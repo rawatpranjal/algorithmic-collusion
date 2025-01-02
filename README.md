@@ -1,1 +1,1 @@
-# algorithmic-collusion
+# algo-collude
