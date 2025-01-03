@@ -1,5 +1,4 @@
 \begin{table}[!htbp] \centering
-  \caption{Regression 2: OLS w/ Covariates}
 \begin{tabular}{@{\extracolsep{5pt}}lc}
 \\[-1.8ex]\hline
 \hline \\[-1.8ex]
@@ -7,32 +6,32 @@
 \cr \cline{2-2}
 \\[-1.8ex] & (1) \\
 \hline \\[-1.8ex]
- Intercept & -175.040$^{***}$ \\
-& (inf) \\
- N & 0.038$^{***}$ \\
-& (inf) \\
- alpha & 0.240$^{***}$ \\
-& (inf) \\
- asynchronous & -0.073$^{***}$ \\
-& (inf) \\
- decay & 175.940$^{***}$ \\
-& (inf) \\
- design & -0.055$^{***}$ \\
-& (inf) \\
- egreedy & 0.029$^{***}$ \\
-& (inf) \\
- feedback & -0.013$^{***}$ \\
-& (inf) \\
- gamma & -0.111$^{***}$ \\
-& (inf) \\
- num_actions & 0.001$^{***}$ \\
-& (inf) \\
+ Intercept & 0.984$^{***}$ \\
+& (0.100) \\
+ N & 0.016$^{**}$ \\
+& (0.006) \\
+ alpha & -0.022$^{}$ \\
+& (0.384) \\
+ asynchronous & -0.033$^{}$ \\
+& (0.036) \\
+ design & -0.121$^{***}$ \\
+& (0.045) \\
+ egreedy & 0.021$^{}$ \\
+& (0.033) \\
+ explore_frac & 0.030$^{}$ \\
+& (0.104) \\
+ feedback & -0.059$^{*}$ \\
+& (0.031) \\
+ gamma & -0.029$^{}$ \\
+& (0.034) \\
+ num_actions & -0.002$^{}$ \\
+& (0.003) \\
 \hline \\[-1.8ex]
- Observations & 10 \\
- $R^2$ & 1.000 \\
- Adjusted $R^2$ & nan \\
- Residual Std. Error & inf (df=0) \\
- F Statistic & nan$^{***}$ (df=9; 0) \\
+ Observations & 50 \\
+ $R^2$ & 0.380 \\
+ Adjusted $R^2$ & 0.240 \\
+ Residual Std. Error & 0.107 (df=40) \\
+ F Statistic & 2.719$^{**}$ (df=9; 40) \\
 \hline
 \hline \\[-1.8ex]
 \textit{Note:} & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\
