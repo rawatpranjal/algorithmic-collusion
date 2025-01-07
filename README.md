@@ -1,4 +1,4 @@
-# Algo-Collude
+# Algorithmic-Collusion
 
 This repository contains data and analysis for the paper:  
 **"Designing Auctions when Algorithms Learn to Bid: The Critical Role of Payment Rules"**  
