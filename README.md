@@ -1,38 +1,19 @@
-# Algorithmic-Collusion
+# Algorithmic Collusion
 
-This repository contains data and analysis for the paper:  
-**"Designing Auctions when Algorithms Learn to Bid: The Critical Role of Payment Rules"**  
+This repository accompanies **"Designing Auctions when Algorithms Learn to Bid: The Critical Role of Payment Rules"**  
 [arXiv link](https://arxiv.org/abs/2306.09437)
 
-## Abstract  
-I run a fully randomized experiment with Q-learning bidders participating in repeated auctions.  
-- **First-price auction**: susceptible to coordinated bid suppression, with winning bids ~20% below true values.  
-- **Second-price auction**: aligns bids to values, reduces learning volatility, speeds convergence.  
-Regression and machine learning methods confirm the **critical** role of payment rules—especially with fewer bidders, high discount factors, asynchronous learning, and coarse bid spaces.
+## Abstract
 
----
+Algorithms are increasingly being used to automate participation in online markets. Banchio and Skrzypacz (2022) demonstrate how exploration under identical valuation in first-price auctions may lead to spontaneous coupling into sub-competitive bidding. However, it is an open question if these findings extend to affiliated values, optimal exploration, and specifically which algorithmic details play a role in facilitating algorithmic collusion. This paper contributes to the literature by generating robust stylized facts to cover these gaps. I conduct a set of fully randomized experiments in a controlled laboratory setup and apply double machine learning to estimate granular conditional treatment effects of auction design on seller revenues. I find that first-price auctions lead to lower seller revenues, slower convergence, and higher seller regret under identical values, affiliated values, and also under optimal exploration. There is more possibility of such tacit collusion under fewer bidders, lower learning rates, and higher discount factors. This evidence suggests that programmatic auctions, e.g. the Google Ad Exchange, which depend on first-price auctions, might be susceptible to coordinated bid suppression and significant revenue losses.
 
-## How to Use
-1. **Install Dependencies**  
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. **Run the Main Script**  
-   ```bash
-   python code/main.py
-   ```
-   - Generates sample plots for first-price vs. second-price auctions in `code/figures/`:
-     - `first-price-visual.png`
-     - `second-price-visual.png`
-   - Randomly samples parameter sets (K=10 demo) and saves data to `code/data/data.csv`.
-   - Produces boxplots, runs t-tests, regressions, and advanced ML analyses, with output in `code/figures/`.
+## Contents
+- **experiment1**: Q-learning, constant valuations  
+- **experiment2**: Q-learning, stochastic valuations with affiliation  
+- **experiment3**: UCB and linear contextual bandits, stochastic valuations  
+- **analysis**: Illustrative scripts for statistical/ML analyses (ATE, GATE, CATE)
 
-3. **Inspect Outputs**  
-   - **Figures**: `code/figures/` folder for:
-     - Boxplots (`boxplot_bid2val.png`, `boxplot_vol.png`, `boxplot_episodes.png`)
-     - Regression tables in `.tex` format (`regression_1.tex`, `regression_2.tex`)
-     - Machine learning effect plots (`orf_treatment_effects.png`)
-     - Example convergence figures (`first-price-visual.png`, `second-price-visual.png`)
-   - **Data**: `code/data/data.csv` for aggregated experimental results.
+## Citation
+If you find this work useful, please cite the arXiv preprint above.  
 
----
+Rawat, P. (2023). Designing Auctions when Algorithms Learn to Bid: The critical role of Payment Rules. arXiv preprint arXiv:2306.09437.
