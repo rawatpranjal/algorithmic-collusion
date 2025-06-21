@@ -1,0 +1,176 @@
+=== Variable Definitions ===
+|    | Parameter                 | Definition                                        |
+|----|---------------------------|---------------------------------------------------|
+|  0 | alpha                     | Learning rate for Q-updates (0.01 to 0.1).        |
+|  1 | gamma                     | Discount factor for future rewards (0.0 to 0.99). |
+|  2 | episodes                  | Total number of training episodes (10k to 100k).  |
+|  3 | auction_type              | 'first' or 'second' price auction (treatment).    |
+|  4 | init                      | Q-initialization: 'random' or 'zeros'.            |
+|  5 | exploration               | Exploration strategy: 'egreedy' or 'boltzmann'.   |
+|  6 | asynchronous              | Update mode: 0=synchronous, 1=asynchronous.       |
+|  7 | n_bidders                 | Number of bidding agents (2, 4, 6).               |
+|  8 | median_opp_past_bid_index | Use median of opponents' past bids in state?      |
+|  9 | winner_bid_index_state    | Track winning bid index in state?                 |
+| 10 | avg_rev_last_1000         | Mean seller revenue in the final 1000 episodes.   |
+| 11 | time_to_converge          | Fraction of episodes until ±5% convergence.       |
+| 12 | avg_regret_of_seller      | Average regret for the seller (valuations=1).     |
+| 13 | r                         | Reserve price for the auction (0.0 to 0.5).       |
+| 14 | boltzmann_temp_start      | Starting temperature for Boltzmann exploration.   |
+
+=== Summary Statistics ===
+|                           |         mean |           std |           min |             25% |            50% |          75% |          max |
+|---------------------------|--------------|---------------|---------------|-----------------|----------------|--------------|--------------|
+| alpha                     |     0.0153   |     0.0187442 |     0.001     |     0.00325     |     0.01       |     0.01     |     0.05     |
+| gamma                     |     0.812    |     0.248185  |     0.25      |     0.7875      |     0.9        |     0.98     |     0.99     |
+| asynchronous              |     0.8      |     0.421637  |     0         |     1           |     1          |     1        |     1        |
+| n_bidders                 |     4.4      |     1.83787   |     2         |     2.5         |     5          |     6        |     6        |
+| median_opp_past_bid_index |     0.3      |     0.483046  |     0         |     0           |     0          |     0.75     |     1        |
+| winner_bid_index_state    |     0.3      |     0.483046  |     0         |     0           |     0          |     0.75     |     1        |
+| r                         |     0.22     |     0.209762  |     0         |     0.025       |     0.15       |     0.4      |     0.5      |
+| boltzmann_temp_start      |     1.16     |     0.76768   |     0.1       |     0.5         |     1          |     2        |     2        |
+| episodes                  | 57295.1      | 19437.8       | 22795         | 44017.8         | 56685.5        | 73721        | 85342        |
+| init_zeros                |     0.2      |     0.421637  |     0         |     0           |     0          |     0        |     1        |
+| exploration_egreedy       |     0.6      |     0.516398  |     0         |     0           |     1          |     1        |     1        |
+| auction_type              |     0.5      |     0.527046  |     0         |     0           |     0.5        |     1        |     1        |
+| avg_rev_last_1000         |     0.8179   |     0.149128  |     0.5877    |     0.6869      |     0.90015    |     0.9182   |     0.9368   |
+| time_to_converge          |     0.153331 |     0.27945   |     0         |     3.31895e-06 |     0.00549454 |     0.205701 |     0.897564 |
+| avg_regret_of_seller      |     0.216396 |     0.144943  |     0.0866976 |     0.0918998   |     0.148298   |     0.324189 |     0.442903 |
+
+========== AVG_REV_LAST_1000 | ATE Results ==========
+                 coef   std err         t     P>|t|    2.5 %   97.5 %
+auction_type  0.11015  0.097451  1.130313  0.258344 -0.08085  0.30115
+
+=== Group Average Treatment Effects (GATEs) for avg_rev_last_1000 ===
+
+--- GATE for asynchronous ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0  0.021532  0.206235  0.104405  0.916848 -0.382680  0.425744
+Group_1  0.132305  0.108966  1.214186  0.224677 -0.081264  0.345873
+
+--- GATE for median_opp_past_bid_index ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0  0.199025  0.102082  1.949664  0.051216 -0.001051  0.399101
+Group_1 -0.097225  0.168243 -0.577886  0.563341 -0.426974  0.232524
+
+--- GATE for winner_bid_index_state ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0  0.066154  0.102505  0.645375  0.518684 -0.134752  0.267060
+Group_1  0.212807  0.208073  1.022755  0.306424 -0.195008  0.620623
+
+--- GATE for init_zeros ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0  0.129752  0.111548  1.163200  0.244748 -0.088877  0.348382
+Group_1  0.031740  0.185709  0.170914  0.864291 -0.332242  0.395723
+
+--- GATE for exploration_egreedy ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0  0.247011  0.159250  1.551094  0.120879 -0.065112  0.559135
+Group_1  0.018909  0.107887  0.175269  0.860869 -0.192546  0.230364
+
+=== CATE Drivers for avg_rev_last_1000 (Best Linear Predictor) ===
+Coefficients for the Best Linear Predictor of the CATE on all covariates:
+                               coef       std err             t  P>|t|    [0.025    0.975]
+alpha                      1.469897  3.368108e-11  4.364162e+10    0.0  1.469897  1.469897
+gamma                     -3.230525  9.353328e-11 -3.453878e+10    0.0 -3.230525 -3.230525
+asynchronous               2.141514  5.170230e-11  4.142010e+10    0.0  2.141514  2.141514
+n_bidders                 -0.478485  1.138191e-11 -4.203907e+10    0.0 -0.478485 -0.478485
+median_opp_past_bid_index -2.960754  5.364911e-11 -5.518739e+10    0.0 -2.960754 -2.960754
+winner_bid_index_state     3.435062  7.569333e-11  4.538130e+10    0.0  3.435062  3.435062
+r                         -6.153384  1.262093e-10 -4.875539e+10    0.0 -6.153384 -6.153384
+boltzmann_temp_start       0.223822  7.823047e-12  2.861058e+10    0.0  0.223822  0.223822
+episodes                   0.000059  1.237451e-15  4.743419e+10    0.0  0.000059  0.000059
+init_zeros                -2.403221  4.292124e-11 -5.599140e+10    0.0 -2.403221 -2.403221
+exploration_egreedy        1.953924  5.495881e-11  3.555252e+10    0.0  1.953924  1.953924
+
+========== TIME_TO_CONVERGE | ATE Results ==========
+                  coef   std err         t     P>|t|     2.5 %    97.5 %
+auction_type -0.227813  0.139247 -1.636033  0.101833 -0.500733  0.045107
+
+=== Group Average Treatment Effects (GATEs) for time_to_converge ===
+
+--- GATE for asynchronous ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.784043  0.401357 -1.953480  0.050763 -1.570688  0.002602
+Group_1 -0.088756  0.090239 -0.983565  0.325330 -0.265622  0.088109
+
+--- GATE for median_opp_past_bid_index ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.037321  0.087249 -0.427754  0.668830 -0.208326  0.133684
+Group_1 -0.672295  0.282700 -2.378122  0.017401 -1.226377 -0.118213
+
+--- GATE for winner_bid_index_state ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.136002  0.089916 -1.512550  0.130394 -0.312234  0.040230
+Group_1 -0.442040  0.386745 -1.142975  0.253049 -1.200046  0.315966
+
+--- GATE for init_zeros ---
+             coef   std err          t          P>|t|    [0.025    0.975]
+Group_0 -0.319213  0.158348  -2.015888   4.381166e-02 -0.629570 -0.008856
+Group_1  0.137783  0.004603  29.936352  6.624076e-197  0.128762  0.146804
+
+--- GATE for exploration_egreedy ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.348998  0.316676 -1.102067  0.270433 -0.969671  0.271675
+Group_1 -0.147024  0.081060 -1.813773  0.069713 -0.305897  0.011850
+
+=== CATE Drivers for time_to_converge (Best Linear Predictor) ===
+Coefficients for the Best Linear Predictor of the CATE on all covariates:
+                               coef       std err             t  P>|t|    [0.025    0.975]
+alpha                      0.904128  2.343151e-11  3.858597e+10    0.0  0.904128  0.904128
+gamma                     -2.631529  6.285227e-11 -4.186848e+10    0.0 -2.631529 -2.631529
+asynchronous               1.441361  3.466831e-11  4.157575e+10    0.0  1.441361  1.441361
+n_bidders                 -0.378095  7.844751e-12 -4.819719e+10    0.0 -0.378095 -0.378095
+median_opp_past_bid_index -1.861626  3.715303e-11 -5.010698e+10    0.0 -1.861626 -1.861626
+winner_bid_index_state     2.299478  5.256166e-11  4.374820e+10    0.0  2.299478  2.299478
+r                         -1.965954  8.998659e-11 -2.184719e+10    0.0 -1.965954 -1.965954
+boltzmann_temp_start      -0.069120  6.011632e-12 -1.149764e+10    0.0 -0.069120 -0.069120
+episodes                   0.000030  8.655404e-16  3.410162e+10    0.0  0.000030  0.000030
+init_zeros                -0.124731  3.073372e-11 -4.058455e+09    0.0 -0.124731 -0.124731
+exploration_egreedy        1.868037  3.779930e-11  4.941988e+10    0.0  1.868037  1.868037
+
+========== AVG_REGRET_OF_SELLER | ATE Results ==========
+                  coef   std err         t     P>|t|     2.5 %   97.5 %
+auction_type -0.179274  0.087799 -2.041858  0.041166 -0.351357 -0.00719
+
+=== Group Average Treatment Effects (GATEs) for avg_regret_of_seller ===
+
+--- GATE for asynchronous ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.186948  0.041340 -4.522234  0.000006 -0.267972 -0.105924
+Group_1 -0.177355  0.109251 -1.623374  0.104509 -0.391483  0.036773
+
+--- GATE for median_opp_past_bid_index ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.229391  0.111781 -2.052147  0.040155 -0.448478 -0.010304
+Group_1 -0.062333  0.105414 -0.591317  0.554308 -0.268941  0.144275
+
+--- GATE for winner_bid_index_state ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.128697  0.113506 -1.133830  0.256866 -0.351165  0.093772
+Group_1 -0.297286  0.094212 -3.155511  0.001602 -0.481937 -0.112634
+
+--- GATE for init_zeros ---
+             coef   std err         t     P>|t|    [0.025    0.975]
+Group_0 -0.221404  0.089135 -2.483916  0.012995 -0.396106 -0.046703
+Group_1 -0.010751  0.218738 -0.049149  0.960800 -0.439470  0.417969
+
+--- GATE for exploration_egreedy ---
+             coef   std err        t         P>|t|    [0.025    0.975]
+Group_0 -0.371085  0.050531 -7.34372  2.077369e-13 -0.470124 -0.272046
+Group_1 -0.051399  0.116039 -0.44295  6.578018e-01 -0.278831  0.176032
+
+=== CATE Drivers for avg_regret_of_seller (Best Linear Predictor) ===
+Coefficients for the Best Linear Predictor of the CATE on all covariates:
+                               coef       std err             t  P>|t|    [0.025    0.975]
+alpha                     -0.585067  1.210641e-11 -4.832698e+10    0.0 -0.585067 -0.585067
+gamma                      0.729151  3.532231e-11  2.064278e+10    0.0  0.729151  0.729151
+asynchronous              -0.866511  1.973014e-11 -4.391813e+10    0.0 -0.866511 -0.866511
+n_bidders                  0.199878  4.141475e-12  4.826241e+10    0.0  0.199878  0.199878
+median_opp_past_bid_index  1.577225  1.942323e-11  8.120301e+10    0.0  1.577225  1.577225
+winner_bid_index_state    -1.184082  2.711856e-11 -4.366316e+10    0.0 -1.184082 -1.184082
+r                          3.566364  4.383894e-11  8.135150e+10    0.0  3.566364  3.566364
+boltzmann_temp_start      -0.321192  2.664459e-12 -1.205467e+11    0.0 -0.321192 -0.321192
+episodes                  -0.000029  4.389550e-16 -6.646853e+10    0.0 -0.000029 -0.000029
+init_zeros                 1.975109  1.505232e-11  1.312163e+11    0.0  1.975109  1.975109
+exploration_egreedy       -0.336576  1.998386e-11 -1.684240e+10    0.0 -0.336576 -0.336576
+

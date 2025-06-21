@@ -21,31 +21,27 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Read the path of the latest experiment run from the script's directory
-with open(os.path.join(script_dir, "LATEST_RUN.txt"), "r") as f:
-    output_dir = f.read().strip()
-
-df = pd.read_csv(os.path.join(output_dir, "data.csv"))
+try:
+    with open(os.path.join(script_dir, "LATEST_RUN.txt"), "r") as f:
+        output_dir = f.read().strip()
+    df = pd.read_csv(os.path.join(output_dir, "data.csv"))
+except FileNotFoundError:
+    print("Error: LATEST_RUN.txt or data.csv not found.")
+    print("Please run the data generation script (exp3_data.py) first.")
+    exit()
 
 # --- Preprocessing ---
-# Create explicit dummy variables for categorical features
-df = pd.get_dummies(df, columns=['init', 'exploration'], drop_first=True, dtype=int)
-# Convert treatment to binary 0/1
+df = pd.get_dummies(df, columns=['bandit_type'], drop_first=True, dtype=int)
 treatment_col = 'auction_type'
 df[treatment_col] = (df[treatment_col] == 'first').astype(int)
-# Convert boolean flags to integers for analysis
-for col in ['median_opp_past_bid_index', 'winner_bid_index_state', 'asynchronous']:
-    if df[col].dtype == bool:
-        df[col] = df[col].astype(int)
 
 # --- Define variable lists ---
-outcomes_list = ['avg_rev_last_1000', 'time_to_converge', 'avg_regret_of_seller']
-# Programmatically define covariates
+outcomes_list = ['avg_rev', 'time_to_converge', 'avg_regret_seller']
 non_feature_cols = outcomes_list + [treatment_col, 'seed']
 covariates_list = [col for col in df.columns if col not in non_feature_cols]
 
 # --- Analysis ---
 with open(os.path.join(output_dir, 'results.txt'), 'w') as f:
-    # Summary Statistics
     summary_stats = df[covariates_list + [treatment_col] + outcomes_list].describe().T
     f.write("=== Summary Statistics ===\n")
     f.write(tabulate(summary_stats, headers='keys', tablefmt="github"))
@@ -60,7 +56,7 @@ with open(os.path.join(output_dir, 'results.txt'), 'w') as f:
         ml_g = LGBMRegressor(random_state=123, verbose=-1)
         ml_m = LGBMClassifier(random_state=123, verbose=-1)
         
-        n_folds = 2 if len(df) <= 10 else (3 if len(df) < 50 else 10)
+        n_folds = 3 if len(df) < 50 else 10
         dml_irm = DoubleMLIRM(dml_data, ml_g=ml_g, ml_m=ml_m, n_folds=n_folds, n_rep=1, score='ATE')
         dml_irm.fit()
 
@@ -71,14 +67,13 @@ with open(os.path.join(output_dir, 'results.txt'), 'w') as f:
         # GATEs
         f.write(f"=== Group Average Treatment Effects (GATEs) for {outcome} ===\n")
         binary_covs = [c for c in covariates_list if df[c].nunique() == 2]
-        
-        n_bin = len(binary_covs)
-        if n_bin > 0:
+        if binary_covs:
+            n_bin = len(binary_covs)
             nrows_gate = math.ceil(n_bin / 3)
             ncols_gate = min(n_bin, 3)
             fig_gate, axes_gate = plt.subplots(nrows=nrows_gate, ncols=ncols_gate, figsize=(5 * ncols_gate, 4 * nrows_gate))
             if n_bin == 1: axes_gate = np.array([axes_gate])
-
+            
             for i, bin_col in enumerate(binary_covs):
                 groups_df = df[[bin_col]].astype('category')
                 gate_obj = dml_irm.gate(groups=groups_df)
@@ -86,11 +81,8 @@ with open(os.path.join(output_dir, 'results.txt'), 'w') as f:
                 f.write(str(gate_obj.summary))
                 f.write("\n")
                 
-                # Plotting logic for GATE
                 ci_95 = gate_obj.confint(level=0.95)
-                eff = ci_95['effect']
-                lo = ci_95['2.5 %']
-                hi = ci_95['97.5 %']
+                eff, lo, hi = ci_95['effect'], ci_95['2.5 %'], ci_95['97.5 %']
                 ax = axes_gate.flatten()[i]
                 x_pos = np.arange(len(eff))
                 ax.errorbar(x_pos, eff, yerr=[eff - lo, hi - eff], fmt='o', capsize=5)
@@ -104,7 +96,7 @@ with open(os.path.join(output_dir, 'results.txt'), 'w') as f:
             fig_gate.savefig(gate_path, bbox_inches='tight')
             plt.close(fig_gate)
         
-        # CATE Summary Table (Best Linear Predictor)
+        # BLP
         f.write(f"\n=== CATE Drivers for {outcome} (Best Linear Predictor) ===\n")
         blp_basis_df = df[covariates_list]
         blp_obj = dml_irm.cate(basis=blp_basis_df)

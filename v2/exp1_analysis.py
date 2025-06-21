@@ -9,6 +9,13 @@ import patsy
 from scipy.stats import norm
 from tabulate import tabulate
 import math
+import warnings
+
+# Suppress known, non-critical warnings for cleaner output
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+
 np.random.seed(12234334)
 
 # Get the directory where this script is located
@@ -82,8 +89,9 @@ with open(os.path.join(output_dir, 'results.txt'), 'w') as f:
         dml_data = dml.DoubleMLData(df, y_col='Y', d_cols=treatment_col, x_cols=covariates_list)
         ml_g = LGBMRegressor(random_state=123, verbose=-1)
         ml_m = LGBMClassifier(random_state=123, verbose=-1)
-        # GATE/CATE methods require n_rep=1
-        dml_irm = DoubleMLIRM(dml_data, ml_g=ml_g, ml_m=ml_m, n_folds=10, n_rep=1, score='ATE')
+        # Use a smaller n_folds for small K, and n_rep=1 for GATE/CATE
+        n_folds = 2 if len(df) <= 10 else (3 if len(df) < 50 else 10)
+        dml_irm = DoubleMLIRM(dml_data, ml_g=ml_g, ml_m=ml_m, n_folds=n_folds, n_rep=1, score='ATE')
         dml_irm.fit()
 
         f.write(f"========== {outcome.upper()} | ATE Results ==========\n")

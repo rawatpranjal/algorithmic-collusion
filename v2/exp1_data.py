@@ -306,7 +306,7 @@ if __name__ == "__main__":
         "boltzmann_temp_start": [0.1, 0.5, 1.0, 2.0]
     }
 
-    K = 30
+    K = 10
     all_params = []
     for k in range(K):
         params = {key: random.choice(values) for key, values in param_space.items()}

@@ -1,0 +1,38 @@
+=== Variable Definitions ===
+|    | Parameter                 | Definition                                        |
+|----|---------------------------|---------------------------------------------------|
+|  0 | alpha                     | Learning rate for Q-updates (0.01 to 0.1).        |
+|  1 | gamma                     | Discount factor for future rewards (0.0 to 0.99). |
+|  2 | episodes                  | Total number of training episodes (10k to 100k).  |
+|  3 | auction_type              | 'first' or 'second' price auction (treatment).    |
+|  4 | init                      | Q-initialization: 'random' or 'zeros'.            |
+|  5 | exploration               | Exploration strategy: 'egreedy' or 'boltzmann'.   |
+|  6 | asynchronous              | Update mode: 0=synchronous, 1=asynchronous.       |
+|  7 | n_bidders                 | Number of bidding agents (2, 4, 6).               |
+|  8 | median_opp_past_bid_index | Use median of opponents' past bids in state?      |
+|  9 | winner_bid_index_state    | Track winning bid index in state?                 |
+| 10 | avg_rev_last_1000         | Mean seller revenue in the final 1000 episodes.   |
+| 11 | time_to_converge          | Fraction of episodes until ±5% convergence.       |
+| 12 | avg_regret_of_seller      | Average regret for the seller (valuations=1).     |
+| 13 | r                         | Reserve price for the auction (0.0 to 0.5).       |
+| 14 | boltzmann_temp_start      | Starting temperature for Boltzmann exploration.   |
+
+=== Summary Statistics ===
+|                           |         mean |           std |             min |          25% |          50% |          75% |          max |
+|---------------------------|--------------|---------------|-----------------|--------------|--------------|--------------|--------------|
+| alpha                     |     0.0417   |     0.0443322 |     0.001       |     0.005    |     0.0275   |     0.0875   |     0.1      |
+| gamma                     |     0.723    |     0.312767  |     0           |     0.5625   |     0.825    |     0.9375   |     0.99     |
+| asynchronous              |     0.3      |     0.483046  |     0           |     0        |     0        |     0.75     |     1        |
+| n_bidders                 |     3.8      |     1.75119   |     2           |     2        |     4        |     5.5      |     6        |
+| median_opp_past_bid_index |     0.7      |     0.483046  |     0           |     0.25     |     1        |     1        |     1        |
+| winner_bid_index_state    |     0.6      |     0.516398  |     0           |     0        |     1        |     1        |     1        |
+| r                         |     0.18     |     0.193218  |     0           |     0        |     0.15     |     0.35     |     0.5      |
+| boltzmann_temp_start      |     0.96     |     0.627517  |     0.1         |     0.5      |     1        |     1        |     2        |
+| episodes                  | 61836.5      | 17593.4       | 33022           | 50813.5      | 64950        | 70667        | 90160        |
+| init_zeros                |     0.6      |     0.516398  |     0           |     0        |     1        |     1        |     1        |
+| exploration_egreedy       |     0.2      |     0.421637  |     0           |     0        |     0        |     0        |     1        |
+| auction_type              |     0.2      |     0.421637  |     0           |     0        |     0        |     0        |     1        |
+| avg_rev_last_1000         |     0.85668  |     0.106491  |     0.588       |     0.847175 |     0.88045  |     0.906075 |     0.9605   |
+| time_to_converge          |     0.606389 |     0.419584  |     1.68501e-05 |     0.203069 |     0.841216 |     0.885964 |     0.903521 |
+| avg_regret_of_seller      |     0.265066 |     0.0928065 |     0.0947195   |     0.208197 |     0.290097 |     0.333865 |     0.373478 |
+
