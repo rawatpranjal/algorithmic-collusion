@@ -1,0 +1,434 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\setcounter{secnumdepth}{0}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\DeclareUnicodeCharacter{202F}{~} % Replaces narrow no-break space with LaTeX non-breaking space
+
+
+\title{Algorithmic Collusion in Auctions: Evidence from Controlled Laboratory Experiments}
+\author{Pranjal Rawat}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Algorithms are increasingly being used to automate participation in online markets. Banchio and Skrzypacz (2022) demonstrate how exploration under identical valuation in first-price auctions may lead to spontaneous coupling into sub-competitive bidding. However, it is an open question if these findings extend to affiliated values, optimal exploration, and specifically which algorithmic details play a role in facilitating algorithmic collusion. This paper contributes to the literature by generating robust stylized facts to cover these gaps. I conduct a set of fully randomized experiments in a controlled laboratory setup and apply double machine learning to estimate granular conditional treatment effects of auction design on seller revenues. I find that first-price auctions lead to lower seller revenues and higher seller regret under identical values, affiliated values, and under both Q-learning and Bandits. There is more possibility of such tacit collusion under fewer bidders, Boltzmann exploration, asynchronous updating, and longer episodes; while high reserve prices can offset this. This evidence suggests that programmatic auctions, e.g. the Google Ad Exchange, which depend on first-price auctions, might be susceptible to coordinated bid suppression and significant revenue losses.
+\end{abstract}
+
+% Main sections
+\newpage
+\input{sections/introduction}
+\input{sections/literature}
+\input{sections/auctions}
+\input{sections/algorithms}
+\input{sections/experiments}
+\input{sections/inference}
+\input{sections/res1}
+\input{sections/res2}
+\input{sections/res3}
+
+\input{sections/discussion}
+\appendix
+\input{sections/references}
+\newpage
+\input{sections/exp1}
+\input{sections/exp2}
+\input{sections/exp3}
+\input{sections/equilibria}
+
+\end{document}
+
+\section{Introduction}
+
+Intelligent algorithms are rapidly taking over real-time computerized auctions and markets in areas such as online marketplaces for pre-owned items, display advertising, sponsored search, financial trading, electricity, transportation, and public procurement. Significant concerns arise about the efficiency of auctions—originally tailored to human participants—under this new regime of algorithmic bidding. For instance, in large-scale advertising exchanges like Google AdSense, even minor inefficiencies or bid suppression can cause million-dollar losses.
+
+Banchio and Skrzypacz (2022) first examined how reinforcement-learning agents interact in auction settings and concluded that a first-price auction is prone to collusive (or “bid-suppression”) outcomes, whereas a second-price auction is not. Their study, however, focused on constant valuations with only two or three bidders, used relatively simple exploration mechanisms, and did not thoroughly parse out how algorithmic factors (learning rates, discount factors, synchronization modes, etc.) amplify or mitigate tacit collusion. 
+
+This leaves open important questions: Do these findings hold when bidders have stochastic, possibly affiliated valuations? Are the results sensitive to the fine details of the algorithm? Are conclusions sensitive to different ways of exploring or initializing Q-values? Would the results change if algorithms explored the bid space in a more efficient way? What is the role of competitive pressure and informtion disclosures? 
+
+Empirical data on real-world algorithmic auctions are fairly inaccessible, as most auctions are proprietary. Theoretical work also faces challenges, since modeling high-dimensional dynamic systems of Q-learning agents is analytically intractable. Indeed, if they were transparent then we would not have to wait until 2017 for Q-learning to attain superhuman prowess in chess. Existing theoretical papers typically focus on small state/action spaces and very crude learning algorithms. 
+
+This is where experimental work can come in and shed light on machine behaviour in important settings. However, experimental work in this area has also been partial in scope, rarely examining multiple interacting factors (e.g., discounting, asynchronous updates, alternative exploration strategies). This paper adopts a rigorous statistical approach and documents important facts about algorithmic learning in repeated auctions. 
+
+This paper addresses the gap in the literature by conducting a fully randomized factorial experiment comprising three sequential designs, each involving 500 independent trials and up to 100,000 simulated auctions per trial. Bidders apply reinforcement learning or bandit-based exploration under varied institutional elements (e.g., private vs.\ affiliated values, number of bidders, reserve prices) and algorithmic parameters (e.g., discount factors, Q-learning rates, synchronous vs.\ asynchronous updates, different exploration rules). 
+
+\textbf{Contribution.} In this paper, we offer one of the most comprehensive experimental studies of algorithmic learning in sealed-bid auctions to date, examining an exceptionally wide range of parameters and outcomes. We systematically investigate both Q-learning and bandit-based approaches, incorporate affiliated values to capture the continuum betwee private and common values, and measure not only revenue and regret but also price volatility, no-sale rates, and winner identity patterns. By varying reserve prices, the number of bidders, and distinct exploration schemes (e.g., Boltzmann vs.\ $\varepsilon$-greedy, synchronous vs.\ asynchronous Q-learning, and linear bandits), we uncover robust heterogeneity and interactions between auction formats and algorithmic details. More broadly, this paper offers a statistical approach to analysing machine behaviour in a controlled environment in an efficient manner. 
+
+We first re-establish that a first-price auction, in which the winner pays her own bid, consistently exhibits coordinated bid suppression. In contrast, the second-price auction aligns winning bids more closely with actual valuations, reduces volatility during the learning phase, and often speeds up convergence. The second-price design appears robust to further complexity, such as the introduction of partial common values via affiliation or more sophisticated exploration algorithms. We also obtain heterogeneous treatment effects i.e. how other factors influence the impact of payment rules on seller reserves. Here I employ state of the art machine learning estimators to show that the impact of moving to second-price is magnified by fewer bidders, higher discount factors, and asynchronous updating. 
+
+
+\section{Literature}
+
+There are a few kinds of literature that are relevant. First, a theoretical literature on auctions that assumes rational actors. Second, an experimental literature replaces rational actors with humans or algorithms. Third, empirical evidence on algorithmic adoption and collusion. Fourth, legal literature on possible gaps in regulation. 
+
+The first thread is theoretical literature on auctions (Milgrom and Weber 1982, Krishna 2009). The second price auction is superior to the first price auction when bidders only have a noisy signal about the actual value of the item. The first price auction suffers from the risk of the winner's curse, which leads to conservative bidding, and this reduces auction revenues. These results can break down in repeated games, and the Folk Theorem says that if bidders are patient enough, any average winning bid can be supported by a suitable and credible threat of punishment e.g., tit-for-tat or grim trigger. Tacit collusion in repeated auctions will take the form of symmetrically suppressed bids or asymmetric bid rotation. 
+
+Oligopoly theory also offers some insight into the determinants of tacit collusion in repeated games. Ivaldi et al. (2002) show that in repeated games, the degree of tacit collusion rises with a higher discount rate, fewer market participants, symmetric conditions, higher entry barriers, a high frequency of interaction, greater transparency, and data availability. The last three factors are magnified with algorithms and are often cited as the reason for concern for algorithmic collusion. 
+
+The second thread consists of experiments. The experimental evidence with humans shows a distinctive departure from theory (Kagel and Levin 2011). Bids are generally above Nash prediction in both the first and second price auctions. Experiments with noisy signals show a significant presence of the winner's curse, which even experienced bidders are unable to avoid (Levin et al., 1996). Sequential auctions of identical items often show declining prices (Keser et al., 1996, Neugebauer et al., 2007). 
+
+Experiments with algorithms have highlighted different mechanisms through which tacit collusion can occur. Waltman and Kamyak (2008), Dopologov (2021) and Abada et al (2022) show how certain exploration strategies can lead to collusive outcomes. Asker et al (2021) highlight asynchronous vs synchronous learning. Calvano (2020) studies retaliatory strategies in simultaneous pricing games. Klein (2021) studies sequential pricing games and granularity of action spaces. Hansen et al (2021) study collusion arising from misspecified prediction and correlated price experimentation. Hettich (2021), Han (2022) and Zhang (2021) study deep reinforcement learning and compare different sampling strategies. Most of the literature on algorithmic collusion has focused on pricing and the only experiments with auctions can be found in Banchio and Skrzypacz (2022).
+
+A few papers look at algorithms learning to bid in auctions. Bandyopadhyay et al. (2008), study reverse auctions with reinforcement learning and find that in simple cases mixed strategy equilibrium can be attained. Tellidou et al.,(2007) study electricity markets and find that tacit collusion is easy to sustain even under competitive conditions. Banchio and Skrzypacz (2022) study auction design with Q-learning bots and found that the first price auction can lead to collusive outcomes while the second price auction does not. Criticisms of simulation-based studies are that settings are too stylized, using competitive rather than monopolistic benchmarks is unrealistic, and algorithms tested are too unrealistic (Kühn \& Tadelis 2017, Schwalbe 2018).
+
+The third thread looks at the pervasive adoption of algorithms and actual evidence for algorithmic collusion. Chen et al. (2016) studied 1,641 best-seller products on Amazon and detected that about 543 had adopted some form of algorithmic pricing. A 2017 OECD report titled ``Algorithms and Collusion" found that \textit{``Two-thirds of them [ecommerce firms] use automatic software programs that adjust their own prices based on the observed prices of competitors"}. A 2023 eMarketer report shows that algorithms are dominating bidding in display and sponsored search auctions across the globe. Brogaard et al., (2014) find that algorithms have come to dominate trading in the double auction markets. 
+
+These developments have led to limited evidence of algorithmic collusion. Assad et al. (2020) study the adoption of algorithmic pricing in German gasoline markets. They find that adoption increases margins by 9\% in competitive markets and upto 28\% in duopolies. Brown and Mackay (2021) five largest online retailers in over-the-counter allergy medications. The use of automated software to change prices quickly leads to prices that are 10 percent higher than otherwise. Musoloff (2022) studied data from Amazon Marketplace and found that adopting algorithmic pricing reduces prices on average but leads to ``resetting" price cycles where participants regularly increase prices at night to cajole the others into following suit. We also see a few legal cases already. \footnote{The 2015 Topkins (US) and 2016 GB Posters (UK) cases brought to light price fixing via pricing algorithms on Amazon. In 2018, after the insolvency of Air Berlin, Lufthansa abused its temporary monopoly power by raising prices roughly by 25\% through pricing algorithms. In 2021, Google was fined 2.42 billion Euro for using algorithms to exclusively place its own Shopping services on Google search while demoting rival providers. Similarily, Amazon is currently defending a claim that its algorithms put its own products over rivals on its lucrative ‘Featured Offer’ placement. There have also been hub-and-spoke conspiracies. In 2016, e-Turas the Lithuanian travel website, was charged for imposing caps on discount rates proposed by travel agencies. In 2018, Accenture was accused of using its software Partneo to coordinate price increases on auto parts, dramatically increasing revenue for major carmakers.}
+
+The fourth thread looks at possible gaps in regulation. Tacit algorithmic collusion is currently not prohibited by law. In the United States, anti-collusion laws require evidence of ``actionable agreement" over mere interdependent behavior. A report at the OECD Competition Committee \footnote{``Algorithms and Collusion" - A note submitted by the United States to the OECD Competition Committee.} reiterates that in the U.S. firms have the freedom to decide their own prices and implement any kind of pricing technology; only decisions taken with an understanding with other competitors is prosecutable. Similarily, European Law (Article 101 TFEU) outlaws three types of collusion: agreements, decisions, and concerted practices. Again, this does not include tacit collusion. 
+
+There are many ways in which algorithms can participate in collusion (Ezrachi and Maurice 2017). First, they can act as messengers and conduits for human collusion and cartels e.g., price fixing on Amazon via algorithms. Here, an agreement to collude is established clearly. Second, they can be part of a hub-and-spoke conspiracy where the developers of the hub use a single algorithm to set prices for many spokes e.g., Uber's algorithm setting taxi rates. Agreement to collude is harder to establish in such vertical agreements, and so evidence for intent must be found. Third, humans can unilaterally set up to behave in predictable ways, and some of them lead to coordination with others e.g. gasoline pricing algorithms in Brown and MacKay (2021). Here agreement is nonexistent, and intent to collude must be established. Lastly, algorithms are given the objective to maximize profits and, through sophisticated learning and experimentation, begin to collude with other similar algorithms e.g. Deep Q-learning. In this case, neither agreement nor intent can be established, and the case would be difficult to prosecute. This paper addresses this last case. It is this last case of algorithmic tacit collusion that this paper considers. 
+
+To summarize: (1) Second-price auctions are generally considered theoretically superior to first-price auctions, but in repeated auctions and complex learning dynamics this may not be true. In practise the first-price auction remains a popular choice for platforms. (2) There has been widespread adoption of algorithms in marketplaces but only a few cases of algorithmic collusion have been detected. There is little work dones on detecting algorithmic collusion. (3) Simulations and experiments have highlighted many mechanisms and conditions through which tacit algorithmic collusion is possible. Many of this has been done under controlled laboratory environments and not field experiments. (4) There seems to be a large gap in policy and regulation since the innovation in algorithms continues to outpace legal developments. 
+
+\section{Auctions}
+
+We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome---who wins and how much is paid---depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximize her per-round payoff, given by her valuation minus her payment. The experiments differ in how valuations are set---ranging from everyone having a fixed value of 1 to signals that are partially ``affiliated'' across bidders---and in the specific informational states that bidders may observe between rounds.
+
+\medskip
+
+\noindent \textbf{Valuations.} In Experiment\,1, every bidder's valuation is fixed at 1, so the private-value assumption is trivially satisfied and there is no direct impact of signals. In Experiments\,2 and\,3, however, each bidder $i$ draws a signal $s_{i}\in [0,1]$ (using a finite set of possible signal realizations) and forms a valuation via a linear-affiliation function
+\[
+v_{i}(s_{i}, s_{-i}) \;=\; \bigl(1 - 0.5\,\eta\bigr)\,s_{i} \;+\; 0.5\,\eta\;\frac{1}{n-1}\sum_{j\neq i} s_{j},
+\]
+where $\eta\in[0,1]$ measures how strongly bidder\,$i$'s value depends on the others' signals. When $\eta=0$, each bidder's value depends only on her own signal; as $\eta$ increases, the environment moves closer to a ``common-value'' setting. Note that in each round, every bidder draws a fresh signal, independently of other bidders and independently across rounds, so that valuations may vary from one round to the next.
+
+\medskip
+
+\noindent \textbf{Bidding.} Bids are constrained to lie in a finite grid, typically $\{0,0.1,0.2,\ldots,1.0\}$ or a similar set, so each bidder's action space is discrete. This restriction is imposed in all three experiments to simplify the strategy space. Despite this simplification, each bidder remains free to adapt her bids over repeated rounds as she observes outcomes. I choose a moderate granularity (e.g.\ 11 equally spaced points from 0 to 1) that is fine enough to allow distinct bidding behaviors and multiple points of convergence, yet small enough to allow full exploration. Empirically, I found that increasing or decreasing the grid size does not materially change the results.
+
+\medskip
+
+\noindent \textbf{Reserve Prices.} All experiments allow a reserve price $r\ge 0$. If every submitted bid is below $r$, then no sale occurs in that round. Since valuations in Experiment\,1 are all~1, imposing a reserve in that setting simply means that bids below $r$ are excluded from contention. In Experiments\,2 and\,3, a reserve likewise disqualifies any bidder whose chosen discrete bid is below $r$. 
+
+\medskip
+
+\noindent \textbf{Payment Rules.} Both first- and second-price formats are studied. Under first-price, the winner pays her own highest valid bid; under second-price, the winner pays the second-highest valid bid (if any). In all cases, if multiple bidders tie for the highest valid bid, one among them is chosen at random to be the winner, and the payment is then computed according to the standard rule for that auction format. The resulting payoff for bidder\,$i$ is
+\[
+u_{i} \;=\; 
+\begin{cases}
+v_{i} - \text{(own bid)} & \text{(first-price),}\\
+v_{i} - \text{(second-highest bid)} & \text{(second-price),}
+\end{cases}
+\]
+and is zero for those bidders who do not win.
+
+\medskip
+
+\noindent \textbf{Information.} A defining feature of these repeated interactions is that bidders may condition their future bids on information from prior rounds. In Experiment\,1, the possible states include the median of the others' previous bids and/or the previous round's winning bid. In Experiments\,2 and\,3, states can similarly incorporate bidder-specific signals $s_{i}$, as well as optional statistics of past outcomes such as the median of others' bids or the past winning bid. Each bidder knows her own signal in each round and can rely on these state variables to guide her subsequent bid choice. The affiliation parameter~$\eta$ thus captures how interdependent each bidder's underlying valuation is with the other signals, but each bidder's private signal still enters only her own valuation (albeit modulated by average signals).
+
+\medskip
+
+Across all three experiments, the auctions are repeated for many rounds, allowing for long-run behavior to emerge under different reserve price levels and different degrees of valuation interdependence. The discrete setup (both for signals and for bids) is maintained for computational tractability, but the core elements of a standard first- or second-price auction---with or without a reserve---are preserved, and the ultimate allocation and payment follow the standard textbook rules.
+
+\section{Algorithms}
+
+Reinforcement learning (RL) typically involves an agent interacting with an environment through states, actions, and rewards. In \emph{Q-learning}, the agent learns to approximate an optimal action-value function $Q(s,a)$, which represents the expected discounted reward for taking action $a$ in state $s$. By comparison, \emph{bandit} algorithms (including multi-armed and contextual bandits) consider no or minimal state transitions, learning directly which action maximizes the expected payoff.
+
+\paragraph{Asynchronous Q-learning.}
+An \emph{asynchronous} Q-learning agent updates its $Q$-values only for the action actually taken at each step. Let $s_t$ be the current state, $a_t$ the chosen action, and $r_t$ the immediate reward upon transitioning to $s_{t+1}$. The Q-update is:
+\begin{equation}
+Q(s_t,a_t) 
+\;\leftarrow\; 
+Q(s_t,a_t) 
+\;+\; 
+\alpha \Bigl[
+  r_t 
+  \;+\; 
+  \gamma \,\max_{a'} Q(s_{t+1},a') 
+  \;-\; 
+  Q(s_t,a_t)
+\Bigr],
+\label{eq:qlearning_async}
+\end{equation}
+where $\alpha$ is the learning rate and $\gamma$ the discount factor. Only $Q(s_t,a_t)$ changes, reflecting the experience from action $a_t$.
+
+\paragraph{Synchronous Q-learning.}
+In \emph{synchronous} Q-learning, the agent updates the Q-values for \emph{all} actions from the same state. Let $A$ be the set of possible actions. If the agent took action $a_t$ but also computes hypothetical rewards $r_t(a)$ for each $a \in A$, the synchronous update is:
+\begin{equation}
+Q\bigl(s_t,a\bigr) 
+\;\leftarrow\; 
+\bigl(1-\alpha\bigr)\,Q\bigl(s_t,a\bigr) 
+\;+\; 
+\alpha \Bigl[
+  r_t(a) 
+  \;+\; 
+  \gamma \,\max_{a'} Q\bigl(s_{t+1},a'\bigr)
+\Bigr]
+\quad 
+\forall a \in A.
+\label{eq:qlearning_sync}
+\end{equation}
+Thus every $Q(s_t,a)$ is updated in a single step, including actions the agent did not actually choose.
+
+\paragraph{Boltzmann Exploration.}
+When selecting actions, \emph{Boltzmann} (or \emph{softmax}) exploration draws an action $a$ from a distribution favoring higher estimated $Q$-values:
+\begin{equation}
+P\bigl(a \mid s\bigr) 
+\;=\;
+\frac{\exp\!\bigl(\beta\,Q(s,a)\bigr)}{\sum_{b}\,\exp\!\bigl(\beta\,Q(s,b)\bigr)},
+\label{eq:boltzmann}
+\end{equation}
+where $\beta > 0$ is a temperature parameter. Larger $\beta$ makes the distribution flatter, promoting more exploration; smaller $\beta$ makes the policy greedier with respect to $Q$.
+
+\paragraph{Epsilon-greedy Exploration.}
+An alternative is \emph{$\varepsilon$-greedy} exploration, which selects the action that maximizes $Q(s,a)$ with probability $1-\varepsilon$ and picks an action uniformly at random with probability $\varepsilon$. Formally,
+\begin{equation}
+P\bigl(a \mid s\bigr)
+\;=\;
+\begin{cases}
+1-\varepsilon, & \text{if }a = \displaystyle\arg\max_{b}\,Q(s,b),\\
+\displaystyle\frac{\varepsilon}{|A|}, & \text{otherwise}.
+\end{cases}
+\label{eq:egreedy}
+\end{equation}
+As $\varepsilon$ diminishes, the policy exploits more aggressively based on current $Q$-estimates. In our experiments, $\varepsilon$ (or the Boltzmann temperature $\beta$) starts near 1.0 to encourage exploration and decays linearly over the first 90\% of the episodes to a near-zero value in the final phase, thus allowing the agents to exploit what they have learned.
+
+\paragraph{Bandits.}
+A \emph{multi-armed bandit} scenario omits state transitions, focusing instead on learning which of several actions (arms) maximizes expected reward. Let $\hat{\mu}_a$ be the estimated mean reward of arm $a$, and $u_a$ be an uncertainty term. A typical approach is Upper Confidence Bound (UCB), which selects
+\begin{equation}
+a_t 
+\;=\; 
+\arg\max_{a}\Bigl[\hat{\mu}_a + u_a\Bigr],
+\end{equation}
+then updates $\hat{\mu}_a$ and $u_a$ using the reward observed after pulling arm $a$. This encourages exploration of actions whose rewards are still uncertain. In our implementation, we initialize $\mathbf{A}_a = \lambda \mathbf{I}$ and $\mathbf{b}_a = \mathbf{0}$ for each arm $a$. The regularization parameter $\lambda$ ensures that $\mathbf{A}_a$ is invertible from the start and provides numerical stability.
+
+\paragraph{Contextual Bandits.}
+\emph{Contextual bandits} generalize the bandit problem by providing a context vector $\mathbf{x}\in\mathbb{R}^d$ prior to choosing an action. The \emph{LinUCB} algorithm assumes a linear payoff model, so each action $a$ has parameters $\boldsymbol{\theta}_a$, and the reward is approximately $\boldsymbol{\theta}_a^\top \mathbf{x}$. For each action $a$, one maintains a matrix $\mathbf{A}_a$ and vector $\mathbf{b}_a$. The algorithm selects $a$ via:
+\begin{equation}
+a_t 
+\;=\; 
+\arg\max_{a}\Bigl[\hat{\boldsymbol{\theta}}_{a}^\top \mathbf{x} 
+\;+\;
+c\sqrt{\mathbf{x}^\top \mathbf{A}_a^{-1}\mathbf{x}}\Bigr],
+\quad
+\text{where}
+\quad
+\hat{\boldsymbol{\theta}}_{a} \;=\; \mathbf{A}_a^{-1}\mathbf{b}_a,
+\end{equation}
+and $c>0$ controls exploration. After observing the reward, $\mathbf{A}_a$ and $\mathbf{b}_a$ are updated, refining the estimate of $\boldsymbol{\theta}_a$ and thus improving action selection over time.
+
+A few other implementation choices may affect performance. Each experiment runs for a set number of \emph{episodes}, during which agents collect rewards and update their parameters. Both $\varepsilon$-greedy and Boltzmann exploration typically begin with higher randomness (e.g., $\varepsilon=1.0$ or high temperature $\beta$) and decay linearly or exponentially across the first 90\% of episodes, settling to zero thereafter for purely greedy actions in the final phase. Q-tables may be initialized to all zeros or to small random values, influencing early exploration. In any given state, if multiple actions share the same $Q$-value, ties are broken uniformly at random. In the bandit setting, particularly with \emph{LinUCB}, two key parameters shape the agent’s behavior: the regularization parameter $\lambda$, which scales the identity matrix added to the design matrix $\mathbf{X}^\top \mathbf{X}$ to stabilize estimates, and the exploration coefficient $c$, which controls the width of the confidence interval around each action’s estimated reward. Larger $c$ promotes more exploration, whereas smaller $c$ favors exploiting the current reward estimates. 
+
+\section{Experimental Design}
+
+\subsection{Overview}
+We investigate how agents learn to bid in sealed-bid auctions under different informational and valuation assumptions, focusing on the distinction between first-price and second-price rules. Each round, every bidder submits a bid in the unit interval, and the highest bidder wins. We incorporate a reserve price $r$ that excludes bids below a certain threshold. Tie-breaking among equally high bids is random. We measure outcomes with three key statistics: (i) average revenue in later rounds, (ii) the round at which bidding strategies stabilize (time to converge), and (iii) a “seller regret” defined as $1$ minus the realized revenue. 
+
+We conduct three experiments that vary in valuation complexity and the learning algorithms used. Experiment 1 isolates and tests how the payment rule (first-price vs. second-price) interacts with constant valuations. Experiment 2 introduces affiliated (signal-based) valuations, parameterized by $\eta$, to assess whether interdependent bidder valuations alter outcomes found in Experiment~1. Experiment 3 replaces the setup in Experiment 2 with bandit-based algorithms to study the effect of more realistic exploration methods. To summarize:
+
+\begin{itemize}
+    \item Experiment 1: Constant (identical) valuations + Q-learning.
+    \item Experiment 2: Affiliated, signal-based valuations + Q-learning.
+    \item Experiment 3: Affiliated, signal-based valuations + bandit-based exploration.
+\end{itemize}
+
+The first experiment is the simplest case: valuations are constant. A good auction design in this case should lead to honest bidding. The second experiment introduces real world elements of stochasticity in valuations: this permits natural bid shading. The last experiment add another real world dimension: optimal exploration. Q-learning takes a very long time to converge and this can be costly. Bandit based approaches on the other hand are designed to minimize regret and arrive quickly towards the optimal decison using statistical error bands. They are more representative of how algorithms would `learn to bid" in real world settings. 
+
+\subsection{Auction Settings}
+We model a sealed-bid auction with $n$ bidders. In each round, bidder $i$ submits a bid $b_i \in [0,1]$, discretized into a finite grid (e.g.\ $11$ equally spaced actions). Let $r \ge 0$ be a reserve price. Any bid below $r$ is ineligible to win. Among the remaining bids, the highest wins:
+\[
+\text{Winner} \;=\;\arg\max_i\; \{\,b_i : b_i \ge r\}.
+\]
+If all bids lie below $r$, no bidder wins and the revenue is zero. If multiple bids tie for the highest value, one is chosen uniformly at random. We consider two payment rules:
+\[
+\text{First-Price: pays own bid,}
+\quad
+\text{Second-Price: pays the second-highest bid.}
+\]
+A bidder $i$ has valuation $v_i$ and obtains payoff $v_i - \text{price}$ if she wins and $0$ otherwise. In the simplest scenario, we set $v_i = 1.0$ for all $i$. More generally, we let $v_i$ depend on private signals and an affiliation parameter $\eta \in [0,1]$.
+
+\subsection{Algorithmic Settings}
+We employ two broad classes of learning algorithms: Q-learning (Experiments~1--2) and bandit-based methods (Experiment~3). Additionally, we incorporate various parameters controlling exploration, discounting, and information usage.
+
+\paragraph{Q-learning.}
+Each bidder maintains a table $Q(s,a)$ for a finite set of states $s$ and actions $a$. A “state” may encode (a) the bidder’s current signal (if valuations are signal-based), (b) the median of other bidders’ past bids, (c) the most recent winning bid, or (d) neither. Adding either the median or the winner-bid dimension discretizes these features into the same grid as the bids.
+
+After the bidder observes a payoff $r$ and transitions to a new state $s'$, the Q-learning update takes the form
+\[
+Q(s_t,a_t)
+\;\leftarrow\;Q(s_t,a_t)\;+\;\alpha\,\Bigl[
+r_t \;+\;\gamma\,\max_{a'}\,Q(s_{t+1},a') 
+\;-\;Q(s_t,a_t)\Bigr].
+\]
+Here $\alpha \in (0,1]$ is the learning rate, and $\gamma \in [0,1)$ is the discount factor. In an \emph{asynchronous} approach, only the chosen action’s $Q$-value is updated; in a \emph{synchronous} approach, each potential action $a$ in state $s_t$ is updated via a similar formula but uses counterfactual payoffs $r_t(a)$ for unchosen actions as well. Exploration is enforced through either an $\varepsilon$-greedy policy or a Boltzmann (softmax) policy.
+
+\paragraph{Bandits.}
+In our final experiment, we replace Q-learning with multi-armed or contextual bandits. Each bidder regards each feasible bid as an “arm” and seeks to maximize immediate payoff. A standard UCB bandit applies an optimism bonus of the form
+\[
+\hat{\mu}_a + c\,\sqrt{\frac{\ln(t)}{n_a}},
+\]
+where $\hat{\mu}_a$ is the empirical mean payoff for arm (bid) $a$, $n_a$ is how many times $a$ has been played, $t$ is the total number of rounds, and $c$ governs exploration. A linear contextual bandit replaces $\hat{\mu}_a$ with a linear model of the context (own signal, previous winning bid, etc.), adding a similar exploration bonus involving $c$ and the context’s covariance under the model. Unlike Q-learning, these bandits do not use $\alpha$ or $\gamma$.
+
+\subsection{Outcomes}
+Across all experiments, we collect three primary statistics:
+\begin{itemize}
+\item \emph{Average revenue in later rounds} to gauge whether the auction mechanism and bidder learning converge to high revenue.
+\item \emph{Time to converge}, computed as the earliest round after which revenue remains within a small band (e.g.\ $\pm5\%$) of its final average.
+\item \emph{Seller regret}, defined as $1 - \text{(observed revenue)}$, measuring how far short the seller’s revenue is from an ideal upper bound of $1$.
+\end{itemize}
+We track these measures for both first-price and second-price rules, comparing how each mechanism’s final outcomes and convergence speeds differ.
+
+\subsection{Experiment 1: Identical Valuations}
+In the first experiment, we set $v_i = 1.0$ for all bidders. Each bidder’s payoff if winning is $1 - b$ in a first-price auction and $1 - b_{(2)}$ in a second-price auction, where $b_{(2)}$ is the second-highest bid. We optionally impose a reserve price $r$. Q-learning is used to pick actions from the $[0,1]$ grid, with $\alpha$ and $\gamma$ chosen from predefined sets. The number of bidders $n$ and total episodes are also varied. Agents may observe no additional state features, or they may observe the median of opponents’ previous bids and/or the previous winning bid. Both asynchronous and synchronous Q-learning modes are tested, using either an $\varepsilon$-greedy or Boltzmann exploration policy.
+
+\subsection{Experiment 2: Affiliated Valuations}
+Each bidder now draws a private signal $s_i \in [0,1]$ each round. We introduce an affiliation parameter $\eta \in [0,1]$ and define
+\[
+v_i 
+\;=\;
+\bigl(1 - 0.5\,\eta\bigr)\,s_i 
+\;+\;
+0.5\,\eta \,m_{-i},
+\]
+where $m_{-i}$ is the average signal among all other bidders. When $\eta=0$, the valuation depends solely on one’s own signal; when $\eta=1$, it weights the bidder’s and opponents’ signals equally. This leads to non-stationary valuations. We still apply Q-learning with $\alpha$ and $\gamma$, as in Experiment~1, but now each bidder’s state may include her current $s_i$, as well as the median or previous winning bid if desired. We again allow multiple reserve prices $r$, different numbers of bidders, and various numbers of total episodes.
+
+\subsection{Experiment 3: Bandit Approaches}
+We retain the affiliated valuation model from Experiment~2, but replace Q-learning with either a standard UCB bandit or a linear contextual bandit. Each bidder treats each possible bid as an arm and updates an estimate of the reward. A parameter $c$ controls exploration; for UCB, this appears in the square-root bonus term, and for contextual bandits, it appears in the uncertainty bonus involving the context features. Other aspects remain the same (reserve price $r$, number of bidders, total rounds). By comparing these bandit strategies with Q-learning, we examine whether more structured exploration can converge faster or yield distinct equilibrium-like bidding behaviors.
+
+\subsection{Parameter Ranges}
+Table~\ref{tab:params} summarizes the parameters used across all experiments, their descriptions, and the ranges explored. A checkmark indicates that the parameter is applicable in a given experiment. 
+
+\begin{table}[H]
+\centering
+\caption{Parameter Ranges and Their Usage Across Experiments}
+\label{tab:params}
+\begin{tabular}{l l l c c c}
+\toprule
+\textbf{Name} & \textbf{Description} & \textbf{Range} & \textbf{E1} & \textbf{E2} & \textbf{E3}\\
+\midrule
+$\alpha$ & Q-learning rate & $\{0.001,0.005,0.01,0.05,0.1\}$ & \checkmark & \checkmark & \\
+$\gamma$ & Discount factor & $\{0.0,0.25,0.5,0.75,0.9,0.95,0.99\}$ & \checkmark & \checkmark & \\
+$\varepsilon$ & E-greedy exploration prob & Typically decays from 1 to 0 & \checkmark & \checkmark & \\
+Boltzmann & Softmax exploration & Weight factor over $Q$-values & \checkmark & \checkmark & \\
+$c$ & Bandit exploration param & E.g.\ $[0.01,2.0]$ &  &  & \checkmark \\
+$r$ & Reserve price & $\{0.0,0.1,0.2,0.3,0.4,0.5\}$ & \checkmark & \checkmark & \checkmark \\
+$n$ & Number of bidders & $\{2,4,6\}$ or similar & \checkmark & \checkmark & \checkmark \\
+$\eta$ & Affiliation parameter & $[0,1]$ &  & \checkmark & \checkmark \\
+\textit{Episodes} & Total training rounds & E.g.\ $\{10{,}000, 50{,}000, 100{,}000\}$ & \checkmark & \checkmark & \checkmark \\
+\textit{Sync/Async} & Q-learning modes & N/A (binary choice) & \checkmark & \checkmark & \\
+\textit{Median/Winner} & State features & N/A (binary choice) & \checkmark & \checkmark & \checkmark\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Inference}
+\label{sec:appendix_dml}
+
+In this section, we describe how we estimate heterogeneous treatment effects for first- vs.\ second-price auctions using \emph{Double Machine Learning} (DML) under the \emph{interactive regression model} (IRM). First, we outline the IRM specification and its identification assumptions (SUTVA, ignorability, and overlap). Then we explain how average (ATE), group (GATE), and conditional (CATE) treatment effects arise in this setup. Finally, we detail how sample-splitting and orthogonal moment conditions yield debiased estimates in the presence of flexible machine-learning regressors.
+
+\paragraph{Interactive Regression Model (IRM).}
+We consider a binary treatment $D \in \{0,1\}$, a set of covariates $X$, and an outcome $Y$. In our application, the \emph{treatment} $D$ is the auction type (\texttt{auction\_type\_code}) indicating whether the format is first-price ($D=1$) or second-price ($D=0$). The covariates $X$ are all other experimental parameters (e.g., learning rate, number of bidders). Finally, $Y$ is one of the performance measures---for instance, average revenue over the last 1000 rounds or time-to-convergence. The IRM posits that
+\[
+Y \;=\; g_0(D, X) \;+\; U,
+\quad 
+\mathbb{E}[U \mid X, D] = 0,
+\]
+\[
+D \;=\; m_0(X) \;+\; V,
+\quad 
+\mathbb{E}[V \mid X] = 0,
+\]
+where $g_0(D, X)$ fully interacts $D$ with $X$, allowing treatment effects to vary arbitrarily across the covariates $X$. 
+
+\paragraph{Estimands.} We focus on three main estimands:
+
+\begin{enumerate}
+\item 
+\emph{Average Treatment Effect (ATE):} 
+\[
+\theta_{\mathrm{ATE}} 
+\;=\; 
+\mathbb{E}[\,Y(1) - Y(0)\,] 
+\;=\;
+\mathbb{E}\bigl[\,g_0(1,X) - g_0(0,X)\bigr].
+\]
+Here, $Y(1)$ and $Y(0)$ denote potential outcomes under first- and second-price auctions, respectively.
+
+\item 
+\emph{Group Average Treatment Effects (GATE):}
+If we partition the sample by a discrete characteristic $G \in \{1,2,\dots,K\}$ (e.g.\ high vs.\ low number of bidders), we define
+\[
+\mathrm{GATE}(g) 
+\;=\; 
+\mathbb{E}\bigl[Y(1) - Y(0)\,\big|\,G=g\bigr].
+\]
+This captures how treatment effects differ across subgroups.
+
+\item 
+\emph{Conditional Average Treatment Effects (CATE):}
+If a continuous covariate $Z \subset X$ is of interest (e.g.\ the learning rate $\alpha$), the CATE is
+\[
+\mathrm{CATE}(z) 
+\;=\; 
+\mathbb{E}[\,Y(1) - Y(0)\,\mid Z=z].
+\]
+A practical approach approximates $\mathrm{CATE}(z)$ by projecting $\hat{g}_0(1,X) - \hat{g}_0(0,X)$ onto a low-dimensional spline basis for $Z$.
+\end{enumerate}
+
+\paragraph{Identification.} We impose three standard conditions:
+\begin{enumerate}
+\item \textit{Stable Unit Treatment Value Assumption (SUTVA):} 
+Each unit’s realized outcome $Y_i$ can be written as
+\[
+Y_i \;=\; D_i \,Y_i(1) \;+\; \bigl(1 - D_i\bigr)\,Y_i(0),
+\]
+where $Y_i(d)$ is well-defined for $d \in \{0,1\}$, and there is no interference among units. In our context, $D_i$ indicates whether unit $i$ received the “treatment” (e.g., first-price auction), ensuring no unit’s outcome depends on another unit’s treatment assignment.
+
+\item 
+\textit{Ignorability:}
+\[
+D \;\perp\; (Y(0), Y(1)) \;\big|\; X.
+\]
+Once we condition on $X$, the choice of auction format $D$ is independent of the potential outcomes. Conceptually, this is satisfied because we manually randomized the treatment. We also check for any correlation between the treatment and covariates, that might arise due to faulty or poor randomization, but that is not the case. 
+
+\item 
+\textit{Positivity:}
+\[
+0 
+\;<\; 
+P\bigl(D=1 \mid X=x\bigr) 
+\;<\;
+1, 
+\quad
+\text{for almost all } x.
+\]
+This ensures that for each $X=x$, there is a positive probability of both $D=1$ and $D=0$. This is again trivially satisfied due to randomization. 
+\end{enumerate}
+
+\paragraph{Orthogonal Moment Conditions} To estimate $\theta_{\mathrm{ATE}}$ robustly, we rely on \emph{orthogonal moment} conditions. Denote by $\pi(X)=\mathbb{E}[D\mid X]$ the propensity score and by $g_0(d,X)$ the outcome regression. A typical \emph{DoubleML} moment takes the form
+\[
+\psi\bigl(Y, D, X;\,\theta, g_0,\pi\bigr)
+\;=\;
+\Bigl[
+  \tfrac{D}{\pi(X)} - \tfrac{1-D}{1-\pi(X)}
+\Bigr]\bigl(Y - g_0(D,X)\bigr)
+\;+\;
+\bigl[g_0(1,X)-g_0(0,X)\bigr]
+\;-\;
+\theta.
+\]
+At the true functions $\bigl(g_0,\pi\bigr)$ and $\theta=\theta_{\mathrm{ATE}}$, the expectation of $\psi$ is zero. Substituting machine-learning estimates $\hat{g}_0,\hat{\pi}$ and solving $\tfrac{1}{n}\sum \hat{\psi}_i(\hat{\theta})=0$ yields a debiased estimator. \emph{Sample splitting} (cross-fitting) prevents overfitting bias by never using the same data fold for training and testing.
+
+\paragraph{Double Machine Learning} We implement DoubleML with LightGBM regressor for the outcome and classifier for the propensity model (we could have just used 0.5 for the propensity score). The procedure is:
+\begin{enumerate}
+\item 
+Randomly partition the data into $K$ folds. For each fold, train the nuisance functions $\hat{g}_0,\hat{\pi}$ on the remaining $K{-}1$ folds.
+\item 
+Use the fitted models to compute $\hat{\psi}_i$ in the held-out fold. Solve the orthogonal moment condition for $\hat{\theta}$ on that fold.
+\item 
+Average across folds to obtain the final estimates of ATE, and compute standard errors by plugging $\hat{\theta}$ back into the moment conditions.
+\end{enumerate}
+Our code also estimates GATEs by grouping observations according to binary covariates (such as “asynchronous vs.\ synchronous updates”) and CATEs by fitting spline expansions of continuous covariates (e.g.\ $\gamma$ or $\alpha$). We display these estimates in partial-dependence plots, along with 95\% confidence intervals. The results appear in the tables and figures that follow. 
