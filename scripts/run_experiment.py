@@ -31,6 +31,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from cloud.config import LocalConfig, ExperimentConfig
 from cloud.runner import DistributedRunner, run_sequential, TaskResult
+from cloud.gcs import GCSBucket
+from cloud.startup import generate_startup_script
 from typing import List, Dict, Any
 
 
@@ -82,7 +84,7 @@ def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250
         init_values = ["random", "zeros"]
         exploration_values = ["egreedy", "boltzmann"]
         async_values = [0, 1]
-        n_bidders_values = [2, 4, 6]
+        n_bidders_values = [2, 3, 4]
         median_flags = [False, True]
         winner_flags = [False, True]
 
@@ -170,7 +172,7 @@ def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250
         init_values = ["random", "zeros"]
         exploration_values = ["egreedy", "boltzmann"]
         async_values = [0, 1]
-        n_bidders_values = [2, 4, 6]
+        n_bidders_values = [2, 3, 4]
         median_flags = [False, True]
         winner_flags = [False, True]
 
@@ -253,7 +255,7 @@ def get_exp3_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250
         eta_values = [0.0, 0.25, 0.5, 0.75, 1.0]
         c_values = [0.01, 0.1, 0.5, 1.0, 2.0]
         lam_values = [0.1, 1.0, 5.0]
-        n_bidders_values = [2, 4, 6]
+        n_bidders_values = [2, 3, 4]
         reserve_price_values = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
         max_rounds_values = [100_000]
         use_median_flags = [False, True]
@@ -499,6 +501,77 @@ def run_exp1_sequential(quick: bool, output_dir: str):
     subprocess.run(cmd, check=True)
 
 
+def run_detached(args):
+    """Launch experiment on cloud VM in fire-and-forget mode."""
+    import subprocess
+    from cloud.vm import CloudVM, VMConfig
+    from cloud.gcs import GCSBucket
+    from cloud.startup import generate_startup_script
+
+    # Get project ID
+    if args.project:
+        project_id = args.project
+    else:
+        result = subprocess.run(
+            ["gcloud", "config", "get-value", "project"],
+            capture_output=True, text=True
+        )
+        project_id = result.stdout.strip()
+        if not project_id:
+            print("No GCP project specified. Use --project or run 'gcloud config set project PROJECT_ID'")
+            sys.exit(1)
+
+    print(f"Using GCP project: {project_id}")
+
+    # Setup GCS bucket
+    bucket_name = f"{project_id}-collusion-experiments"
+    bucket = GCSBucket(bucket_name, project_id)
+    bucket.create()
+
+    # Upload code
+    print("Uploading code to GCS...")
+    bucket.upload_code()
+
+    # Generate startup script
+    startup_script = generate_startup_script(
+        bucket_name=bucket_name,
+        exp=args.exp,
+        quick=args.quick,
+        parallel=True
+    )
+
+    # Create VM with startup script
+    vm_config = VMConfig(
+        name=f"collusion-exp{args.exp}",
+        machine_type="n2-standard-4",
+        startup_script=startup_script
+    )
+    vm = CloudVM(project_id, vm_config)
+
+    if vm.exists():
+        print(f"VM {vm_config.name} already exists. Delete it first or use a different name.")
+        sys.exit(1)
+
+    vm.create()
+
+    print(f"\n{'='*60}")
+    print(f"Experiment {args.exp} launched in detached mode!")
+    print(f"{'='*60}")
+    print(f"\nVM: {vm_config.name}")
+    print(f"Bucket: gs://{bucket_name}/")
+    print(f"\nThe VM will:")
+    print(f"  1. Install dependencies")
+    print(f"  2. Run experiment {args.exp}")
+    print(f"  3. Upload results to gs://{bucket_name}/results/exp{args.exp}/")
+    print(f"  4. Upload logs to gs://{bucket_name}/logs/")
+    print(f"  5. Self-delete")
+    print(f"\nYou can close this terminal now.")
+    print(f"\nTo check progress:")
+    print(f"  gcloud compute instances list --filter='name~collusion-exp'")
+    print(f"  gsutil ls gs://{bucket_name}/results/")
+    print(f"  gsutil ls gs://{bucket_name}/logs/")
+
+
 def run_cloud(args):
     """Run experiment on Google Cloud."""
     from cloud.vm import CloudVM, VMConfig
@@ -619,6 +692,10 @@ def main():
         help="Run on Google Cloud (not yet implemented)"
     )
     parser.add_argument(
+        "--detached", action="store_true",
+        help="Fire-and-forget cloud mode: VM auto-runs, uploads to GCS, self-deletes"
+    )
+    parser.add_argument(
         "--project", type=str,
         help="GCP project ID (for --cloud mode)"
     )
@@ -642,7 +719,10 @@ def main():
 
     # Cloud mode
     if args.cloud:
-        run_cloud(args)
+        if args.detached:
+            run_detached(args)
+        else:
+            run_cloud(args)
         return
 
     if args.monitor or args.download:
