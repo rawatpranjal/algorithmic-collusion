@@ -34,7 +34,28 @@ from cloud.runner import DistributedRunner, run_sequential, TaskResult
 from typing import List, Dict, Any
 
 
-def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[str, Any]]:
+def _run_exp1_summary_only(**kwargs):
+    """Wrapper that returns only summary to reduce memory in parallel mode."""
+    from experiments import exp1
+    summary, _, _, _ = exp1.run_experiment(**kwargs)
+    return summary
+
+
+def _run_exp2_summary_only(**kwargs):
+    """Wrapper that returns only summary to reduce memory in parallel mode."""
+    from experiments import exp2
+    summary, _, _, _ = exp2.run_experiment(**kwargs)
+    return summary
+
+
+def _run_exp3_summary_only(**kwargs):
+    """Wrapper that returns only summary to reduce memory in parallel mode."""
+    from experiments import exp3
+    summary, _, _, _ = exp3.run_bandit_experiment(**kwargs)
+    return summary
+
+
+def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250) -> List[Dict[str, Any]]:
     """Generate task list for Experiment 1 (Constant Valuations)."""
     import numpy as np
 
@@ -53,7 +74,7 @@ def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
         median_flags = [False]
         winner_flags = [False]
     else:
-        K = 250
+        K = runs
         alpha_values = [0.001, 0.005, 0.01, 0.05, 0.1]
         gamma_values = [0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]
         episodes_values = [100_000]
@@ -84,7 +105,7 @@ def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
             task_id = f"exp1_run{run_id}_{auction_type}"
             tasks.append({
                 "task_id": task_id,
-                "func": exp1.run_experiment,
+                "func": _run_exp1_summary_only,
                 "kwargs": {
                     "auction_type": auction_type,
                     "alpha": float(alpha),
@@ -120,7 +141,7 @@ def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
     return tasks
 
 
-def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[str, Any]]:
+def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250) -> List[Dict[str, Any]]:
     """Generate task list for Experiment 2."""
     import numpy as np
 
@@ -140,7 +161,7 @@ def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
         median_flags = [False]
         winner_flags = [False]
     else:
-        K = 250
+        K = runs
         eta_values = [0.0, 0.25, 0.5, 0.75, 1.0]
         alpha_values = [0.001, 0.005, 0.01, 0.05, 0.1]
         gamma_values = [0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]
@@ -173,7 +194,7 @@ def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
             task_id = f"exp2_run{run_id}_{auction_type}"
             tasks.append({
                 "task_id": task_id,
-                "func": exp2.run_experiment,
+                "func": _run_exp2_summary_only,
                 "kwargs": {
                     "eta": float(eta),
                     "auction_type": auction_type,
@@ -211,7 +232,7 @@ def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
     return tasks
 
 
-def get_exp3_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[str, Any]]:
+def get_exp3_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250) -> List[Dict[str, Any]]:
     """Generate task list for Experiment 3."""
     import numpy as np
 
@@ -228,7 +249,7 @@ def get_exp3_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
         use_median_flags = [False]
         use_winner_flags = [False]
     else:
-        K = 250
+        K = runs
         eta_values = [0.0, 0.25, 0.5, 0.75, 1.0]
         c_values = [0.01, 0.1, 0.5, 1.0, 2.0]
         lam_values = [0.1, 1.0, 5.0]
@@ -255,7 +276,7 @@ def get_exp3_tasks(quick: bool, output_dir: str, seed: int = 42) -> List[Dict[st
             task_id = f"exp3_run{run_id}_{auction_type}"
             tasks.append({
                 "task_id": task_id,
-                "func": exp3.run_bandit_experiment,
+                "func": _run_exp3_summary_only,
                 "kwargs": {
                     "eta": float(eta),
                     "auction_type": auction_type,
@@ -305,7 +326,7 @@ def aggregate_exp1_results(results: List[TaskResult], tasks: List[Dict], output_
             print(f"Skipping failed task {result.task_id}: {result.error}")
             continue
 
-        summary = result.result[0]  # run_experiment returns (summary, revenues, round_history, Q)
+        summary = result.result  # wrapper returns summary directly
         config = task["config"]
 
         # Get theoretical revenue
@@ -368,7 +389,7 @@ def aggregate_exp2_results(results: List[TaskResult], tasks: List[Dict], output_
             print(f"Skipping failed task {result.task_id}: {result.error}")
             continue
 
-        summary = result.result[0]  # run_experiment returns (summary, revenues, round_history, Q)
+        summary = result.result  # wrapper returns summary directly
         config = task["config"]
 
         # Get theoretical revenue
@@ -430,7 +451,7 @@ def aggregate_exp3_results(results: List[TaskResult], tasks: List[Dict], output_
             print(f"Skipping failed task {result.task_id}: {result.error}")
             continue
 
-        summary = result.result[0]  # run_bandit_experiment returns (summary, revenues, round_history, bandits)
+        summary = result.result  # wrapper returns summary directly
         config = task["config"]
 
         # Get theoretical revenue
@@ -529,7 +550,8 @@ def run_cloud(args):
             exp=args.exp,
             quick=args.quick,
             parallel=True,
-            workers=workers
+            workers=workers,
+            runs=args.runs
         )
 
         # Download results
@@ -585,6 +607,10 @@ def main():
     parser.add_argument(
         "--seed", type=int, default=42,
         help="Random seed"
+    )
+    parser.add_argument(
+        "--runs", type=int, default=250,
+        help="Number of runs (default: 250, ignored with --quick which uses 5)"
     )
 
     # Cloud options (Phase 2)
@@ -647,13 +673,13 @@ def main():
 
     # Get tasks based on experiment
     if args.exp == 1:
-        tasks = get_exp1_tasks(args.quick, output_dir, args.seed)
+        tasks = get_exp1_tasks(args.quick, output_dir, args.seed, args.runs)
         desc = "Experiment 1: Identical Values"
     elif args.exp == 2:
-        tasks = get_exp2_tasks(args.quick, output_dir, args.seed)
+        tasks = get_exp2_tasks(args.quick, output_dir, args.seed, args.runs)
         desc = "Experiment 2: Affiliated Values"
     else:  # exp == 3
-        tasks = get_exp3_tasks(args.quick, output_dir, args.seed)
+        tasks = get_exp3_tasks(args.quick, output_dir, args.seed, args.runs)
         desc = "Experiment 3: LinUCB Bandits"
 
     print(f"Generated {len(tasks)} tasks")
