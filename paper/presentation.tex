@@ -1,0 +1,493 @@
+\documentclass[10pt]{beamer}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor,colortbl}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subfig}
+
+\usetheme[progressbar=frametitle]{metropolis}
+
+\title{Algorithmic Collusion}
+\subtitle{Evidence from Simulations}
+\date{\today}
+\author{Pranjal Rawat}
+\institute{Georgetown University}
+
+\AtBeginSection[]
+{
+  \begin{frame}{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\maketitle
+
+%---------------------------------------------------
+\section{Motivation}
+%---------------------------------------------------
+
+\begin{frame}{Motivation and Research Questions}
+    Automated algorithms dominate online ad auctions, and platforms have largely shifted from second-price to first-price rules.
+    
+    Auction theory disfavors first-price formats, but does it apply when algorithms are learning over time?
+
+    We ask:
+    \begin{enumerate}
+        \item How do first-price auctions actually perform when bidders are Q-learning agents?
+        \item Which algorithmic details and information structures most influence market outcomes?
+        \item How do different classes of learning algorithms, such as bandits, compare in this strategic setting?
+    \end{enumerate}
+\end{frame}
+
+%---------------------------------------------------
+\section{Methodology}
+%---------------------------------------------------
+
+\begin{frame}{Auction Environment}
+    We simulate a sealed-bid auction with $n$ bidders, a reserve price $r$, and a discrete bid space. Ties are broken randomly.
+
+    Two formats are compared:
+    \begin{itemize}
+        \item First-Price Auction (FPA): The winner pays their own bid.
+        \item Second-Price Auction (SPA): The winner pays second-highest bid.
+    \end{itemize}
+    
+    A winning bidder's utility is their value minus the price paid:
+    \[ u_i = v_i - p \]
+\end{frame}
+
+\begin{frame}{Algorithm 1: Q-Learning (Exp 1 \& 2)\footnote{\tiny $Q(s,a)$ is the agent's estimated value of taking action $a$ in state $s$. $\alpha$ is the learning rate, $r_t$ is the immediate reward, $\gamma$ is the discount factor, and $s'$ is the next state.}}
+    Agents use Q-learning to estimate the value of a bid, $Q(s, a)$, for an action $a$ in a state $s$.
+    
+    \[ Q(s,a) \leftarrow Q(s,a) + \alpha [r_t + \gamma \max_{a'} Q(s',a') - Q(s,a)] \]
+    
+    The state-based structure allows agents to be reactive to opponents.
+\end{frame}
+
+\begin{frame}{Algorithm 2: Bandits (Exp 3)\footnote{\tiny $\hat{\mu}_a$ is the current average reward for action $a$. $c$ is an exploration parameter. $t$ is the current time step. $N_a(t)$ is the number of times action $a$ has been chosen.}}
+    Agents use bandit algorithms, treating each possible bid as an "arm" to be pulled.
+    
+    The selection rule balances expected payoff ($\hat{\mu}_a$) with an uncertainty bonus.
+    \[ a_t = \arg\max_{a} \left( \hat{\mu}_a + c \sqrt{\frac{\ln t}{N_a(t)}} \right) \]
+
+    This approach is non-strategic and does not model opponent behavior.
+\end{frame}
+
+\begin{frame}{Experiment Outcomes}
+    We measure three primary outcomes to assess market performance from the platform/seller's perspective:
+    
+    \begin{itemize}
+        \item Platform Revenue\\
+        Average revenue in the final 1,000 rounds, measuring stable market performance.
+        
+        \item Seller Regret\\
+        Measures the "money left on the table" by the platform ($1 - \text{revenue}$). This is a measure of seller-side efficiency, distinct from the bidder's own algorithmic regret.
+        
+        \item Time to Converge\\
+        Fraction of episodes until revenue stabilizes.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Parameters}
+    
+    \begin{table}
+    \centering
+    %\caption{Parameter Space for Experiments}
+    \begin{tabular}{ll}
+    \toprule
+    Parameter & Range / Values \\
+    \midrule
+    \multicolumn{2}{l}{\textit{Common Parameters (All Experiments)}} \\
+    Number of Bidders ($n$) & $\{2, 4, 6\}$ \\
+    Reserve Price ($r$) & $[0.0, 0.5]$ \\
+    \midrule
+    \multicolumn{2}{l}{\textit{Q-Learning Specific (Exp 1 \& 2)}} \\
+    Learning Rate ($\alpha$) & $[0.001, 0.1]$ \\
+    Discount Factor ($\gamma$) & $[0.0, 0.99]$ \\
+    Exploration & Epsilon-Greedy or Boltzmann \\
+    Update Mechanism & Synchronous or Asynchronous \\
+    \midrule
+    \multicolumn{2}{l}{\textit{Bandit Specific (Exp 3)}} \\
+    Exploration Constant ($c$) & $[0.1, 2.0]$ \\
+    Regularization ($\lambda$) & $[0.1, 10.0]$ \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Simulation Process}
+    Each experiment consists of 500 independent runs.
+    
+    \begin{enumerate}
+        \item Parameter Sampling:\\
+        For each run, a set of parameters is randomly drawn from the grid. The auction format is also randomly assigned.
+        
+        \item Simulation:\\
+        The simulation is run for a large number of episodes (10k-100k) with the selected parameters.
+        
+        \item Data Recording:\\
+        The final outcome variables (Revenue, Regret, Convergence) are recorded for each run.
+    \end{enumerate}
+    
+\end{frame}
+
+\begin{frame}{Estimators}
+    We use Double Machine Learning to estimate the causal effect of the auction format (FPA vs SPA).
+    
+    \begin{itemize}
+        \item Average Treatment Effect (ATE):\\
+        The average impact of switching from a second-price to a first-price auction.
+        \[ \text{ATE} = E[Y(1) - Y(0)] \]
+        
+        \item Conditional Average Treatment Effect (CATE):\\
+        How the treatment effect varies with other experimental parameters (covariates, $X$).
+        \[ \text{CATE}(x) = E[Y(1) - Y(0) | X=x] \]
+
+    \end{itemize}
+\end{frame}
+
+%---------------------------------------------------
+\section{Results}
+%---------------------------------------------------
+
+\begin{frame}{Experiment 1: Outcome Summary}
+    
+    \begin{table}
+    \centering
+    \caption{Descriptive Statistics for Outcome Variables}
+    \begin{tabular}{lccc}
+    \toprule
+    Outcome & Mean & Min & Max \\
+    \midrule
+    Platform Revenue & 0.844 & 0.300 & 1.000 \\
+    Seller Regret & 0.225 & 0.051 & 0.659 \\
+    Time to Converge & 0.320 & 0.000 & 0.954 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 1: Main Effects of FPA}
+    
+    \begin{table}
+    \centering
+    \caption{ATE of FPA vs. SPA}
+    \begin{tabular}{lcc}
+    \toprule
+    Outcome & Effect of FPA & p-value \\
+    \midrule
+    Seller Regret & -0.082 (Less Regret) & 0.000 \\
+    Time to Converge & -0.192 (Faster) & 0.015 \\
+    Platform Revenue & +0.025 (More Revenue) & 0.068 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 1: Heterogeneity}
+    
+    \begin{table}
+    \centering
+    \caption{Statistically Significant Drivers of the FPA Effect (p < 0.05)}
+    \begin{tabular}{llcc}
+    \toprule
+    Parameter & Impact on FPA's... & Coef. & p-value \\
+    \midrule
+    \multicolumn{4}{l}{...Regret-Reducing Advantage} \\
+    Higher Learning Rate & Strengthens & -0.457 & 0.003 \\
+    Asynchronous Updates & Strengthens & -0.057 & 0.000 \\
+    Boltzmann Exploration & Strengthens & -0.050 & 0.000 \\
+    $\varepsilon$-greedy Exploration & Weakens & +0.049 & 0.000 \\
+    \midrule
+    \multicolumn{4}{l}{...Revenue Effect} \\
+    Higher Learning Rate & Increases Revenue & +1.488 & 0.000 \\
+    Opponent Bid Info & Decreases Revenue & -0.084 & 0.000 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 2: Outcome Summary}
+    
+    \begin{table}
+    \centering
+    \caption{Descriptive Statistics for Outcome Variables}
+    \begin{tabular}{lccc}
+    \toprule
+    Outcome & Mean & Min & Max \\
+    \midrule
+    Platform Revenue & 0.535 & 0.252 & 0.867 \\
+    Seller Regret & 0.385 & 0.120 & 0.708 \\
+    Time to Converge & 0.757 & 0.000 & 0.995 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 2: Main Effects of FPA}
+    
+    \begin{table}
+    \centering
+    \caption{ATE of FPA vs. SPA (p < 0.05)}
+    \begin{tabular}{lc}
+    \toprule
+    Outcome & Effect of FPA \\
+    \midrule
+    Seller Revenue & +0.053 \\
+    Seller Regret & -0.144 \\
+    Time to Converge & +0.111 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 2: Heterogeneity}
+
+    \begin{table}
+    \centering
+    \caption{Statistically Significant Drivers of the FPA Effect (p < 0.05)}
+    \begin{tabular}{llcc}
+    \toprule
+    Parameter & Impact on FPA's... & Coef. & p-value \\
+    \midrule
+    \multicolumn{4}{l}{...Revenue Advantage} \\
+    Provide Opponent Bid Info & Strengthens & +0.055 & 0.000 \\
+    Higher Learning Rate & Weakens & -0.643 & 0.004 \\
+    Higher Reserve Price & Weakens & -0.145 & 0.000 \\
+    \midrule
+    \multicolumn{4}{l}{...Regret-Reducing Advantage} \\
+    More Bidders & Strengthens & +0.016 & 0.000 \\
+    Higher Learning Rate & Weakens & +0.301 & 0.003 \\
+    Higher Reserve Price & Weakens & +0.148 & 0.000 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 3: Outcome Summary}
+    
+    \begin{table}
+    \centering
+    \caption{Descriptive Statistics for Outcome Variables}
+    \begin{tabular}{lccc}
+    \toprule
+    Outcome & Mean & Min & Max \\
+    \midrule
+    Platform Revenue & 0.087 & 0.000 & 0.710 \\
+    Seller Regret & 0.910 & 0.302 & 1.000 \\
+    Time to Converge & 0.105 & 0.000 & 0.998 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Experiment 3: Main Effects}
+    
+    \begin{table}
+    \centering
+    \caption{ATE of FPA vs. SPA}
+    \begin{tabular}{lcc}
+    \toprule
+    Outcome & Effect of FPA & p-value \\
+    \midrule
+    Platform Revenue & -0.006 & 0.686 \\
+    Seller Regret & +0.013 & 0.223 \\
+    Time to Converge & -0.024 & 0.264 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    There were no statistically significant drivers of heterogeneity.
+\end{frame}
+
+%---------------------------------------------------
+\section{Conclusion}
+%---------------------------------------------------
+
+\begin{frame}{Summary}
+    \begin{enumerate}
+        \item With Q-learning agents, first-price auctions consistently and significantly reduce seller regret for the platform.
+        
+        \item Bandit algorithms, which lack strategic awareness, lead to market failure with near-zero revenue and maximum seller regret.
+        
+        \item The advantages of the first-price auction format are strongest under specific conditions:
+            \begin{itemize}
+                \item When learning is asynchronous (less sophisticated).
+                \item When there is less competition (fewer bidders).
+            \end{itemize}
+        
+        \item The impact of market design choices, like information transparency and learning rates, robustly reverses depending on the complexity of the economic environment.
+    \end{enumerate}
+\end{frame}
+
+
+%---------------------------------------------------
+\appendix
+%---------------------------------------------------
+
+\begin{frame}[allowframebreaks]{Appendix: Experiment 1 Full Results}
+    \frametitle{Exp 1: Summary Statistics}
+    \tiny
+    \begin{tabular}{lrrrrrrr}
+    \toprule
+    Variable & Mean & Std & Min & 25\% & 50\% & 75\% & Max \\
+    \midrule
+    alpha & 0.0327 & 0.0363 & 0.001 & 0.005 & 0.01 & 0.05 & 0.1 \\
+    gamma & 0.6148 & 0.3560 & 0.0 & 0.25 & 0.75 & 0.95 & 0.99 \\
+    asynchronous & 0.5 & 0.5005 & 0.0 & 0.0 & 0.5 & 1.0 & 1.0 \\
+    n\_bidders & 3.96 & 1.6888 & 2.0 & 2.0 & 4.0 & 6.0 & 6.0 \\
+    episodes & 54694.7 & 25791.7 & 10188 & 32618 & 52793 & 76930 & 99905 \\
+    avg\_rev\_last\_1000 & 0.8435 & 0.1270 & 0.3 & 0.8083 & 0.9 & 0.9191 & 1.0 \\
+    avg\_regret\_of\_seller & 0.2246 & 0.1348 & 0.0508 & 0.1105 & 0.1800 & 0.3112 & 0.6593 \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+
+    \frametitle{Exp 1: Revenue Results (ATE, CATE, GATE)}
+    \tiny
+    \begin{tabular}{lrrrr}
+    \toprule
+    Effect & Coef. & Std. Err. & t & p-value \\
+    \midrule
+    ATE (Auction Type) & 0.0248 & 0.0136 & 1.823 & 0.0683 \\
+    \midrule
+    \multicolumn{5}{l}{CATE Drivers} \\
+    \midrule
+    alpha & 1.4882 & 0.3667 & 4.0582 & 0.0000 \\
+    asynchronous & 0.0537 & 0.0252 & 2.1285 & 0.0333 \\
+    median\_opp\_past\_bid\_index & -0.0839 & 0.0231 & -3.6236 & 0.0003 \\
+    \midrule
+    \multicolumn{5}{l}{GATEs: FPA Effect for Group 0 vs Group 1} \\
+    \midrule
+    asynchronous & 0.008 vs 0.041 & & & \\
+    median\_opp\_past\_bid\_index & 0.069 vs -0.020 & & & \\
+    init\_zeros & 0.044 vs 0.007 & & & \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+    
+    \frametitle{Exp 1: Seller Regret Results (ATE, CATE, GATE)}
+    \tiny
+    \begin{tabular}{lrrrr}
+    \toprule
+    Effect & Coef. & Std. Err. & t & p-value \\
+    \midrule
+    ATE (Auction Type) & -0.0821 & 0.0059 & -13.9709 & 0.0000 \\
+    \midrule
+    \multicolumn{5}{l}{CATE Drivers} \\
+    \midrule
+    alpha & -0.4572 & 0.1538 & -2.9726 & 0.0030 \\
+    asynchronous & -0.0569 & 0.0105 & -5.4124 & 0.0000 \\
+    n\_bidders & 0.0114 & 0.0030 & 3.7868 & 0.0002 \\
+    boltzmann\_temp\_start & -0.0503 & 0.0073 & -6.9225 & 0.0000 \\
+    exploration\_egreedy & 0.0493 & 0.0109 & 4.5232 & 0.0000 \\
+    \midrule
+    \multicolumn{5}{l}{GATEs: FPA Effect for Group 0 vs Group 1} \\
+    \midrule
+    asynchronous & -0.061 vs -0.103 & & & \\
+    exploration\_egreedy & -0.114 vs -0.047 & & & \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Appendix: Experiment 2 Full Results}
+    \frametitle{Exp 2: Summary Statistics}
+    \tiny
+    \begin{tabular}{lrrrrrrr}
+    \toprule
+    Variable & Mean & Std & Min & 25\% & 50\% & 75\% & Max \\
+    \midrule
+    eta & 0.4930 & 0.3570 & 0.0 & 0.25 & 0.5 & 0.75 & 1.0 \\
+    alpha & 0.0341 & 0.0385 & 0.001 & 0.005 & 0.01 & 0.05 & 0.1 \\
+    n\_bidders & 4.04 & 1.6841 & 2.0 & 2.0 & 4.0 & 6.0 & 6.0 \\
+    avg\_rev\_last\_1000 & 0.5350 & 0.1384 & 0.2516 & 0.4059 & 0.5484 & 0.6422 & 0.8665 \\
+    avg\_regret\_of\_seller & 0.3849 & 0.1441 & 0.1199 & 0.2861 & 0.3505 & 0.4876 & 0.7077 \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+
+    \frametitle{Exp 2: Revenue Results (ATE, CATE, GATE)}
+    \tiny
+    \begin{tabular}{lrrrr}
+    \toprule
+    Effect & Coef. & Std. Err. & t & p-value \\
+    \midrule
+    ATE (Auction Type) & 0.0529 & 0.0075 & 7.0716 & 0.0000 \\
+    \midrule
+    \multicolumn{5}{l}{CATE Drivers} \\
+    \midrule
+    alpha & -0.6432 & 0.2234 & -2.8786 & 0.0040 \\
+    asynchronous & 0.0689 & 0.0166 & 4.1427 & 0.0000 \\
+    median\_opp\_past\_bid\_index & 0.0545 & 0.0134 & 4.0543 & 0.0001 \\
+    r & -0.1448 & 0.0393 & -3.6842 & 0.0002 \\
+    init\_zeros & -0.0921 & 0.0139 & -6.6168 & 0.0000 \\
+    \midrule
+    \multicolumn{5}{l}{GATEs: FPA Effect for Group 0 vs Group 1} \\
+    \midrule
+    median\_opp\_past\_bid\_index & 0.031 vs 0.076 & & & \\
+    winner\_bid\_index\_state & 0.039 vs 0.067 & & & \\
+    init\_zeros & 0.098 vs 0.008 & & & \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+    
+    \frametitle{Exp 2: Seller Regret Results (ATE, CATE, GATE)}
+    \tiny
+    \begin{tabular}{lrrrr}
+    \toprule
+    Effect & Coef. & Std. Err. & t & p-value \\
+    \midrule
+    ATE (Auction Type) & -0.1442 & 0.0040 & -35.9500 & 0.0000 \\
+    \midrule
+    \multicolumn{5}{l}{CATE Drivers} \\
+    \midrule
+    alpha & 0.3015 & 0.1013 & 2.9768 & 0.0029 \\
+    asynchronous & -0.1349 & 0.0089 & -15.1598 & 0.0000 \\
+    n\_bidders & 0.0160 & 0.0021 & 7.5712 & 0.0000 \\
+    median\_opp\_past\_bid\_index & -0.0264 & 0.0065 & -4.0322 & 0.0001 \\
+    winner\_bid\_index\_state & -0.0200 & 0.0068 & -2.9435 & 0.0032 \\
+    r & 0.1477 & 0.0213 & 6.9338 & 0.0000 \\
+    init\_zeros & 0.0515 & 0.0067 & 7.7215 & 0.0000 \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Appendix: Experiment 3 Full Results}
+    \frametitle{Exp 3: Summary Statistics}
+    \tiny
+    \begin{tabular}{lrrrrrrr}
+    \toprule
+    Variable & Mean & Std & Min & 25\% & 50\% & 75\% & Max \\
+    \midrule
+    eta & 0.4895 & 0.3464 & 0.0 & 0.25 & 0.5 & 0.75 & 1.0 \\
+    c & 0.8742 & 0.6934 & 0.1 & 0.1 & 0.5 & 1.0 & 2.0 \\
+    avg\_rev & 0.0869 & 0.1816 & 0.0 & 0.0 & 0.0 & 0.0 & 0.7096 \\
+    avg\_regret\_seller & 0.9104 & 0.1842 & 0.3019 & 0.9995 & 0.9998 & 1.0 & 1.0 \\
+    \bottomrule
+    \end{tabular}
+    \normalsize
+
+    \frametitle{Exp 3: ATE and GATEs (No Significant Effects)}
+    \tiny
+    \begin{tabular}{lrrrr}
+    \toprule
+    Outcome & ATE & Std. Err. & t & p-value \\
+    \midrule
+    Revenue & -0.0061 & 0.0150 & -0.4038 & 0.6864 \\
+    Seller Regret & 0.0132 & 0.0108 & 1.2176 & 0.2234 \\
+    Time to Converge & -0.0244 & 0.0218 & -1.1173 & 0.2639 \\
+    \bottomrule
+    \end{tabular}
+    \note{No CATE or GATE analyses yielded statistically significant results.}
+    \normalsize
+\end{frame}
+
+
+\end{document} 

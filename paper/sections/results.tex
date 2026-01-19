@@ -1,0 +1,37 @@
+\section{Experimental Results}
+
+We consistently observe that first-price generates noticeably lower revenue than second-price, across different valuation environments and learning algorithms. Several factors have a clear, statistically significant impact on how this gap evolves:
+
+\subsection{Factors affecting algorithmic collusion}
+
+\paragraph{Exploration Method (Q-learning).}
+Switching from an epsilon-greedy exploration policy to a Boltzmann (softmax) one significantly narrows the first-price penalty. Under Boltzmann, the final difference between first-price and second-price in terms of revenue, regret, and volatility is smaller, indicating that more structured exploration partially alleviates first-price’s disadvantage. What this implies is that minute algorithmic details can matter. 
+
+\paragraph{Bandit Parameters.}
+Under the bandit-based approach, first-price still suffers from substantially lower revenue, but the exploration and regularization settings of the bandit have a systematic influence. Intermediate values of the exploration bonus and regularization reduce the first-price penalty more effectively than extreme values. These middle settings lead to a smaller gap, while excessively large or small parameters leave first-price trailing by a wider margin. Once again, minute details of the algorithm do play a role. 
+
+\paragraph{Asynchronous Updates (Q-learning).}
+When Q-learning is applied asynchronously, the difference between first-price and second-price becomes more pronounced. In this setting, updates that rely only on the chosen action reinforce first-price’s weaker performance, resulting in a noticeably larger revenue gap. This is finding that had been reported in prior studies as well. 
+
+\paragraph{Number of Bidders.}
+Increasing the number of bidders from low to moderate levels reduces the first-price penalty in revenue, indicating that more competition initially helps close the gap. But this was generally not enough to eliminate the gap. Thus increased competition does mitigate algorithmic collusion. 
+
+\paragraph{Reserve Price.}
+Raising the reserve price can diminish the first-price gap, but only beyond a certain moderate level. At a low reserve, there is little effect on the difference. Once the reserve is large enough, the difference in regret or volatility shrinks, suggesting that a stronger price floor gives a slight advantage to first-price relative to second-price. This result is largely alligned with theoretical results about reserve prices. 
+
+\paragraph{Episodes (Q-learning).}
+When agents use Q-learning, having more training episodes makes the revenue gap larger. In other words, as agents learn for longer, first-price underperforms second-price by an even wider margin. This also means that the regret gap grows correspondingly: with extended learning, the first-price mechanism falls further behind from the seller’s perspective. What this implies is that a larger window for learning does not mitigate algorithmic collusion. 
+
+\subsection{Factors not affecting algorithmic collusion}
+
+\paragraph{Affiliation.}
+In affiliated valuation settings, adjusting the affiliation parameter alone does not reverse or substantially weaken first-price’s disadvantage. Other factors, such as exploration mode or reserve price, have a more pronounced influence on the gap. Although affiliation captures correlation in bidders’ valuations, it does not appear to meaningfully eliminate first-price’s shortfall.
+
+\paragraph{Initialization}
+In these experiments, different initialization schemes (e.g.\ random vs.\ zeros) do not materially shift the final difference between first-price and second-price. While the learning process begins from distinct starting points, the ultimate gap in revenue and regret converges to a similar level regardless of how the agents’ Q-values are initialized.
+
+\paragraph{Discount Factor.}
+Although different discount factors can change how quickly Q-learning agents adapt, these variations do not alter the ultimate gap between first-price and second-price. Once the agents have trained, the difference in revenue, regret, or volatility remains effectively the same, regardless of the discount factor used.
+
+\paragraph{Learning Rate.}
+The learning rate similarly influences short-term convergence but does not shift the long-run disadvantage of first-price. Faster or slower updates do not lead to a systematically different final gap once the system has stabilized; first-price continues to trail second-price under a wide range of learning rates.

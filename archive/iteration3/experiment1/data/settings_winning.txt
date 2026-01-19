@@ -1,0 +1,9 @@
+state_mode: winning
+alpha_start: 0.10
+alpha_end: 0.10
+gamma: 0.95
+epsilon_start: 1.00
+epsilon_end: 0.00
+decay_factor: 2.00
+bid_actions: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+max_learning_rounds: 1000000

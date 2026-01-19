@@ -1,0 +1,209 @@
+{
+  "state_mode": "none",
+  "retaliation_ratio": {
+    "FPA_bidder0": {
+      "retaliation_count": 0,
+      "higher_count": 0,
+      "ratio": 0.0,
+      "message": "Retaliation not possible in 'none' state mode as agent cannot observe opponent's bid"
+    },
+    "FPA_bidder1": {
+      "retaliation_count": 0,
+      "higher_count": 0,
+      "ratio": 0.0,
+      "message": "Retaliation not possible in 'none' state mode as agent cannot observe opponent's bid"
+    },
+    "SPA_bidder0": {
+      "retaliation_count": 0,
+      "higher_count": 0,
+      "ratio": 0.0,
+      "message": "Retaliation not possible in 'none' state mode as agent cannot observe opponent's bid"
+    },
+    "SPA_bidder1": {
+      "retaliation_count": 0,
+      "higher_count": 0,
+      "ratio": 0.0,
+      "message": "Retaliation not possible in 'none' state mode as agent cannot observe opponent's bid"
+    }
+  },
+  "best_response_consistency": {
+    "FPA_bidder0": {
+      "valid_count": 4,
+      "br_violations": 0,
+      "consistency": 1.0
+    },
+    "FPA_bidder1": {
+      "valid_count": 4,
+      "br_violations": 0,
+      "consistency": 1.0
+    },
+    "SPA_bidder0": {
+      "valid_count": 4,
+      "br_violations": 0,
+      "consistency": 1.0
+    },
+    "SPA_bidder1": {
+      "valid_count": 4,
+      "br_violations": 0,
+      "consistency": 1.0
+    }
+  },
+  "conditional_correlation": {
+    "FPA": {
+      "corr_bidder0_next_vs_bidder1": 0.05618727361358352,
+      "corr_bidder1_next_vs_bidder0": 0.0363279680665559,
+      "num_observations": 999
+    },
+    "SPA": {
+      "corr_bidder0_next_vs_bidder1": 0.13637823877262187,
+      "corr_bidder1_next_vs_bidder0": 0.0555472325695216,
+      "num_observations": 999
+    }
+  },
+  "deviation_response": {
+    "FPA_bidder0_state0.2": {
+      "state": [
+        0.2
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder1_state0.2": {
+      "state": [
+        0.2
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder0_state0.2": {
+      "state": [
+        0.2
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder1_state0.2": {
+      "state": [
+        0.2
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder0_state0.4": {
+      "state": [
+        0.4
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder1_state0.4": {
+      "state": [
+        0.4
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder0_state0.4": {
+      "state": [
+        0.4
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder1_state0.4": {
+      "state": [
+        0.4
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder0_state0.6": {
+      "state": [
+        0.6
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder1_state0.6": {
+      "state": [
+        0.6
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder0_state0.6": {
+      "state": [
+        0.6
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder1_state0.6": {
+      "state": [
+        0.6
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder0_state0.8": {
+      "state": [
+        0.8
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "FPA_bidder1_state0.8": {
+      "state": [
+        0.8
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder0_state0.8": {
+      "state": [
+        0.8
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    },
+    "SPA_bidder1_state0.8": {
+      "state": [
+        0.8
+      ],
+      "is_retaliatory": false,
+      "best_action": null,
+      "message": "State not in Q-table"
+    }
+  },
+  "summary": {
+    "FPA": {
+      "collusion_score": 1,
+      "interpretation": "Weak evidence of collusion, likely just 'coupling'",
+      "key_findings": [
+        "High best-response consistency (1.00): Agents have optimized their strategies"
+      ]
+    },
+    "SPA": {
+      "collusion_score": 1,
+      "interpretation": "Weak evidence of collusion, likely just 'coupling'",
+      "key_findings": [
+        "High best-response consistency (1.00): Agents have optimized their strategies"
+      ]
+    }
+  }
+}

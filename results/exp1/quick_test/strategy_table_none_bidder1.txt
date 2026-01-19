@@ -1,0 +1,8 @@
+
+--- Learned Strategy Table - Bidder 1 - No Disclosure ---
+|   Previous Bid |   FPA Best Action |   SPA Best Action |
+|---------------:|------------------:|------------------:|
+|           0    |              0.33 |              1    |
+|           0.33 |              0.67 |              0.67 |
+|           0.67 |              0.67 |              0.33 |
+|           1    |              0.67 |              0.67 |

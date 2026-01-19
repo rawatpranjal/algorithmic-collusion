@@ -1,0 +1,93 @@
+Starting perturbation analysis for collusion detection...
+Loading Q-tables for none information regime...
+Using bid actions: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+--------------------------------------------------
+Running perturbation analysis for none information regime
+--------------------------------------------------
+Collusion analysis is not applicable for No Disclosure mode (single state).
+
+--- No Perturbation Analysis for none (Single State) ---
+Loading Q-tables for winning information regime...
+Using bid actions: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+--------------------------------------------------
+Running perturbation analysis for winning information regime
+--------------------------------------------------
+Computing state visitation frequencies for FPA with winning information regime...
+Recorded visitation frequencies for 8 states
+Computing state visitation frequencies for SPA with winning information regime...
+Recorded visitation frequencies for 5 states
+Testing perturbation responses for winning information regime...
+Completed perturbation testing for 5 states
+Testing perturbation responses for winning information regime...
+Completed perturbation testing for 3 states
+Calculating collusion indices...
+Calculating collusion indices...
+
+--- Perturbation Analysis Results for winning ---
+
+FPA Collusion Results:
+Agent 0: Retaliation = 0.25, Accommodation = 0.00, Index = 0.12
+Agent 1: Retaliation = 0.25, Accommodation = 0.00, Index = 0.12
+Overall Collusion Index: 0.12
+Interpretation: No evidence of collusion, agents act independently
+
+SPA Collusion Results:
+Agent 0: Retaliation = 0.50, Accommodation = 0.00, Index = 0.25
+Agent 1: Retaliation = 0.25, Accommodation = 0.00, Index = 0.12
+Overall Collusion Index: 0.19
+Interpretation: No evidence of collusion, agents act independently
+Loading Q-tables for full information regime...
+Using bid actions: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+--------------------------------------------------
+Running perturbation analysis for full information regime
+--------------------------------------------------
+Computing state visitation frequencies for FPA with full information regime...
+Recorded visitation frequencies for 6 states
+Computing state visitation frequencies for SPA with full information regime...
+Recorded visitation frequencies for 15 states
+Testing perturbation responses for full information regime...
+Completed perturbation testing for 2 states
+Testing perturbation responses for full information regime...
+Completed perturbation testing for 9 states
+Calculating collusion indices...
+Calculating collusion indices...
+
+--- Perturbation Analysis Results for full ---
+
+FPA Collusion Results:
+Agent 0: Retaliation = 1.00, Accommodation = 0.00, Index = 0.50
+Agent 1: Retaliation = 0.50, Accommodation = 0.50, Index = 0.50
+Overall Collusion Index: 0.50
+Interpretation: Some evidence of strategic coordination, weak collusion
+
+SPA Collusion Results:
+Agent 0: Retaliation = 0.20, Accommodation = 0.50, Index = 0.35
+Agent 1: Retaliation = 0.30, Accommodation = 0.60, Index = 0.45
+Overall Collusion Index: 0.40
+Interpretation: Some evidence of strategic coordination, weak collusion
+Generating collusion index plot...
+Saved collusion index plot to figures/collusion_indices.png
+Generating component indices plot...
+Saved component indices plot to figures/component_indices.png
+
+Collusion Analysis Summary Table:
+| Info Regime      | Auction Type   | Agent   | Retaliation   | Accommodation   | Collusion Index   | Interpretation                                          |
+|:-----------------|:---------------|:--------|:--------------|:----------------|:------------------|:--------------------------------------------------------|
+| No Disclosure    | All            | All     | N/A           | N/A             | N/A               | Not applicable for No Disclosure mode                   |
+| Winning Bid Only | FPA            | Agent 0 | 0.25          | 0.00            | 0.12              |                                                         |
+| Winning Bid Only | FPA            | Agent 1 | 0.25          | 0.00            | 0.12              |                                                         |
+| Winning Bid Only | FPA            | Overall |               |                 | 0.12              | No evidence of collusion, agents act independently      |
+| Winning Bid Only | SPA            | Agent 0 | 0.50          | 0.00            | 0.25              |                                                         |
+| Winning Bid Only | SPA            | Agent 1 | 0.25          | 0.00            | 0.12              |                                                         |
+| Winning Bid Only | SPA            | Overall |               |                 | 0.19              | No evidence of collusion, agents act independently      |
+| Full Disclosure  | FPA            | Agent 0 | 1.00          | 0.00            | 0.50              |                                                         |
+| Full Disclosure  | FPA            | Agent 1 | 0.50          | 0.50            | 0.50              |                                                         |
+| Full Disclosure  | FPA            | Overall |               |                 | 0.50              | Some evidence of strategic coordination, weak collusion |
+| Full Disclosure  | SPA            | Agent 0 | 0.20          | 0.50            | 0.35              |                                                         |
+| Full Disclosure  | SPA            | Agent 1 | 0.30          | 0.60            | 0.45              |                                                         |
+| Full Disclosure  | SPA            | Overall |               |                 | 0.40              | Some evidence of strategic coordination, weak collusion |
+
+Perturbation analysis complete. Results saved to logs/collusion_log.txt and figures/

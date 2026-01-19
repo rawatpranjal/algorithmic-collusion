@@ -1,0 +1,39 @@
+\section{Auctions}
+
+We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome---who wins and how much is paid---depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximize her per-round payoff, given by her valuation minus her payment. The experiments differ in how valuations are set---ranging from everyone having a fixed value of 1 to signals that are partially ``affiliated'' across bidders---and in the specific informational states that bidders may observe between rounds.
+
+\medskip
+
+\noindent \textbf{Valuations.} In Experiment\,1, every bidder's valuation is fixed at 1, so the private-value assumption is trivially satisfied and there is no direct impact of signals. In Experiments\,2 and\,3, however, each bidder $i$ draws a signal $s_{i}\in [0,1]$ (using a finite set of possible signal realizations) and forms a valuation via a linear-affiliation function
+\[
+v_{i}(s_{i}, s_{-i}) \;=\; \bigl(1 - 0.5\,\eta\bigr)\,s_{i} \;+\; 0.5\,\eta\;\frac{1}{n-1}\sum_{j\neq i} s_{j},
+\]
+where $\eta\in[0,1]$ measures how strongly bidder\,$i$'s value depends on the others' signals. When $\eta=0$, each bidder's value depends only on her own signal; as $\eta$ increases, the environment moves closer to a ``common-value'' setting. Note that in each round, every bidder draws a fresh signal, independently of other bidders and independently across rounds, so that valuations may vary from one round to the next.
+
+\medskip
+
+\noindent \textbf{Bidding.} Bids are constrained to lie in a finite grid, typically $\{0,0.1,0.2,\ldots,1.0\}$ or a similar set, so each bidder's action space is discrete. This restriction is imposed in all three experiments to simplify the strategy space. Despite this simplification, each bidder remains free to adapt her bids over repeated rounds as she observes outcomes. I choose a moderate granularity (e.g.\ 11 equally spaced points from 0 to 1) that is fine enough to allow distinct bidding behaviors and multiple points of convergence, yet small enough to allow full exploration. Empirically, I found that increasing or decreasing the grid size does not materially change the results.
+
+\medskip
+
+\noindent \textbf{Reserve Prices.} All experiments allow a reserve price $r\ge 0$. If every submitted bid is below $r$, then no sale occurs in that round. Since valuations in Experiment\,1 are all~1, imposing a reserve in that setting simply means that bids below $r$ are excluded from contention. In Experiments\,2 and\,3, a reserve likewise disqualifies any bidder whose chosen discrete bid is below $r$. 
+
+\medskip
+
+\noindent \textbf{Payment Rules.} Both first- and second-price formats are studied. Under first-price, the winner pays her own highest valid bid; under second-price, the winner pays the second-highest valid bid (if any). In all cases, if multiple bidders tie for the highest valid bid, one among them is chosen at random to be the winner, and the payment is then computed according to the standard rule for that auction format. The resulting payoff for bidder\,$i$ is
+\[
+u_{i} \;=\; 
+\begin{cases}
+v_{i} - \text{(own bid)} & \text{(first-price),}\\
+v_{i} - \text{(second-highest bid)} & \text{(second-price),}
+\end{cases}
+\]
+and is zero for those bidders who do not win.
+
+\medskip
+
+\noindent \textbf{Information.} A defining feature of these repeated interactions is that bidders may condition their future bids on information from prior rounds. In Experiment\,1, the possible states include the median of the others' previous bids and/or the previous round's winning bid. In Experiments\,2 and\,3, states can similarly incorporate bidder-specific signals $s_{i}$, as well as optional statistics of past outcomes such as the median of others' bids or the past winning bid. Each bidder knows her own signal in each round and can rely on these state variables to guide her subsequent bid choice. The affiliation parameter~$\eta$ thus captures how interdependent each bidder's underlying valuation is with the other signals, but each bidder's private signal still enters only her own valuation (albeit modulated by average signals).
+
+\medskip
+
+Across all three experiments, the auctions are repeated for many rounds, allowing for long-run behavior to emerge under different reserve price levels and different degrees of valuation interdependence. The discrete setup (both for signals and for bids) is maintained for computational tractability, but the core elements of a standard first- or second-price auction---with or without a reserve---are preserved, and the ultimate allocation and payment follow the standard textbook rules.

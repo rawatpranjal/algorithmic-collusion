@@ -1,0 +1,7 @@
+Experiment Settings:
+Learning Rate (α): 0.10 to 0.10 (exponential decay)
+Decay Factor: 2.00
+Discount Factor (γ): 0.95
+Exploration Rate (ε): 1.00 to 0.00 (exponential decay)
+Bid Space: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+Training Rounds: 1,000,000

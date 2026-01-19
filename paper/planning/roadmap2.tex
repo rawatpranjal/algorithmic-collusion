@@ -1,0 +1,348 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs} % For professional looking tables
+\usepackage{multirow} % For multirow cells in tables
+\usepackage{array}    % For more table options
+\usepackage{enumitem} % For customized lists
+\usepackage{hyperref} % For clickable links and ToC
+\usepackage{caption}  % For better caption control
+\usepackage{setspace} % For line spacing, e.g., \onehalfspacing
+\usepackage{times}    % Using Times font, common for proposals
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Research Proposal: Evaluating Auction Design Robustness in Learning-Driven Auto-bidding Ecosystems},
+    pdfpagemode=FullScreen,
+}
+
+\title{\textbf{Research Proposal: \\ Evaluating Auction Design Robustness in Learning-Driven Auto-bidding Ecosystems}}
+\author{Pranjal Rawat}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Online advertising platforms are increasingly dominated by auto-bidding systems where advertisers deploy learning algorithms to optimize their bidding strategies, particularly for pacing spend to meet return-on-spend (RoS) and budget objectives. While theoretical models offer insights into optimal auction designs under idealized conditions (e.g., rational, converged agents), the practical performance of these designs in dynamic environments populated by adaptive, learning agents remains largely unexplored. Analytical or closed-form numerical solutions for such complex multi-agent learning systems are often intractable. This research proposes a comprehensive simulation-based approach to evaluate the practical robustness and performance of common auction mechanisms—primarily First-Price Auctions (FPA) and Second-Price Auctions (SPA)—when advertisers utilize prevalent online learning algorithms (e.g., Dual Gradient, UCB, MWU) for pacing. We aim to bridge the gap between theoretical optima/bounds (like Price of Anarchy) and the actual, average-case outcomes observed in these learning-driven ecosystems, potentially leveraging real-world ad-tech platform data for semi-synthetic simulation calibration. The study will systematically assess platform revenue, social welfare, system stability (volatility, convergence, susceptibility to "crashes"), and distributional fairness across a range of market structures, advertiser constraints, and reserve price policies. The findings will provide crucial, evidence-based insights for platform designers seeking to select and configure auction mechanisms that are not only theoretically sound but also practically robust and effective in the face of evolving, learning-based participation.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+\onehalfspacing % Or \doublespacing
+
+\section{Introduction}
+
+\subsection{Motivation and Problem Statement}
+The landscape of online advertising has been fundamentally reshaped by the advent of auto-bidding systems. Advertisers increasingly rely on sophisticated learning algorithms to automate their bidding strategies, particularly for managing campaign pacing to achieve specific return-on-spend (RoS) targets and adhere to budget constraints \cite{Aggarwal2019, Aggarwal2024Survey}. This shift presents a significant challenge for advertising platforms: the need to select auction mechanisms (e.g., First-Price Auctions (FPA), Second-Price Auctions (SPA)) that perform robustly and predictably not just in theory, but when populated by these dynamic, continuously adapting auto-bidder agents.
+
+The core problem is that the interaction of multiple learning agents within an auction environment creates a complex adaptive system. Traditional auction theory often assumes rational, fully informed agents or analyzes equilibrium states \cite{Myerson1981}. Theoretical equilibria for auto-bidding, such as Pacing Equilibria (FPPE/SPPE), have been defined \cite{Conitzer2021SPPE, Conitzer2022FPPE}, but the practical learning dynamics towards these states are less understood. In practice, auto-bidders employ online learning algorithms that adjust strategies based on observed performance, leading to system dynamics that can deviate significantly from theoretical predictions and potentially exhibit complex behaviors like bi-stability or periodic orbits \cite{PaesLeme2024}. Analytical or closed-form numerical solutions for these multi-agent learning systems are generally intractable due to their high dimensionality and non-stationary nature. Consequently, understanding the ``average practical outcome'' and robustness of different auction designs requires empirical investigation, primarily through simulation or large-scale A/B testing. This research focuses on the former, proposing a semi-synthetic simulation approach calibrated with data from an ad-tech platform (TopSort) to enhance realism, offering a controlled environment to dissect these interactions.
+
+\subsection{The Gap in Current Understanding}
+Current literature reveals a critical gap between theoretical understanding and practical performance in learning-driven auto-bidding:
+\begin{itemize}
+    \item \textbf{Theoretical Benchmarks vs. Practical Realities:} Auction theory provides insights into optimal mechanisms under simplified assumptions (e.g., truthful bidding in SPA \cite{Vickrey1961}). For auto-bidders, PoA results for VCG/FPA often assume converged or optimal bidding (e.g., PoA of 1/2 for FPA in full autobidding \cite{Deng2022FPAEfficiency}, or for VCG \cite{Aggarwal2019}), and these bounds are often worst-case \cite{DengVarious}. The average-case performance when agents are actively *learning* their pacing strategies remains largely unexplored.
+    \item \textbf{Algorithmic Collusion and Emergent Behavior:} While some research (including prior work by the author \cite{Rawat2025AlgorithmicCollusion}) has explored how Q-learning agents might lead to collusive outcomes in auctions, and Paes Leme et al. \cite{PaesLeme2024} demonstrate complex dynamics in autobidding systems, the behavior of simpler, more industry-relevant pacing algorithms (like Dual Gradient, UCB, or MWU for pacing multipliers) in this context is less understood.
+    \item \textbf{Focus on Equilibrium vs. Learning Dynamics:} Much of the auto-bidding literature focuses on equilibrium properties (e.g., First-Price Pacing Equilibrium (FPPE), Second-Price Pacing Equilibrium (SPPE) \cite{Conitzer2021SPPE, Conitzer2022FPPE}) or single-agent optimization problems \cite{Aggarwal2019}. While some work addresses learning and convergence (e.g., \cite{Balseiro2019Learning, Lucier2023PacingDynamics}), there is less systematic comparison of FPA vs. SPA considering the transient learning dynamics, the stability of learned states, and how different auction designs influence the path to (or oscillations around) such states when populated by multiple common pacing learners.
+\end{itemize}
+This research aims to fill this gap by providing a systematic, simulation-based evaluation of auction design robustness when confronted with practical learning-based auto-bidding, with parameters informed by real-world data.
+
+\subsection{Research Questions and Objectives}
+The primary goal of this research is to determine which auction design (focusing on FPA vs. SPA) offers better practical robustness and performance for a platform when advertisers use common online learning algorithms for learning a single, uniform pacing multiplier under RoS and budget constraints.
+\begin{itemize}
+    \item \textbf{Primary Research Question:} Which auction design (FPA vs. SPA) is practically superior for a platform—prioritizing platform revenue, then social welfare and system stability—when advertisers employ common online learning algorithms (e.g., Dual Gradient inspired by \cite{Balseiro2019Learning}, UCB, MWU) for learning a single, uniform pacing multiplier?
+    \item \textbf{Secondary Research Questions:}
+        \begin{enumerate}
+            \item How do different learning algorithms interact with FPA and SPA, and does the optimal auction design depend on the prevalent learning mechanism?
+            \item How do market structure (number of bidders, valuation distributions, potentially informed by TopSort data) and advertiser constraints (RoS targets, budget tightness) modulate the relative performance and stability of FPA and SPA?
+            \item What is the role of reserve price policies (potentially informed by \cite{Balseiro2021RobustAuction, Deng2022FPAEfficiency}) in enhancing the performance or mitigating the risks associated with FPA and SPA in these learning environments?
+            \item Can we identify conditions under which FPA or SPA are more susceptible to emergent undesirable behaviors, such as tacit collusion (manifesting as persistently low pacing multipliers, potentially related to complex dynamics observed in \cite{PaesLeme2024}) or system instability ("bidding crashes")?
+        \end{enumerate}
+\end{itemize}
+
+\textbf{Objectives:}
+\begin{enumerate}
+    \item To develop a flexible, semi-synthetic simulation framework modeling a canonical auto-bidding environment where agents learn a single pacing multiplier, with key parameters (e.g., value distributions, typical RoS targets) calibrated using historical data from an ad-tech platform (TopSort).
+    \item To implement and compare the performance of FPA and SPA when agents use representative online learning algorithms (Dual Gradient, UCB, MWU) for pacing.
+    \item To assess performance comprehensively across:
+        \begin{itemize}
+            \item First-order metrics: Platform revenue, social welfare, total advertiser value, aggregate RoS achievement.
+            \item Second-order metrics: Volatility of platform revenue/welfare, volatility/oscillation of pacing multipliers, metrics for "bidding crashes" or instability.
+            \item Distributional/Fairness metrics: Gini coefficient of advertiser spend/value/profit, skewness of profits/RoS, percentage of advertisers meeting constraints.
+        \end{itemize}
+    \item To systematically investigate how the relative performance and stability of these auction designs are influenced by key covariates (market structure, advertiser constraints) and design levers (reserve prices).
+    \item To derive practical, evidence-based recommendations for platform designers on selecting and configuring auction mechanisms in learning-driven auto-bidding ecosystems.
+\end{enumerate}
+
+\subsection{Methodology and Expected Contributions}
+\textbf{Methodology:}
+This research will employ a simulation-based approach, enhanced by data from the TopSort ad-tech platform for parameter calibration to create a semi-synthetic environment. A detailed model of an advertising auction market will be developed, where multiple auto-bidder agents, each employing a specific online learning algorithm (Dual Gradient, UCB, or MWU), compete for impressions. These agents will learn a single pacing multiplier to scale their base impression values, aiming to meet RoS and budget targets. The core of the methodology involves:
+\begin{enumerate}
+    \item Defining a canonical auto-bidding environment and agent behavior (Section \ref{sec:simulation_model}), with parameters informed by TopSort data where feasible.
+    \item Implementing representative online learning algorithms for pacing multiplier adaptation (Section \ref{sec:learning_algorithms}).
+    \item Conducting a systematic experimental design, varying auction mechanisms, learning algorithms, market covariates (some calibrated from TopSort data), and reserve price policies across a grid of parameters (Section \ref{sec:experimental_design}).
+    \item Analyzing the simulation outputs using a comprehensive set of outcome metrics (Section \ref{sec:outcome_metrics}).
+\end{enumerate}
+
+\textbf{Expected Contributions:}
+\begin{enumerate}
+    \item \textbf{Bridging Theory and Practice:} Providing insights into the average-case, practical performance of FPA and SPA in learning-driven auto-bidding, moving beyond theoretical optima or worst-case bounds, and grounding simulations with real-world data characteristics.
+    \item \textbf{Robustness Evaluation of Auction Designs:} Offering a systematic assessment of how FPA and SPA perform under the influence of adaptive learning agents, focusing on revenue, welfare, stability, and fairness. This addresses a key concern for platforms: choosing designs that are not just efficient but also resilient.
+    \item \textbf{Understanding Emergent Dynamics with Pacing Learners:} Investigating how industry-relevant pacing algorithms can lead to complex system dynamics (potentially including limit cycles or bi-stability as observed in \cite{PaesLeme2024}), and how auction design and reserve prices influence these phenomena.
+    \item \textbf{Actionable Insights for Platform Designers:} Delivering data-driven recommendations on selecting auction mechanisms and reserve price strategies that are better suited for ecosystems with learning auto-bidders, considering various market conditions and platform objectives.
+    \item \textbf{Methodological Framework:} Providing a detailed semi-synthetic simulation framework that can be extended by other researchers to explore further complexities in auto-bidding systems.
+\end{enumerate}
+
+\section{Literature Review}
+This research builds upon and aims to extend several interconnected streams of literature.
+
+\subsection{Foundations of Auto-bidding and Pacing Equilibria}
+The canonical framework for auto-bidding often involves advertisers specifying high-level objectives (like RoS and budgets) and delegating bid optimization to automated agents \cite{Aggarwal2019, Aggarwal2024Survey}. A key aspect is "pacing," where agents adjust their bidding aggressiveness (often via a single multiplicative factor on their values) to meet these constraints over time.
+Theoretical work by Conitzer et al. \cite{Conitzer2021SPPE, Conitzer2022FPPE} has formally defined and analyzed Pacing Equilibria for Second-Price (SPPE) and First-Price (FPPE) auctions. Their findings indicate that FPPEs possess desirable properties like essential uniqueness of pacing multipliers, revenue maximization among budget-feasible multipliers, computational tractability via convex programming, and monotonicity with respect to goods and budgets. In contrast, SPPEs may not be unique and can be harder to compute. These equilibrium concepts provide crucial benchmarks for the converged state of a market with rational, informed auto-bidders. Our work investigates the *dynamic learning process* by which agents might reach (or fail to reach) such equilibria.
+
+\subsection{Auction Design and Efficiency with Auto-bidders}
+A significant body of research has explored how to design or adapt auctions for auto-bidding environments. Deng et al. \cite{Deng2021TowardsEfficient, Deng2023AutobiddingUserCosts} have investigated the use of additive "boosts" to improve welfare in VCG and GSP auctions with auto-bidders. The efficiency of FPA with autobidders was notably analyzed in \cite{Deng2022FPAEfficiency}, establishing a Price of Anarchy (PoA) of 1/2 when autobidders use uniform bid-scaling (a strategy shown to be optimal for value maximizers in truthful auctions by \cite{Aggarwal2019}). This PoA result matches the known bound for VCG auctions with value maximizers \cite{Aggarwal2019}.
+Further work has explored the use of machine-learned advice, often in the form of reserve prices, to improve auction outcomes. Balseiro et al. \cite{Balseiro2021RobustAuction} showed that reserves based on (even inaccurate) value signals can improve welfare and revenue in VCG and GSP with mixed utility and value maximizers. Deng et al. \cite{Deng2022FPAEfficiency} extended this to FPA, demonstrating that machine-learned reserves can improve its PoA. Other works like Liaw et al. \cite{Liaw2022EfficiencyNonTruthful, Liaw2024EfficiencyBudget} and Mehta \cite{Mehta2022AuctionDesign} have studied how randomization in auction rules can enhance efficiency for autobidders.
+This proposal complements these studies by focusing not on the design of new mechanisms or features (like boosts/reserves derived from ML advice) per se, but on the *robustness of standard FPA and SPA* when populated by agents *learning* their pacing strategies, and how basic reserve policies interact with these learning dynamics. Deng et al. \cite{Deng2024NonUniformGSP} also provide an empirical study of GSP with non-uniform bid-scaling, underscoring that uniform scaling is not always optimal in non-truthful auctions, which motivates our study of agents learning a single, uniform pacing multiplier as a common, practical approach.
+
+\subsection{Learning Dynamics and Convergence in Budgeted/Paced Auctions}
+The behavior of learning agents in auctions, especially with budget or pacing constraints, is an active research area. Balseiro and Gur \cite{Balseiro2019Learning} provide seminal work on adaptive pacing strategies for budget-constrained advertisers in repeated auctions, establishing regret minimization and convergence to equilibrium for single agents adapting to a stationary or adversarial environment. Conitzer et al. \cite{Conitzer2017MultiplicativePacing} also explored pacing equilibria and their computation, including some dynamic aspects.
+More recently, Lucier et al. \cite{Lucier2023PacingDynamics} specifically investigated efficiency, regret, and the *dynamics* of pacing for autobidders with budget and ROI constraints, which is closely related to our proposed work. They analyze a specific regret-based dynamic and its properties. Our work expands on this by systematically comparing FPA vs. SPA under a few different, common online learning algorithms (Dual Gradient, UCB, MWU) and exploring a wider range of outcome metrics including system stability and fairness.
+Crucially, Paes Leme et al. \cite{PaesLeme2024} have recently shown that autobidding systems, even with simple update rules for multipliers, can exhibit highly complex dynamical behaviors, including bi-stability, periodic orbits, and quasi-periodicity. This finding underscores the importance of simulation studies like the one proposed here, as analytical prediction of long-term behavior for such systems is extremely challenging. Our research will investigate if the specific learning algorithms and auction formats we study lead to such complex dynamics, and how market conditions might trigger them.
+
+\subsection{Empirical and Simulation Studies in Advertising}
+Field experiments and observational studies, such as Blake et al. \cite{Blake2014Consumer}, provide valuable insights into real-world advertiser and consumer behavior, for instance, highlighting consumer heterogeneity in response to ads. While our work is simulation-based, the plan to calibrate parameters using data from an ad-tech platform like TopSort aims to incorporate some of this real-world heterogeneity.
+Deng et al. \cite{Deng2024NonUniformGSP} offer an example of an empirical study using synthetic data to compare auction formats in an autobidding context, focusing on non-uniform bid-scaling. Our study is similar in its empirical, simulation-driven approach but focuses on the learning dynamics of a single pacing multiplier across FPA and SPA.
+
+This proposal seeks to synthesize these threads by empirically evaluating the dynamic, average-case performance and robustness of canonical auction mechanisms when realistic pacing learners interact, providing insights beyond worst-case theoretical bounds or static equilibrium analyses.
+
+\section{Proposed Simulation Model} \label{sec:simulation_model}
+
+\subsection{Market Environment}
+\begin{itemize}
+    \item $N$ advertisers, indexed by $i \in \{1, \dots, N\}$.
+    \item $M$ sequential single-impression auction opportunities (queries), indexed by $j \in \{1, \dots, M\}$, occurring over a time horizon $T$.
+    \item \textbf{Advertiser Base Value per Impression ($v_{i,j}$):} For each advertiser $i$ and auction $j$, $v_{i,j}$ represents the expected value advertiser $i$ derives from winning that impression, \textit{before} any pacing adjustments. This $v_{i,j}$ will be drawn from a specified distribution (e.g., Uniform$[\text{val}_{\min}, \text{val}_{\max}]$, LogNormal$(\mu_v, \sigma_v^2)$) to model advertiser heterogeneity and value uncertainty. Different distributions and parameterizations will be used as covariates.
+\end{itemize}
+
+\subsubsection{Data-Driven Parameter Calibration (TopSort)} \label{subsubsec:topsort_calibration}
+To enhance the practical relevance of our simulations, key parameters will be calibrated using historical, aggregated, and anonymized data from the TopSort ad-tech platform, where feasible. This approach aims to create a semi-synthetic environment that reflects real-world characteristics while allowing for controlled experimentation.
+\begin{itemize}
+    \item \textbf{$v_{i,j}$ distributions:} We will analyze historical eCPM (effective cost per mille) distributions, potentially in conjunction with typical click-through rates (CTRs) if available, to inform the scale, shape, and heterogeneity of $v_{i,j}$ distributions. This may involve fitting parametric distributions (e.g., LogNormal) to observed data proxies or using empirical distributions. The heterogeneity observed in studies like Blake et al. \cite{Blake2014Consumer} will be considered if inferable.
+    \item \textbf{Number of Advertisers ($N$):} Typical numbers of active bidders observed participating in auctions on the TopSort platform will guide the selection of $N$.
+    \item \textbf{RoS Targets ($\tau_i$):} If available, the distribution of RoS targets commonly set by advertisers on the platform will inform the settings for $\tau_i$ in heterogeneous scenarios. Otherwise, industry common ranges will be used.
+    \item \textbf{Budgets ($B_i$):} Typical budget magnitudes relative to potential unconstrained spend (at target RoS) will be estimated from platform data, if possible, to set "tight" vs. "loose" budget scenarios.
+    \item \textbf{Canonical Framework:} The simulation adheres to the canonical auto-bidding framework where agents learn a single, uniform pacing multiplier $\alpha_i$ for all their bids, consistent with models in \cite{Aggarwal2019, Conitzer2022FPPE}.
+    \item \textbf{Limitations:} We acknowledge that platform data typically reflects observed bids/spend (i.e., $\alpha_i \cdot v_{i,j}$ or outcomes of paced bidding) rather than true underlying unpaced values $v_{i,j}$ or the latent pacing multipliers $\alpha_i$ directly. We will make reasonable assumptions and clearly document the inference process used for calibration.
+\end{itemize}
+
+\subsection{Advertiser Auto-bidder Agents}
+Each advertiser $i$ is an auto-bidder agent aiming to maximize their campaign objectives subject to performance constraints.
+\begin{itemize}
+    \item \textbf{Agent Objective \& Constraints:}
+    Each agent $i$ seeks to maximize its campaign objectives (e.g., total value acquired, $\sum_{j \text{ won}} v_{i,j}$) subject to:
+    \begin{enumerate}
+        \item \textbf{Return-on-Spend (RoS) Constraint:} The primary constraint driving adaptation.
+        \[ \frac{\sum_{j \text{ won by } i} v_{i,j}}{\sum_{j \text{ won by } i} p_{i,j}} \ge \tau_i \]
+        where $p_{i,j}$ is the payment made by advertiser $i$ for winning auction $j$, and $\tau_i$ is the target RoS for advertiser $i$. $\tau_i$ can be homogeneous or heterogeneous across advertisers.
+        \item \textbf{Budget Constraint (Optional):}
+        \[ \sum_{j \text{ won by } i} p_{i,j} \le B_i \]
+        where $B_i$ is the total budget for advertiser $i$. The impact of tight vs. loose budgets (or RoS-only scenarios) will be explored.
+    \end{enumerate}
+    \item \textbf{Pacing Strategy:} Each agent $i$ learns a single \textbf{pacing multiplier} $\alpha_i(t) \in [\alpha_{\min}, \alpha_{\max}]$ (e.g., $[0.1, 5.0]$) at time $t$ (or after a block of $M_t$ auctions). This multiplier scales their base value.
+    \item \textbf{Bidding Strategy (Uniform Pacing):} The bid submitted by advertiser $i$ for auction $j$ at time $t$ is:
+    \[ b_{i,j}(t) = \alpha_i(t) \cdot v_{i,j} \]
+    This represents a uniform scaling of the advertiser's perceived value for the impression.
+\end{itemize}
+
+\subsection{Online Learning Algorithms for Pacing Multiplier ($\alpha_i(t)$)} \label{sec:learning_algorithms}
+Agents update their pacing multiplier $\alpha_i(t)$ based on observed performance over a window of $W$ auctions (or a time period $W_t$). We will implement and compare three representative algorithms:
+\begin{itemize}
+    \item \textbf{Dual Gradient-Descent Style (Primary Algorithm):} Inspired by the dual methods for constrained optimization common in ad auction pacing (e.g., related to \cite{Balseiro2019Learning}), agents adjust their pacing multiplier based on constraint violations.
+        \begin{itemize}
+            \item \textit{Observation (after window $W$):} Agent $i$ observes its total value acquired $V_i^W = \sum v_{i,j} x_{i,j}$ and total spend $P_i^W = \sum p_{i,j}$ within the window, where $x_{i,j}=1$ if $i$ won auction $j$.
+            \item \textit{Error Signal (RoS):} The error with respect to the RoS target $\tau_i$ can be defined as $e_{\text{RoS},i} = \tau_i P_i^W - V_i^W$. If $e_{\text{RoS},i} > 0$, it implies $V_i^W/P_i^W < \tau_i$ (RoS is too low, meaning spend $P_i^W$ is too high relative to value $V_i^W$ for the target $\tau_i$). In this case, $\alpha_i$ should typically decrease to bid less aggressively. If $e_{\text{RoS},i} < 0$, then $V_i^W/P_i^W > \tau_i$ (RoS is too high), suggesting $\alpha_i$ could increase to capture more value, provided the budget allows.
+            \item \textit{Error Signal (Budget, if applicable):} $e_{\text{Budget},i} = P_i^W - B_i^{\text{window}}$, where $B_i^{\text{window}}$ is the pro-rata budget for the window. If $e_{\text{Budget},i} > 0$, the agent is overspending.
+            \item \textit{Update Rule (Log-space for $\alpha_i$ often preferred for stability):}
+            Let $l_i(t) = \log(\alpha_i(t))$. Then $l_i(t+1) = l_i(t) - \eta \cdot (\lambda_{\text{RoS}} \cdot \text{grad}_{\text{RoS},i} + \lambda_{\text{Budget}} \cdot \text{grad}_{\text{Budget},i})$, where $\text{grad}_{\text{RoS},i}$ is derived from $e_{\text{RoS},i}$ (e.g., $\text{grad}_{\text{RoS},i} = e_{\text{RoS},i}$) and similarly for budget. The final $\alpha_i(t+1) = \text{clip}(\exp(l_i(t+1)), \alpha_{\min}, \alpha_{\max})$. Learning rate $\eta$ and policy weights $\lambda$ are key.
+        \end{itemize}
+    \item \textbf{Bandit Algorithms (e.g., UCB1):}
+        \begin{itemize}
+            \item \textit{Arms:} $K_A$ discretized levels of $\alpha_i$ within $[\alpha_{\min}, \alpha_{\max}]$.
+            \item \textit{Reward (after window $W$ playing arm $\alpha_i^k$):} $R_i^k = V_i^W - \text{penalty}_{\text{RoS}} \cdot \max(0, \tau_i P_i^W - V_i^W) - \text{penalty}_{\text{Budget}} \cdot \max(0, P_i^W - B_i^{\text{window}})$. The penalties scale with the magnitude of violation.
+            \item \textit{Update Rule:} Standard UCB1 arm selection and value updates.
+        \end{itemize}
+    \item \textbf{Multiplicative Weights Update (MWU):}
+        \begin{itemize}
+            \item \textit{Experts:} $K_A$ discretized levels of $\alpha_i$.
+            \item \textit{Loss (for expert $\alpha_i^k$ after window $W$ resulting in $V_i^{W,k}, P_i^{W,k}$):} $L_i^k = -V_i^{W,k} + \text{LargePenalty}_{\text{RoS}} \cdot \mathbf{1}(\tau_i P_i^{W,k} > V_i^{W,k}) + \text{LargePenalty}_{\text{Budget}} \cdot \mathbf{1}(P_i^{W,k} > B_i^{\text{window}})$.
+            \item \textit{Update Rule:} $w_k(t+1) = w_k(t) \cdot \exp(-\eta \cdot L_i^k)$, followed by normalization of weights $w_k$.
+        \end{itemize}
+\end{itemize}
+(Detailed mathematical formulations for each algorithm, including precise gradient derivations for Dual Gradient, and handling of edge cases like zero spend, will be provided in Appendix \ref{app:learning_algo_details}.)
+
+\subsection{Market Design (Auction Mechanisms and Rules)}
+\begin{itemize}
+    \item \textbf{Auction Mechanisms (Primary Treatment Variable):}
+        \begin{enumerate}
+            \item \textbf{First-Price Auction (FPA):} The highest bidder wins and pays their own bid.
+            \item \textbf{Second-Price Auction (SPA):} The highest bidder wins and pays the second-highest bid.
+        \end{enumerate}
+        Ties for the highest bid will be broken uniformly at random.
+    \item \textbf{Reserve Price Policy (Secondary Design Lever):}
+        \begin{enumerate}
+            \item \textbf{No Reserve Price.}
+            \item \textbf{Static Reserve Price:} A fixed reserve $r$ applied to all auctions. This $r$ will be set as a percentage (e.g., 0\%, 25\%, 50\%) of a characteristic of the $v_{i,j}$ distribution (e.g., mean E$[v_{i,j}]$ or a specific quantile, potentially informed by TopSort data for the "calibrated" scenarios). If all bids are below $r$, no sale occurs.
+        \end{enumerate}
+\end{itemize}
+
+\section{Experimental Design} \label{sec:experimental_design}
+A full factorial or fractional factorial design will be employed to explore the parameter space.
+
+\subsection{Factors and Levels (Experimental Grid)}
+The key factors and their proposed levels are summarized in Table \ref{tab:experimental_grid_proposal}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Experimental Input Parameters (Knobs) and Covariates}
+    \label{tab:experimental_grid_proposal}
+    \small % Reduce font size for the table
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        \textbf{Category} & \textbf{Parameter} & \textbf{Tested Values/Ranges} \\ \midrule
+        \textbf{Auction Design} & Mechanism & \{FPA, SPA\} \\
+         & Reserve Price Policy & \{None; Static RP at 0\%, 25\%, 50\% of E[$v_{i,j}$]\} \\ \midrule
+        \textbf{Learning Algorithm} & Algorithm Type & \{DualGradient, UCB1, MWU\} \\
+         & Learning Rate $\eta$ (GD/MWU) & \{e.g., 0.01, 0.005, 0.001; Fixed vs. Decaying $1/\sqrt{t}$\} \\
+         & Exploration (UCB $c$-param) & \{e.g., 0.5, 1.0, 2.0\} \\
+         & $\alpha_i$ Discretization (UCB/MWU) & \{e.g., 20, 50 levels in $[\alpha_{\min}, \alpha_{\max}]$ \} \\
+         & Observation Window $W$ & \{e.g., 100, 500, 1000 auctions\} \\ \midrule
+        \textbf{Auto-bidder Setup} & RoS Target $\tau_i$ & \{Homogeneous (e.g., 1.5, 2.5, 4.0); \\
+         & & Heterogeneous (e.g., drawn from $U[1.5, 4.5]$ or TopSort-Calibrated Dist.)\} \\
+         & Budget $B_i$ & \{RoS-only; Tight (e.g., 50\% of potential RoS-spend); \\
+         & & Loose (e.g., 150\% of potential RoS-spend), or TopSort-Calibrated Dist.\} \\ \midrule
+        \textbf{Market Structure} & Num Advertisers $N$ & \{3, 5, 10, 20 (informed by TopSort typicals)\} \\
+         & Num Auctions $M$ per run & \{$10^5$, $5 \times 10^5$\} (ensure learning convergence) \\
+         & Advertiser $v_{i,j}$ Dist. & \{TopSort-Calibrated; Unif[0.5,1.5]; LogNormal($\mu_v$=1, $\sigma_v^2 \in \{0.25, 1.0\}$)\} \\ \midrule
+        \textbf{Simulation Control} & Random Seeds & $N_{runs}=30$ independent runs per cell \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Simulation Execution Protocol}
+For each unique combination of parameters in the experimental grid (a "cell"):
+\begin{enumerate}
+    \item $N_{runs}$ (e.g., 30) independent simulation runs will be executed. Each run uses a different random seed for drawing $v_{i,j}$, tie-breaking, and any stochasticity in learning algorithms.
+    \item Each simulation run will proceed for $M$ auction opportunities.
+    \item Time-series data for bids, allocations, payments, pacing multipliers ($\alpha_i(t)$), achieved RoS, spend, and other relevant agent-level and system-level variables will be recorded.
+\end{enumerate}
+
+\subsection{Outcome Metrics} \label{sec:outcome_metrics}
+The performance of each experimental setting will be evaluated using a comprehensive set of metrics, calculated typically after a "burn-in" period to allow learning algorithms to stabilize.
+\begin{itemize}
+    \item \textbf{Platform Performance:}
+        \begin{itemize}
+            \item Total Platform Revenue: $\sum_{i,j} p_{i,j}$.
+            \item Revenue Volatility: StdDev of platform revenue calculated over rolling windows in the steady-state phase.
+        \end{itemize}
+    \item \textbf{Economic Efficiency:}
+        \begin{itemize}
+            \item Total Social Welfare: $\sum_{i,j} v_{i,j} x_{i,j}$ (sum of values of winning bidders).
+            \item Welfare Volatility.
+        \end{itemize}
+    \item \textbf{Advertiser Performance (Aggregated \& Distributional):}
+        \begin{itemize}
+            \item Total Advertiser Value Acquired: $\sum_{i,j} v_{i,j} x_{i,j}$.
+            \item Aggregate Achieved RoS: $(\sum V_i) / (\sum P_i)$.
+            \item Constraint Adherence: Percentage of advertisers meeting their RoS target (e.g., within $\pm10\%$) and budget (if applicable).
+            \item Gini Coefficient: For advertiser spend, value acquired, and net profit ($V_i - P_i$) to measure inequality.
+            \item Skewness: Of advertiser profit and achieved RoS distributions.
+        \end{itemize}
+    \item \textbf{System Stability \& Learning Dynamics:}
+        \begin{itemize}
+            \item Convergence Time: Number of auctions/updates until key metrics (e.g., average $\alpha_i(t)$, platform revenue) stabilize.
+            \item Steady-State Pacing Multipliers: Average and distribution of $\alpha_i(t)$ in the post-convergence phase. Compare with theoretical predictions like FPPE multipliers \cite{Conitzer2022FPPE} where applicable.
+            \item Pacing Multiplier Volatility/Oscillation: StdDev of individual $\alpha_i(t)$ in steady state.
+            \item "Crash" Metrics: Frequency and magnitude of sharp drops in platform revenue or average $\alpha_i(t)$ (e.g., >X\% simultaneous decrease in $\alpha_i$ for >Y\% of bidders); variance of first differences of these series.
+            \item Tacit Collusion Metric: Persistently low average $\alpha_i(t)$ values relative to what RoS targets would allow if agents could coordinate to maximize surplus.
+            \item Frequency/Duration of Constraint Violations: How often and for how long agents operate outside their RoS/budget targets during the learning process.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Data Analysis Plan}
+\begin{enumerate}
+    \item \textbf{Descriptive Statistics:} For each cell, means, medians, standard deviations, and distributions of the outcome metrics will be computed across the $N_{runs}$.
+    \item \textbf{Grand Averages \& Main Effects:} Overall performance of FPA vs. SPA (and different reserve policies) averaged across other factors.
+    \item \textbf{Interaction Effects (Heterogeneity Analysis):} This is crucial. ANOVA-like approaches or regression models (e.g., using Double Machine Learning if complex non-linearities are suspected, similar to \cite{Rawat2025AlgorithmicCollusion}, though simpler models may suffice) will be used to identify how the treatment effect of auction design (FPA vs. SPA) changes with covariates (market structure, advertiser constraints, learning algorithm type).
+        \begin{itemize}
+            \item Plots of relative performance (e.g., Revenue$_{FPA}$/Revenue$_{SPA}$) against covariates like $N$, RoS target variance, etc.
+            \item Explicit comparison of results from TopSort-calibrated scenarios versus purely synthetic ones to assess the impact of realistic parameter distributions.
+        \end{itemize}
+    \item \textbf{Analysis of Learning Dynamics:} Time-series plots of average $\alpha_i(t)$, revenue, etc., to visualize convergence, stability, and potential oscillations or "collusion-like" states (e.g., persistently low $\alpha_i(t)$ in FPA despite RoS headroom). Spectral analysis or phase diagram plots (e.g., $\alpha_i(t)$ vs $\alpha_k(t)$) might be used if strong periodicities or complex dynamics as in \cite{PaesLeme2024} are observed.
+\end{enumerate}
+
+\section{Expected Results and Discussion Plan}
+\subsection{Overall Performance and Trade-offs}
+We expect to find that neither FPA nor SPA universally dominates across all metrics.
+\begin{itemize}
+    \item \textbf{Revenue and Welfare:} SPA might generally yield higher revenue and welfare due to less aggressive bid shading by learning agents. However, FPA, with its theoretical PoA of 1/2 with value maximizers \cite{Deng2022FPAEfficiency}, might perform competitively on average, especially if learning dynamics temper extreme shading. We will compare average PoA achieved in simulations against theoretical bounds.
+    \item \textbf{Stability:} SPA might exhibit more stable revenue and agent behavior. FPA could be more prone to "boom-bust" cycles or convergence to multiple equilibria, some potentially low-revenue ("collusion-like"), as hinted by general dynamical systems theory for autobidding \cite{PaesLeme2024}.
+    \item \textbf{Fairness:} The impact on Gini coefficients and constraint adherence will be compared.
+\end{itemize}
+
+\subsection{Influence of Learning Algorithms}
+The choice of learning algorithm by advertisers is expected to significantly impact outcomes.
+\begin{itemize}
+    \item Algorithms with more explicit exploration (like UCB) might prevent convergence to deeply sub-optimal collusive states in FPA compared to simpler gradient methods.
+    \item The speed and stability of convergence of different learning algorithms will influence the overall system dynamics.
+\end{itemize}
+
+\subsection{Heterogeneity Analysis: When is Which Design Better?}
+This section will form the core of practical recommendations.
+\begin{itemize}
+    \item \textbf{Market Structure:} We hypothesize that FPA's susceptibility to low-revenue outcomes (due to learned bid shading via low $\alpha_i(t)$) might be exacerbated in markets with fewer bidders ($N$) or less valuation variance. SPA might be more robust to these changes. Results from TopSort-calibrated scenarios will be crucial here.
+    \item \textbf{Advertiser Constraints:} Tight RoS targets or budgets might force agents to learn more aggressive (higher) $\alpha_i(t)$ values, potentially reducing the gap between FPA and SPA revenue, or even favoring FPA if SPA bidders overbid.
+    \item \textbf{Reserve Prices:} Optimal static reserve prices, potentially informed by strategies in \cite{Balseiro2021RobustAuction} or \cite{Deng2022FPAEfficiency}, are expected to improve revenue for both FPA and SPA, potentially by truncating the action space and mitigating extreme bid shading in FPA. The interaction between reserve prices and the learning dynamics is a key point of investigation.
+\end{itemize}
+
+\subsection{Observed Learning Dynamics and Emergent Behaviors}
+\begin{itemize}
+    \item We will discuss typical convergence patterns, stability of learned $\alpha_i(t)$ values, and instances of oscillations or "crashes." Our simulations will investigate if the types of complex dynamics (e.g., limit cycles, bi-stability) identified by Paes Leme et al. \cite{PaesLeme2024} manifest with these industry-standard pacing algorithms, and how auction rules (FPA/SPA) affect their prevalence and nature.
+    \item We will specifically look for evidence of FPA leading to persistently lower average $\alpha_i(t)$ values compared to SPA, even when RoS targets might allow for higher bids, and how this is affected by market conditions and learning algorithms. This will be framed in the context of emergent "collusion-like" shading. The observed steady-state $\alpha_i(t)$ distributions will be compared to theoretical equilibrium predictions like FPPE from \cite{Conitzer2022FPPE} where appropriate.
+\end{itemize}
+
+\section{Timeline and Resources}
+\begin{itemize}
+    \item \textbf{Phase 1 (Months 1-2):} Refine simulation framework, implement core auction mechanisms (FPA, SPA) and one primary learning algorithm (e.g., Dual Gradient). Initial pilot runs and debugging. Begin TopSort data analysis for parameter calibration.
+    \item \textbf{Phase 2 (Months 3-4):} Implement remaining learning algorithms (UCB, MWU). Develop and test the full suite of outcome metrics and analysis scripts. Finalize TopSort parameter calibration.
+    \item \textbf{Phase 3 (Months 5-7):} Conduct full-scale simulation runs according to the experimental grid, including both purely synthetic and TopSort-calibrated scenarios. Data collection and initial processing.
+    \item \textbf{Phase 4 (Months 8-10):} In-depth data analysis, heterogeneity analysis, interpretation of results, comparison between synthetic and semi-synthetic findings.
+    \item \textbf{Phase 5 (Months 11-12):} Manuscript preparation, drafting of discussion and conclusions, revisions.
+\end{itemize}
+\textbf{Resources:} Access to sufficient computational resources (e.g., university HPC cluster or cloud computing) will be required for the extensive simulation runs. Access to aggregated and anonymized TopSort data as discussed. Standard statistical software (R, Python) will be used for data analysis.
+
+\section{Conclusion and Broader Impact}
+This research will provide a much-needed empirical evaluation of auction design choices in the context of modern, learning-driven auto-bidding. By moving beyond static equilibrium analysis and focusing on the dynamic interactions of adaptive agents, and by grounding parameters in real-world data characteristics, this study will offer significant practical insights for advertising platforms. The findings will help platforms make more informed decisions about which auction mechanisms and reserve price policies are most robust and effective, ultimately leading to more efficient, stable, and fair advertising marketplaces. The methodological framework developed will also serve as a valuable tool for future investigations into the complex world of algorithmic markets.
+
+\bibliographystyle{apalike} % Or another suitable style
+\bibliography{references} % Assuming you have a references.bib file
+
+\appendix
+\section{Detailed Learning Algorithm Implementations} \label{app:learning_algo_details}
+(This section will contain the precise mathematical formulations for each learning algorithm as outlined in Section \ref{sec:learning_algorithms}, including pseudocode if helpful, parameter choices, and justifications.)
+
+\section{Parameter Justification for Simulation Grid}
+(This section will detail the rationale behind selecting specific ranges and values for the experimental parameters in Table \ref{tab:experimental_grid_proposal}, referencing existing literature or industry practices where appropriate.)
+
+\section{Calibration Details from TopSort Data} \label{app:topsort_calibration}
+(This section will describe the specific TopSort data fields used (e.g., aggregated eCPM, CTR distributions, observed RoS targets if available, typical advertiser counts per auction). It will explain the process of deriving distributions for $v_{i,j}$, $\tau_i$, $B_i$, $N$, etc., from this data. Any aggregation, anonymization, or proxy metrics used, along with their justifications and limitations, will be detailed here.)
+
+\section{Derivation or Definition of Key Benchmark Metrics}
+(If complex benchmark metrics are used, their derivation or precise definition will be provided here.)
+
+\end{document}

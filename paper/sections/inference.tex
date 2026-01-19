@@ -1,0 +1,108 @@
+\section{Inference}
+\label{sec:appendix_dml}
+
+In this section, we describe how we estimate heterogeneous treatment effects for first- vs.\ second-price auctions using \emph{Double Machine Learning} (DML) under the \emph{interactive regression model} (IRM). First, we outline the IRM specification and its identification assumptions (SUTVA, ignorability, and overlap). Then we explain how average (ATE), group (GATE), and conditional (CATE) treatment effects arise in this setup. Finally, we detail how sample-splitting and orthogonal moment conditions yield debiased estimates in the presence of flexible machine-learning regressors.
+
+\paragraph{Interactive Regression Model (IRM).}
+We consider a binary treatment $D \in \{0,1\}$, a set of covariates $X$, and an outcome $Y$. In our application, the \emph{treatment} $D$ is the auction type (\texttt{auction\_type\_code}) indicating whether the format is first-price ($D=1$) or second-price ($D=0$). The covariates $X$ are all other experimental parameters (e.g., learning rate, number of bidders). Finally, $Y$ is one of the performance measures---for instance, average revenue over the last 1000 rounds or time-to-convergence. The IRM posits that
+\[
+Y \;=\; g_0(D, X) \;+\; U,
+\quad 
+\mathbb{E}[U \mid X, D] = 0,
+\]
+\[
+D \;=\; m_0(X) \;+\; V,
+\quad 
+\mathbb{E}[V \mid X] = 0,
+\]
+where $g_0(D, X)$ fully interacts $D$ with $X$, allowing treatment effects to vary arbitrarily across the covariates $X$. 
+
+\paragraph{Estimands.} We focus on three main estimands:
+
+\begin{enumerate}
+\item 
+\emph{Average Treatment Effect (ATE):} 
+\[
+\theta_{\mathrm{ATE}} 
+\;=\; 
+\mathbb{E}[\,Y(1) - Y(0)\,] 
+\;=\;
+\mathbb{E}\bigl[\,g_0(1,X) - g_0(0,X)\bigr].
+\]
+Here, $Y(1)$ and $Y(0)$ denote potential outcomes under first- and second-price auctions, respectively.
+
+\item 
+\emph{Group Average Treatment Effects (GATE):}
+If we partition the sample by a discrete characteristic $G \in \{1,2,\dots,K\}$ (e.g.\ high vs.\ low number of bidders), we define
+\[
+\mathrm{GATE}(g) 
+\;=\; 
+\mathbb{E}\bigl[Y(1) - Y(0)\,\big|\,G=g\bigr].
+\]
+This captures how treatment effects differ across subgroups.
+
+\item 
+\emph{Conditional Average Treatment Effects (CATE):}
+If a continuous covariate $Z \subset X$ is of interest (e.g.\ the learning rate $\alpha$), the CATE is
+\[
+\mathrm{CATE}(z) 
+\;=\; 
+\mathbb{E}[\,Y(1) - Y(0)\,\mid Z=z].
+\]
+A practical approach approximates $\mathrm{CATE}(z)$ by projecting $\hat{g}_0(1,X) - \hat{g}_0(0,X)$ onto a low-dimensional spline basis for $Z$.
+\end{enumerate}
+
+\paragraph{Identification.} We impose three standard conditions:
+\begin{enumerate}
+\item \textit{Stable Unit Treatment Value Assumption (SUTVA):} 
+Each unit’s realized outcome $Y_i$ can be written as
+\[
+Y_i \;=\; D_i \,Y_i(1) \;+\; \bigl(1 - D_i\bigr)\,Y_i(0),
+\]
+where $Y_i(d)$ is well-defined for $d \in \{0,1\}$, and there is no interference among units. In our context, $D_i$ indicates whether unit $i$ received the “treatment” (e.g., first-price auction), ensuring no unit’s outcome depends on another unit’s treatment assignment.
+
+\item 
+\textit{Ignorability:}
+\[
+D \;\perp\; (Y(0), Y(1)) \;\big|\; X.
+\]
+Once we condition on $X$, the choice of auction format $D$ is independent of the potential outcomes. Conceptually, this is satisfied because we manually randomized the treatment. We also check for any correlation between the treatment and covariates, that might arise due to faulty or poor randomization, but that is not the case. 
+
+\item 
+\textit{Positivity:}
+\[
+0 
+\;<\; 
+P\bigl(D=1 \mid X=x\bigr) 
+\;<\;
+1, 
+\quad
+\text{for almost all } x.
+\]
+This ensures that for each $X=x$, there is a positive probability of both $D=1$ and $D=0$. This is again trivially satisfied due to randomization. 
+\end{enumerate}
+
+\paragraph{Orthogonal Moment Conditions} To estimate $\theta_{\mathrm{ATE}}$ robustly, we rely on \emph{orthogonal moment} conditions. Denote by $\pi(X)=\mathbb{E}[D\mid X]$ the propensity score and by $g_0(d,X)$ the outcome regression. A typical \emph{DoubleML} moment takes the form
+\[
+\psi\bigl(Y, D, X;\,\theta, g_0,\pi\bigr)
+\;=\;
+\Bigl[
+  \tfrac{D}{\pi(X)} - \tfrac{1-D}{1-\pi(X)}
+\Bigr]\bigl(Y - g_0(D,X)\bigr)
+\;+\;
+\bigl[g_0(1,X)-g_0(0,X)\bigr]
+\;-\;
+\theta.
+\]
+At the true functions $\bigl(g_0,\pi\bigr)$ and $\theta=\theta_{\mathrm{ATE}}$, the expectation of $\psi$ is zero. Substituting machine-learning estimates $\hat{g}_0,\hat{\pi}$ and solving $\tfrac{1}{n}\sum \hat{\psi}_i(\hat{\theta})=0$ yields a debiased estimator. \emph{Sample splitting} (cross-fitting) prevents overfitting bias by never using the same data fold for training and testing.
+
+\paragraph{Double Machine Learning} We implement DoubleML with LightGBM regressor for the outcome and classifier for the propensity model (we could have just used 0.5 for the propensity score). The procedure is:
+\begin{enumerate}
+\item 
+Randomly partition the data into $K$ folds. For each fold, train the nuisance functions $\hat{g}_0,\hat{\pi}$ on the remaining $K{-}1$ folds.
+\item 
+Use the fitted models to compute $\hat{\psi}_i$ in the held-out fold. Solve the orthogonal moment condition for $\hat{\theta}$ on that fold.
+\item 
+Average across folds to obtain the final estimates of ATE, and compute standard errors by plugging $\hat{\theta}$ back into the moment conditions.
+\end{enumerate}
+Our code also estimates GATEs by grouping observations according to binary covariates (such as “asynchronous vs.\ synchronous updates”) and CATEs by fitting spline expansions of continuous covariates (e.g.\ $\gamma$ or $\alpha$). We display these estimates in partial-dependence plots, along with 95\% confidence intervals. The results appear in the tables and figures that follow. 

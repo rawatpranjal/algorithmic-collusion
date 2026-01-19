@@ -1,0 +1,95 @@
+\section{Results: Experiment 1}
+
+The summary statistics confirm that the experimental design randomly allocated parameters across treatment conditions: none of the main covariates (e.g., learning rate $\alpha$, discount factor $\gamma$, or initialization strategy) shows correlation with \texttt{auction\_type\_code}. Despite true valuations of 1 for all bidders, the final 1000-episode average revenues (\texttt{avg\_rev\_last\_1000}) span a broad range (0.3 to 1.0), highlighting substantial variability stemming from different learning and auction interactions.
+
+\subsection*{Reveues and Seller Regret}
+
+\paragraph{First-Price Auctions Reduce Revenues.}
+DoubleML estimates reveal that switching to a first-price format (\texttt{auction\_type\_code} $=1$) significantly lowers final revenue on average by about 0.0945 ($p<0.0001$) and raises the seller’s regret on average by 0.0651 ($p<0.0001$). Other outcomes, including convergence time and price volatility, remain statistically insignificant. The no-sale rate trends modestly higher under first-price but does not reach conventional significance ($p \approx 0.082$). 
+
+\begin{table}[H]
+\centering
+\caption{Final ATE Estimates (DoubleMLIRM) for All Outcomes}
+\label{tab:ate_outcomes}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Outcome} & \textbf{ATE} & \textbf{StdErr} & \textbf{p-value} \\
+\midrule
+avg\_rev\_last\_1000   & -0.0945 & 0.0078 & 0.0000 \\
+time\_to\_converge     &  0.0152 & 0.0282 & 0.5904 \\
+avg\_regret\_of\_seller &  0.0651 & 0.0036 & 0.0000 \\
+no\_sale\_rate         &  0.0008 & 0.0004 & 0.0822 \\
+price\_volatility      &  0.0021 & 0.0018 & 0.2540 \\
+winner\_entropy        &  0.0014 & 0.0017 & 0.3845 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Fewer Bidders and Very High Discount Factors Worsen Collusion.}
+Conditional average treatment effect (CATE) results indicate that having more bidders offsets part of the revenue penalty from first-price auctions: as \(\texttt{n\_bidders}\) increases, the negative effect on final revenue shrinks. In contrast, higher \(\gamma\) slightly exacerbates the first-price reduction, presumably because agents with a stronger focus on future returns adopt more conservative near-term bidding. 
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\linewidth}
+  \centering
+  \includegraphics[width=\textwidth]{figures/e1_reg_bidder.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\linewidth}
+  \centering
+  \includegraphics[width=\textwidth]{figures/e1_rev_bidder.png}
+\end{minipage}
+\\[1em]
+\begin{minipage}{0.45\linewidth}
+  \centering
+  \includegraphics[width=\textwidth]{figures/e1_reg_gamma.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\linewidth}
+  \centering
+  \includegraphics[width=\textwidth]{figures/e1_rev_gamma.png}
+\end{minipage}
+\caption{Illustrative CATE partial-dependence plots in a 2$\times$2 grid.}
+\label{fig:cate_2x2}
+\end{figure}
+
+\paragraph{Exploration and Update Mode.}
+Group-average treatment effect (GATE) comparisons indicate that $\varepsilon$-greedy exploration intensifies first-price losses (a revenue drop of $-0.1420$) relative to Boltzmann exploration ($-0.0339$), a substantial difference ($p<0.0001$) that highlights how a more controlled and probabilistic (Boltzmann) approach mitigates aggressive underbidding. Likewise, asynchronous Q-updates increase the magnitude of first-price losses ($-0.1161$) compared to synchronous updates ($-0.0683$), a significant difference ($p=0.0010$). In other words, \emph{synchronous} Q-learning dampens the detrimental impact of first-price auctions, likely by maintaining more uniform knowledge updates across all possible actions and bidders.
+
+\begin{table}[ht]
+\centering
+\caption{GATE T-tests for \texttt{avg\_rev\_last\_1000}}
+\label{tab:gate_ttests}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{BinaryCov} & \textbf{Diff} & \textbf{t} & \textbf{p} \\
+\midrule
+init\_code                       & -0.0176 & -1.1156 & 0.2646 \\
+exploration\_code                &  0.1081 &  7.7589 & 0.0000 \\
+asynchronous\_code               & -0.0478 & -3.2790 & 0.0010 \\
+median\_opp\_past\_bid\_index\_code  & -0.0108 & -0.6911 & 0.4895 \\
+winner\_bid\_index\_state\_code     & -0.0022 & -0.1408 & 0.8880 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Price Volatility and No-Sale}
+
+Beyond the highly significant results for \textit{avg\_rev\_last\_1000} (revenue) and \textit{avg\_regret\_of\_seller}, two other findings merit attention:
+
+\paragraph{Price Volatility.}
+Although the average treatment effect (ATE) on \(\texttt{price\_volatility}\) is not significant (\(p=0.2540\)), the group-average treatment effect (GATE) analysis reveals that volatility outcomes depend significantly on both \(\texttt{exploration\_code}\) (\(\Delta=0.0112\), \(t=2.962\), \(p=0.0031\)) and \(\texttt{asynchronous\_code}\) (\(\Delta=0.0089\), \(t=2.633\), \(p=0.0085\)). In other words, while first-price auctions do not generally raise volatility on average, they \emph{do} if the agents rely on $\varepsilon$-greedy exploration or asynchronous Q-learning updates. Further, increasing the number of bidders modestly increases the price volatility under first-price auctions. The CATE turns slightly positive with higher bidders.  
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/e1_vol_bidder.png}
+\caption{CATE partial-dependence plot for number of bidders.}
+\label{fig:volatility_vs_bidders}
+\end{figure}
+
+\paragraph{No-Sale Rate.}
+The estimated ATE on \(\texttt{no\_sale\_rate}\) yields a \(p\)-value near \(0.082\), suggesting a slight upward trend under first-price auctions. Although this does not meet the strict 5\% threshold, it is sufficiently close to underscore a modest likelihood that first-price auctions may increase the fraction of no-bid rounds (where no agents' bid exceeds the reserve price).
+
+\subsection{Summary}
+
+Overall, first-price auctions were associated with substantially lower final revenues and noticeably higher seller regret. These effects were buffered by having a larger pool of bidders, but were intensified by higher discount factors. Exploration strategy and update mode both played significant roles in shaping outcomes: synchronous updates and Boltzmann exploration helped curtail the losses under first-price, whereas asynchronous updates and $\varepsilon$-greedy exploration amplified them. Although price volatility did not increase under first-price on average, it did when agents used asynchronous updating or $\varepsilon$-greedy exploration. It also did when there were a larger number of bidders, pushing against the view that more bidders are always better. Finally, while there was only a borderline effect on the fraction of no-sale episodes, the data suggest a slight tendency toward more such episodes under first-price auctions. These results are fairly unambiguous from a seller's point of view: first price auctions do not fare well when algorithms learn. 

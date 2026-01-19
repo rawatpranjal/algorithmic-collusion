@@ -1,0 +1,109 @@
+Starting differential impulse analysis with permanent defection...
+Loading Q-tables for winning information regime...
+Using bid actions: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+--------------------------------------------------
+Running differential impulse analysis for winning information regime
+--------------------------------------------------
+Running differential impulse simulations for FPA...
+Running differential impulse simulations for SPA...
+Saved figure: figures/diff_impulse_FPA_up_winning.png
+Saved figure: figures/diff_impulse_FPA_down_winning.png
+Saved figure: figures/permanent_defection_FPA_winning.png
+Saved figure: figures/diff_impulse_SPA_up_winning.png
+Saved figure: figures/diff_impulse_SPA_down_winning.png
+Saved figure: figures/permanent_defection_SPA_winning.png
+Differential impulse and permanent defection analysis completed.
+
+Analyzing differential responses for winning information regime...
+
+=== SINGLE IMPULSE ANALYSIS ===
+
+--- Differential Impulse Analysis for Winning Information Regime ---
+| Auction   | Impulse   | Shock To   | Response From   |   Immediate Diff |   Later Diff | Punishment?   | Return to Cooperation?   |
+|:----------|:----------|:-----------|:----------------|-----------------:|-------------:|:--------------|:-------------------------|
+| FPA       | Up        | Bidder 0   | Bidder 1        |             0.2  |         0    | Yes           | Yes                      |
+| FPA       | Up        | Bidder 1   | Bidder 0        |             0    |        -0.01 | No            | Yes                      |
+| FPA       | Down      | Bidder 0   | Bidder 1        |             0.13 |         0    | No            | Yes                      |
+| FPA       | Down      | Bidder 1   | Bidder 0        |             0    |         0    | No            | Yes                      |
+| SPA       | Up        | Bidder 0   | Bidder 1        |             0    |         0    | No            | Yes                      |
+| SPA       | Up        | Bidder 1   | Bidder 0        |             0    |         0    | No            | Yes                      |
+| SPA       | Down      | Bidder 0   | Bidder 1        |             0.4  |         0.6  | No            | No                       |
+| SPA       | Down      | Bidder 1   | Bidder 0        |             0    |         0    | No            | Yes                      |
+
+=== PERMANENT DEFECTION ANALYSIS ===
+
+--- Permanent Defection Analysis for Winning Information Regime ---
+| Auction   | Defector   | Responder   |   Immediate Response |   Long-term Response | Initial Punishment?   | Eventual Reciprocity?   |
+|:----------|:-----------|:------------|---------------------:|---------------------:|:----------------------|:------------------------|
+| FPA       | Bidder 0   | Bidder 1    |                    0 |                 0.04 | No                    | No                      |
+| FPA       | Bidder 1   | Bidder 0    |                    0 |                 0    | No                    | No                      |
+| SPA       | Bidder 0   | Bidder 1    |                    0 |                 0    | No                    | No                      |
+| SPA       | Bidder 1   | Bidder 0    |                    0 |                 0    | No                    | No                      |
+
+=== SUMMARY OF FINDINGS ===
+
+Single Impulse Collusion Evidence Score: 0.50 - Some evidence of collusion
+Punishment Responses: 1/8 (12%)
+Return to Cooperation: 7/8 (88%)
+
+
+Permanent Defection Response Score: 0.00 - No evidence of strategic response to defection
+Initial Punishment Responses: 0/4 (0%)
+Eventual Reciprocity: 0/4 (0%)
+
+Loading Q-tables for full information regime...
+Using bid actions: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+--------------------------------------------------
+Running differential impulse analysis for full information regime
+--------------------------------------------------
+Running differential impulse simulations for FPA...
+Running differential impulse simulations for SPA...
+Saved figure: figures/diff_impulse_FPA_up_full.png
+Saved figure: figures/diff_impulse_FPA_down_full.png
+Saved figure: figures/permanent_defection_FPA_full.png
+Saved figure: figures/diff_impulse_SPA_up_full.png
+Saved figure: figures/diff_impulse_SPA_down_full.png
+Saved figure: figures/permanent_defection_SPA_full.png
+Differential impulse and permanent defection analysis completed.
+
+Analyzing differential responses for full information regime...
+
+=== SINGLE IMPULSE ANALYSIS ===
+
+--- Differential Impulse Analysis for Full Information Regime ---
+| Auction   | Impulse   | Shock To   | Response From   |   Immediate Diff |   Later Diff | Punishment?   | Return to Cooperation?   |
+|:----------|:----------|:-----------|:----------------|-----------------:|-------------:|:--------------|:-------------------------|
+| FPA       | Up        | Bidder 0   | Bidder 1        |             0    |         0.04 | No            | Yes                      |
+| FPA       | Up        | Bidder 1   | Bidder 0        |             0.4  |         0.04 | Yes           | Yes                      |
+| FPA       | Down      | Bidder 0   | Bidder 1        |             0.27 |         0.04 | No            | Yes                      |
+| FPA       | Down      | Bidder 1   | Bidder 0        |             0.4  |         0.04 | No            | Yes                      |
+| SPA       | Up        | Bidder 0   | Bidder 1        |             0    |         0    | No            | Yes                      |
+| SPA       | Up        | Bidder 1   | Bidder 0        |            -0.13 |         0.02 | No            | Yes                      |
+| SPA       | Down      | Bidder 0   | Bidder 1        |            -0.13 |         0.02 | Yes           | Yes                      |
+| SPA       | Down      | Bidder 1   | Bidder 0        |             0.2  |         0.02 | No            | Yes                      |
+
+=== PERMANENT DEFECTION ANALYSIS ===
+
+--- Permanent Defection Analysis for Full Information Regime ---
+| Auction   | Defector   | Responder   |   Immediate Response |   Long-term Response | Initial Punishment?   | Eventual Reciprocity?   |
+|:----------|:-----------|:------------|---------------------:|---------------------:|:----------------------|:------------------------|
+| FPA       | Bidder 0   | Bidder 1    |                 0.07 |                 0.12 | No                    | Yes                     |
+| FPA       | Bidder 1   | Bidder 0    |                 0.4  |                 0.64 | Yes                   | Yes                     |
+| SPA       | Bidder 0   | Bidder 1    |                 0    |                 0.28 | No                    | Yes                     |
+| SPA       | Bidder 1   | Bidder 0    |                 0.33 |                 0.48 | Yes                   | Yes                     |
+
+=== SUMMARY OF FINDINGS ===
+
+Single Impulse Collusion Evidence Score: 0.62 - Moderate evidence of collusion
+Punishment Responses: 2/8 (25%)
+Return to Cooperation: 8/8 (100%)
+
+
+Permanent Defection Response Score: 0.70 - Moderate evidence of strategic response to defection
+Initial Punishment Responses: 2/4 (50%)
+Eventual Reciprocity: 4/4 (100%)
+
+
+Differential impulse analysis with permanent defection complete. Results saved to logs/differential_impulse_log.txt and figures/

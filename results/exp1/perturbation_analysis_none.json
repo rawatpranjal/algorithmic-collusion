@@ -1,0 +1,102 @@
+{
+  "FPA": {
+    "visitation_frequency": {
+      "['START']": 0.0001,
+      "[0.0]": 5e-05,
+      "[1.0]": 5e-05,
+      "[0.33]": 0.24995,
+      "[0.67]": 0.74985
+    },
+    "perturbation_results": {
+      "[0.33]": {
+        "agent0": {
+          "retaliation": true,
+          "accommodation": false
+        },
+        "agent1": {
+          "retaliation": true,
+          "accommodation": false
+        }
+      },
+      "[0.67]": {
+        "agent0": {
+          "retaliation": false,
+          "accommodation": true
+        },
+        "agent1": {
+          "retaliation": false,
+          "accommodation": true
+        }
+      }
+    },
+    "collusion_index": {
+      "agent0": {
+        "retaliation": 0.25,
+        "accommodation": 0.75,
+        "collusion_index": 0.5
+      },
+      "agent1": {
+        "retaliation": 0.25,
+        "accommodation": 0.75,
+        "collusion_index": 0.5
+      },
+      "overall_collusion_index": 0.5,
+      "interpretation": "Some evidence of strategic coordination, weak collusion"
+    }
+  },
+  "SPA": {
+    "visitation_frequency": {
+      "['START']": 0.0001,
+      "[0.0]": 5e-05,
+      "[1.0]": 0.49995,
+      "[0.67]": 0.24995,
+      "[0.33]": 0.24995
+    },
+    "perturbation_results": {
+      "[1.0]": {
+        "agent0": {
+          "retaliation": false,
+          "accommodation": true
+        },
+        "agent1": {
+          "retaliation": false,
+          "accommodation": true
+        }
+      },
+      "[0.67]": {
+        "agent0": {
+          "retaliation": true,
+          "accommodation": false
+        },
+        "agent1": {
+          "retaliation": false,
+          "accommodation": true
+        }
+      },
+      "[0.33]": {
+        "agent0": {
+          "retaliation": true,
+          "accommodation": false
+        },
+        "agent1": {
+          "retaliation": true,
+          "accommodation": false
+        }
+      }
+    },
+    "collusion_index": {
+      "agent0": {
+        "retaliation": 0.4999749962494374,
+        "accommodation": 0.5000250037505626,
+        "collusion_index": 0.5
+      },
+      "agent1": {
+        "retaliation": 0.2499874981247187,
+        "accommodation": 0.7500125018752813,
+        "collusion_index": 0.5
+      },
+      "overall_collusion_index": 0.5,
+      "interpretation": "Some evidence of strategic coordination, weak collusion"
+    }
+  }
+}

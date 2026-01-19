@@ -1,0 +1,90 @@
+==================================================
+QUICK TEST MODE - Reduced parameters for fast validation
+==================================================
+
+==================================================
+EXPERIMENT 1: IDENTICAL VALUES (N=2, vi=1.0)
+==================================================
+Q-Learning Parameters:
+  Learning Rate (α): 0.1 to 0.0 (linear decay)
+  Discount Factor (γ): 0.9
+  Exploration Rate (ε): 1.0 to 0.0 (linear decay)
+  Initial Q-Values: Random in [0, 1]
+  Training Rounds: 1,000
+Bid Space: [0.0, 0.33, 0.67, 1.0]
+Rolling Window Size: 100
+Bellman Error Window Size: 500
+Information Regimes:
+  - No Disclosure ('none')
+  - Winning Bid Only ('winning')
+  - Full Disclosure ('full')
+==================================================
+
+
+INFORMATION REGIME: No Disclosure
+--------------------------------------------------
+
+Generating training dynamics plots (3x2 grid)
+Saved figure: results/exp1/quick_test/bellman_revenue_none.png
+Saved figure: results/exp1/quick_test/rewards_none.png
+Saved figure: results/exp1/quick_test/bids_none.png
+
+Generating bid and price distribution plots (3x2 grid)
+Saved distribution table to: results/exp1/quick_test/distribution_table_none.txt
+Saved LaTeX distribution table to: results/exp1/quick_test/distribution_table_none.tex
+
+--- Distribution Table (Last 100 Rounds) - No Disclosure ---
+|   Bid | FPA Price (%)   | SPA Price (%)   | FPA Bid0 (%)   | FPA Bid1 (%)   | SPA Bid0 (%)   | SPA Bid1 (%)   |
+|------:|:----------------|:----------------|:---------------|:---------------|:---------------|:---------------|
+|  0    | 0 (0.0%)        | 5 (5.0%)        | 1 (2.0%)       | 0 (0.0%)       | 1 (2.0%)       | 1 (2.0%)       |
+|  0.33 | 0 (0.0%)        | 26 (26.0%)      | 23 (46.0%)     | 0 (0.0%)       | 1 (2.0%)       | 24 (48.0%)     |
+|  0.67 | 97 (97.0%)      | 66 (66.0%)      | 24 (48.0%)     | 50 (100.0%)    | 3 (6.0%)       | 24 (48.0%)     |
+|  1    | 3 (3.0%)        | 3 (3.0%)        | 2 (4.0%)       | 0 (0.0%)       | 45 (90.0%)     | 1 (2.0%)       |
+
+Generating learned strategy plots
+Saved strategy table to: results/exp1/quick_test/strategy_table_none_bidder0.txt
+Saved LaTeX strategy table to: results/exp1/quick_test/strategy_table_none_bidder0.tex
+Saved strategy table to: results/exp1/quick_test/strategy_table_none_bidder1.txt
+Saved LaTeX strategy table to: results/exp1/quick_test/strategy_table_none_bidder1.tex
+
+--- Analysis Results ---
+Auction Type      Mean Bellman Error (Agent 0)    Mean Bellman Error (Agent 1)    Best Response Consistency (Agent 0)    Best Response Consistency (Agent 1)    Number of States Checked
+--------------  ------------------------------  ------------------------------  -------------------------------------  -------------------------------------  --------------------------
+FPA                                       1.08                            1.4                                     0.4                                    0.6                           5
+SPA                                       1.99                            1.87                                    0.8                                    1                             5
+
+--- Learned Strategies (Sample) ---
+Auction Type      Agent ID  State      Action  Q-Value
+--------------  ----------  -------  --------  ---------
+FPA                      0  (0.0,)       0     1.19
+FPA                      0  (0.0,)       0.33  1.24*
+FPA                      0  (0.0,)       0.67  1.11
+FPA                      0  (0.0,)       1     0.77
+FPA                      0  (0.33,)      0     1.08
+FPA                      0  (0.33,)      0.33  1.19
+FPA                      0  (0.33,)      0.67  1.21*
+FPA                      0  (0.33,)      1     0.88
+FPA                      0  (0.67,)      0     1.04
+FPA                      0  (0.67,)      0.33  1.19*
+FPA                      0  (0.67,)      0.67  0.78
+FPA                      0  (0.67,)      1     0.70
+FPA                      0  (1.0,)       0     1.14*
+FPA                      0  (1.0,)       0.33  0.60
+FPA                      0  (1.0,)       0.67  0.85
+FPA                      0  (1.0,)       1     0.80
+FPA                      1  (0.0,)       0     1.33
+FPA                      1  (0.0,)       0.33  1.81*
+FPA                      1  (0.0,)       0.67  1.18
+FPA                      1  (0.0,)       1     1.11
+Saved complete strategy table to: results/exp1/quick_test/learned_strategies.txt
+
+Analyzing collusion strategies...
+Saved collusion analysis for none to results/exp1
+
+Performing perturbation analysis...
+Computing state visitation frequencies...
+Testing perturbation responses...
+Calculating collusion indices...
+Saved perturbation analysis for none to results/exp1
+Saved experiment data to: results/exp1/quick_test/none_data.npz
+Experiment completed. Log files and figures saved to results/exp1/quick_test/ directory.

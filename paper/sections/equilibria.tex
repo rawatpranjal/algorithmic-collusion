@@ -1,0 +1,12 @@
+
+\section{Appendix: Equilibria under Discretized Bidding}
+
+\subsection{Constant Valuations}
+
+In a first-price auction where each bidder's valuation is 1 and allowable bids are in \(\{0,0.1,\dots,1\}\), a symmetric profile \((b,b,\dots,b)\) yields an expected payoff of \(\frac{1}{N}(1-b)\). A unilateral upward deviation to \(b+0.1\) (if \(\le 1\)) has a payoff of \(1-(b+0.1)\). No deviation is profitable if 
+\[
+1 - (b + 0.1) \;\le\; \frac{1}{N}(1 - b)
+\;\;\Longrightarrow\;\;
+b \;\ge\; \frac{0.9\,N - 1}{N - 1}.
+\]
+Thus, for each \(N\), any \(b\) at or above this threshold (rounded to 0.1) is a pure-strategy Nash equilibrium. For example, when \(N=2\), \(b\ge 0.8\), and when \(N=3\), \(b\ge 0.85\). By contrast, in a second-price auction with identical valuations all equal to 1, bidding 1 is weakly dominant under private values, and in the setting of known identical values, any profile where at least one bidder bids 1 constitutes a Nash equilibrium.

@@ -1,0 +1,18 @@
+
+==================================================
+EXPERIMENT 1: IDENTICAL VALUES (N=2, vi=1.0)
+==================================================
+Q-Learning Parameters:
+  Learning Rate (α): 0.1 to 0.0 (linear decay)
+  Discount Factor (γ): 0.9
+  Exploration Rate (ε): 1.0 to 0.0 (linear decay)
+  Initial Q-Values: Random in [0, 1]
+  Training Rounds: 1,000
+Bid Space: [0.0, 0.33, 0.67, 1.0]
+Rolling Window Size: 100
+Bellman Error Window Size: 500
+Information Regimes:
+  - No Disclosure ('none')
+  - Winning Bid Only ('winning')
+  - Full Disclosure ('full')
+==================================================

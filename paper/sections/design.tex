@@ -1,0 +1,101 @@
+\section{Experimental Design}
+
+\subsection{Overview}
+We investigate how agents learn to bid in sealed-bid auctions under different informational and valuation assumptions, focusing on the distinction between first-price and second-price rules. Each round, every bidder submits a bid in the unit interval, and the highest bidder wins. We incorporate a reserve price $r$ that excludes bids below a certain threshold. Tie-breaking among equally high bids is random. We measure outcomes with three key statistics: (i) average revenue in later rounds, (ii) the round at which bidding strategies stabilize (time to converge), and (iii) a “seller regret” defined as $1$ minus the realized revenue. 
+
+We conduct three experiments that vary in valuation complexity and the learning algorithms used. Experiment 1 isolates and tests how the payment rule (first-price vs. second-price) interacts with constant valuations. Experiment 2 introduces affiliated (signal-based) valuations, parameterized by $\eta$, to assess whether interdependent bidder valuations alter outcomes found in Experiment~1. Experiment 3 replaces the setup in Experiment 2 with bandit-based algorithms to study the effect of more realistic exploration methods. To summarize:
+
+\begin{itemize}
+    \item Experiment 1: Constant (identical) valuations + Q-learning.
+    \item Experiment 2: Affiliated, signal-based valuations + Q-learning.
+    \item Experiment 3: Affiliated, signal-based valuations + bandit-based exploration.
+\end{itemize}
+
+The first experiment is the simplest case: valuations are constant. A good auction design in this case should lead to honest bidding. The second experiment introduces real world elements of stochasticity in valuations: this permits natural bid shading. The last experiment add another real world dimension: optimal exploration. Q-learning takes a very long time to converge and this can be costly. Bandit based approaches on the other hand are designed to minimize regret and arrive quickly towards the optimal decison using statistical error bands. They are more representative of how algorithms would `learn to bid" in real world settings. 
+
+\subsection{Auction Settings}
+We model a sealed-bid auction with $n$ bidders. In each round, bidder $i$ submits a bid $b_i \in [0,1]$, discretized into a finite grid (e.g.\ $11$ equally spaced actions). Let $r \ge 0$ be a reserve price. Any bid below $r$ is ineligible to win. Among the remaining bids, the highest wins:
+\[
+\text{Winner} \;=\;\arg\max_i\; \{\,b_i : b_i \ge r\}.
+\]
+If all bids lie below $r$, no bidder wins and the revenue is zero. If multiple bids tie for the highest value, one is chosen uniformly at random. We consider two payment rules:
+\[
+\text{First-Price: pays own bid,}
+\quad
+\text{Second-Price: pays the second-highest bid.}
+\]
+A bidder $i$ has valuation $v_i$ and obtains payoff $v_i - \text{price}$ if she wins and $0$ otherwise. In the simplest scenario, we set $v_i = 1.0$ for all $i$. More generally, we let $v_i$ depend on private signals and an affiliation parameter $\eta \in [0,1]$.
+
+\subsection{Algorithmic Settings}
+We employ two broad classes of learning algorithms: Q-learning (Experiments~1--2) and bandit-based methods (Experiment~3). Additionally, we incorporate various parameters controlling exploration, discounting, and information usage.
+
+\paragraph{Q-learning.}
+Each bidder maintains a table $Q(s,a)$ for a finite set of states $s$ and actions $a$. A “state” may encode (a) the bidder’s current signal (if valuations are signal-based), (b) the median of other bidders’ past bids, (c) the most recent winning bid, or (d) neither. Adding either the median or the winner-bid dimension discretizes these features into the same grid as the bids.
+
+After the bidder observes a payoff $r$ and transitions to a new state $s'$, the Q-learning update takes the form
+\[
+Q(s_t,a_t)
+\;\leftarrow\;Q(s_t,a_t)\;+\;\alpha\,\Bigl[
+r_t \;+\;\gamma\,\max_{a'}\,Q(s_{t+1},a') 
+\;-\;Q(s_t,a_t)\Bigr].
+\]
+Here $\alpha \in (0,1]$ is the learning rate, and $\gamma \in [0,1)$ is the discount factor. In an \emph{asynchronous} approach, only the chosen action’s $Q$-value is updated; in a \emph{synchronous} approach, each potential action $a$ in state $s_t$ is updated via a similar formula but uses counterfactual payoffs $r_t(a)$ for unchosen actions as well. Exploration is enforced through either an $\varepsilon$-greedy policy or a Boltzmann (softmax) policy.
+
+\paragraph{Bandits.}
+In our final experiment, we replace Q-learning with multi-armed or contextual bandits. Each bidder regards each feasible bid as an “arm” and seeks to maximize immediate payoff. A standard UCB bandit applies an optimism bonus of the form
+\[
+\hat{\mu}_a + c\,\sqrt{\frac{\ln(t)}{n_a}},
+\]
+where $\hat{\mu}_a$ is the empirical mean payoff for arm (bid) $a$, $n_a$ is how many times $a$ has been played, $t$ is the total number of rounds, and $c$ governs exploration. A linear contextual bandit replaces $\hat{\mu}_a$ with a linear model of the context (own signal, previous winning bid, etc.), adding a similar exploration bonus involving $c$ and the context’s covariance under the model. Unlike Q-learning, these bandits do not use $\alpha$ or $\gamma$.
+
+\subsection{Outcomes}
+Across all experiments, we collect three primary statistics:
+\begin{itemize}
+\item \emph{Average revenue in later rounds} to gauge whether the auction mechanism and bidder learning converge to high revenue.
+\item \emph{Time to converge}, computed as the earliest round after which revenue remains within a small band (e.g.\ $\pm5\%$) of its final average.
+\item \emph{Seller regret}, defined as $1 - \text{(observed revenue)}$, measuring how far short the seller’s revenue is from an ideal upper bound of $1$.
+\end{itemize}
+We track these measures for both first-price and second-price rules, comparing how each mechanism’s final outcomes and convergence speeds differ.
+
+\subsection{Experiment 1: Identical Valuations}
+In the first experiment, we set $v_i = 1.0$ for all bidders. Each bidder’s payoff if winning is $1 - b$ in a first-price auction and $1 - b_{(2)}$ in a second-price auction, where $b_{(2)}$ is the second-highest bid. We optionally impose a reserve price $r$. Q-learning is used to pick actions from the $[0,1]$ grid, with $\alpha$ and $\gamma$ chosen from predefined sets. The number of bidders $n$ and total episodes are also varied. Agents may observe no additional state features, or they may observe the median of opponents’ previous bids and/or the previous winning bid. Both asynchronous and synchronous Q-learning modes are tested, using either an $\varepsilon$-greedy or Boltzmann exploration policy.
+
+\subsection{Experiment 2: Affiliated Valuations}
+Each bidder now draws a private signal $s_i \in [0,1]$ each round. We introduce an affiliation parameter $\eta \in [0,1]$ and define
+\[
+v_i 
+\;=\;
+\bigl(1 - 0.5\,\eta\bigr)\,s_i 
+\;+\;
+0.5\,\eta \,m_{-i},
+\]
+where $m_{-i}$ is the average signal among all other bidders. When $\eta=0$, the valuation depends solely on one’s own signal; when $\eta=1$, it weights the bidder’s and opponents’ signals equally. This leads to non-stationary valuations. We still apply Q-learning with $\alpha$ and $\gamma$, as in Experiment~1, but now each bidder’s state may include her current $s_i$, as well as the median or previous winning bid if desired. We again allow multiple reserve prices $r$, different numbers of bidders, and various numbers of total episodes.
+
+\subsection{Experiment 3: Bandit Approaches}
+We retain the affiliated valuation model from Experiment~2, but replace Q-learning with either a standard UCB bandit or a linear contextual bandit. Each bidder treats each possible bid as an arm and updates an estimate of the reward. A parameter $c$ controls exploration; for UCB, this appears in the square-root bonus term, and for contextual bandits, it appears in the uncertainty bonus involving the context features. Other aspects remain the same (reserve price $r$, number of bidders, total rounds). By comparing these bandit strategies with Q-learning, we examine whether more structured exploration can converge faster or yield distinct equilibrium-like bidding behaviors.
+
+\subsection{Parameter Ranges}
+Table~\ref{tab:params} summarizes the parameters used across all experiments, their descriptions, and the ranges explored. A checkmark indicates that the parameter is applicable in a given experiment. 
+
+\begin{table}[H]
+\centering
+\caption{Parameter Ranges and Their Usage Across Experiments}
+\label{tab:params}
+\begin{tabular}{l l l c c c}
+\toprule
+\textbf{Name} & \textbf{Description} & \textbf{Range} & \textbf{E1} & \textbf{E2} & \textbf{E3}\\
+\midrule
+$\alpha$ & Q-learning rate & $\{0.001,0.005,0.01,0.05,0.1\}$ & \checkmark & \checkmark & \\
+$\gamma$ & Discount factor & $\{0.0,0.25,0.5,0.75,0.9,0.95,0.99\}$ & \checkmark & \checkmark & \\
+$\varepsilon$ & E-greedy exploration prob & Typically decays from 1 to 0 & \checkmark & \checkmark & \\
+Boltzmann & Softmax exploration & Weight factor over $Q$-values & \checkmark & \checkmark & \\
+$c$ & Bandit exploration param & E.g.\ $[0.01,2.0]$ &  &  & \checkmark \\
+$r$ & Reserve price & $\{0.0,0.1,0.2,0.3,0.4,0.5\}$ & \checkmark & \checkmark & \checkmark \\
+$n$ & Number of bidders & $\{2,4,6\}$ or similar & \checkmark & \checkmark & \checkmark \\
+$\eta$ & Affiliation parameter & $[0,1]$ &  & \checkmark & \checkmark \\
+\textit{Episodes} & Total training rounds & E.g.\ $\{10{,}000, 50{,}000, 100{,}000\}$ & \checkmark & \checkmark & \checkmark \\
+\textit{Sync/Async} & Q-learning modes & N/A (binary choice) & \checkmark & \checkmark & \\
+\textit{Median/Winner} & State features & N/A (binary choice) & \checkmark & \checkmark & \checkmark\\
+\bottomrule
+\end{tabular}
+\end{table}
