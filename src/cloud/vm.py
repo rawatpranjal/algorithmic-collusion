@@ -18,6 +18,7 @@ class VMConfig:
     image_family: str = "ubuntu-2204-lts"
     image_project: str = "ubuntu-os-cloud"
     disk_size_gb: int = 50
+    startup_script: str = None
 
 
 class CloudVM:
@@ -52,7 +53,8 @@ class CloudVM:
             return
 
         print(f"Creating VM {self.config.name}...")
-        self._run_gcloud([
+
+        cmd = [
             "compute", "instances", "create", self.config.name,
             f"--zone={self.config.zone}",
             f"--machine-type={self.config.machine_type}",
@@ -60,9 +62,18 @@ class CloudVM:
             f"--image-project={self.config.image_project}",
             f"--boot-disk-size={self.config.disk_size_gb}GB",
             "--scopes=cloud-platform",
-        ])
-        print(f"VM {self.config.name} created. Waiting for SSH...")
-        time.sleep(30)  # Wait for VM to be ready
+        ]
+
+        # Add startup script if provided
+        if self.config.startup_script:
+            cmd.append(f"--metadata=startup-script={self.config.startup_script}")
+
+        self._run_gcloud(cmd)
+        print(f"VM {self.config.name} created.")
+
+        if not self.config.startup_script:
+            print("Waiting for SSH...")
+            time.sleep(30)  # Only wait if not using startup script
 
     def delete(self):
         """Delete the VM."""
@@ -145,12 +156,13 @@ class CloudVM:
         self.ssh("cd ~ && rm -rf code && mkdir code && tar -xzf code.tar.gz -C code")
         print("Code uploaded")
 
-    def run_experiment(self, exp: int, quick: bool = True, parallel: bool = True, workers: int = 4) -> str:
+    def run_experiment(self, exp: int, quick: bool = True, parallel: bool = True, workers: int = 4, runs: int = 250) -> str:
         """Run an experiment on the VM."""
         cmd_parts = [
             "cd ~/code &&",
             "~/venv/bin/python scripts/run_experiment.py",
-            f"--exp {exp}"
+            f"--exp {exp}",
+            f"--runs {runs}"
         ]
         if quick:
             cmd_parts.append("--quick")
