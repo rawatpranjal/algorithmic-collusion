@@ -25,6 +25,8 @@ algorithmic-collusion/
 │       ├── est1.py
 │       ├── est2.py
 │       └── est3.py
+├── scripts/
+│   └── run_experiment.py   # Unified CLI entry point
 ├── results/                # Experiment output data
 │   ├── exp1/
 │   ├── exp2/
@@ -43,29 +45,42 @@ pip install -r requirements.txt
 
 ## Running Experiments
 
+All experiments are run through the unified CLI at `scripts/run_experiment.py`.
+
 ### Quick Tests
 
-Each experiment supports a `--quick` flag for fast validation:
-
 ```bash
-# Run quick tests (< 30 seconds each)
-python src/experiments/exp1.py --quick
-python src/experiments/exp2.py --quick
-python src/experiments/exp3.py --quick
+python scripts/run_experiment.py --exp 1 --quick
+python scripts/run_experiment.py --exp 2 --quick
+python scripts/run_experiment.py --exp 3 --quick
 ```
 
-Quick test output is saved to `results/exp{N}/quick_test/`.
-
-### Full Experiments
+### Full Experiments (Parallel)
 
 ```bash
-# Run full experiments (these take significant time)
-python src/experiments/exp1.py
-python src/experiments/exp2.py
-python src/experiments/exp3.py
+python scripts/run_experiment.py --exp 1 --parallel
+python scripts/run_experiment.py --exp 2 --parallel
+python scripts/run_experiment.py --exp 3 --parallel
 ```
 
-Full experiment output is saved to `results/exp{N}/`.
+### Full Experiments (Sequential)
+
+```bash
+python scripts/run_experiment.py --exp 1
+python scripts/run_experiment.py --exp 2
+python scripts/run_experiment.py --exp 3
+```
+
+Output is saved to `results/exp{N}/`.
+
+### CLI Reference
+
+| Flag | Description |
+|------|-------------|
+| `--exp N` | Experiment number (1, 2, or 3) |
+| `--quick` | Reduced parameters for fast testing |
+| `--parallel` | Use multiprocessing |
+| `--workers N` | Number of parallel workers |
 
 ### Running Estimation/Analysis
 
