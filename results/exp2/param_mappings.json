@@ -1,0 +1,26 @@
+{
+  "auction_type": {
+    "first": 1,
+    "second": 0
+  },
+  "init": {
+    "random": 0,
+    "zeros": 1
+  },
+  "exploration": {
+    "egreedy": 0,
+    "boltzmann": 1
+  },
+  "asynchronous": {
+    "0": 0,
+    "1": 1
+  },
+  "median_opp_past_bid_index": {
+    "false": 0,
+    "true": 1
+  },
+  "winner_bid_index_state": {
+    "false": 0,
+    "true": 1
+  }
+}

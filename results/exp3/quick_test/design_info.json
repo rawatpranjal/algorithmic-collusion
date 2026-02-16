@@ -1,0 +1,38 @@
+{
+  "experiment": 3,
+  "n_factors": 8,
+  "factors": {
+    "auction_type": {
+      "low": "second",
+      "high": "first"
+    },
+    "eta": {
+      "low": 0.0,
+      "high": 1.0
+    },
+    "c": {
+      "low": 0.1,
+      "high": 2.0
+    },
+    "lam": {
+      "low": 0.1,
+      "high": 5.0
+    },
+    "n_bidders": {
+      "low": 2,
+      "high": 4
+    },
+    "reserve_price": {
+      "low": 0.0,
+      "high": 0.5
+    },
+    "use_median_of_others": {
+      "low": false,
+      "high": true
+    },
+    "use_past_winner_bid": {
+      "low": false,
+      "high": true
+    }
+  }
+}

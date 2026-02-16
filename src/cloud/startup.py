@@ -1,11 +1,12 @@
 """Generate GCE startup scripts for experiments."""
 
 
-def generate_startup_script(bucket_name: str, exp: int, quick: bool = False, parallel: bool = True) -> str:
+def generate_startup_script(bucket_name: str, exp: int, quick: bool = False, parallel: bool = True, runs: int = None) -> str:
     """Generate bash startup script for VM."""
 
     quick_flag = "--quick" if quick else ""
     parallel_flag = "--parallel" if parallel else ""
+    runs_flag = f"--runs {runs}" if runs else ""
 
     script = f'''#!/bin/bash
 set -e
@@ -35,7 +36,7 @@ echo "Installing Python dependencies..."
 # Run experiment
 echo "Running experiment {exp}..."
 cd /opt/code
-/opt/venv/bin/python scripts/run_experiment.py --exp {exp} {quick_flag} {parallel_flag}
+/opt/venv/bin/python scripts/run_experiment.py --exp {exp} {quick_flag} {parallel_flag} {runs_flag}
 
 # Upload results to GCS
 echo "Uploading results..."

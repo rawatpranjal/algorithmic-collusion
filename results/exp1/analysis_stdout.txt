@@ -1,0 +1,1090 @@
+=== Factorial Analysis: Experiment 1 ===
+Observations: 16
+Factors (10): ['auction_type_coded', 'alpha_coded', 'gamma_coded', 'reserve_price_coded', 'init_coded', 'exploration_coded', 'asynchronous_coded', 'n_bidders_coded', 'median_opp_past_bid_index_coded', 'winner_bid_index_state_coded']
+Responses: ['avg_rev_last_1000', 'time_to_converge', 'avg_regret_of_seller', 'no_sale_rate', 'price_volatility', 'winner_entropy']
+
+=== Summary Statistics ===
+|                                 |   count |      mean |    std |       min |       25% |       50% |       75% |       max |
+|---------------------------------|---------|-----------|--------|-----------|-----------|-----------|-----------|-----------|
+| auction_type_coded              | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| alpha_coded                     | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| gamma_coded                     | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| reserve_price_coded             | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| init_coded                      | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| exploration_coded               | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| asynchronous_coded              | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| n_bidders_coded                 | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| median_opp_past_bid_index_coded | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| winner_bid_index_state_coded    | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| avg_rev_last_1000               | 16.0000 |    0.7787 | 0.0975 |    0.6492 |    0.6931 |    0.7664 |    0.8541 |    0.9138 |
+| time_to_converge                | 16.0000 | 1000.0000 | 0.0000 | 1000.0000 | 1000.0000 | 1000.0000 | 1000.0000 | 1000.0000 |
+| avg_regret_of_seller            | 16.0000 |    0.2213 | 0.0975 |    0.0862 |    0.1459 |    0.2336 |    0.3070 |    0.3508 |
+| no_sale_rate                    | 16.0000 |    0.0368 | 0.0383 |    0.0000 |    0.0000 |    0.0310 |    0.0722 |    0.0850 |
+| price_volatility                | 16.0000 |    0.2281 | 0.0305 |    0.1941 |    0.2015 |    0.2256 |    0.2437 |    0.2835 |
+| winner_entropy                  | 16.0000 |    0.6842 | 0.0168 |    0.6365 |    0.6862 |    0.6927 |    0.6930 |    0.6931 |
+
+
+============================================================
+RESPONSE: avg_rev_last_1000
+============================================================
+
+--- OLS Regression Summary ---
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:      avg_rev_last_1000   R-squared:                       0.666
+Model:                            OLS   Adj. R-squared:                 -0.003
+Method:                 Least Squares   F-statistic:                    0.9949
+Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.537
+Time:                        01:28:08   Log-Likelihood:                 23.826
+No. Observations:                  16   AIC:                            -25.65
+Df Residuals:                       5   BIC:                            -17.15
+Df Model:                          10                                         
+Covariance Type:            nonrobust                                         
+================================================================================================================================
+                                                                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                        0.0354      0.001     31.904      0.000       0.033       0.038
+auction_type_coded                                              -0.0086      0.003     -2.469      0.057      -0.018       0.000
+alpha_coded                                                     -0.0022      0.003     -0.625      0.559      -0.011       0.007
+gamma_coded                                                     -0.0035      0.003     -0.991      0.367      -0.012       0.006
+reserve_price_coded                                             -0.0041      0.003     -1.177      0.292      -0.013       0.005
+init_coded                                                      -0.0354      0.001    -31.904      0.000      -0.038      -0.033
+exploration_coded                                               -0.0354      0.001    -31.904      0.000      -0.038      -0.033
+asynchronous_coded                                              -0.0354      0.001    -31.904      0.000      -0.038      -0.033
+n_bidders_coded                                                 -0.0354      0.001    -31.904      0.000      -0.038      -0.033
+median_opp_past_bid_index_coded                                 -0.0354      0.001    -31.904      0.000      -0.038      -0.033
+winner_bid_index_state_coded                                    -0.0354      0.001    -31.904      0.000      -0.038      -0.033
+auction_type_coded:alpha_coded                                   0.0119      0.024      0.487      0.647      -0.051       0.075
+auction_type_coded:gamma_coded                                  -0.0153      0.024     -0.626      0.559      -0.078       0.047
+auction_type_coded:reserve_price_coded                          -0.0008      0.024     -0.034      0.974      -0.064       0.062
+auction_type_coded:init_coded                                    0.0086      0.003      2.469      0.057      -0.000       0.018
+auction_type_coded:exploration_coded                             0.0086      0.003      2.469      0.057      -0.000       0.018
+auction_type_coded:asynchronous_coded                            0.0086      0.003      2.469      0.057      -0.000       0.018
+auction_type_coded:n_bidders_coded                               0.0086      0.003      2.469      0.057      -0.000       0.018
+auction_type_coded:median_opp_past_bid_index_coded               0.0086      0.003      2.469      0.057      -0.000       0.018
+auction_type_coded:winner_bid_index_state_coded                  0.0086      0.003      2.469      0.057      -0.000       0.018
+alpha_coded:gamma_coded                                         -0.0121      0.024     -0.497      0.640      -0.075       0.051
+alpha_coded:reserve_price_coded                                  0.0018      0.024      0.072      0.945      -0.061       0.065
+alpha_coded:init_coded                                           0.0022      0.003      0.625      0.559      -0.007       0.011
+alpha_coded:exploration_coded                                    0.0022      0.003      0.625      0.559      -0.007       0.011
+alpha_coded:asynchronous_coded                                   0.0022      0.003      0.625      0.559      -0.007       0.011
+alpha_coded:n_bidders_coded                                      0.0022      0.003      0.625      0.559      -0.007       0.011
+alpha_coded:median_opp_past_bid_index_coded                      0.0022      0.003      0.625      0.559      -0.007       0.011
+alpha_coded:winner_bid_index_state_coded                         0.0022      0.003      0.625      0.559      -0.007       0.011
+gamma_coded:reserve_price_coded                                  0.0112      0.024      0.460      0.665      -0.052       0.074
+gamma_coded:init_coded                                           0.0035      0.003      0.991      0.367      -0.006       0.012
+gamma_coded:exploration_coded                                    0.0035      0.003      0.991      0.367      -0.006       0.012
+gamma_coded:asynchronous_coded                                   0.0035      0.003      0.991      0.367      -0.006       0.012
+gamma_coded:n_bidders_coded                                      0.0035      0.003      0.991      0.367      -0.006       0.012
+gamma_coded:median_opp_past_bid_index_coded                      0.0035      0.003      0.991      0.367      -0.006       0.012
+gamma_coded:winner_bid_index_state_coded                         0.0035      0.003      0.991      0.367      -0.006       0.012
+reserve_price_coded:init_coded                                   0.0041      0.003      1.177      0.292      -0.005       0.013
+reserve_price_coded:exploration_coded                            0.0041      0.003      1.177      0.292      -0.005       0.013
+reserve_price_coded:asynchronous_coded                           0.0041      0.003      1.177      0.292      -0.005       0.013
+reserve_price_coded:n_bidders_coded                              0.0041      0.003      1.177      0.292      -0.005       0.013
+reserve_price_coded:median_opp_past_bid_index_coded              0.0041      0.003      1.177      0.292      -0.005       0.013
+reserve_price_coded:winner_bid_index_state_coded                 0.0041      0.003      1.177      0.292      -0.005       0.013
+init_coded:exploration_coded                                     0.0354      0.001     31.904      0.000       0.033       0.038
+init_coded:asynchronous_coded                                    0.0354      0.001     31.904      0.000       0.033       0.038
+init_coded:n_bidders_coded                                       0.0354      0.001     31.904      0.000       0.033       0.038
+init_coded:median_opp_past_bid_index_coded                       0.0354      0.001     31.904      0.000       0.033       0.038
+init_coded:winner_bid_index_state_coded                          0.0354      0.001     31.904      0.000       0.033       0.038
+exploration_coded:asynchronous_coded                             0.0354      0.001     31.904      0.000       0.033       0.038
+exploration_coded:n_bidders_coded                                0.0354      0.001     31.904      0.000       0.033       0.038
+exploration_coded:median_opp_past_bid_index_coded                0.0354      0.001     31.904      0.000       0.033       0.038
+exploration_coded:winner_bid_index_state_coded                   0.0354      0.001     31.904      0.000       0.033       0.038
+asynchronous_coded:n_bidders_coded                               0.0354      0.001     31.904      0.000       0.033       0.038
+asynchronous_coded:median_opp_past_bid_index_coded               0.0354      0.001     31.904      0.000       0.033       0.038
+asynchronous_coded:winner_bid_index_state_coded                  0.0354      0.001     31.904      0.000       0.033       0.038
+n_bidders_coded:median_opp_past_bid_index_coded                  0.0354      0.001     31.904      0.000       0.033       0.038
+n_bidders_coded:winner_bid_index_state_coded                     0.0354      0.001     31.904      0.000       0.033       0.038
+median_opp_past_bid_index_coded:winner_bid_index_state_coded     0.0354      0.001     31.904      0.000       0.033       0.038
+==============================================================================
+Omnibus:                        0.266   Durbin-Watson:                   1.840
+Prob(Omnibus):                  0.875   Jarque-Bera (JB):                0.436
+Skew:                           0.000   Prob(JB):                        0.804
+Kurtosis:                       2.191   Cond. No.                     2.40e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.
+[3] The smallest eigenvalue is 6.1e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+R² = 0.6655
+Adj R² = -0.0034
+
+--- ANOVA Table (Type III) ---
+|                                                              |   sum_sq |     df |         F |   PR(>F) |
+|--------------------------------------------------------------|----------|--------|-----------|----------|
+| Intercept                                                    |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| auction_type_coded                                           |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| alpha_coded                                                  |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| gamma_coded                                                  |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| reserve_price_coded                                          |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| init_coded                                                   |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| exploration_coded                                            |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| asynchronous_coded                                           |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| n_bidders_coded                                              |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| median_opp_past_bid_index_coded                              |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| winner_bid_index_state_coded                                 |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| auction_type_coded:alpha_coded                               |   0.0023 | 1.0000 |    0.2372 |   0.6468 |
+| auction_type_coded:gamma_coded                               |   0.0037 | 1.0000 |    0.3923 |   0.5586 |
+| auction_type_coded:reserve_price_coded                       |   0.0000 | 1.0000 |    0.0012 |   0.9740 |
+| auction_type_coded:init_coded                                |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| auction_type_coded:exploration_coded                         |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| auction_type_coded:asynchronous_coded                        |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| auction_type_coded:n_bidders_coded                           |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| auction_type_coded:median_opp_past_bid_index_coded           |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| auction_type_coded:winner_bid_index_state_coded              |   0.0581 | 1.0000 |    6.0953 |   0.0566 |
+| alpha_coded:gamma_coded                                      |   0.0024 | 1.0000 |    0.2473 |   0.6401 |
+| alpha_coded:reserve_price_coded                              |   0.0000 | 1.0000 |    0.0052 |   0.9452 |
+| alpha_coded:init_coded                                       |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| alpha_coded:exploration_coded                                |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| alpha_coded:asynchronous_coded                               |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| alpha_coded:n_bidders_coded                                  |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| alpha_coded:median_opp_past_bid_index_coded                  |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| alpha_coded:winner_bid_index_state_coded                     |   0.0037 | 1.0000 |    0.3910 |   0.5592 |
+| gamma_coded:reserve_price_coded                              |   0.0020 | 1.0000 |    0.2120 |   0.6646 |
+| gamma_coded:init_coded                                       |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| gamma_coded:exploration_coded                                |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| gamma_coded:asynchronous_coded                               |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| gamma_coded:n_bidders_coded                                  |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| gamma_coded:median_opp_past_bid_index_coded                  |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| gamma_coded:winner_bid_index_state_coded                     |   0.0094 | 1.0000 |    0.9819 |   0.3672 |
+| reserve_price_coded:init_coded                               |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| reserve_price_coded:exploration_coded                        |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| reserve_price_coded:asynchronous_coded                       |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| reserve_price_coded:n_bidders_coded                          |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| reserve_price_coded:median_opp_past_bid_index_coded          |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| reserve_price_coded:winner_bid_index_state_coded             |   0.0132 | 1.0000 |    1.3861 |   0.2920 |
+| init_coded:exploration_coded                                 |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| init_coded:asynchronous_coded                                |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| init_coded:n_bidders_coded                                   |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| init_coded:median_opp_past_bid_index_coded                   |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| init_coded:winner_bid_index_state_coded                      |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| exploration_coded:asynchronous_coded                         |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| exploration_coded:n_bidders_coded                            |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| exploration_coded:median_opp_past_bid_index_coded            |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| exploration_coded:winner_bid_index_state_coded               |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| asynchronous_coded:n_bidders_coded                           |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| asynchronous_coded:median_opp_past_bid_index_coded           |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| asynchronous_coded:winner_bid_index_state_coded              |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| n_bidders_coded:median_opp_past_bid_index_coded              |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| n_bidders_coded:winner_bid_index_state_coded                 |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| median_opp_past_bid_index_coded:winner_bid_index_state_coded |   9.7029 | 1.0000 | 1017.8440 |   0.0000 |
+| Residual                                                     |   0.0477 | 5.0000 |  nan      | nan      |
+
+--- Significant Effects (p < 0.05): 21 ---
+  init                                     coef=-0.0354  p=0.0000
+  exploration                              coef=-0.0354  p=0.0000
+  asynchronous                             coef=-0.0354  p=0.0000
+  median_opp_past_bid_index                coef=-0.0354  p=0.0000
+  winner_bid_index_state                   coef=-0.0354  p=0.0000
+  n_bidders:median_opp_past_bid_index      coef=+0.0354  p=0.0000
+  asynchronous:winner_bid_index_state      coef=+0.0354  p=0.0000
+  asynchronous:median_opp_past_bid_index   coef=+0.0354  p=0.0000
+  asynchronous:n_bidders                   coef=+0.0354  p=0.0000
+  exploration:winner_bid_index_state       coef=+0.0354  p=0.0000
+  exploration:median_opp_past_bid_index    coef=+0.0354  p=0.0000
+  exploration:n_bidders                    coef=+0.0354  p=0.0000
+  init:winner_bid_index_state              coef=+0.0354  p=0.0000
+  n_bidders:winner_bid_index_state         coef=+0.0354  p=0.0000
+  init:median_opp_past_bid_index           coef=+0.0354  p=0.0000
+  init:n_bidders                           coef=+0.0354  p=0.0000
+  init:asynchronous                        coef=+0.0354  p=0.0000
+  init:exploration                         coef=+0.0354  p=0.0000
+  n_bidders                                coef=-0.0354  p=0.0000
+  exploration:asynchronous                 coef=+0.0354  p=0.0000
+  median_opp_past_bid_index:winner_bid_index_state coef=+0.0354  p=0.0000
+
+  Plots saved to results/exp1/
+
+============================================================
+RESPONSE: time_to_converge
+============================================================
+
+--- OLS Regression Summary ---
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:       time_to_converge   R-squared:                        -inf
+Model:                            OLS   Adj. R-squared:                   -inf
+Method:                 Least Squares   F-statistic:                   -0.5000
+Date:                Mon, 16 Feb 2026   Prob (F-statistic):               1.00
+Time:                        01:28:09   Log-Likelihood:                 436.22
+No. Observations:                  16   AIC:                            -850.4
+Df Residuals:                       5   BIC:                            -842.0
+Df Model:                          10                                         
+Covariance Type:            nonrobust                                         
+================================================================================================================================
+                                                                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                       45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+auction_type_coded                                            -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+alpha_coded                                                  -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+gamma_coded                                                  -5.329e-15   2.23e-14     -0.239      0.821   -6.27e-14     5.2e-14
+reserve_price_coded                                           4.263e-14   2.23e-14      1.911      0.114   -1.47e-14       1e-13
+init_coded                                                     -45.4545    7.1e-15   -6.4e+15      0.000     -45.455     -45.455
+exploration_coded                                              -45.4545    7.1e-15   -6.4e+15      0.000     -45.455     -45.455
+asynchronous_coded                                             -45.4545    7.1e-15   -6.4e+15      0.000     -45.455     -45.455
+n_bidders_coded                                                -45.4545    7.1e-15   -6.4e+15      0.000     -45.455     -45.455
+median_opp_past_bid_index_coded                                -45.4545    7.1e-15   -6.4e+15      0.000     -45.455     -45.455
+winner_bid_index_state_coded                                   -45.4545    7.1e-15   -6.4e+15      0.000     -45.455     -45.455
+auction_type_coded:alpha_coded                                9.237e-14   1.56e-13      0.591      0.580   -3.09e-13    4.94e-13
+auction_type_coded:gamma_coded                                3.553e-14   1.56e-13      0.227      0.829   -3.66e-13    4.37e-13
+auction_type_coded:reserve_price_coded                       -7.105e-15   1.56e-13     -0.045      0.965   -4.09e-13    3.94e-13
+auction_type_coded:init_coded                                 -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+auction_type_coded:exploration_coded                          -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+auction_type_coded:asynchronous_coded                         -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+auction_type_coded:n_bidders_coded                            -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+auction_type_coded:median_opp_past_bid_index_coded            -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+auction_type_coded:winner_bid_index_state_coded               -3.02e-14   2.23e-14     -1.353      0.234   -8.76e-14    2.72e-14
+alpha_coded:gamma_coded                                       4.974e-14   1.56e-13      0.318      0.763   -3.52e-13    4.51e-13
+alpha_coded:reserve_price_coded                              -1.634e-13   1.56e-13     -1.046      0.343   -5.65e-13    2.38e-13
+alpha_coded:init_coded                                        1.776e-15   2.23e-14      0.080      0.940   -5.56e-14    5.91e-14
+alpha_coded:exploration_coded                                 1.776e-15   2.23e-14      0.080      0.940   -5.56e-14    5.91e-14
+alpha_coded:asynchronous_coded                                1.776e-15   2.23e-14      0.080      0.940   -5.56e-14    5.91e-14
+alpha_coded:n_bidders_coded                                   1.776e-15   2.23e-14      0.080      0.940   -5.56e-14    5.91e-14
+alpha_coded:median_opp_past_bid_index_coded                   1.776e-15   2.23e-14      0.080      0.940   -5.56e-14    5.91e-14
+alpha_coded:winner_bid_index_state_coded                      1.776e-15   2.23e-14      0.080      0.940   -5.56e-14    5.91e-14
+gamma_coded:reserve_price_coded                              -9.948e-14   1.56e-13     -0.637      0.552   -5.01e-13    3.02e-13
+gamma_coded:init_coded                                       -1.066e-14   2.23e-14     -0.478      0.653    -6.8e-14    4.67e-14
+gamma_coded:exploration_coded                                -1.066e-14   2.23e-14     -0.478      0.653    -6.8e-14    4.67e-14
+gamma_coded:asynchronous_coded                               -1.066e-14   2.23e-14     -0.478      0.653    -6.8e-14    4.67e-14
+gamma_coded:n_bidders_coded                                  -1.066e-14   2.23e-14     -0.478      0.653    -6.8e-14    4.67e-14
+gamma_coded:median_opp_past_bid_index_coded                  -1.066e-14   2.23e-14     -0.478      0.653    -6.8e-14    4.67e-14
+gamma_coded:winner_bid_index_state_coded                     -1.066e-14   2.23e-14     -0.478      0.653    -6.8e-14    4.67e-14
+reserve_price_coded:init_coded                               -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+reserve_price_coded:exploration_coded                        -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+reserve_price_coded:asynchronous_coded                       -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+reserve_price_coded:n_bidders_coded                          -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+reserve_price_coded:median_opp_past_bid_index_coded          -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+reserve_price_coded:winner_bid_index_state_coded             -1.421e-14   2.23e-14     -0.637      0.552   -7.16e-14    4.31e-14
+init_coded:exploration_coded                                    45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+init_coded:asynchronous_coded                                   45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+init_coded:n_bidders_coded                                      45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+init_coded:median_opp_past_bid_index_coded                      45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+init_coded:winner_bid_index_state_coded                         45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+exploration_coded:asynchronous_coded                            45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+exploration_coded:n_bidders_coded                               45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+exploration_coded:median_opp_past_bid_index_coded               45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+exploration_coded:winner_bid_index_state_coded                  45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+asynchronous_coded:n_bidders_coded                              45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+asynchronous_coded:median_opp_past_bid_index_coded              45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+asynchronous_coded:winner_bid_index_state_coded                 45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+n_bidders_coded:median_opp_past_bid_index_coded                 45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+n_bidders_coded:winner_bid_index_state_coded                    45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+median_opp_past_bid_index_coded:winner_bid_index_state_coded    45.4545    7.1e-15    6.4e+15      0.000      45.455      45.455
+==============================================================================
+Omnibus:                        0.979   Durbin-Watson:                   1.325
+Prob(Omnibus):                  0.613   Jarque-Bera (JB):                0.867
+Skew:                          -0.369   Prob(JB):                        0.648
+Kurtosis:                       2.130   Cond. No.                     2.40e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.
+[3] The smallest eigenvalue is 6.1e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+R² = -inf
+Adj R² = -inf
+
+--- ANOVA Table (Type III) ---
+|                                                              |        sum_sq |     df |                                     F |   PR(>F) |
+|--------------------------------------------------------------|---------------|--------|---------------------------------------|----------|
+| Intercept                                                    | 16000000.0000 | 1.0000 | 40991392029317240291535517384704.0000 |   0.0000 |
+| auction_type_coded                                           |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| alpha_coded                                                  |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| gamma_coded                                                  |        0.0000 | 1.0000 |                                0.0570 |   0.8207 |
+| reserve_price_coded                                          |        0.0000 | 1.0000 |                                3.6507 |   0.1143 |
+| init_coded                                                   | 16000000.0000 | 1.0000 | 40991392029317231284336262643712.0000 |   0.0000 |
+| exploration_coded                                            | 16000000.0000 | 1.0000 | 40991392029317231284336262643712.0000 |   0.0000 |
+| asynchronous_coded                                           | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| n_bidders_coded                                              | 16000000.0000 | 1.0000 | 40991392029317231284336262643712.0000 |   0.0000 |
+| median_opp_past_bid_index_coded                              | 16000000.0000 | 1.0000 | 40991392029317240291535517384704.0000 |   0.0000 |
+| winner_bid_index_state_coded                                 | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| auction_type_coded:alpha_coded                               |        0.0000 | 1.0000 |                                0.3498 |   0.5800 |
+| auction_type_coded:gamma_coded                               |        0.0000 | 1.0000 |                                0.0517 |   0.8291 |
+| auction_type_coded:reserve_price_coded                       |        0.0000 | 1.0000 |                                0.0021 |   0.9655 |
+| auction_type_coded:init_coded                                |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| auction_type_coded:exploration_coded                         |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| auction_type_coded:asynchronous_coded                        |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| auction_type_coded:n_bidders_coded                           |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| auction_type_coded:median_opp_past_bid_index_coded           |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| auction_type_coded:winner_bid_index_state_coded              |        0.0000 | 1.0000 |                                1.8317 |   0.2339 |
+| alpha_coded:gamma_coded                                      |        0.0000 | 1.0000 |                                0.1014 |   0.7630 |
+| alpha_coded:reserve_price_coded                              |        0.0000 | 1.0000 |                                1.0948 |   0.3433 |
+| alpha_coded:init_coded                                       |        0.0000 | 1.0000 |                                0.0063 |   0.9396 |
+| alpha_coded:exploration_coded                                |        0.0000 | 1.0000 |                                0.0063 |   0.9396 |
+| alpha_coded:asynchronous_coded                               |        0.0000 | 1.0000 |                                0.0063 |   0.9396 |
+| alpha_coded:n_bidders_coded                                  |        0.0000 | 1.0000 |                                0.0063 |   0.9396 |
+| alpha_coded:median_opp_past_bid_index_coded                  |        0.0000 | 1.0000 |                                0.0063 |   0.9396 |
+| alpha_coded:winner_bid_index_state_coded                     |        0.0000 | 1.0000 |                                0.0063 |   0.9396 |
+| gamma_coded:reserve_price_coded                              |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| gamma_coded:init_coded                                       |        0.0000 | 1.0000 |                                0.2282 |   0.6530 |
+| gamma_coded:exploration_coded                                |        0.0000 | 1.0000 |                                0.2282 |   0.6530 |
+| gamma_coded:asynchronous_coded                               |        0.0000 | 1.0000 |                                0.2282 |   0.6530 |
+| gamma_coded:n_bidders_coded                                  |        0.0000 | 1.0000 |                                0.2282 |   0.6530 |
+| gamma_coded:median_opp_past_bid_index_coded                  |        0.0000 | 1.0000 |                                0.2282 |   0.6530 |
+| gamma_coded:winner_bid_index_state_coded                     |        0.0000 | 1.0000 |                                0.2282 |   0.6530 |
+| reserve_price_coded:init_coded                               |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| reserve_price_coded:exploration_coded                        |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| reserve_price_coded:asynchronous_coded                       |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| reserve_price_coded:n_bidders_coded                          |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| reserve_price_coded:median_opp_past_bid_index_coded          |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| reserve_price_coded:winner_bid_index_state_coded             |        0.0000 | 1.0000 |                                0.4056 |   0.5522 |
+| init_coded:exploration_coded                                 | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| init_coded:asynchronous_coded                                | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| init_coded:n_bidders_coded                                   | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| init_coded:median_opp_past_bid_index_coded                   | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| init_coded:winner_bid_index_state_coded                      | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| exploration_coded:asynchronous_coded                         | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| exploration_coded:n_bidders_coded                            | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| exploration_coded:median_opp_past_bid_index_coded            | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| exploration_coded:winner_bid_index_state_coded               | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| asynchronous_coded:n_bidders_coded                           | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| asynchronous_coded:median_opp_past_bid_index_coded           | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| asynchronous_coded:winner_bid_index_state_coded              | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| n_bidders_coded:median_opp_past_bid_index_coded              | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| n_bidders_coded:winner_bid_index_state_coded                 | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| median_opp_past_bid_index_coded:winner_bid_index_state_coded | 16000000.0000 | 1.0000 | 40991392029317222277137007902720.0000 |   0.0000 |
+| Residual                                                     |        0.0000 | 5.0000 |                              nan      | nan      |
+
+--- Significant Effects (p < 0.05): 21 ---
+  init                                     coef=-45.4545  p=0.0000
+  n_bidders:median_opp_past_bid_index      coef=+45.4545  p=0.0000
+  asynchronous:winner_bid_index_state      coef=+45.4545  p=0.0000
+  asynchronous:median_opp_past_bid_index   coef=+45.4545  p=0.0000
+  asynchronous:n_bidders                   coef=+45.4545  p=0.0000
+  exploration:winner_bid_index_state       coef=+45.4545  p=0.0000
+  exploration:median_opp_past_bid_index    coef=+45.4545  p=0.0000
+  exploration:n_bidders                    coef=+45.4545  p=0.0000
+  exploration:asynchronous                 coef=+45.4545  p=0.0000
+  n_bidders:winner_bid_index_state         coef=+45.4545  p=0.0000
+  init:winner_bid_index_state              coef=+45.4545  p=0.0000
+  init:n_bidders                           coef=+45.4545  p=0.0000
+  init:asynchronous                        coef=+45.4545  p=0.0000
+  init:exploration                         coef=+45.4545  p=0.0000
+  winner_bid_index_state                   coef=-45.4545  p=0.0000
+  median_opp_past_bid_index                coef=-45.4545  p=0.0000
+  n_bidders                                coef=-45.4545  p=0.0000
+  asynchronous                             coef=-45.4545  p=0.0000
+  exploration                              coef=-45.4545  p=0.0000
+  init:median_opp_past_bid_index           coef=+45.4545  p=0.0000
+  median_opp_past_bid_index:winner_bid_index_state coef=+45.4545  p=0.0000
+
+  Plots saved to results/exp1/
+
+============================================================
+RESPONSE: avg_regret_of_seller
+============================================================
+
+--- OLS Regression Summary ---
+                             OLS Regression Results                             
+================================================================================
+Dep. Variable:     avg_regret_of_seller   R-squared:                       0.666
+Model:                              OLS   Adj. R-squared:                 -0.003
+Method:                   Least Squares   F-statistic:                    0.9949
+Date:                  Mon, 16 Feb 2026   Prob (F-statistic):              0.537
+Time:                          01:28:10   Log-Likelihood:                 23.826
+No. Observations:                    16   AIC:                            -25.65
+Df Residuals:                         5   BIC:                            -17.15
+Df Model:                            10                                         
+Covariance Type:              nonrobust                                         
+================================================================================================================================
+                                                                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                        0.0101      0.001      9.065      0.000       0.007       0.013
+auction_type_coded                                               0.0086      0.003      2.469      0.057      -0.000       0.018
+alpha_coded                                                      0.0022      0.003      0.625      0.559      -0.007       0.011
+gamma_coded                                                      0.0035      0.003      0.991      0.367      -0.006       0.012
+reserve_price_coded                                              0.0041      0.003      1.177      0.292      -0.005       0.013
+init_coded                                                      -0.0101      0.001     -9.065      0.000      -0.013      -0.007
+exploration_coded                                               -0.0101      0.001     -9.065      0.000      -0.013      -0.007
+asynchronous_coded                                              -0.0101      0.001     -9.065      0.000      -0.013      -0.007
+n_bidders_coded                                                 -0.0101      0.001     -9.065      0.000      -0.013      -0.007
+median_opp_past_bid_index_coded                                 -0.0101      0.001     -9.065      0.000      -0.013      -0.007
+winner_bid_index_state_coded                                    -0.0101      0.001     -9.065      0.000      -0.013      -0.007
+auction_type_coded:alpha_coded                                  -0.0119      0.024     -0.487      0.647      -0.075       0.051
+auction_type_coded:gamma_coded                                   0.0153      0.024      0.626      0.559      -0.047       0.078
+auction_type_coded:reserve_price_coded                           0.0008      0.024      0.034      0.974      -0.062       0.064
+auction_type_coded:init_coded                                   -0.0086      0.003     -2.469      0.057      -0.018       0.000
+auction_type_coded:exploration_coded                            -0.0086      0.003     -2.469      0.057      -0.018       0.000
+auction_type_coded:asynchronous_coded                           -0.0086      0.003     -2.469      0.057      -0.018       0.000
+auction_type_coded:n_bidders_coded                              -0.0086      0.003     -2.469      0.057      -0.018       0.000
+auction_type_coded:median_opp_past_bid_index_coded              -0.0086      0.003     -2.469      0.057      -0.018       0.000
+auction_type_coded:winner_bid_index_state_coded                 -0.0086      0.003     -2.469      0.057      -0.018       0.000
+alpha_coded:gamma_coded                                          0.0121      0.024      0.497      0.640      -0.051       0.075
+alpha_coded:reserve_price_coded                                 -0.0018      0.024     -0.072      0.945      -0.065       0.061
+alpha_coded:init_coded                                          -0.0022      0.003     -0.625      0.559      -0.011       0.007
+alpha_coded:exploration_coded                                   -0.0022      0.003     -0.625      0.559      -0.011       0.007
+alpha_coded:asynchronous_coded                                  -0.0022      0.003     -0.625      0.559      -0.011       0.007
+alpha_coded:n_bidders_coded                                     -0.0022      0.003     -0.625      0.559      -0.011       0.007
+alpha_coded:median_opp_past_bid_index_coded                     -0.0022      0.003     -0.625      0.559      -0.011       0.007
+alpha_coded:winner_bid_index_state_coded                        -0.0022      0.003     -0.625      0.559      -0.011       0.007
+gamma_coded:reserve_price_coded                                 -0.0112      0.024     -0.460      0.665      -0.074       0.052
+gamma_coded:init_coded                                          -0.0035      0.003     -0.991      0.367      -0.012       0.006
+gamma_coded:exploration_coded                                   -0.0035      0.003     -0.991      0.367      -0.012       0.006
+gamma_coded:asynchronous_coded                                  -0.0035      0.003     -0.991      0.367      -0.012       0.006
+gamma_coded:n_bidders_coded                                     -0.0035      0.003     -0.991      0.367      -0.012       0.006
+gamma_coded:median_opp_past_bid_index_coded                     -0.0035      0.003     -0.991      0.367      -0.012       0.006
+gamma_coded:winner_bid_index_state_coded                        -0.0035      0.003     -0.991      0.367      -0.012       0.006
+reserve_price_coded:init_coded                                  -0.0041      0.003     -1.177      0.292      -0.013       0.005
+reserve_price_coded:exploration_coded                           -0.0041      0.003     -1.177      0.292      -0.013       0.005
+reserve_price_coded:asynchronous_coded                          -0.0041      0.003     -1.177      0.292      -0.013       0.005
+reserve_price_coded:n_bidders_coded                             -0.0041      0.003     -1.177      0.292      -0.013       0.005
+reserve_price_coded:median_opp_past_bid_index_coded             -0.0041      0.003     -1.177      0.292      -0.013       0.005
+reserve_price_coded:winner_bid_index_state_coded                -0.0041      0.003     -1.177      0.292      -0.013       0.005
+init_coded:exploration_coded                                     0.0101      0.001      9.065      0.000       0.007       0.013
+init_coded:asynchronous_coded                                    0.0101      0.001      9.065      0.000       0.007       0.013
+init_coded:n_bidders_coded                                       0.0101      0.001      9.065      0.000       0.007       0.013
+init_coded:median_opp_past_bid_index_coded                       0.0101      0.001      9.065      0.000       0.007       0.013
+init_coded:winner_bid_index_state_coded                          0.0101      0.001      9.065      0.000       0.007       0.013
+exploration_coded:asynchronous_coded                             0.0101      0.001      9.065      0.000       0.007       0.013
+exploration_coded:n_bidders_coded                                0.0101      0.001      9.065      0.000       0.007       0.013
+exploration_coded:median_opp_past_bid_index_coded                0.0101      0.001      9.065      0.000       0.007       0.013
+exploration_coded:winner_bid_index_state_coded                   0.0101      0.001      9.065      0.000       0.007       0.013
+asynchronous_coded:n_bidders_coded                               0.0101      0.001      9.065      0.000       0.007       0.013
+asynchronous_coded:median_opp_past_bid_index_coded               0.0101      0.001      9.065      0.000       0.007       0.013
+asynchronous_coded:winner_bid_index_state_coded                  0.0101      0.001      9.065      0.000       0.007       0.013
+n_bidders_coded:median_opp_past_bid_index_coded                  0.0101      0.001      9.065      0.000       0.007       0.013
+n_bidders_coded:winner_bid_index_state_coded                     0.0101      0.001      9.065      0.000       0.007       0.013
+median_opp_past_bid_index_coded:winner_bid_index_state_coded     0.0101      0.001      9.065      0.000       0.007       0.013
+==============================================================================
+Omnibus:                        0.266   Durbin-Watson:                   1.840
+Prob(Omnibus):                  0.875   Jarque-Bera (JB):                0.436
+Skew:                           0.000   Prob(JB):                        0.804
+Kurtosis:                       2.191   Cond. No.                     2.40e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.
+[3] The smallest eigenvalue is 6.1e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+R² = 0.6655
+Adj R² = -0.0034
+
+--- ANOVA Table (Type III) ---
+|                                                              |   sum_sq |     df |        F |   PR(>F) |
+|--------------------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                                    |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| auction_type_coded                                           |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| alpha_coded                                                  |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| gamma_coded                                                  |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| reserve_price_coded                                          |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| init_coded                                                   |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| exploration_coded                                            |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| asynchronous_coded                                           |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| n_bidders_coded                                              |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| median_opp_past_bid_index_coded                              |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| winner_bid_index_state_coded                                 |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| auction_type_coded:alpha_coded                               |   0.0023 | 1.0000 |   0.2372 |   0.6468 |
+| auction_type_coded:gamma_coded                               |   0.0037 | 1.0000 |   0.3923 |   0.5586 |
+| auction_type_coded:reserve_price_coded                       |   0.0000 | 1.0000 |   0.0012 |   0.9740 |
+| auction_type_coded:init_coded                                |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| auction_type_coded:exploration_coded                         |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| auction_type_coded:asynchronous_coded                        |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| auction_type_coded:n_bidders_coded                           |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| auction_type_coded:median_opp_past_bid_index_coded           |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| auction_type_coded:winner_bid_index_state_coded              |   0.0581 | 1.0000 |   6.0953 |   0.0566 |
+| alpha_coded:gamma_coded                                      |   0.0024 | 1.0000 |   0.2473 |   0.6401 |
+| alpha_coded:reserve_price_coded                              |   0.0000 | 1.0000 |   0.0052 |   0.9452 |
+| alpha_coded:init_coded                                       |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| alpha_coded:exploration_coded                                |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| alpha_coded:asynchronous_coded                               |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| alpha_coded:n_bidders_coded                                  |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| alpha_coded:median_opp_past_bid_index_coded                  |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| alpha_coded:winner_bid_index_state_coded                     |   0.0037 | 1.0000 |   0.3910 |   0.5592 |
+| gamma_coded:reserve_price_coded                              |   0.0020 | 1.0000 |   0.2120 |   0.6646 |
+| gamma_coded:init_coded                                       |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| gamma_coded:exploration_coded                                |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| gamma_coded:asynchronous_coded                               |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| gamma_coded:n_bidders_coded                                  |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| gamma_coded:median_opp_past_bid_index_coded                  |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| gamma_coded:winner_bid_index_state_coded                     |   0.0094 | 1.0000 |   0.9819 |   0.3672 |
+| reserve_price_coded:init_coded                               |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| reserve_price_coded:exploration_coded                        |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| reserve_price_coded:asynchronous_coded                       |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| reserve_price_coded:n_bidders_coded                          |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| reserve_price_coded:median_opp_past_bid_index_coded          |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| reserve_price_coded:winner_bid_index_state_coded             |   0.0132 | 1.0000 |   1.3861 |   0.2920 |
+| init_coded:exploration_coded                                 |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| init_coded:asynchronous_coded                                |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| init_coded:n_bidders_coded                                   |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| init_coded:median_opp_past_bid_index_coded                   |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| init_coded:winner_bid_index_state_coded                      |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| exploration_coded:asynchronous_coded                         |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| exploration_coded:n_bidders_coded                            |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| exploration_coded:median_opp_past_bid_index_coded            |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| exploration_coded:winner_bid_index_state_coded               |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| asynchronous_coded:n_bidders_coded                           |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| asynchronous_coded:median_opp_past_bid_index_coded           |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| asynchronous_coded:winner_bid_index_state_coded              |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| n_bidders_coded:median_opp_past_bid_index_coded              |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| n_bidders_coded:winner_bid_index_state_coded                 |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| median_opp_past_bid_index_coded:winner_bid_index_state_coded |   0.7833 | 1.0000 |  82.1703 |   0.0003 |
+| Residual                                                     |   0.0477 | 5.0000 | nan      | nan      |
+
+--- Significant Effects (p < 0.05): 21 ---
+  n_bidders                                coef=-0.0101  p=0.0003
+  init                                     coef=-0.0101  p=0.0003
+  winner_bid_index_state                   coef=-0.0101  p=0.0003
+  n_bidders:median_opp_past_bid_index      coef=+0.0101  p=0.0003
+  asynchronous:winner_bid_index_state      coef=+0.0101  p=0.0003
+  asynchronous:median_opp_past_bid_index   coef=+0.0101  p=0.0003
+  asynchronous:n_bidders                   coef=+0.0101  p=0.0003
+  exploration:winner_bid_index_state       coef=+0.0101  p=0.0003
+  exploration:median_opp_past_bid_index    coef=+0.0101  p=0.0003
+  exploration:n_bidders                    coef=+0.0101  p=0.0003
+  exploration:asynchronous                 coef=+0.0101  p=0.0003
+  init:winner_bid_index_state              coef=+0.0101  p=0.0003
+  init:median_opp_past_bid_index           coef=+0.0101  p=0.0003
+  init:n_bidders                           coef=+0.0101  p=0.0003
+  init:asynchronous                        coef=+0.0101  p=0.0003
+  init:exploration                         coef=+0.0101  p=0.0003
+  n_bidders:winner_bid_index_state         coef=+0.0101  p=0.0003
+  median_opp_past_bid_index:winner_bid_index_state coef=+0.0101  p=0.0003
+  median_opp_past_bid_index                coef=-0.0101  p=0.0003
+  asynchronous                             coef=-0.0101  p=0.0003
+  exploration                              coef=-0.0101  p=0.0003
+
+  Plots saved to results/exp1/
+
+============================================================
+RESPONSE: no_sale_rate
+============================================================
+
+--- OLS Regression Summary ---
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:           no_sale_rate   R-squared:                       0.398
+Model:                            OLS   Adj. R-squared:                 -0.806
+Method:                 Least Squares   F-statistic:                    0.3306
+Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.936
+Time:                        01:28:11   Log-Likelihood:                 34.054
+No. Observations:                  16   AIC:                            -46.11
+Df Residuals:                       5   BIC:                            -37.61
+Df Model:                          10                                         
+Covariance Type:            nonrobust                                         
+================================================================================================================================
+                                                                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                        0.0017      0.001      2.858      0.035       0.000       0.003
+auction_type_coded                                              -0.0013      0.002     -0.733      0.497      -0.006       0.003
+alpha_coded                                                      0.0012      0.002      0.655      0.541      -0.004       0.006
+gamma_coded                                                    6.25e-05      0.002      0.034      0.974      -0.005       0.005
+reserve_price_coded                                          -4.464e-05      0.002     -0.024      0.982      -0.005       0.005
+init_coded                                                      -0.0017      0.001     -2.858      0.035      -0.003      -0.000
+exploration_coded                                               -0.0017      0.001     -2.858      0.035      -0.003      -0.000
+asynchronous_coded                                              -0.0017      0.001     -2.858      0.035      -0.003      -0.000
+n_bidders_coded                                                 -0.0017      0.001     -2.858      0.035      -0.003      -0.000
+median_opp_past_bid_index_coded                                 -0.0017      0.001     -2.858      0.035      -0.003      -0.000
+winner_bid_index_state_coded                                    -0.0017      0.001     -2.858      0.035      -0.003      -0.000
+auction_type_coded:alpha_coded                                   0.0007      0.013      0.053      0.960      -0.032       0.034
+auction_type_coded:gamma_coded                                   0.0082      0.013      0.636      0.553      -0.025       0.041
+auction_type_coded:reserve_price_coded                          -0.0088      0.013     -0.684      0.524      -0.042       0.024
+auction_type_coded:init_coded                                    0.0013      0.002      0.733      0.497      -0.003       0.006
+auction_type_coded:exploration_coded                             0.0013      0.002      0.733      0.497      -0.003       0.006
+auction_type_coded:asynchronous_coded                            0.0013      0.002      0.733      0.497      -0.003       0.006
+auction_type_coded:n_bidders_coded                               0.0013      0.002      0.733      0.497      -0.003       0.006
+auction_type_coded:median_opp_past_bid_index_coded               0.0013      0.002      0.733      0.497      -0.003       0.006
+auction_type_coded:winner_bid_index_state_coded                  0.0013      0.002      0.733      0.497      -0.003       0.006
+alpha_coded:gamma_coded                                          0.0106      0.013      0.820      0.450      -0.023       0.044
+alpha_coded:reserve_price_coded                                 -0.0114      0.013     -0.888      0.415      -0.045       0.022
+alpha_coded:init_coded                                          -0.0012      0.002     -0.655      0.541      -0.006       0.004
+alpha_coded:exploration_coded                                   -0.0012      0.002     -0.655      0.541      -0.006       0.004
+alpha_coded:asynchronous_coded                                  -0.0012      0.002     -0.655      0.541      -0.006       0.004
+alpha_coded:n_bidders_coded                                     -0.0012      0.002     -0.655      0.541      -0.006       0.004
+alpha_coded:median_opp_past_bid_index_coded                     -0.0012      0.002     -0.655      0.541      -0.006       0.004
+alpha_coded:winner_bid_index_state_coded                        -0.0012      0.002     -0.655      0.541      -0.006       0.004
+gamma_coded:reserve_price_coded                                 -0.0007      0.013     -0.053      0.960      -0.034       0.032
+gamma_coded:init_coded                                        -6.25e-05      0.002     -0.034      0.974      -0.005       0.005
+gamma_coded:exploration_coded                                 -6.25e-05      0.002     -0.034      0.974      -0.005       0.005
+gamma_coded:asynchronous_coded                                -6.25e-05      0.002     -0.034      0.974      -0.005       0.005
+gamma_coded:n_bidders_coded                                   -6.25e-05      0.002     -0.034      0.974      -0.005       0.005
+gamma_coded:median_opp_past_bid_index_coded                   -6.25e-05      0.002     -0.034      0.974      -0.005       0.005
+gamma_coded:winner_bid_index_state_coded                      -6.25e-05      0.002     -0.034      0.974      -0.005       0.005
+reserve_price_coded:init_coded                                4.464e-05      0.002      0.024      0.982      -0.005       0.005
+reserve_price_coded:exploration_coded                         4.464e-05      0.002      0.024      0.982      -0.005       0.005
+reserve_price_coded:asynchronous_coded                        4.464e-05      0.002      0.024      0.982      -0.005       0.005
+reserve_price_coded:n_bidders_coded                           4.464e-05      0.002      0.024      0.982      -0.005       0.005
+reserve_price_coded:median_opp_past_bid_index_coded           4.464e-05      0.002      0.024      0.982      -0.005       0.005
+reserve_price_coded:winner_bid_index_state_coded              4.464e-05      0.002      0.024      0.982      -0.005       0.005
+init_coded:exploration_coded                                     0.0017      0.001      2.858      0.035       0.000       0.003
+init_coded:asynchronous_coded                                    0.0017      0.001      2.858      0.035       0.000       0.003
+init_coded:n_bidders_coded                                       0.0017      0.001      2.858      0.035       0.000       0.003
+init_coded:median_opp_past_bid_index_coded                       0.0017      0.001      2.858      0.035       0.000       0.003
+init_coded:winner_bid_index_state_coded                          0.0017      0.001      2.858      0.035       0.000       0.003
+exploration_coded:asynchronous_coded                             0.0017      0.001      2.858      0.035       0.000       0.003
+exploration_coded:n_bidders_coded                                0.0017      0.001      2.858      0.035       0.000       0.003
+exploration_coded:median_opp_past_bid_index_coded                0.0017      0.001      2.858      0.035       0.000       0.003
+exploration_coded:winner_bid_index_state_coded                   0.0017      0.001      2.858      0.035       0.000       0.003
+asynchronous_coded:n_bidders_coded                               0.0017      0.001      2.858      0.035       0.000       0.003
+asynchronous_coded:median_opp_past_bid_index_coded               0.0017      0.001      2.858      0.035       0.000       0.003
+asynchronous_coded:winner_bid_index_state_coded                  0.0017      0.001      2.858      0.035       0.000       0.003
+n_bidders_coded:median_opp_past_bid_index_coded                  0.0017      0.001      2.858      0.035       0.000       0.003
+n_bidders_coded:winner_bid_index_state_coded                     0.0017      0.001      2.858      0.035       0.000       0.003
+median_opp_past_bid_index_coded:winner_bid_index_state_coded     0.0017      0.001      2.858      0.035       0.000       0.003
+==============================================================================
+Omnibus:                        0.115   Durbin-Watson:                   1.174
+Prob(Omnibus):                  0.944   Jarque-Bera (JB):                0.340
+Skew:                          -0.000   Prob(JB):                        0.844
+Kurtosis:                       2.286   Cond. No.                     2.40e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.
+[3] The smallest eigenvalue is 6.1e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+R² = 0.3980
+Adj R² = -0.8059
+
+--- ANOVA Table (Type III) ---
+|                                                              |   sum_sq |     df |        F |   PR(>F) |
+|--------------------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                                    |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| auction_type_coded                                           |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| alpha_coded                                                  |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| gamma_coded                                                  |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| reserve_price_coded                                          |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| init_coded                                                   |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| exploration_coded                                            |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| asynchronous_coded                                           |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| n_bidders_coded                                              |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| median_opp_past_bid_index_coded                              |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| winner_bid_index_state_coded                                 |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| auction_type_coded:alpha_coded                               |   0.0000 | 1.0000 |   0.0028 |   0.9595 |
+| auction_type_coded:gamma_coded                               |   0.0011 | 1.0000 |   0.4040 |   0.5530 |
+| auction_type_coded:reserve_price_coded                       |   0.0012 | 1.0000 |   0.4681 |   0.5243 |
+| auction_type_coded:init_coded                                |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| auction_type_coded:exploration_coded                         |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| auction_type_coded:asynchronous_coded                        |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| auction_type_coded:n_bidders_coded                           |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| auction_type_coded:median_opp_past_bid_index_coded           |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| auction_type_coded:winner_bid_index_state_coded              |   0.0014 | 1.0000 |   0.5368 |   0.4966 |
+| alpha_coded:gamma_coded                                      |   0.0018 | 1.0000 |   0.6724 |   0.4495 |
+| alpha_coded:reserve_price_coded                              |   0.0021 | 1.0000 |   0.7884 |   0.4152 |
+| alpha_coded:init_coded                                       |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| alpha_coded:exploration_coded                                |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| alpha_coded:asynchronous_coded                               |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| alpha_coded:n_bidders_coded                                  |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| alpha_coded:median_opp_past_bid_index_coded                  |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| alpha_coded:winner_bid_index_state_coded                     |   0.0011 | 1.0000 |   0.4291 |   0.5414 |
+| gamma_coded:reserve_price_coded                              |   0.0000 | 1.0000 |   0.0028 |   0.9595 |
+| gamma_coded:init_coded                                       |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| gamma_coded:exploration_coded                                |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| gamma_coded:asynchronous_coded                               |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| gamma_coded:n_bidders_coded                                  |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| gamma_coded:median_opp_past_bid_index_coded                  |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| gamma_coded:winner_bid_index_state_coded                     |   0.0000 | 1.0000 |   0.0012 |   0.9742 |
+| reserve_price_coded:init_coded                               |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| reserve_price_coded:exploration_coded                        |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| reserve_price_coded:asynchronous_coded                       |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| reserve_price_coded:n_bidders_coded                          |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| reserve_price_coded:median_opp_past_bid_index_coded          |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| reserve_price_coded:winner_bid_index_state_coded             |   0.0000 | 1.0000 |   0.0006 |   0.9816 |
+| init_coded:exploration_coded                                 |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| init_coded:asynchronous_coded                                |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| init_coded:n_bidders_coded                                   |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| init_coded:median_opp_past_bid_index_coded                   |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| init_coded:winner_bid_index_state_coded                      |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| exploration_coded:asynchronous_coded                         |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| exploration_coded:n_bidders_coded                            |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| exploration_coded:median_opp_past_bid_index_coded            |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| exploration_coded:winner_bid_index_state_coded               |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| asynchronous_coded:n_bidders_coded                           |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| asynchronous_coded:median_opp_past_bid_index_coded           |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| asynchronous_coded:winner_bid_index_state_coded              |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| n_bidders_coded:median_opp_past_bid_index_coded              |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| n_bidders_coded:winner_bid_index_state_coded                 |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| median_opp_past_bid_index_coded:winner_bid_index_state_coded |   0.0217 | 1.0000 |   8.1677 |   0.0355 |
+| Residual                                                     |   0.0133 | 5.0000 | nan      | nan      |
+
+--- Significant Effects (p < 0.05): 21 ---
+  median_opp_past_bid_index                coef=-0.0017  p=0.0355
+  init                                     coef=-0.0017  p=0.0355
+  n_bidders:median_opp_past_bid_index      coef=+0.0017  p=0.0355
+  asynchronous:winner_bid_index_state      coef=+0.0017  p=0.0355
+  asynchronous:median_opp_past_bid_index   coef=+0.0017  p=0.0355
+  asynchronous:n_bidders                   coef=+0.0017  p=0.0355
+  exploration:winner_bid_index_state       coef=+0.0017  p=0.0355
+  exploration:median_opp_past_bid_index    coef=+0.0017  p=0.0355
+  exploration:n_bidders                    coef=+0.0017  p=0.0355
+  exploration:asynchronous                 coef=+0.0017  p=0.0355
+  init:winner_bid_index_state              coef=+0.0017  p=0.0355
+  init:median_opp_past_bid_index           coef=+0.0017  p=0.0355
+  init:n_bidders                           coef=+0.0017  p=0.0355
+  init:asynchronous                        coef=+0.0017  p=0.0355
+  init:exploration                         coef=+0.0017  p=0.0355
+  n_bidders:winner_bid_index_state         coef=+0.0017  p=0.0355
+  median_opp_past_bid_index:winner_bid_index_state coef=+0.0017  p=0.0355
+  asynchronous                             coef=-0.0017  p=0.0355
+  winner_bid_index_state                   coef=-0.0017  p=0.0355
+  n_bidders                                coef=-0.0017  p=0.0355
+  exploration                              coef=-0.0017  p=0.0355
+
+  Plots saved to results/exp1/
+
+============================================================
+RESPONSE: price_volatility
+============================================================
+
+--- OLS Regression Summary ---
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:       price_volatility   R-squared:                       0.540
+Model:                            OLS   Adj. R-squared:                 -0.381
+Method:                 Least Squares   F-statistic:                    0.5859
+Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.779
+Time:                        01:28:12   Log-Likelihood:                 39.853
+No. Observations:                  16   AIC:                            -57.71
+Df Residuals:                       5   BIC:                            -49.21
+Df Model:                          10                                         
+Covariance Type:            nonrobust                                         
+================================================================================================================================
+                                                                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                        0.0104      0.000     25.441      0.000       0.009       0.011
+auction_type_coded                                              -0.0019      0.001     -1.462      0.203      -0.005       0.001
+alpha_coded                                                      0.0005      0.001      0.353      0.738      -0.003       0.004
+gamma_coded                                                     -0.0006      0.001     -0.502      0.637      -0.004       0.003
+reserve_price_coded                                          -6.109e-05      0.001     -0.048      0.964      -0.003       0.003
+init_coded                                                      -0.0104      0.000    -25.441      0.000      -0.011      -0.009
+exploration_coded                                               -0.0104      0.000    -25.441      0.000      -0.011      -0.009
+asynchronous_coded                                              -0.0104      0.000    -25.441      0.000      -0.011      -0.009
+n_bidders_coded                                                 -0.0104      0.000    -25.441      0.000      -0.011      -0.009
+median_opp_past_bid_index_coded                                 -0.0104      0.000    -25.441      0.000      -0.011      -0.009
+winner_bid_index_state_coded                                    -0.0104      0.000    -25.441      0.000      -0.011      -0.009
+auction_type_coded:alpha_coded                                  -0.0002      0.009     -0.028      0.979      -0.023       0.023
+auction_type_coded:gamma_coded                                   0.0064      0.009      0.714      0.507      -0.017       0.029
+auction_type_coded:reserve_price_coded                          -0.0052      0.009     -0.576      0.590      -0.028       0.018
+auction_type_coded:init_coded                                    0.0019      0.001      1.462      0.203      -0.001       0.005
+auction_type_coded:exploration_coded                             0.0019      0.001      1.462      0.203      -0.001       0.005
+auction_type_coded:asynchronous_coded                            0.0019      0.001      1.462      0.203      -0.001       0.005
+auction_type_coded:n_bidders_coded                               0.0019      0.001      1.462      0.203      -0.001       0.005
+auction_type_coded:median_opp_past_bid_index_coded               0.0019      0.001      1.462      0.203      -0.001       0.005
+auction_type_coded:winner_bid_index_state_coded                  0.0019      0.001      1.462      0.203      -0.001       0.005
+alpha_coded:gamma_coded                                          0.0125      0.009      1.391      0.223      -0.011       0.036
+alpha_coded:reserve_price_coded                                 -0.0062      0.009     -0.694      0.519      -0.029       0.017
+alpha_coded:init_coded                                          -0.0005      0.001     -0.353      0.738      -0.004       0.003
+alpha_coded:exploration_coded                                   -0.0005      0.001     -0.353      0.738      -0.004       0.003
+alpha_coded:asynchronous_coded                                  -0.0005      0.001     -0.353      0.738      -0.004       0.003
+alpha_coded:n_bidders_coded                                     -0.0005      0.001     -0.353      0.738      -0.004       0.003
+alpha_coded:median_opp_past_bid_index_coded                     -0.0005      0.001     -0.353      0.738      -0.004       0.003
+alpha_coded:winner_bid_index_state_coded                        -0.0005      0.001     -0.353      0.738      -0.004       0.003
+gamma_coded:reserve_price_coded                                 -0.0026      0.009     -0.286      0.786      -0.026       0.020
+gamma_coded:init_coded                                           0.0006      0.001      0.502      0.637      -0.003       0.004
+gamma_coded:exploration_coded                                    0.0006      0.001      0.502      0.637      -0.003       0.004
+gamma_coded:asynchronous_coded                                   0.0006      0.001      0.502      0.637      -0.003       0.004
+gamma_coded:n_bidders_coded                                      0.0006      0.001      0.502      0.637      -0.003       0.004
+gamma_coded:median_opp_past_bid_index_coded                      0.0006      0.001      0.502      0.637      -0.003       0.004
+gamma_coded:winner_bid_index_state_coded                         0.0006      0.001      0.502      0.637      -0.003       0.004
+reserve_price_coded:init_coded                                6.109e-05      0.001      0.048      0.964      -0.003       0.003
+reserve_price_coded:exploration_coded                         6.109e-05      0.001      0.048      0.964      -0.003       0.003
+reserve_price_coded:asynchronous_coded                        6.109e-05      0.001      0.048      0.964      -0.003       0.003
+reserve_price_coded:n_bidders_coded                           6.109e-05      0.001      0.048      0.964      -0.003       0.003
+reserve_price_coded:median_opp_past_bid_index_coded           6.109e-05      0.001      0.048      0.964      -0.003       0.003
+reserve_price_coded:winner_bid_index_state_coded              6.109e-05      0.001      0.048      0.964      -0.003       0.003
+init_coded:exploration_coded                                     0.0104      0.000     25.441      0.000       0.009       0.011
+init_coded:asynchronous_coded                                    0.0104      0.000     25.441      0.000       0.009       0.011
+init_coded:n_bidders_coded                                       0.0104      0.000     25.441      0.000       0.009       0.011
+init_coded:median_opp_past_bid_index_coded                       0.0104      0.000     25.441      0.000       0.009       0.011
+init_coded:winner_bid_index_state_coded                          0.0104      0.000     25.441      0.000       0.009       0.011
+exploration_coded:asynchronous_coded                             0.0104      0.000     25.441      0.000       0.009       0.011
+exploration_coded:n_bidders_coded                                0.0104      0.000     25.441      0.000       0.009       0.011
+exploration_coded:median_opp_past_bid_index_coded                0.0104      0.000     25.441      0.000       0.009       0.011
+exploration_coded:winner_bid_index_state_coded                   0.0104      0.000     25.441      0.000       0.009       0.011
+asynchronous_coded:n_bidders_coded                               0.0104      0.000     25.441      0.000       0.009       0.011
+asynchronous_coded:median_opp_past_bid_index_coded               0.0104      0.000     25.441      0.000       0.009       0.011
+asynchronous_coded:winner_bid_index_state_coded                  0.0104      0.000     25.441      0.000       0.009       0.011
+n_bidders_coded:median_opp_past_bid_index_coded                  0.0104      0.000     25.441      0.000       0.009       0.011
+n_bidders_coded:winner_bid_index_state_coded                     0.0104      0.000     25.441      0.000       0.009       0.011
+median_opp_past_bid_index_coded:winner_bid_index_state_coded     0.0104      0.000     25.441      0.000       0.009       0.011
+==============================================================================
+Omnibus:                        0.047   Durbin-Watson:                   1.376
+Prob(Omnibus):                  0.977   Jarque-Bera (JB):                0.275
+Skew:                          -0.000   Prob(JB):                        0.871
+Kurtosis:                       2.357   Cond. No.                     2.40e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.
+[3] The smallest eigenvalue is 6.1e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+R² = 0.5396
+Adj R² = -0.3813
+
+--- ANOVA Table (Type III) ---
+|                                                              |   sum_sq |     df |        F |   PR(>F) |
+|--------------------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                                    |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| auction_type_coded                                           |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| alpha_coded                                                  |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| gamma_coded                                                  |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| reserve_price_coded                                          |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| init_coded                                                   |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| exploration_coded                                            |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| asynchronous_coded                                           |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| n_bidders_coded                                              |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| median_opp_past_bid_index_coded                              |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| winner_bid_index_state_coded                                 |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| auction_type_coded:alpha_coded                               |   0.0000 | 1.0000 |   0.0008 |   0.9790 |
+| auction_type_coded:gamma_coded                               |   0.0007 | 1.0000 |   0.5096 |   0.5073 |
+| auction_type_coded:reserve_price_coded                       |   0.0004 | 1.0000 |   0.3319 |   0.5895 |
+| auction_type_coded:init_coded                                |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| auction_type_coded:exploration_coded                         |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| auction_type_coded:asynchronous_coded                        |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| auction_type_coded:n_bidders_coded                           |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| auction_type_coded:median_opp_past_bid_index_coded           |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| auction_type_coded:winner_bid_index_state_coded              |   0.0028 | 1.0000 |   2.1386 |   0.2035 |
+| alpha_coded:gamma_coded                                      |   0.0025 | 1.0000 |   1.9358 |   0.2229 |
+| alpha_coded:reserve_price_coded                              |   0.0006 | 1.0000 |   0.4817 |   0.5186 |
+| alpha_coded:init_coded                                       |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| alpha_coded:exploration_coded                                |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| alpha_coded:asynchronous_coded                               |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| alpha_coded:n_bidders_coded                                  |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| alpha_coded:median_opp_past_bid_index_coded                  |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| alpha_coded:winner_bid_index_state_coded                     |   0.0002 | 1.0000 |   0.1248 |   0.7382 |
+| gamma_coded:reserve_price_coded                              |   0.0001 | 1.0000 |   0.0819 |   0.7862 |
+| gamma_coded:init_coded                                       |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| gamma_coded:exploration_coded                                |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| gamma_coded:asynchronous_coded                               |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| gamma_coded:n_bidders_coded                                  |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| gamma_coded:median_opp_past_bid_index_coded                  |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| gamma_coded:winner_bid_index_state_coded                     |   0.0003 | 1.0000 |   0.2518 |   0.6371 |
+| reserve_price_coded:init_coded                               |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| reserve_price_coded:exploration_coded                        |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| reserve_price_coded:asynchronous_coded                       |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| reserve_price_coded:n_bidders_coded                          |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| reserve_price_coded:median_opp_past_bid_index_coded          |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| reserve_price_coded:winner_bid_index_state_coded             |   0.0000 | 1.0000 |   0.0023 |   0.9638 |
+| init_coded:exploration_coded                                 |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| init_coded:asynchronous_coded                                |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| init_coded:n_bidders_coded                                   |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| init_coded:median_opp_past_bid_index_coded                   |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| init_coded:winner_bid_index_state_coded                      |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| exploration_coded:asynchronous_coded                         |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| exploration_coded:n_bidders_coded                            |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| exploration_coded:median_opp_past_bid_index_coded            |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| exploration_coded:winner_bid_index_state_coded               |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| asynchronous_coded:n_bidders_coded                           |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| asynchronous_coded:median_opp_past_bid_index_coded           |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| asynchronous_coded:winner_bid_index_state_coded              |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| n_bidders_coded:median_opp_past_bid_index_coded              |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| n_bidders_coded:winner_bid_index_state_coded                 |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| median_opp_past_bid_index_coded:winner_bid_index_state_coded |   0.8323 | 1.0000 | 647.2350 |   0.0000 |
+| Residual                                                     |   0.0064 | 5.0000 | nan      | nan      |
+
+--- Significant Effects (p < 0.05): 21 ---
+  median_opp_past_bid_index                coef=-0.0104  p=0.0000
+  init                                     coef=-0.0104  p=0.0000
+  asynchronous                             coef=-0.0104  p=0.0000
+  winner_bid_index_state                   coef=-0.0104  p=0.0000
+  n_bidders:median_opp_past_bid_index      coef=+0.0104  p=0.0000
+  asynchronous:winner_bid_index_state      coef=+0.0104  p=0.0000
+  asynchronous:median_opp_past_bid_index   coef=+0.0104  p=0.0000
+  asynchronous:n_bidders                   coef=+0.0104  p=0.0000
+  exploration:winner_bid_index_state       coef=+0.0104  p=0.0000
+  exploration:median_opp_past_bid_index    coef=+0.0104  p=0.0000
+  exploration:n_bidders                    coef=+0.0104  p=0.0000
+  init:winner_bid_index_state              coef=+0.0104  p=0.0000
+  n_bidders:winner_bid_index_state         coef=+0.0104  p=0.0000
+  init:median_opp_past_bid_index           coef=+0.0104  p=0.0000
+  init:n_bidders                           coef=+0.0104  p=0.0000
+  init:asynchronous                        coef=+0.0104  p=0.0000
+  init:exploration                         coef=+0.0104  p=0.0000
+  n_bidders                                coef=-0.0104  p=0.0000
+  exploration:asynchronous                 coef=+0.0104  p=0.0000
+  median_opp_past_bid_index:winner_bid_index_state coef=+0.0104  p=0.0000
+  exploration                              coef=-0.0104  p=0.0000
+
+  Plots saved to results/exp1/
+
+============================================================
+RESPONSE: winner_entropy
+============================================================
+
+--- OLS Regression Summary ---
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:         winner_entropy   R-squared:                       0.765
+Model:                            OLS   Adj. R-squared:                  0.296
+Method:                 Least Squares   F-statistic:                     1.632
+Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.307
+Time:                        01:28:13   Log-Likelihood:                 54.807
+No. Observations:                  16   AIC:                            -87.61
+Df Residuals:                       5   BIC:                            -79.12
+Df Model:                          10                                         
+Covariance Type:            nonrobust                                         
+================================================================================================================================
+                                                                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                        0.0311      0.000    194.341      0.000       0.031       0.032
+auction_type_coded                                               0.0012      0.001      2.311      0.069      -0.000       0.002
+alpha_coded                                                      0.0005      0.001      0.952      0.385      -0.001       0.002
+gamma_coded                                                      0.0008      0.001      1.561      0.179      -0.001       0.002
+reserve_price_coded                                          -8.631e-05      0.001     -0.172      0.870      -0.001       0.001
+init_coded                                                      -0.0311      0.000   -194.341      0.000      -0.032      -0.031
+exploration_coded                                               -0.0311      0.000   -194.341      0.000      -0.032      -0.031
+asynchronous_coded                                              -0.0311      0.000   -194.341      0.000      -0.032      -0.031
+n_bidders_coded                                                 -0.0311      0.000   -194.341      0.000      -0.032      -0.031
+median_opp_past_bid_index_coded                                 -0.0311      0.000   -194.341      0.000      -0.032      -0.031
+winner_bid_index_state_coded                                    -0.0311      0.000   -194.341      0.000      -0.032      -0.031
+auction_type_coded:alpha_coded                                  -0.0030      0.004     -0.851      0.434      -0.012       0.006
+auction_type_coded:gamma_coded                                  -0.0053      0.004     -1.498      0.194      -0.014       0.004
+auction_type_coded:reserve_price_coded                           0.0010      0.004      0.273      0.796      -0.008       0.010
+auction_type_coded:init_coded                                   -0.0012      0.001     -2.311      0.069      -0.002       0.000
+auction_type_coded:exploration_coded                            -0.0012      0.001     -2.311      0.069      -0.002       0.000
+auction_type_coded:asynchronous_coded                           -0.0012      0.001     -2.311      0.069      -0.002       0.000
+auction_type_coded:n_bidders_coded                              -0.0012      0.001     -2.311      0.069      -0.002       0.000
+auction_type_coded:median_opp_past_bid_index_coded              -0.0012      0.001     -2.311      0.069      -0.002       0.000
+auction_type_coded:winner_bid_index_state_coded                 -0.0012      0.001     -2.311      0.069      -0.002       0.000
+alpha_coded:gamma_coded                                         -0.0064      0.004     -1.822      0.128      -0.015       0.003
+alpha_coded:reserve_price_coded                                  0.0014      0.004      0.388      0.714      -0.008       0.010
+alpha_coded:init_coded                                          -0.0005      0.001     -0.952      0.385      -0.002       0.001
+alpha_coded:exploration_coded                                   -0.0005      0.001     -0.952      0.385      -0.002       0.001
+alpha_coded:asynchronous_coded                                  -0.0005      0.001     -0.952      0.385      -0.002       0.001
+alpha_coded:n_bidders_coded                                     -0.0005      0.001     -0.952      0.385      -0.002       0.001
+alpha_coded:median_opp_past_bid_index_coded                     -0.0005      0.001     -0.952      0.385      -0.002       0.001
+alpha_coded:winner_bid_index_state_coded                        -0.0005      0.001     -0.952      0.385      -0.002       0.001
+gamma_coded:reserve_price_coded                                  0.0037      0.004      1.044      0.344      -0.005       0.013
+gamma_coded:init_coded                                          -0.0008      0.001     -1.561      0.179      -0.002       0.001
+gamma_coded:exploration_coded                                   -0.0008      0.001     -1.561      0.179      -0.002       0.001
+gamma_coded:asynchronous_coded                                  -0.0008      0.001     -1.561      0.179      -0.002       0.001
+gamma_coded:n_bidders_coded                                     -0.0008      0.001     -1.561      0.179      -0.002       0.001
+gamma_coded:median_opp_past_bid_index_coded                     -0.0008      0.001     -1.561      0.179      -0.002       0.001
+gamma_coded:winner_bid_index_state_coded                        -0.0008      0.001     -1.561      0.179      -0.002       0.001
+reserve_price_coded:init_coded                                8.631e-05      0.001      0.172      0.870      -0.001       0.001
+reserve_price_coded:exploration_coded                         8.631e-05      0.001      0.172      0.870      -0.001       0.001
+reserve_price_coded:asynchronous_coded                        8.631e-05      0.001      0.172      0.870      -0.001       0.001
+reserve_price_coded:n_bidders_coded                           8.631e-05      0.001      0.172      0.870      -0.001       0.001
+reserve_price_coded:median_opp_past_bid_index_coded           8.631e-05      0.001      0.172      0.870      -0.001       0.001
+reserve_price_coded:winner_bid_index_state_coded              8.631e-05      0.001      0.172      0.870      -0.001       0.001
+init_coded:exploration_coded                                     0.0311      0.000    194.341      0.000       0.031       0.032
+init_coded:asynchronous_coded                                    0.0311      0.000    194.341      0.000       0.031       0.032
+init_coded:n_bidders_coded                                       0.0311      0.000    194.341      0.000       0.031       0.032
+init_coded:median_opp_past_bid_index_coded                       0.0311      0.000    194.341      0.000       0.031       0.032
+init_coded:winner_bid_index_state_coded                          0.0311      0.000    194.341      0.000       0.031       0.032
+exploration_coded:asynchronous_coded                             0.0311      0.000    194.341      0.000       0.031       0.032
+exploration_coded:n_bidders_coded                                0.0311      0.000    194.341      0.000       0.031       0.032
+exploration_coded:median_opp_past_bid_index_coded                0.0311      0.000    194.341      0.000       0.031       0.032
+exploration_coded:winner_bid_index_state_coded                   0.0311      0.000    194.341      0.000       0.031       0.032
+asynchronous_coded:n_bidders_coded                               0.0311      0.000    194.341      0.000       0.031       0.032
+asynchronous_coded:median_opp_past_bid_index_coded               0.0311      0.000    194.341      0.000       0.031       0.032
+asynchronous_coded:winner_bid_index_state_coded                  0.0311      0.000    194.341      0.000       0.031       0.032
+n_bidders_coded:median_opp_past_bid_index_coded                  0.0311      0.000    194.341      0.000       0.031       0.032
+n_bidders_coded:winner_bid_index_state_coded                     0.0311      0.000    194.341      0.000       0.031       0.032
+median_opp_past_bid_index_coded:winner_bid_index_state_coded     0.0311      0.000    194.341      0.000       0.031       0.032
+==============================================================================
+Omnibus:                        0.422   Durbin-Watson:                   1.914
+Prob(Omnibus):                  0.810   Jarque-Bera (JB):                0.512
+Skew:                          -0.000   Prob(JB):                        0.774
+Kurtosis:                       2.123   Cond. No.                     2.40e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.
+[3] The smallest eigenvalue is 6.1e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+R² = 0.7654
+Adj R² = 0.2963
+
+--- ANOVA Table (Type III) ---
+|                                                              |   sum_sq |     df |          F |   PR(>F) |
+|--------------------------------------------------------------|----------|--------|------------|----------|
+| Intercept                                                    |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| auction_type_coded                                           |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| alpha_coded                                                  |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| gamma_coded                                                  |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| reserve_price_coded                                          |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| init_coded                                                   |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| exploration_coded                                            |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| asynchronous_coded                                           |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| n_bidders_coded                                              |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| median_opp_past_bid_index_coded                              |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| winner_bid_index_state_coded                                 |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| auction_type_coded:alpha_coded                               |   0.0001 | 1.0000 |     0.7237 |   0.4338 |
+| auction_type_coded:gamma_coded                               |   0.0004 | 1.0000 |     2.2453 |   0.1943 |
+| auction_type_coded:reserve_price_coded                       |   0.0000 | 1.0000 |     0.0744 |   0.7959 |
+| auction_type_coded:init_coded                                |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| auction_type_coded:exploration_coded                         |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| auction_type_coded:asynchronous_coded                        |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| auction_type_coded:n_bidders_coded                           |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| auction_type_coded:median_opp_past_bid_index_coded           |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| auction_type_coded:winner_bid_index_state_coded              |   0.0011 | 1.0000 |     5.3399 |   0.0688 |
+| alpha_coded:gamma_coded                                      |   0.0007 | 1.0000 |     3.3190 |   0.1281 |
+| alpha_coded:reserve_price_coded                              |   0.0000 | 1.0000 |     0.1509 |   0.7137 |
+| alpha_coded:init_coded                                       |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| alpha_coded:exploration_coded                                |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| alpha_coded:asynchronous_coded                               |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| alpha_coded:n_bidders_coded                                  |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| alpha_coded:median_opp_past_bid_index_coded                  |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| alpha_coded:winner_bid_index_state_coded                     |   0.0002 | 1.0000 |     0.9065 |   0.3848 |
+| gamma_coded:reserve_price_coded                              |   0.0002 | 1.0000 |     1.0903 |   0.3442 |
+| gamma_coded:init_coded                                       |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| gamma_coded:exploration_coded                                |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| gamma_coded:asynchronous_coded                               |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| gamma_coded:n_bidders_coded                                  |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| gamma_coded:median_opp_past_bid_index_coded                  |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| gamma_coded:winner_bid_index_state_coded                     |   0.0005 | 1.0000 |     2.4370 |   0.1793 |
+| reserve_price_coded:init_coded                               |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| reserve_price_coded:exploration_coded                        |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| reserve_price_coded:asynchronous_coded                       |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| reserve_price_coded:n_bidders_coded                          |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| reserve_price_coded:median_opp_past_bid_index_coded          |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| reserve_price_coded:winner_bid_index_state_coded             |   0.0000 | 1.0000 |     0.0294 |   0.8705 |
+| init_coded:exploration_coded                                 |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| init_coded:asynchronous_coded                                |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| init_coded:n_bidders_coded                                   |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| init_coded:median_opp_past_bid_index_coded                   |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| init_coded:winner_bid_index_state_coded                      |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| exploration_coded:asynchronous_coded                         |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| exploration_coded:n_bidders_coded                            |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| exploration_coded:median_opp_past_bid_index_coded            |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| exploration_coded:winner_bid_index_state_coded               |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| asynchronous_coded:n_bidders_coded                           |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| asynchronous_coded:median_opp_past_bid_index_coded           |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| asynchronous_coded:winner_bid_index_state_coded              |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| n_bidders_coded:median_opp_past_bid_index_coded              |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| n_bidders_coded:winner_bid_index_state_coded                 |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| median_opp_past_bid_index_coded:winner_bid_index_state_coded |   7.4900 | 1.0000 | 37768.3354 |   0.0000 |
+| Residual                                                     |   0.0010 | 5.0000 |   nan      | nan      |
+
+--- Significant Effects (p < 0.05): 21 ---
+  init                                     coef=-0.0311  p=0.0000
+  n_bidders:median_opp_past_bid_index      coef=+0.0311  p=0.0000
+  asynchronous:winner_bid_index_state      coef=+0.0311  p=0.0000
+  asynchronous:median_opp_past_bid_index   coef=+0.0311  p=0.0000
+  asynchronous:n_bidders                   coef=+0.0311  p=0.0000
+  exploration:winner_bid_index_state       coef=+0.0311  p=0.0000
+  exploration:median_opp_past_bid_index    coef=+0.0311  p=0.0000
+  exploration:n_bidders                    coef=+0.0311  p=0.0000
+  exploration:asynchronous                 coef=+0.0311  p=0.0000
+  n_bidders:winner_bid_index_state         coef=+0.0311  p=0.0000
+  init:winner_bid_index_state              coef=+0.0311  p=0.0000
+  init:n_bidders                           coef=+0.0311  p=0.0000
+  init:asynchronous                        coef=+0.0311  p=0.0000
+  init:exploration                         coef=+0.0311  p=0.0000
+  winner_bid_index_state                   coef=-0.0311  p=0.0000
+  median_opp_past_bid_index                coef=-0.0311  p=0.0000
+  n_bidders                                coef=-0.0311  p=0.0000
+  asynchronous                             coef=-0.0311  p=0.0000
+  exploration                              coef=-0.0311  p=0.0000
+  init:median_opp_past_bid_index           coef=+0.0311  p=0.0000
+  median_opp_past_bid_index:winner_bid_index_state coef=+0.0311  p=0.0000
+
+  Plots saved to results/exp1/
+
+=== Analysis Complete ===
+Structured results saved to results/exp1/estimation_results.json

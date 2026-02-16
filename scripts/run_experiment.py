@@ -2,29 +2,31 @@
 """
 Unified CLI for running algorithmic collusion experiments.
 
+Uses 2^k factorial design for structured parameter exploration.
+
 Supports:
-- Sequential execution (default, same as original scripts)
+- Sequential execution (default)
 - Local parallel execution (--parallel)
-- Cloud execution (--cloud, Phase 2)
+- Cloud execution (--cloud)
 
 Examples:
-    # Sequential (default)
-    python scripts/run_experiment.py --exp 2 --quick
+    # Quick test (16-cell fractional factorial, 1 replicate)
+    python scripts/run_experiment.py --exp 1 --quick
 
-    # Local parallel
-    python scripts/run_experiment.py --exp 2 --parallel --workers 8
+    # Full factorial (2 replicates per cell)
+    python scripts/run_experiment.py --exp 1 --parallel
 
-    # Local parallel (auto-detect workers)
-    python scripts/run_experiment.py --exp 2 --parallel
-
-    # Cloud execution (Phase 2)
-    python scripts/run_experiment.py --exp 2 --cloud --project my-project
+    # Custom replicates
+    python scripts/run_experiment.py --exp 1 --parallel --replicates 5
 """
 
 import argparse
+import itertools
+import json
 import os
 import sys
 from pathlib import Path
+from typing import Any, Dict, List
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -33,290 +35,315 @@ from cloud.config import LocalConfig, ExperimentConfig
 from cloud.runner import DistributedRunner, run_sequential, TaskResult
 from cloud.gcs import GCSBucket
 from cloud.startup import generate_startup_script
-from typing import List, Dict, Any
 
+
+# =====================================================================
+# Factor Definitions (2 levels each, coded -1/+1)
+# =====================================================================
+
+EXP1_FACTORS = {
+    # factor_name: (low_value, high_value)
+    "auction_type":              ("second", "first"),
+    "alpha":                     (0.01, 0.1),
+    "gamma":                     (0.0, 0.95),
+    "reserve_price":             (0.0, 0.5),
+    "init":                      ("zeros", "random"),
+    "exploration":               ("egreedy", "boltzmann"),
+    "asynchronous":              (0, 1),
+    "n_bidders":                 (2, 4),
+    "median_opp_past_bid_index": (False, True),
+    "winner_bid_index_state":    (False, True),
+}
+
+EXP2_FACTORS = {
+    # Same as Exp1 + eta
+    "auction_type":              ("second", "first"),
+    "alpha":                     (0.01, 0.1),
+    "gamma":                     (0.0, 0.95),
+    "reserve_price":             (0.0, 0.5),
+    "init":                      ("zeros", "random"),
+    "exploration":               ("egreedy", "boltzmann"),
+    "asynchronous":              (0, 1),
+    "n_bidders":                 (2, 4),
+    "median_opp_past_bid_index": (False, True),
+    "winner_bid_index_state":    (False, True),
+    "eta":                       (0.0, 1.0),
+}
+
+EXP3_FACTORS = {
+    "auction_type":       ("second", "first"),
+    "eta":                (0.0, 1.0),
+    "c":                  (0.1, 2.0),
+    "lam":                (0.1, 5.0),
+    "n_bidders":          (2, 4),
+    "reserve_price":      (0.0, 0.5),
+    "use_median_of_others": (False, True),
+    "use_past_winner_bid":  (False, True),
+}
+
+
+# =====================================================================
+# Factorial Design Builder
+# =====================================================================
+
+def build_factorial_design(factor_defs, replicates, seed, half_fraction=False):
+    """
+    Generate 2^k full (or 2^(k-1) half-fraction) factorial design.
+
+    Returns list of dicts, each containing:
+      - actual parameter values
+      - coded values (factor_name + '_coded' = -1 or +1)
+      - replicate number and seed
+
+    For half-fraction (Resolution V): last factor's sign = product of
+    all other factor signs. This aliases the highest-order interaction
+    with the last main effect, keeping all main effects and 2-way
+    interactions estimable.
+    """
+    factor_names = list(factor_defs.keys())
+    k = len(factor_names)
+
+    if half_fraction:
+        # Generate full factorial on first k-1 factors
+        base_factors = factor_names[:-1]
+        last_factor = factor_names[-1]
+        coded_combos = list(itertools.product([-1, 1], repeat=k - 1))
+
+        # For Resolution V half-fraction: last factor = product of all others
+        # This gives 2^(k-1) runs with Resolution V
+        full_coded = []
+        for combo in coded_combos:
+            last_code = 1
+            for c in combo:
+                last_code *= c
+            full_coded.append(list(combo) + [last_code])
+    else:
+        coded_combos = list(itertools.product([-1, 1], repeat=k))
+        full_coded = [list(c) for c in coded_combos]
+
+    design = []
+    for rep in range(replicates):
+        rep_seed = seed + rep
+        for cell_id, coded in enumerate(full_coded):
+            row = {
+                "cell_id": cell_id,
+                "replicate": rep,
+                "seed": rep_seed * 10000 + cell_id,
+            }
+            for i, fname in enumerate(factor_names):
+                low, high = factor_defs[fname]
+                code = coded[i]
+                row[fname + "_coded"] = code
+                row[fname] = low if code == -1 else high
+            design.append(row)
+
+    return design
+
+
+def build_quick_design(factor_defs, seed):
+    """
+    Generate a small 2^4 fractional factorial for quick testing.
+    Picks the first 4 factors, 1 replicate, 16 cells.
+    Remaining factors are set to their low (-1) level.
+    """
+    factor_names = list(factor_defs.keys())
+    quick_factors = factor_names[:4]
+    fixed_factors = factor_names[4:]
+
+    coded_combos = list(itertools.product([-1, 1], repeat=4))
+
+    design = []
+    for cell_id, coded in enumerate(coded_combos):
+        row = {
+            "cell_id": cell_id,
+            "replicate": 0,
+            "seed": seed * 10000 + cell_id,
+        }
+        # Quick factors get varied
+        for i, fname in enumerate(quick_factors):
+            low, high = factor_defs[fname]
+            code = coded[i]
+            row[fname + "_coded"] = code
+            row[fname] = low if code == -1 else high
+
+        # Fixed factors stay at low level
+        for fname in fixed_factors:
+            low, high = factor_defs[fname]
+            row[fname + "_coded"] = -1
+            row[fname] = low
+
+        design.append(row)
+
+    return design
+
+
+# =====================================================================
+# Summary-only wrappers (reduce memory in parallel mode)
+# =====================================================================
 
 def _run_exp1_summary_only(**kwargs):
-    """Wrapper that returns only summary to reduce memory in parallel mode."""
     from experiments import exp1
     summary, _, _, _ = exp1.run_experiment(**kwargs)
     return summary
 
 
 def _run_exp2_summary_only(**kwargs):
-    """Wrapper that returns only summary to reduce memory in parallel mode."""
     from experiments import exp2
     summary, _, _, _ = exp2.run_experiment(**kwargs)
     return summary
 
 
 def _run_exp3_summary_only(**kwargs):
-    """Wrapper that returns only summary to reduce memory in parallel mode."""
     from experiments import exp3
     summary, _, _, _ = exp3.run_bandit_experiment(**kwargs)
     return summary
 
 
-def get_exp1_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250) -> List[Dict[str, Any]]:
-    """Generate task list for Experiment 1 (Constant Valuations)."""
-    import numpy as np
+# =====================================================================
+# Task Generators (factorial design)
+# =====================================================================
 
-    from experiments import exp1
-
+def get_exp1_tasks(quick, output_dir, seed=42, replicates=2):
+    """Generate task list for Experiment 1 using factorial design."""
     if quick:
-        K = 5
-        alpha_values = [0.01, 0.1]
-        gamma_values = [0.9]
-        episodes_values = [1000]
-        reserve_price_values = [0.0]
-        init_values = ["random"]
-        exploration_values = ["egreedy"]
-        async_values = [0]
-        n_bidders_values = [2]
-        median_flags = [False]
-        winner_flags = [False]
+        design = build_quick_design(EXP1_FACTORS, seed)
     else:
-        K = runs
-        alpha_values = [0.001, 0.005, 0.01, 0.05, 0.1]
-        gamma_values = [0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]
-        episodes_values = [100_000]
-        reserve_price_values = [0.0, 0.1, 0.2, 0.3, 0.5]
-        init_values = ["random", "zeros"]
-        exploration_values = ["egreedy", "boltzmann"]
-        async_values = [0, 1]
-        n_bidders_values = [2, 3, 4]
-        median_flags = [False, True]
-        winner_flags = [False, True]
-
-    rng = np.random.default_rng(seed)
+        design = build_factorial_design(EXP1_FACTORS, replicates, seed)
 
     tasks = []
-    for run_id in range(K):
-        alpha = rng.choice(alpha_values)
-        gamma = rng.choice(gamma_values)
-        episodes = rng.choice(episodes_values)
-        reserve_price = rng.choice(reserve_price_values)
-        init_str = rng.choice(init_values)
-        exploration_str = rng.choice(exploration_values)
-        async_val = rng.choice(async_values)
-        n_bidders_val = rng.choice(n_bidders_values)
-        median_flag = rng.choice(median_flags)
-        winner_flag = rng.choice(winner_flags)
-
-        for auction_type in ["first", "second"]:
-            task_id = f"exp1_run{run_id}_{auction_type}"
-            tasks.append({
-                "task_id": task_id,
-                "func": _run_exp1_summary_only,
-                "kwargs": {
-                    "auction_type": auction_type,
-                    "alpha": float(alpha),
-                    "gamma": float(gamma),
-                    "episodes": int(episodes),
-                    "init": init_str,
-                    "exploration": exploration_str,
-                    "asynchronous": int(async_val),
-                    "n_bidders": int(n_bidders_val),
-                    "median_opp_past_bid_index": bool(median_flag),
-                    "winner_bid_index_state": bool(winner_flag),
-                    "reserve_price": float(reserve_price),
-                    "seed": run_id,
-                    "store_qtables": False,
-                    "qtable_folder": None,
-                },
-                "run_id": run_id,
-                "config": {
-                    "alpha": float(alpha),
-                    "gamma": float(gamma),
-                    "episodes": int(episodes),
-                    "reserve_price": float(reserve_price),
-                    "init": init_str,
-                    "exploration": exploration_str,
-                    "asynchronous": int(async_val),
-                    "n_bidders": int(n_bidders_val),
-                    "median_flag": bool(median_flag),
-                    "winner_flag": bool(winner_flag),
-                    "auction_type": auction_type,
-                }
-            })
+    for row in design:
+        task_id = f"exp1_cell{row['cell_id']}_rep{row['replicate']}"
+        tasks.append({
+            "task_id": task_id,
+            "func": _run_exp1_summary_only,
+            "kwargs": {
+                "auction_type": row["auction_type"],
+                "alpha": float(row["alpha"]),
+                "gamma": float(row["gamma"]),
+                "episodes": 1000 if quick else 100_000,
+                "init": row["init"],
+                "exploration": row["exploration"],
+                "asynchronous": int(row["asynchronous"]),
+                "n_bidders": int(row["n_bidders"]),
+                "median_opp_past_bid_index": bool(row["median_opp_past_bid_index"]),
+                "winner_bid_index_state": bool(row["winner_bid_index_state"]),
+                "reserve_price": float(row["reserve_price"]),
+                "seed": row["seed"],
+                "store_qtables": False,
+                "qtable_folder": None,
+            },
+            "run_id": row["cell_id"],
+            "design_row": row,
+        })
 
     return tasks
 
 
-def get_exp2_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250) -> List[Dict[str, Any]]:
-    """Generate task list for Experiment 2."""
-    import numpy as np
-
-    from experiments import exp2
-
+def get_exp2_tasks(quick, output_dir, seed=42, replicates=2):
+    """Generate task list for Experiment 2 using half-fraction factorial."""
     if quick:
-        K = 5
-        eta_values = [0.0, 0.5]
-        alpha_values = [0.01, 0.1]
-        gamma_values = [0.9]
-        episodes_values = [1000]
-        reserve_price_values = [0.0]
-        init_values = ["random"]
-        exploration_values = ["egreedy"]
-        async_values = [0]
-        n_bidders_values = [2]
-        median_flags = [False]
-        winner_flags = [False]
+        design = build_quick_design(EXP2_FACTORS, seed)
     else:
-        K = runs
-        eta_values = [0.0, 0.25, 0.5, 0.75, 1.0]
-        alpha_values = [0.001, 0.005, 0.01, 0.05, 0.1]
-        gamma_values = [0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]
-        episodes_values = [100_000]
-        reserve_price_values = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
-        init_values = ["random", "zeros"]
-        exploration_values = ["egreedy", "boltzmann"]
-        async_values = [0, 1]
-        n_bidders_values = [2, 3, 4]
-        median_flags = [False, True]
-        winner_flags = [False, True]
-
-    rng = np.random.default_rng(seed)
+        # 2^(11-1) = 1024 cells, Resolution V half-fraction
+        design = build_factorial_design(EXP2_FACTORS, replicates, seed,
+                                        half_fraction=True)
 
     tasks = []
-    for run_id in range(K):
-        eta = rng.choice(eta_values)
-        alpha = rng.choice(alpha_values)
-        gamma = rng.choice(gamma_values)
-        episodes = rng.choice(episodes_values)
-        reserve_price = rng.choice(reserve_price_values)
-        init_str = rng.choice(init_values)
-        exploration_str = rng.choice(exploration_values)
-        async_val = rng.choice(async_values)
-        n_bidders_val = rng.choice(n_bidders_values)
-        median_flag = rng.choice(median_flags)
-        winner_flag = rng.choice(winner_flags)
-
-        for auction_type in ["first", "second"]:
-            task_id = f"exp2_run{run_id}_{auction_type}"
-            tasks.append({
-                "task_id": task_id,
-                "func": _run_exp2_summary_only,
-                "kwargs": {
-                    "eta": float(eta),
-                    "auction_type": auction_type,
-                    "alpha": float(alpha),
-                    "gamma": float(gamma),
-                    "episodes": int(episodes),
-                    "init": init_str,
-                    "exploration": exploration_str,
-                    "asynchronous": int(async_val),
-                    "n_bidders": int(n_bidders_val),
-                    "median_opp_past_bid_index": bool(median_flag),
-                    "winner_bid_index_state": bool(winner_flag),
-                    "reserve_price": float(reserve_price),
-                    "seed": run_id,
-                    "store_qtables": False,  # Disable for parallel runs to save memory
-                    "qtable_folder": None,
-                },
-                "run_id": run_id,
-                "config": {
-                    "eta": float(eta),
-                    "alpha": float(alpha),
-                    "gamma": float(gamma),
-                    "episodes": int(episodes),
-                    "reserve_price": float(reserve_price),
-                    "init": init_str,
-                    "exploration": exploration_str,
-                    "asynchronous": int(async_val),
-                    "n_bidders": int(n_bidders_val),
-                    "median_flag": bool(median_flag),
-                    "winner_flag": bool(winner_flag),
-                    "auction_type": auction_type,
-                }
-            })
+    for row in design:
+        task_id = f"exp2_cell{row['cell_id']}_rep{row['replicate']}"
+        tasks.append({
+            "task_id": task_id,
+            "func": _run_exp2_summary_only,
+            "kwargs": {
+                "eta": float(row["eta"]),
+                "auction_type": row["auction_type"],
+                "alpha": float(row["alpha"]),
+                "gamma": float(row["gamma"]),
+                "episodes": 1000 if quick else 100_000,
+                "init": row["init"],
+                "exploration": row["exploration"],
+                "asynchronous": int(row["asynchronous"]),
+                "n_bidders": int(row["n_bidders"]),
+                "median_opp_past_bid_index": bool(row["median_opp_past_bid_index"]),
+                "winner_bid_index_state": bool(row["winner_bid_index_state"]),
+                "reserve_price": float(row["reserve_price"]),
+                "seed": row["seed"],
+                "store_qtables": False,
+                "qtable_folder": None,
+            },
+            "run_id": row["cell_id"],
+            "design_row": row,
+        })
 
     return tasks
 
 
-def get_exp3_tasks(quick: bool, output_dir: str, seed: int = 42, runs: int = 250) -> List[Dict[str, Any]]:
-    """Generate task list for Experiment 3."""
-    import numpy as np
-
-    from experiments import exp3
-
+def get_exp3_tasks(quick, output_dir, seed=42, replicates=2):
+    """Generate task list for Experiment 3 using full factorial."""
     if quick:
-        K = 5
-        eta_values = [0.0, 0.5]
-        c_values = [0.1, 1.0]
-        lam_values = [1.0]
-        n_bidders_values = [2]
-        reserve_price_values = [0.0]
-        max_rounds_values = [1000]
-        use_median_flags = [False]
-        use_winner_flags = [False]
+        design = build_quick_design(EXP3_FACTORS, seed)
     else:
-        K = runs
-        eta_values = [0.0, 0.25, 0.5, 0.75, 1.0]
-        c_values = [0.01, 0.1, 0.5, 1.0, 2.0]
-        lam_values = [0.1, 1.0, 5.0]
-        n_bidders_values = [2, 3, 4]
-        reserve_price_values = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
-        max_rounds_values = [100_000]
-        use_median_flags = [False, True]
-        use_winner_flags = [False, True]
-
-    rng = np.random.default_rng(seed)
+        design = build_factorial_design(EXP3_FACTORS, replicates, seed)
 
     tasks = []
-    for run_id in range(K):
-        eta = rng.choice(eta_values)
-        c = rng.choice(c_values)
-        lam = rng.choice(lam_values)
-        n_bidders = rng.choice(n_bidders_values)
-        r_price = rng.choice(reserve_price_values)
-        use_median = rng.choice(use_median_flags)
-        use_winner = rng.choice(use_winner_flags)
-        max_rounds = rng.choice(max_rounds_values)
-
-        for auction_type in ["first", "second"]:
-            task_id = f"exp3_run{run_id}_{auction_type}"
-            tasks.append({
-                "task_id": task_id,
-                "func": _run_exp3_summary_only,
-                "kwargs": {
-                    "eta": float(eta),
-                    "auction_type": auction_type,
-                    "c": float(c),
-                    "lam": float(lam),
-                    "n_bidders": int(n_bidders),
-                    "reserve_price": float(r_price),
-                    "max_rounds": int(max_rounds),
-                    "use_median_of_others": bool(use_median),
-                    "use_past_winner_bid": bool(use_winner),
-                    "seed": run_id,
-                },
-                "run_id": run_id,
-                "config": {
-                    "eta": float(eta),
-                    "c": float(c),
-                    "lam": float(lam),
-                    "n_bidders": int(n_bidders),
-                    "reserve_price": float(r_price),
-                    "max_rounds": int(max_rounds),
-                    "use_median": bool(use_median),
-                    "use_winner": bool(use_winner),
-                    "auction_type": auction_type,
-                }
-            })
+    for row in design:
+        task_id = f"exp3_cell{row['cell_id']}_rep{row['replicate']}"
+        tasks.append({
+            "task_id": task_id,
+            "func": _run_exp3_summary_only,
+            "kwargs": {
+                "eta": float(row["eta"]),
+                "auction_type": row["auction_type"],
+                "c": float(row["c"]),
+                "lam": float(row["lam"]),
+                "n_bidders": int(row["n_bidders"]),
+                "reserve_price": float(row["reserve_price"]),
+                "max_rounds": 1000 if quick else 100_000,
+                "use_median_of_others": bool(row["use_median_of_others"]),
+                "use_past_winner_bid": bool(row["use_past_winner_bid"]),
+                "seed": row["seed"],
+            },
+            "run_id": row["cell_id"],
+            "design_row": row,
+        })
 
     return tasks
 
 
-def aggregate_exp1_results(results: List[TaskResult], tasks: List[Dict], output_dir: str):
-    """Aggregate parallel exp1 results into a single data.csv."""
+# =====================================================================
+# Aggregation Functions
+# =====================================================================
+
+def _save_design_info(factor_defs, output_dir, experiment_id):
+    """Save factor definitions as design_info.json."""
+    info = {
+        "experiment": experiment_id,
+        "n_factors": len(factor_defs),
+        "factors": {
+            name: {"low": low, "high": high}
+            for name, (low, high) in factor_defs.items()
+        },
+    }
+    # Convert non-serializable types
+    for name in info["factors"]:
+        for level in ["low", "high"]:
+            v = info["factors"][name][level]
+            if isinstance(v, bool):
+                info["factors"][name][level] = v
+            elif hasattr(v, 'item'):
+                info["factors"][name][level] = v.item()
+    with open(os.path.join(output_dir, "design_info.json"), "w") as f:
+        json.dump(info, f, indent=2, default=str)
+
+
+def aggregate_exp1_results(results, tasks, output_dir):
+    """Aggregate parallel exp1 results into data.csv with coded columns."""
     import pandas as pd
-    import json
     from experiments.exp1 import param_mappings, theoretical_revenue_constant_valuation
 
     os.makedirs(output_dir, exist_ok=True)
+    _save_design_info(EXP1_FACTORS, output_dir, 1)
 
-    # Save param mappings
     with open(os.path.join(output_dir, "param_mappings.json"), "w") as f:
         json.dump(param_mappings, f, indent=2)
 
@@ -328,36 +355,32 @@ def aggregate_exp1_results(results: List[TaskResult], tasks: List[Dict], output_
             print(f"Skipping failed task {result.task_id}: {result.error}")
             continue
 
-        summary = result.result  # wrapper returns summary directly
-        config = task["config"]
+        summary = result.result
+        design = task["design_row"]
 
-        # Get theoretical revenue
-        cache_key = (config["n_bidders"], config["auction_type"], config["reserve_price"])
+        cache_key = (int(design["n_bidders"]), design["auction_type"],
+                     float(design["reserve_price"]))
         if cache_key not in theory_cache:
-            rev_theory = theoretical_revenue_constant_valuation(
-                config["n_bidders"], config["auction_type"], config["reserve_price"]
-            )
-            theory_cache[cache_key] = rev_theory
-        else:
-            rev_theory = theory_cache[cache_key]
+            theory_cache[cache_key] = theoretical_revenue_constant_valuation(
+                *cache_key)
 
         outcome = dict(summary)
-        outcome["run_id"] = task["run_id"]
-        outcome["alpha"] = config["alpha"]
-        outcome["gamma"] = config["gamma"]
-        outcome["episodes"] = config["episodes"]
-        outcome["reserve_price"] = config["reserve_price"]
-        outcome["auction_type_code"] = param_mappings["auction_type"][config["auction_type"]]
-        outcome["init_code"] = param_mappings["init"][config["init"]]
-        outcome["exploration_code"] = param_mappings["exploration"][config["exploration"]]
-        outcome["asynchronous_code"] = param_mappings["asynchronous"][config["asynchronous"]]
-        outcome["n_bidders"] = config["n_bidders"]
-        outcome["median_opp_past_bid_index_code"] = param_mappings["median_opp_past_bid_index"][config["median_flag"]]
-        outcome["winner_bid_index_state_code"] = param_mappings["winner_bid_index_state"][config["winner_flag"]]
-        outcome["theoretical_revenue"] = rev_theory
-
-        if rev_theory > 1e-8:
-            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / rev_theory
+        # Add actual values
+        for fname in EXP1_FACTORS:
+            outcome[fname] = design[fname]
+        # Add coded values
+        for fname in EXP1_FACTORS:
+            outcome[fname + "_coded"] = design[fname + "_coded"]
+        # Add design metadata
+        outcome["cell_id"] = design["cell_id"]
+        outcome["replicate"] = design["replicate"]
+        outcome["seed"] = design["seed"]
+        # Legacy columns for compatibility
+        outcome["auction_type_code"] = param_mappings["auction_type"][design["auction_type"]]
+        outcome["n_bidders"] = int(design["n_bidders"])
+        outcome["theoretical_revenue"] = theory_cache[cache_key]
+        if theory_cache[cache_key] > 1e-8:
+            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / theory_cache[cache_key]
         else:
             outcome["ratio_to_theory"] = None
 
@@ -366,23 +389,21 @@ def aggregate_exp1_results(results: List[TaskResult], tasks: List[Dict], output_
     df = pd.DataFrame(rows)
     csv_path = os.path.join(output_dir, "data.csv")
     df.to_csv(csv_path, index=False)
-    print(f"Data generation complete. Final summary => '{csv_path}'")
+    print(f"Factorial design complete. {len(rows)} runs => '{csv_path}'")
+    print(f"  Design: 2^{len(EXP1_FACTORS)} = {2**len(EXP1_FACTORS)} cells")
 
 
-def aggregate_exp2_results(results: List[TaskResult], tasks: List[Dict], output_dir: str):
-    """Aggregate parallel exp2 results into a single data.csv."""
+def aggregate_exp2_results(results, tasks, output_dir):
+    """Aggregate parallel exp2 results into data.csv with coded columns."""
     import pandas as pd
-    import json
-    import numpy as np
     from experiments.exp2 import param_mappings, simulate_linear_affiliation_revenue
 
     os.makedirs(output_dir, exist_ok=True)
+    _save_design_info(EXP2_FACTORS, output_dir, 2)
 
-    # Save param mappings
     with open(os.path.join(output_dir, "param_mappings.json"), "w") as f:
         json.dump(param_mappings, f, indent=2)
 
-    # Build results dataframe
     rows = []
     theory_cache = {}
 
@@ -391,37 +412,27 @@ def aggregate_exp2_results(results: List[TaskResult], tasks: List[Dict], output_
             print(f"Skipping failed task {result.task_id}: {result.error}")
             continue
 
-        summary = result.result  # wrapper returns summary directly
-        config = task["config"]
+        summary = result.result
+        design = task["design_row"]
 
-        # Get theoretical revenue
-        cache_key = (config["n_bidders"], config["eta"], config["auction_type"])
+        cache_key = (int(design["n_bidders"]), float(design["eta"]),
+                     design["auction_type"])
         if cache_key not in theory_cache:
-            rev_theory = simulate_linear_affiliation_revenue(
-                config["n_bidders"], config["eta"], config["auction_type"]
-            )
-            theory_cache[cache_key] = rev_theory
-        else:
-            rev_theory = theory_cache[cache_key]
+            theory_cache[cache_key] = simulate_linear_affiliation_revenue(*cache_key)
 
         outcome = dict(summary)
-        outcome["run_id"] = task["run_id"]
-        outcome["eta"] = config["eta"]
-        outcome["alpha"] = config["alpha"]
-        outcome["gamma"] = config["gamma"]
-        outcome["episodes"] = config["episodes"]
-        outcome["reserve_price"] = config["reserve_price"]
-        outcome["auction_type_code"] = param_mappings["auction_type"][config["auction_type"]]
-        outcome["init_code"] = param_mappings["init"][config["init"]]
-        outcome["exploration_code"] = param_mappings["exploration"][config["exploration"]]
-        outcome["asynchronous_code"] = param_mappings["asynchronous"][config["asynchronous"]]
-        outcome["n_bidders"] = config["n_bidders"]
-        outcome["median_opp_past_bid_index_code"] = param_mappings["median_opp_past_bid_index"][config["median_flag"]]
-        outcome["winner_bid_index_state_code"] = param_mappings["winner_bid_index_state"][config["winner_flag"]]
-        outcome["theoretical_revenue"] = rev_theory
-
-        if rev_theory > 1e-8:
-            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / rev_theory
+        for fname in EXP2_FACTORS:
+            outcome[fname] = design[fname]
+        for fname in EXP2_FACTORS:
+            outcome[fname + "_coded"] = design[fname + "_coded"]
+        outcome["cell_id"] = design["cell_id"]
+        outcome["replicate"] = design["replicate"]
+        outcome["seed"] = design["seed"]
+        outcome["auction_type_code"] = param_mappings["auction_type"][design["auction_type"]]
+        outcome["n_bidders"] = int(design["n_bidders"])
+        outcome["theoretical_revenue"] = theory_cache[cache_key]
+        if theory_cache[cache_key] > 1e-8:
+            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / theory_cache[cache_key]
         else:
             outcome["ratio_to_theory"] = None
 
@@ -430,18 +441,18 @@ def aggregate_exp2_results(results: List[TaskResult], tasks: List[Dict], output_
     df = pd.DataFrame(rows)
     csv_path = os.path.join(output_dir, "data.csv")
     df.to_csv(csv_path, index=False)
-    print(f"Data generation complete. Final summary => '{csv_path}'")
+    print(f"Factorial design complete. {len(rows)} runs => '{csv_path}'")
+    print(f"  Design: 2^(11-1) = 1024 cells (Resolution V half-fraction)")
 
 
-def aggregate_exp3_results(results: List[TaskResult], tasks: List[Dict], output_dir: str):
-    """Aggregate parallel exp3 results into a single data.csv."""
+def aggregate_exp3_results(results, tasks, output_dir):
+    """Aggregate parallel exp3 results into data.csv with coded columns."""
     import pandas as pd
-    import json
     from experiments.exp3 import param_mappings, simulate_linear_affiliation_revenue
 
     os.makedirs(output_dir, exist_ok=True)
+    _save_design_info(EXP3_FACTORS, output_dir, 3)
 
-    # Save param mappings
     with open(os.path.join(output_dir, "param_mappings.json"), "w") as f:
         json.dump(param_mappings, f, indent=2)
 
@@ -453,34 +464,27 @@ def aggregate_exp3_results(results: List[TaskResult], tasks: List[Dict], output_
             print(f"Skipping failed task {result.task_id}: {result.error}")
             continue
 
-        summary = result.result  # wrapper returns summary directly
-        config = task["config"]
+        summary = result.result
+        design = task["design_row"]
 
-        # Get theoretical revenue
-        cache_key = (config["n_bidders"], config["eta"], config["auction_type"])
+        cache_key = (int(design["n_bidders"]), float(design["eta"]),
+                     design["auction_type"])
         if cache_key not in theory_cache:
-            rev_theory = simulate_linear_affiliation_revenue(
-                config["n_bidders"], config["eta"], config["auction_type"]
-            )
-            theory_cache[cache_key] = rev_theory
-        else:
-            rev_theory = theory_cache[cache_key]
+            theory_cache[cache_key] = simulate_linear_affiliation_revenue(*cache_key)
 
         outcome = dict(summary)
-        outcome["run_id"] = task["run_id"]
-        outcome["eta"] = config["eta"]
-        outcome["c"] = config["c"]
-        outcome["lam"] = config["lam"]
-        outcome["n_bidders"] = config["n_bidders"]
-        outcome["auction_type_code"] = param_mappings["auction_type"][config["auction_type"]]
-        outcome["reserve_price"] = config["reserve_price"]
-        outcome["max_rounds"] = config["max_rounds"]
-        outcome["use_median_of_others_code"] = param_mappings["use_median_of_others"][config["use_median"]]
-        outcome["use_past_winner_bid_code"] = param_mappings["use_past_winner_bid"][config["use_winner"]]
-        outcome["theoretical_revenue"] = rev_theory
-
-        if rev_theory > 1e-8:
-            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / rev_theory
+        for fname in EXP3_FACTORS:
+            outcome[fname] = design[fname]
+        for fname in EXP3_FACTORS:
+            outcome[fname + "_coded"] = design[fname + "_coded"]
+        outcome["cell_id"] = design["cell_id"]
+        outcome["replicate"] = design["replicate"]
+        outcome["seed"] = design["seed"]
+        outcome["auction_type_code"] = param_mappings["auction_type"][design["auction_type"]]
+        outcome["n_bidders"] = int(design["n_bidders"])
+        outcome["theoretical_revenue"] = theory_cache[cache_key]
+        if theory_cache[cache_key] > 1e-8:
+            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / theory_cache[cache_key]
         else:
             outcome["ratio_to_theory"] = None
 
@@ -489,26 +493,37 @@ def aggregate_exp3_results(results: List[TaskResult], tasks: List[Dict], output_
     df = pd.DataFrame(rows)
     csv_path = os.path.join(output_dir, "data.csv")
     df.to_csv(csv_path, index=False)
-    print(f"Data generation complete. Final summary => '{csv_path}'")
+    print(f"Factorial design complete. {len(rows)} runs => '{csv_path}'")
+    print(f"  Design: 2^{len(EXP3_FACTORS)} = {2**len(EXP3_FACTORS)} cells")
 
 
-def run_exp1_sequential(quick: bool, output_dir: str):
-    """Run exp1 sequentially."""
+# =====================================================================
+# Sequential Mode
+# =====================================================================
+
+def run_exp_sequential(exp, quick, output_dir):
+    """Run experiment sequentially using subprocess."""
     import subprocess
-    cmd = [sys.executable, "src/experiments/exp1.py"]
+    if exp == 1:
+        cmd = [sys.executable, "src/experiments/exp1.py"]
+    elif exp == 2:
+        cmd = [sys.executable, "src/experiments/exp2.py"]
+    else:
+        cmd = [sys.executable, "src/experiments/exp3.py"]
     if quick:
         cmd.append("--quick")
     subprocess.run(cmd, check=True)
 
 
+# =====================================================================
+# Cloud Mode (fire-and-forget)
+# =====================================================================
+
 def run_detached(args):
     """Launch experiment on cloud VM in fire-and-forget mode."""
     import subprocess
     from cloud.vm import CloudVM, VMConfig
-    from cloud.gcs import GCSBucket
-    from cloud.startup import generate_startup_script
 
-    # Get project ID
     if args.project:
         project_id = args.project
     else:
@@ -523,27 +538,24 @@ def run_detached(args):
 
     print(f"Using GCP project: {project_id}")
 
-    # Setup GCS bucket
     bucket_name = f"{project_id}-collusion-experiments"
     bucket = GCSBucket(bucket_name, project_id)
     bucket.create()
 
-    # Upload code
     print("Uploading code to GCS...")
     bucket.upload_code()
 
-    # Generate startup script
     startup_script = generate_startup_script(
         bucket_name=bucket_name,
         exp=args.exp,
         quick=args.quick,
-        parallel=True
+        parallel=True,
+        runs=args.replicates
     )
 
-    # Create VM with startup script
     vm_config = VMConfig(
         name=f"collusion-exp{args.exp}",
-        machine_type="n2-standard-4",
+        machine_type="n2-standard-8",
         startup_script=startup_script
     )
     vm = CloudVM(project_id, vm_config)
@@ -559,24 +571,13 @@ def run_detached(args):
     print(f"{'='*60}")
     print(f"\nVM: {vm_config.name}")
     print(f"Bucket: gs://{bucket_name}/")
-    print(f"\nThe VM will:")
-    print(f"  1. Install dependencies")
-    print(f"  2. Run experiment {args.exp}")
-    print(f"  3. Upload results to gs://{bucket_name}/results/exp{args.exp}/")
-    print(f"  4. Upload logs to gs://{bucket_name}/logs/")
-    print(f"  5. Self-delete")
     print(f"\nYou can close this terminal now.")
-    print(f"\nTo check progress:")
-    print(f"  gcloud compute instances list --filter='name~collusion-exp'")
-    print(f"  gsutil ls gs://{bucket_name}/results/")
-    print(f"  gsutil ls gs://{bucket_name}/logs/")
 
 
 def run_cloud(args):
     """Run experiment on Google Cloud."""
     from cloud.vm import CloudVM, VMConfig
 
-    # Get project ID
     if args.project:
         project_id = args.project
     else:
@@ -591,19 +592,15 @@ def run_cloud(args):
             sys.exit(1)
 
     print(f"Using GCP project: {project_id}")
-
-    # Determine workers based on machine type
     workers = args.workers or 4
 
-    # Create VM manager
     vm_config = VMConfig(
         name=f"collusion-exp{args.exp}",
-        machine_type="n2-standard-4",  # 4 vCPUs
+        machine_type="n2-standard-8",
     )
     vm = CloudVM(project_id, vm_config)
 
     try:
-        # Create VM if needed
         if not vm.exists():
             vm.create()
             vm.setup_environment()
@@ -611,10 +608,8 @@ def run_cloud(args):
             vm.install_requirements()
         else:
             print(f"VM {vm_config.name} already exists, reusing...")
-            # Still upload latest code
             vm.upload_code()
 
-        # Run experiment
         print(f"\n{'='*50}")
         print(f"Running Experiment {args.exp} on cloud VM...")
         print(f"{'='*50}\n")
@@ -624,35 +619,33 @@ def run_cloud(args):
             quick=args.quick,
             parallel=True,
             workers=workers,
-            runs=args.runs
+            runs=args.replicates
         )
 
-        # Download results
         suffix = "/quick_test" if args.quick else ""
         local_output = args.output_dir or f"results/exp{args.exp}{suffix}_cloud"
         vm.download_results(remote_results, local_output)
 
-        print(f"\n{'='*50}")
-        print(f"Results downloaded to: {local_output}")
-        print(f"{'='*50}")
+        print(f"\nResults downloaded to: {local_output}")
 
-        # Ask about VM cleanup
         response = input("\nDelete cloud VM? [y/N]: ").strip().lower()
         if response == 'y':
             vm.delete()
 
     except KeyboardInterrupt:
         print("\nInterrupted. VM is still running.")
-        print(f"To delete: gcloud compute instances delete {vm_config.name} --zone={vm_config.zone} --project={project_id}")
     except Exception as e:
         print(f"\nError: {e}")
-        print(f"VM may still be running: {vm_config.name}")
         raise
 
 
+# =====================================================================
+# Main CLI
+# =====================================================================
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Unified CLI for algorithmic collusion experiments",
+        description="Unified CLI for algorithmic collusion experiments (factorial design)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )
@@ -663,7 +656,7 @@ def main():
     )
     parser.add_argument(
         "--quick", action="store_true",
-        help="Run quick test with reduced parameters"
+        help="Run quick test: 2^4=16 cells, 1 replicate, 1000 episodes"
     )
     parser.add_argument(
         "--parallel", action="store_true",
@@ -671,7 +664,7 @@ def main():
     )
     parser.add_argument(
         "--workers", type=int, default=None,
-        help="Number of parallel workers (default: cpu_count - 1)"
+        help="Number of parallel workers (default: cpu_count // 2)"
     )
     parser.add_argument(
         "--output-dir", type=str, default=None,
@@ -682,31 +675,16 @@ def main():
         help="Random seed"
     )
     parser.add_argument(
-        "--runs", type=int, default=250,
-        help="Number of runs (default: 250, ignored with --quick which uses 5)"
+        "--replicates", type=int, default=2,
+        help="Number of replicates per cell (default: 2)"
     )
 
-    # Cloud options (Phase 2)
-    parser.add_argument(
-        "--cloud", action="store_true",
-        help="Run on Google Cloud (not yet implemented)"
-    )
-    parser.add_argument(
-        "--detached", action="store_true",
-        help="Fire-and-forget cloud mode: VM auto-runs, uploads to GCS, self-deletes"
-    )
-    parser.add_argument(
-        "--project", type=str,
-        help="GCP project ID (for --cloud mode)"
-    )
-    parser.add_argument(
-        "--monitor", action="store_true",
-        help="Monitor running cloud job (not yet implemented)"
-    )
-    parser.add_argument(
-        "--download", action="store_true",
-        help="Download results from cloud (not yet implemented)"
-    )
+    # Cloud options
+    parser.add_argument("--cloud", action="store_true")
+    parser.add_argument("--detached", action="store_true")
+    parser.add_argument("--project", type=str)
+    parser.add_argument("--monitor", action="store_true")
+    parser.add_argument("--download", action="store_true")
 
     args = parser.parse_args()
 
@@ -729,56 +707,62 @@ def main():
         print("Use --cloud to manage cloud VMs")
         sys.exit(1)
 
-    # Sequential mode (default, maintains backward compatibility)
+    # Print design info
+    factor_defs = {1: EXP1_FACTORS, 2: EXP2_FACTORS, 3: EXP3_FACTORS}[args.exp]
+    k = len(factor_defs)
+    if args.quick:
+        n_cells = 16
+        n_reps = 1
+        total = 16
+    else:
+        if args.exp == 2:
+            n_cells = 2 ** (k - 1)
+            design_desc = f"2^({k}-1) = {n_cells} (Resolution V half-fraction)"
+        else:
+            n_cells = 2 ** k
+            design_desc = f"2^{k} = {n_cells} (full factorial)"
+        n_reps = args.replicates
+        total = n_cells * n_reps
+
+    if not args.quick:
+        print(f"Experiment {args.exp}: {design_desc}")
+        print(f"  Replicates: {n_reps}")
+        print(f"  Total runs: {total}")
+    else:
+        print(f"Experiment {args.exp}: Quick test (2^4 = 16 cells, 1 replicate)")
+        print(f"  Total runs: {total}")
+
+    # Sequential mode
     if not args.parallel:
-        print(f"Running Experiment {args.exp} sequentially...")
-        if args.exp == 1:
-            run_exp1_sequential(args.quick, output_dir)
-        elif args.exp == 2:
-            import subprocess
-            cmd = [sys.executable, "src/experiments/exp2.py"]
-            if args.quick:
-                cmd.append("--quick")
-            subprocess.run(cmd, check=True)
-        else:  # exp == 3
-            import subprocess
-            cmd = [sys.executable, "src/experiments/exp3.py"]
-            if args.quick:
-                cmd.append("--quick")
-            subprocess.run(cmd, check=True)
+        print(f"\nRunning Experiment {args.exp} sequentially...")
+        run_exp_sequential(args.exp, args.quick, output_dir)
         return
 
     # Parallel mode
-    print(f"Running Experiment {args.exp} in parallel...")
+    print(f"\nRunning Experiment {args.exp} in parallel...")
 
-    # Get tasks based on experiment
     if args.exp == 1:
-        tasks = get_exp1_tasks(args.quick, output_dir, args.seed, args.runs)
-        desc = "Experiment 1: Identical Values"
+        tasks = get_exp1_tasks(args.quick, output_dir, args.seed, args.replicates)
+        desc = "Experiment 1: Constant Values (Factorial)"
     elif args.exp == 2:
-        tasks = get_exp2_tasks(args.quick, output_dir, args.seed, args.runs)
-        desc = "Experiment 2: Affiliated Values"
-    else:  # exp == 3
-        tasks = get_exp3_tasks(args.quick, output_dir, args.seed, args.runs)
-        desc = "Experiment 3: LinUCB Bandits"
+        tasks = get_exp2_tasks(args.quick, output_dir, args.seed, args.replicates)
+        desc = "Experiment 2: Affiliated Values (Factorial)"
+    else:
+        tasks = get_exp3_tasks(args.quick, output_dir, args.seed, args.replicates)
+        desc = "Experiment 3: LinUCB Bandits (Factorial)"
 
     print(f"Generated {len(tasks)} tasks")
 
-    # Create runner
     config = LocalConfig(max_workers=args.workers)
     runner = DistributedRunner(config)
-
-    # Run tasks
     results = runner.run(tasks, desc=desc)
 
-    # Aggregate results
     os.makedirs(output_dir, exist_ok=True)
-
     if args.exp == 1:
         aggregate_exp1_results(results, tasks, output_dir)
     elif args.exp == 2:
         aggregate_exp2_results(results, tasks, output_dir)
-    else:  # exp == 3
+    else:
         aggregate_exp3_results(results, tasks, output_dir)
 
     print(f"Output directory: {output_dir}")

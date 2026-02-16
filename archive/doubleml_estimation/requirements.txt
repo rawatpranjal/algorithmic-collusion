@@ -1,0 +1,16 @@
+numpy
+pandas
+matplotlib
+seaborn
+scipy
+doubleml
+scikit-learn
+lightgbm
+tabulate
+tqdm
+patsy
+
+# Cloud (optional, for --cloud mode in scripts/run_experiment.py)
+# google-cloud-storage>=2.0.0
+# google-cloud-logging>=3.0.0
+# google-api-python-client>=2.0.0

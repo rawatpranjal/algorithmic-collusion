@@ -17,7 +17,7 @@ class LocalConfig:
     def __post_init__(self):
         if self.max_workers is None:
             # Leave one CPU free for the main process
-            self.max_workers = max(1, os.cpu_count() - 1)
+            self.max_workers = max(1, os.cpu_count() // 2)
 
 
 @dataclass

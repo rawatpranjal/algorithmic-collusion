@@ -7,23 +7,7 @@ The summary statistics confirm that the experimental design randomly allocated p
 \paragraph{First-Price Auctions Reduce Revenues.}
 DoubleML estimates reveal that switching to a first-price format (\texttt{auction\_type\_code} $=1$) significantly lowers final revenue on average by about 0.0945 ($p<0.0001$) and raises the seller’s regret on average by 0.0651 ($p<0.0001$). Other outcomes, including convergence time and price volatility, remain statistically insignificant. The no-sale rate trends modestly higher under first-price but does not reach conventional significance ($p \approx 0.082$). 
 
-\begin{table}[H]
-\centering
-\caption{Final ATE Estimates (DoubleMLIRM) for All Outcomes}
-\label{tab:ate_outcomes}
-\begin{tabular}{lrrrr}
-\toprule
-\textbf{Outcome} & \textbf{ATE} & \textbf{StdErr} & \textbf{p-value} \\
-\midrule
-avg\_rev\_last\_1000   & -0.0945 & 0.0078 & 0.0000 \\
-time\_to\_converge     &  0.0152 & 0.0282 & 0.5904 \\
-avg\_regret\_of\_seller &  0.0651 & 0.0036 & 0.0000 \\
-no\_sale\_rate         &  0.0008 & 0.0004 & 0.0822 \\
-price\_volatility      &  0.0021 & 0.0018 & 0.2540 \\
-winner\_entropy        &  0.0014 & 0.0017 & 0.3845 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/exp1_ate}
 
 \paragraph{Fewer Bidders and Very High Discount Factors Worsen Collusion.}
 Conditional average treatment effect (CATE) results indicate that having more bidders offsets part of the revenue penalty from first-price auctions: as \(\texttt{n\_bidders}\) increases, the negative effect on final revenue shrinks. In contrast, higher \(\gamma\) slightly exacerbates the first-price reduction, presumably because agents with a stronger focus on future returns adopt more conservative near-term bidding. 
@@ -56,22 +40,7 @@ Conditional average treatment effect (CATE) results indicate that having more bi
 \paragraph{Exploration and Update Mode.}
 Group-average treatment effect (GATE) comparisons indicate that $\varepsilon$-greedy exploration intensifies first-price losses (a revenue drop of $-0.1420$) relative to Boltzmann exploration ($-0.0339$), a substantial difference ($p<0.0001$) that highlights how a more controlled and probabilistic (Boltzmann) approach mitigates aggressive underbidding. Likewise, asynchronous Q-updates increase the magnitude of first-price losses ($-0.1161$) compared to synchronous updates ($-0.0683$), a significant difference ($p=0.0010$). In other words, \emph{synchronous} Q-learning dampens the detrimental impact of first-price auctions, likely by maintaining more uniform knowledge updates across all possible actions and bidders.
 
-\begin{table}[ht]
-\centering
-\caption{GATE T-tests for \texttt{avg\_rev\_last\_1000}}
-\label{tab:gate_ttests}
-\begin{tabular}{lrrr}
-\toprule
-\textbf{BinaryCov} & \textbf{Diff} & \textbf{t} & \textbf{p} \\
-\midrule
-init\_code                       & -0.0176 & -1.1156 & 0.2646 \\
-exploration\_code                &  0.1081 &  7.7589 & 0.0000 \\
-asynchronous\_code               & -0.0478 & -3.2790 & 0.0010 \\
-median\_opp\_past\_bid\_index\_code  & -0.0108 & -0.6911 & 0.4895 \\
-winner\_bid\_index\_state\_code     & -0.0022 & -0.1408 & 0.8880 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/exp1_gate}
 
 \subsection{Price Volatility and No-Sale}
 
