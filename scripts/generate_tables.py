@@ -50,6 +50,21 @@ RESPONSES = {
         "price_volatility",
         "winner_entropy",
     ],
+    4: [
+        "avg_rev_last_1000",
+        "time_to_converge",
+        "avg_regret_of_seller",
+        "no_sale_rate",
+        "price_volatility",
+        "winner_entropy",
+        "budget_utilization",
+        "spend_volatility",
+        "budget_violation_rate",
+        "effective_bid_shading",
+        "multiplier_convergence_time",
+        "multiplier_final_mean",
+        "multiplier_final_std",
+    ],
 }
 
 # The regret variable name differs in Exp3
@@ -57,6 +72,7 @@ REGRET_VAR = {
     1: "avg_regret_of_seller",
     2: "avg_regret_of_seller",
     3: "avg_regret_seller",
+    4: "avg_regret_of_seller",
 }
 
 
@@ -350,7 +366,7 @@ def main():
     os.makedirs(TABLES_DIR, exist_ok=True)
     os.makedirs(FIGURES_DIR, exist_ok=True)
 
-    for exp_num in [1, 2, 3]:
+    for exp_num in [1, 2, 3, 4]:
         print(f"\nProcessing Experiment {exp_num}...")
         process_experiment(exp_num)
 

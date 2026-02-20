@@ -1,0 +1,42 @@
+{
+  "experiment": 4,
+  "n_factors": 9,
+  "factors": {
+    "algorithm": {
+      "low": "multiplicative",
+      "high": "pid"
+    },
+    "auction_type": {
+      "low": "second",
+      "high": "first"
+    },
+    "n_bidders": {
+      "low": 2,
+      "high": 4
+    },
+    "budget_tightness": {
+      "low": 0.25,
+      "high": 0.75
+    },
+    "eta": {
+      "low": 0.0,
+      "high": 1.0
+    },
+    "aggressiveness": {
+      "low": 0.5,
+      "high": 2.0
+    },
+    "update_frequency": {
+      "low": 1,
+      "high": 100
+    },
+    "initial_multiplier": {
+      "low": 0.5,
+      "high": 1.0
+    },
+    "reserve_price": {
+      "low": 0.0,
+      "high": 0.3
+    }
+  }
+}

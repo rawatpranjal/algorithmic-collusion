@@ -1,0 +1,63 @@
+======================================================================
+ROBUST ANALYSIS SUMMARY — Experiment 4
+======================================================================
+
+KEY FINDING: algorithm × budget_tightness interaction
+--------------------------------------------------
+  avg_rev_last_1000|algorithm:budget_tightness: raw p=5.5168e-09, holm p=2.6922e-06 → SURVIVES Holm-Bonferroni
+  time_to_converge|algorithm:budget_tightness: raw p=1.2724e-04, holm p=5.8146e-02 → does NOT survive Holm-Bonferroni
+  avg_regret_of_seller|algorithm:budget_tightness: raw p=8.8078e-01, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
+  no_sale_rate|algorithm:budget_tightness: raw p=3.9824e-01, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
+  price_volatility|algorithm:budget_tightness: raw p=6.1209e-01, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
+  winner_entropy|algorithm:budget_tightness: raw p=5.0546e-01, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
+  budget_utilization|algorithm:budget_tightness: raw p=3.7343e-01, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
+  spend_volatility|algorithm:budget_tightness: raw p=2.5546e-05, holm p=1.1930e-02 → SURVIVES Holm-Bonferroni
+  effective_bid_shading|algorithm:budget_tightness: raw p=1.0335e-03, holm p=4.6612e-01 → does NOT survive Holm-Bonferroni
+  multiplier_convergence_time|algorithm:budget_tightness: raw p=1.5613e-11, holm p=7.7126e-09 → SURVIVES Holm-Bonferroni
+  multiplier_final_mean|algorithm:budget_tightness: raw p=3.8549e-20, holm p=1.9660e-17 → SURVIVES Holm-Bonferroni
+  multiplier_final_std|algorithm:budget_tightness: raw p=1.7569e-24, holm p=9.1009e-22 → SURVIVES Holm-Bonferroni
+
+MODEL ADEQUACY
+--------------------------------------------------
+  avg_rev_last_1000               R²=0.5887  Pred-R²=0.5346  Gap=0.0541
+  time_to_converge                R²=0.4046  Pred-R²=0.3263  Gap=0.0783
+  avg_regret_of_seller            R²=0.6274  Pred-R²=0.5784  Gap=0.0490
+  no_sale_rate                    R²=0.2950  Pred-R²=0.2023  Gap=0.0927
+  price_volatility                R²=0.5249  Pred-R²=0.4624  Gap=0.0625
+  winner_entropy                  R²=0.6957  Pred-R²=0.6556  Gap=0.0400
+  budget_utilization              R²=0.5443  Pred-R²=0.4844  Gap=0.0599
+  spend_volatility                R²=0.2653  Pred-R²=0.1687  Gap=0.0966
+  effective_bid_shading           R²=0.5096  Pred-R²=0.4451  Gap=0.0645
+  multiplier_convergence_time     R²=0.4116  Pred-R²=0.3342  Gap=0.0774
+  multiplier_final_mean           R²=0.4522  Pred-R²=0.3802  Gap=0.0720
+  multiplier_final_std            R²=0.4999  Pred-R²=0.4342  Gap=0.0658
+
+LINEAR vs NONPARAMETRIC
+--------------------------------------------------
+  avg_rev_last_1000               OLS=0.5887  LGBM=0.6080  Gap=0.0194
+  time_to_converge                OLS=0.4046  LGBM=0.4312  Gap=0.0266
+  avg_regret_of_seller            OLS=0.6274  LGBM=0.6323  Gap=0.0049
+  no_sale_rate                    OLS=0.2950  LGBM=0.2913  Gap=-0.0037
+  price_volatility                OLS=0.5249  LGBM=0.5543  Gap=0.0294
+  winner_entropy                  OLS=0.6957  LGBM=0.7802  Gap=0.0845
+  budget_utilization              OLS=0.5443  LGBM=0.6497  Gap=0.1053
+  spend_volatility                OLS=0.2653  LGBM=0.2158  Gap=-0.0495
+  effective_bid_shading           OLS=0.5096  LGBM=0.5626  Gap=0.0530
+  multiplier_convergence_time     OLS=0.4116  LGBM=0.4390  Gap=0.0274
+  multiplier_final_mean           OLS=0.4522  LGBM=0.5401  Gap=0.0879
+  multiplier_final_std            OLS=0.4999  LGBM=0.5293  Gap=0.0294
+
+POWER ANALYSIS (80% power, α=0.05)
+--------------------------------------------------
+  avg_rev_last_1000               MDE=0.016286 (3.5% of mean)
+  time_to_converge                MDE=0.030896 (7.2% of mean)
+  avg_regret_of_seller            MDE=0.010851 (2.3% of mean)
+  no_sale_rate                    MDE=0.015533 (15.0% of mean)
+  price_volatility                MDE=0.004669 (2.1% of mean)
+  winner_entropy                  MDE=0.020047 (1.9% of mean)
+  budget_utilization              MDE=0.017732 (2.3% of mean)
+  spend_volatility                MDE=0.076881 (4.8% of mean)
+  effective_bid_shading           MDE=0.017931 (9.1% of mean)
+  multiplier_convergence_time     MDE=355.591103 (9.0% of mean)
+  multiplier_final_mean           MDE=0.025995 (2.5% of mean)
+  multiplier_final_std            MDE=0.017974 (12.4% of mean)

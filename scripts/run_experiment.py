@@ -81,6 +81,20 @@ EXP3_FACTORS = {
     "use_past_winner_bid":  (False, True),
 }
 
+EXP4_FACTORS = {
+    # Original 8 factors
+    "algorithm":           ("multiplicative", "pid"),
+    "auction_type":        ("second", "first"),
+    "n_bidders":           (2, 4),
+    "budget_tightness":    (0.25, 0.75),
+    "eta":                 (0.0, 1.0),
+    "aggressiveness":      (0.5, 2.0),
+    "update_frequency":    (1, 100),
+    "initial_multiplier":  (0.5, 1.0),
+    # NEW: 9th factor
+    "reserve_price":       (0.0, 0.3),
+}
+
 
 # =====================================================================
 # Factorial Design Builder
@@ -199,6 +213,12 @@ def _run_exp3_summary_only(**kwargs):
     return summary
 
 
+def _run_exp4_summary_only(**kwargs):
+    from experiments import exp4
+    summary, _, _, _ = exp4.run_experiment(**kwargs)
+    return summary
+
+
 # =====================================================================
 # Task Generators (factorial design)
 # =====================================================================
@@ -301,6 +321,41 @@ def get_exp3_tasks(quick, output_dir, seed=42, replicates=2):
                 "max_rounds": 1000 if quick else 100_000,
                 "use_median_of_others": bool(row["use_median_of_others"]),
                 "use_past_winner_bid": bool(row["use_past_winner_bid"]),
+                "seed": row["seed"],
+            },
+            "run_id": row["cell_id"],
+            "design_row": row,
+        })
+
+    return tasks
+
+
+def get_exp4_tasks(quick, output_dir, seed=42, replicates=2):
+    """Generate task list for Experiment 4 using 2^(9-1) half-fraction."""
+    if quick:
+        design = build_quick_design(EXP4_FACTORS, seed)
+    else:
+        # 2^(9-1) = 256 cells, Resolution IX half-fraction
+        design = build_factorial_design(EXP4_FACTORS, replicates, seed,
+                                        half_fraction=True)
+
+    tasks = []
+    for row in design:
+        task_id = f"exp4_cell{row['cell_id']}_rep{row['replicate']}"
+        tasks.append({
+            "task_id": task_id,
+            "func": _run_exp4_summary_only,
+            "kwargs": {
+                "algorithm": row["algorithm"],
+                "auction_type": row["auction_type"],
+                "n_bidders": int(row["n_bidders"]),
+                "budget_tightness": float(row["budget_tightness"]),
+                "eta": float(row["eta"]),
+                "aggressiveness": float(row["aggressiveness"]),
+                "update_frequency": int(row["update_frequency"]),
+                "initial_multiplier": float(row["initial_multiplier"]),
+                "reserve_price": float(row["reserve_price"]),
+                "max_rounds": 1000 if quick else 10_000,
                 "seed": row["seed"],
             },
             "run_id": row["cell_id"],
@@ -497,6 +552,60 @@ def aggregate_exp3_results(results, tasks, output_dir):
     print(f"  Design: 2^{len(EXP3_FACTORS)} = {2**len(EXP3_FACTORS)} cells")
 
 
+def aggregate_exp4_results(results, tasks, output_dir):
+    """Aggregate parallel exp4 results into data.csv with coded columns."""
+    import pandas as pd
+    from experiments.exp4 import param_mappings, simulate_linear_affiliation_revenue
+
+    os.makedirs(output_dir, exist_ok=True)
+    _save_design_info(EXP4_FACTORS, output_dir, 4)
+
+    with open(os.path.join(output_dir, "param_mappings.json"), "w") as f:
+        json.dump(param_mappings, f, indent=2)
+
+    rows = []
+    theory_cache = {}
+
+    for result, task in zip(results, tasks):
+        if not result.success:
+            print(f"Skipping failed task {result.task_id}: {result.error}")
+            continue
+
+        summary = result.result
+        design = task["design_row"]
+
+        cache_key = (int(design["n_bidders"]), float(design["eta"]),
+                     design["auction_type"])
+        if cache_key not in theory_cache:
+            theory_cache[cache_key] = simulate_linear_affiliation_revenue(*cache_key)
+
+        outcome = dict(summary)
+        for fname in EXP4_FACTORS:
+            outcome[fname] = design[fname]
+        for fname in EXP4_FACTORS:
+            outcome[fname + "_coded"] = design[fname + "_coded"]
+        outcome["cell_id"] = design["cell_id"]
+        outcome["replicate"] = design["replicate"]
+        outcome["seed"] = design["seed"]
+        outcome["max_rounds"] = task["kwargs"]["max_rounds"]
+        outcome["auction_type_code"] = param_mappings["auction_type"][design["auction_type"]]
+        outcome["algorithm_code"] = param_mappings["algorithm"][design["algorithm"]]
+        outcome["n_bidders"] = int(design["n_bidders"])
+        outcome["theoretical_revenue"] = theory_cache[cache_key]
+        if theory_cache[cache_key] > 1e-8:
+            outcome["ratio_to_theory"] = outcome["avg_rev_last_1000"] / theory_cache[cache_key]
+        else:
+            outcome["ratio_to_theory"] = None
+
+        rows.append(outcome)
+
+    df = pd.DataFrame(rows)
+    csv_path = os.path.join(output_dir, "data.csv")
+    df.to_csv(csv_path, index=False)
+    print(f"Factorial design complete. {len(rows)} runs => '{csv_path}'")
+    print(f"  Design: 2^(9-1) = 256 cells (Resolution IX half-fraction)")
+
+
 # =====================================================================
 # Sequential Mode
 # =====================================================================
@@ -651,8 +760,8 @@ def main():
     )
 
     parser.add_argument(
-        "--exp", type=int, required=True, choices=[1, 2, 3],
-        help="Experiment number (1, 2, or 3)"
+        "--exp", type=int, required=True, choices=[1, 2, 3, 4],
+        help="Experiment number (1, 2, 3, or 4)"
     )
     parser.add_argument(
         "--quick", action="store_true",
@@ -708,16 +817,20 @@ def main():
         sys.exit(1)
 
     # Print design info
-    factor_defs = {1: EXP1_FACTORS, 2: EXP2_FACTORS, 3: EXP3_FACTORS}[args.exp]
+    factor_defs = {1: EXP1_FACTORS, 2: EXP2_FACTORS, 3: EXP3_FACTORS,
+                   4: EXP4_FACTORS}[args.exp]
     k = len(factor_defs)
     if args.quick:
         n_cells = 16
         n_reps = 1
         total = 16
     else:
-        if args.exp == 2:
+        if args.exp in (2, 4):
             n_cells = 2 ** (k - 1)
-            design_desc = f"2^({k}-1) = {n_cells} (Resolution V half-fraction)"
+            if args.exp == 2:
+                design_desc = f"2^({k}-1) = {n_cells} (Resolution V half-fraction)"
+            else:
+                design_desc = f"2^({k}-1) = {n_cells} (Resolution IX half-fraction)"
         else:
             n_cells = 2 ** k
             design_desc = f"2^{k} = {n_cells} (full factorial)"
@@ -747,9 +860,12 @@ def main():
     elif args.exp == 2:
         tasks = get_exp2_tasks(args.quick, output_dir, args.seed, args.replicates)
         desc = "Experiment 2: Affiliated Values (Factorial)"
-    else:
+    elif args.exp == 3:
         tasks = get_exp3_tasks(args.quick, output_dir, args.seed, args.replicates)
         desc = "Experiment 3: LinUCB Bandits (Factorial)"
+    else:
+        tasks = get_exp4_tasks(args.quick, output_dir, args.seed, args.replicates)
+        desc = "Experiment 4: Budget-Constrained Pacing (Factorial)"
 
     print(f"Generated {len(tasks)} tasks")
 
@@ -762,8 +878,10 @@ def main():
         aggregate_exp1_results(results, tasks, output_dir)
     elif args.exp == 2:
         aggregate_exp2_results(results, tasks, output_dir)
-    else:
+    elif args.exp == 3:
         aggregate_exp3_results(results, tasks, output_dir)
+    else:
+        aggregate_exp4_results(results, tasks, output_dir)
 
     print(f"Output directory: {output_dir}")
 

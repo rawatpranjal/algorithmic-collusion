@@ -29,12 +29,14 @@ EXP_TITLES = {
     1: "Q-Learning with Constant Valuations",
     2: "Q-Learning with Affiliated Values",
     3: "LinUCB Bandits with Affiliated Values",
+    4: "Budget-Constrained Pacing (PID vs Multiplicative)",
 }
 
 EXP_DESIGNS = {
     1: {"design": "$2^{10}$ full factorial", "k": 10},
     2: {"design": "$2^{11-1}$ half-fraction (Res V)", "k": 11},
     3: {"design": "$2^{8}$ full factorial", "k": 8},
+    4: {"design": "$2^{9-1}$ half-fraction (Res IX)", "k": 9},
 }
 
 # Response variables expected per experiment
@@ -62,6 +64,21 @@ EXP_RESPONSES = {
         "no_sale_rate",
         "price_volatility",
         "winner_entropy",
+    ],
+    4: [
+        "avg_rev_last_1000",
+        "time_to_converge",
+        "avg_regret_of_seller",
+        "no_sale_rate",
+        "price_volatility",
+        "winner_entropy",
+        "budget_utilization",
+        "spend_volatility",
+        "budget_violation_rate",
+        "effective_bid_shading",
+        "multiplier_convergence_time",
+        "multiplier_final_mean",
+        "multiplier_final_std",
     ],
 }
 
@@ -648,7 +665,7 @@ def generate_results_tex():
     )
 
     # Experiment sections
-    for exp_num in [1, 2, 3]:
+    for exp_num in [1, 2, 3, 4]:
         print(f"  Processing Experiment {exp_num}...")
         parts.append(generate_experiment_section(exp_num))
         parts.append(r"\newpage")

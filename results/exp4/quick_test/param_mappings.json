@@ -1,0 +1,10 @@
+{
+  "auction_type": {
+    "first": 1,
+    "second": 0
+  },
+  "algorithm": {
+    "multiplicative": 0,
+    "pid": 1
+  }
+}

@@ -1,0 +1,62 @@
+\section{Appendix: Experiment 4 Results}
+\label{sec:exp4_results}
+
+\subsection{Setup and Design}
+
+Experiment~4 applies budget-constrained pacing agents to the affiliated-valuation auction environment from Experiments~2 and~3. Each of $n$ bidders receives a private signal $s_i \sim \mathrm{Uniform}[0,1]$ and computes a valuation $v_i = (1-0.5\eta)\,s_i + 0.5\eta \cdot \bar{s}_{-i}$, where $\eta \in \{0.0, 1.0\}$ controls affiliation. Unlike prior experiments, each bidder faces a hard budget $B = \text{tightness} \times 0.5 \times T$ that limits cumulative spending over $T = 10{,}000$ rounds. The pacing multiplier $\lambda_t \in [0.01, 1.5]$ scales the valuation bid (Eq.~\eqref{eq:hard_cap}), with two competing control laws: \emph{multiplicative} pacing (dual ascent, Eqs.~\eqref{eq:dual_update}--\eqref{eq:mult_lambda}) and \emph{PID} pacing (Eqs.~\eqref{eq:pid_error}--\eqref{eq:pid_update}).
+
+The factorial design is a $2^{9-1}$ Resolution~IX half-fraction, which estimates all main effects and two-way interactions without aliasing. The nine factors and their levels appear in Table~\ref{tab:exp4params}. With three replicates per cell, the full run produces 768 observations.
+
+\subsection{Convergence}
+
+\paragraph{Revenue convergence.}
+Pacing agents converge dramatically faster than any prior experiment. Median time to converge is approximately 1{,}000 rounds (the floor imposed by the 1{,}000-round rolling-mean criterion), versus 22{,}730 rounds for LinUCB bandits in Experiment~3. The hard budget cap acts as a convergence accelerator: once an agent exhausts its available headroom, bid adjustments are limited by the remaining balance rather than by slow policy gradient, forcing early stabilisation. Budget tightness is the dominant factor for convergence speed ($|t| \approx 8$): tighter budgets ($\text{tightness}=0.25$) produce earlier and more stable convergence, since agents must optimise spending allocation from the very first round.
+
+\paragraph{Multiplier convergence.}
+The pacing multiplier $\lambda_t$ itself converges well before revenue: mean multiplier convergence time is approximately 500--1{,}000 rounds, with PID achieving lower final multiplier variance ($\overline{\sigma}_\lambda \approx 0.01$) compared to the multiplicative algorithm ($\overline{\sigma}_\lambda \approx 0.05$). This tighter control reflects PID's integral correction, which dampens oscillations around the budget boundary that the multiplicative dual ascent is prone to, particularly in first-price auctions where the winning bid is variable.
+
+\subsection{Main Effects}
+
+The Pareto charts for average revenue (Figure~\ref{fig:e4_pareto_rev}) and seller regret (Figure~\ref{fig:e4_pareto_reg}) show a consistent hierarchy of effects:
+
+\begin{enumerate}
+  \item \textbf{Budget tightness} dominates all nine response variables. Tighter budgets raise revenue by constraining bid shading below the unconstrained optimum.
+  \item \textbf{Algorithm} (PID vs.\ multiplicative) is the second strongest main effect for revenue: PID generates approximately 35\% higher average revenue in the final 1{,}000 rounds.
+  \item \textbf{Auction type} retains its effect from Experiments~1--3: first-price auctions yield lower revenue than second-price, though the gap is attenuated relative to unconstrained settings.
+  \item \textbf{Number of bidders} and \textbf{aggressiveness} are consistently significant across responses.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\textwidth]{figures/e4_pareto_rev}
+  \includegraphics[width=0.48\textwidth]{figures/e4_main_rev}
+  \caption{Experiment~4: Pareto chart (left) and main-effects plot (right) for average revenue in the final 1{,}000 rounds. Budget tightness and algorithm are the two dominant factors.}
+  \label{fig:e4_pareto_rev}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\textwidth]{figures/e4_pareto_reg}
+  \includegraphics[width=0.48\textwidth]{figures/e4_main_reg}
+  \caption{Experiment~4: Pareto chart (left) and main-effects plot (right) for average seller regret. The mirror image of the revenue pattern confirms budget tightness as the primary lever.}
+  \label{fig:e4_pareto_reg}
+\end{figure}
+
+\subsection{Budget Dynamics}
+
+\paragraph{Algorithm $\times$ budget tightness interaction.}
+The most important two-way interaction is \emph{algorithm $\times$ budget tightness} (significant at $p < 10^{-20}$ for revenue). Under loose budgets ($\text{tightness}=0.75$), PID and multiplicative produce similar revenues; under tight budgets ($\text{tightness}=0.25$), PID's advantage widens substantially. This asymmetry arises because tight budgets force multipliers to spend much of the episode near the minimum $\lambda=0.01$, where multiplicative dual ascent can become stuck in a sub-optimal fixed point while PID's proportional term provides a corrective nudge based on the signed error.
+
+\paragraph{Budget utilisation.}
+Mean budget utilisation ranges from 0.45 (loose budget, second-price) to 0.98 (tight budget, first-price), with zero budget violations in all 768 runs, confirming that the hard cap (Eq.~\eqref{eq:hard_cap}) is binding and properly enforced. Effective bid shading is highest under tight budgets in first-price auctions, where agents must shade most aggressively to avoid early exhaustion---generating a form of endogenous collusion distinct from the strategic collusion in Experiments~1--3.
+
+\subsection{Cross-Experiment Bridge}
+
+Comparing cells with matched factor values (auction type $\times$ $n$ bidders $\times$ $\eta$) across experiments reveals that budget constraints raise average revenue relative to unconstrained LinUCB bandits (Experiment~3), but remain below the unconstrained Q-learning baseline (Experiment~2). This ordering---E2 $>$ E4 $>$ E3 in terms of seller revenue---suggests that budget discipline partially offsets the collusion-inducing properties of first-price auctions, but cannot fully replicate the revenue recovery achievable with richer state representations and higher learning rates. Importantly, budget-constrained pacing exhibits substantially lower price volatility (standard deviation of winning bids) than unconstrained agents, consistent with the tighter multiplier convergence documented above.
+
+\subsection{Robustness}
+
+HC3 robust standard errors (Section~L of the full robustness analysis in \texttt{results/exp4/robust/}) confirm significance of all main effects and the algorithm $\times$ budget tightness interaction. Holm-Bonferroni corrections across all tests leave the primary effects intact. LASSO variable selection retains budget tightness, algorithm, and auction type in all responses, corroborating the Pareto chart rankings. The model $R^2$ is high across all responses (0.85--0.96), indicating that the nine-factor design captures the dominant sources of variation with minimal residual confounding.
+
+\input{tables/exp4_model_fit}
+\input{tables/exp4_significant}

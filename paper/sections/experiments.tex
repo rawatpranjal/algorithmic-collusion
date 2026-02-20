@@ -69,28 +69,56 @@ Number of rounds & e.g.\ $10^5$\\
 \end{tabular}
 \end{table}
 
+\paragraph{Experiment 4.} Building on the affiliated-valuation model of Experiments~2 and~3, Experiment~4 introduces explicit budget constraints on each bidder. Rather than unconstrained learning, each of $n$ bidders must allocate a finite budget $B$ across $T$ rounds. We study two pacing algorithms: \emph{multiplicative pacing} (Lagrangian dual ascent, following Balseiro and Gur 2019) and a \emph{PID controller} (see Section~\ref{sec:algorithms}). Both apply a multiplier $\lambda_t$ to the raw valuation bid, with a hard cap enforcing that cumulative spending never exceeds $B$. The design retains the same affiliation parameter $\eta$ and auction format (first vs.\ second price) as bridge factors to connect with prior experiments. Three new factors---budget tightness, pacing aggressiveness, and update frequency---govern how the pacing control law responds to observed spending patterns. Table~\ref{tab:exp4params} details the factor levels.
+
+\begin{table}[H]
+\centering
+\caption{Parameter settings for Experiment~4 (Budget-Constrained Pacing).}
+\label{tab:exp4params}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Factor} & \textbf{Low level} & \textbf{High level}\\
+\midrule
+Algorithm & Multiplicative & PID \\
+Auction type & Second-price & First-price \\
+Number of bidders ($n$) & 2 & 4 \\
+Budget tightness & 0.25 (tight) & 0.75 (loose) \\
+Affiliation ($\eta$) & 0.0 (private) & 1.0 (common) \\
+Aggressiveness & 0.5 & 2.0 \\
+Update frequency & 1 (every round) & 100 (batched) \\
+Initial multiplier & 0.5 & 1.0 \\
+Reserve price ($r$) & 0.0 & 0.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Parameter Ranges in Experiments}
-Table~\ref{tab:params} summarizes the parameters used across all experiments, their descriptions, and the ranges explored. A checkmark indicates that the parameter is applicable in a given experiment. 
+Table~\ref{tab:params} summarizes the parameters used across all experiments, their descriptions, and the ranges explored. A checkmark indicates that the parameter is applicable in a given experiment.
 
 \begin{table}[H]
 \centering
 \caption{Parameter Ranges and Their Usage Across Experiments}
 \label{tab:params}
-\begin{tabular}{l l l c c c}
+\begin{tabular}{l l l c c c c}
 \toprule
-\textbf{Name} & \textbf{Description} & \textbf{Range} & \textbf{E1} & \textbf{E2} & \textbf{E3}\\
+\textbf{Name} & \textbf{Description} & \textbf{Range} & \textbf{E1} & \textbf{E2} & \textbf{E3} & \textbf{E4}\\
 \midrule
-$\alpha$ & Q-learning rate & $\{0.001,0.005,0.01,0.05,0.1\}$ & \checkmark & \checkmark & \\
-$\gamma$ & Discount factor & $\{0.0,0.25,0.5,0.75,0.9,0.95,0.99\}$ & \checkmark & \checkmark & \\
-$\varepsilon$ & E-greedy exploration prob & Typically decays from 1 to 0 & \checkmark & \checkmark & \\
-Boltzmann & Softmax exploration & Weight factor over $Q$-values & \checkmark & \checkmark & \\
-$c$ & Bandit exploration param & E.g.\ $[0.01,2.0]$ &  &  & \checkmark \\
-$r$ & Reserve price & $\{0.0,0.1,0.2,0.3,0.4,0.5\}$ & \checkmark & \checkmark & \checkmark \\
-$n$ & Number of bidders & $\{2,4,6\}$ or similar & \checkmark & \checkmark & \checkmark \\
-$\eta$ & Affiliation parameter & $[0,1]$ &  & \checkmark & \checkmark \\
-\textit{Episodes} & Total training rounds & E.g.\ $\{10{,}000, 50{,}000, 100{,}000\}$ & \checkmark & \checkmark & \checkmark \\
-\textit{Sync/Async} & Q-learning modes & N/A (binary choice) & \checkmark & \checkmark & \\
-\textit{Median/Winner} & State features & N/A (binary choice) & \checkmark & \checkmark & \checkmark\\
+$\alpha$ & Q-learning rate & $\{0.001,0.005,0.01,0.05,0.1\}$ & \checkmark & \checkmark & & \\
+$\gamma$ & Discount factor & $\{0.0,0.25,0.5,0.75,0.9,0.95,0.99\}$ & \checkmark & \checkmark & & \\
+$\varepsilon$ & E-greedy exploration prob & Typically decays from 1 to 0 & \checkmark & \checkmark & & \\
+Boltzmann & Softmax exploration & Weight factor over $Q$-values & \checkmark & \checkmark & & \\
+$c$ & Bandit exploration param & E.g.\ $[0.01,2.0]$ &  &  & \checkmark & \\
+$r$ & Reserve price & $\{0.0,0.1,0.2,0.3,0.4,0.5\}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+$n$ & Number of bidders & $\{2,4,6\}$ or similar & \checkmark & \checkmark & \checkmark & \checkmark \\
+$\eta$ & Affiliation parameter & $[0,1]$ &  & \checkmark & \checkmark & \checkmark \\
+\textit{Episodes} & Total training rounds & E.g.\ $\{10{,}000, 50{,}000, 100{,}000\}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\textit{Sync/Async} & Q-learning modes & N/A (binary choice) & \checkmark & \checkmark & & \\
+\textit{Median/Winner} & State features & N/A (binary choice) & \checkmark & \checkmark & \checkmark & \\
+Budget tightness & Fraction of max feasible budget & $\{0.25, 0.75\}$ & & & & \checkmark \\
+Algorithm & Pacing control law & Multiplicative / PID & & & & \checkmark \\
+Aggressiveness & Step-size multiplier & $\{0.5, 2.0\}$ & & & & \checkmark \\
+Update frequency & Rounds per multiplier update & $\{1, 100\}$ & & & & \checkmark \\
+Initial multiplier & Starting $\lambda_0$ & $\{0.5, 1.0\}$ & & & & \checkmark \\
 \bottomrule
 \end{tabular}
 \end{table}
