@@ -1,0 +1,59 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\setcounter{secnumdepth}{0}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\DeclareUnicodeCharacter{202F}{~} % Replaces narrow no-break space with LaTeX non-breaking space
+
+
+\title{Algorithmic Collusion in Auctions: Evidence from Controlled Laboratory Experiments}
+\author{Pranjal Rawat}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Algorithms are increasingly being used to automate participation in online markets. Banchio and Skrzypacz (2022) demonstrate how exploration under identical valuation in first-price auctions may lead to spontaneous coupling into sub-competitive bidding. However, it is an open question if these findings extend to affiliated values, optimal exploration, and specifically which algorithmic details play a role in facilitating algorithmic collusion. This paper contributes to the literature by generating robust stylized facts to cover these gaps. I conduct a set of fully randomized experiments in a controlled laboratory setup and apply double machine learning to estimate granular conditional treatment effects of auction design on seller revenues. I find that first-price auctions lead to lower seller revenues and higher seller regret under identical values, affiliated values, and under both Q-learning and Bandits. There is more possibility of such tacit collusion under fewer bidders, Boltzmann exploration, asynchronous updating, and longer episodes; while high reserve prices can offset this. This evidence suggests that programmatic auctions, e.g. the Google Ad Exchange, which depend on first-price auctions, might be susceptible to coordinated bid suppression and significant revenue losses.
+\end{abstract}
+
+% Main sections
+\newpage
+\input{sections/introduction}
+\input{sections/literature}
+\input{sections/auctions}
+\input{sections/algorithms}
+\input{sections/experiments}
+\input{sections/inference}
+\input{sections/res1}
+\input{sections/res2}
+\input{sections/res3}
+
+\input{sections/discussion}
+\appendix
+\input{sections/references}
+\newpage
+\input{sections/exp1}
+\input{sections/exp2}
+\input{sections/exp3}
+\input{sections/exp4}
+\input{sections/equilibria}
+
+\end{document}
+
+
+cate: second price --> avg rev
+- rises slightly when alpha is lower

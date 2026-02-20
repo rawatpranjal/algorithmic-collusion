@@ -1,0 +1,27 @@
+BACKUP MANIFEST
+================
+
+Timestamp: 20260220_095145
+Purpose: Pre-discussion integration backup
+Git Hash: 35d51df12368c0abbc64bdcdc6853f032449c430
+Created: 2026-02-20 09:52:01 IST
+
+FILES BACKED UP:
+- main.tex (Abstract + document structure)
+- introduction.tex (Will add synthesis paragraph)
+- discussion.tex (Already rewritten, 130 lines)
+- exp4.tex (Will be migrated to res4.tex)
+- res1.tex (Reference check)
+- res2.tex (Reference check)
+- res3.tex (Reference check)
+
+PLANNED CHANGES:
+1. Migrate exp4.tex → res4.tex (appendix to main results)
+2. Update abstract with 2 cross-experiment sentences
+3. Add synthesis paragraph to introduction
+4. Verify statistical claims and citations
+5. Recompile paper and regenerate results.pdf
+
+RESTORE COMMAND:
+cp paper/archived_versions/20260220_095145_pre_discussion_integration/* paper/sections/
+git checkout paper/main.tex
