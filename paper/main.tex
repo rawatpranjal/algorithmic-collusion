@@ -6,19 +6,18 @@
 \usepackage{tabularx}
 \usepackage{xcolor}
 \usepackage{hyperref}
-\setcounter{secnumdepth}{0}
-\usepackage{amsmath,amssymb,amsfonts}
+\setcounter{secnumdepth}{3}
+\usepackage{amsfonts}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric}
 \usepackage{float}
-\usepackage{graphicx}
 \usepackage{fullpage}
 \DeclareUnicodeCharacter{202F}{~} % Replaces narrow no-break space with LaTeX non-breaking space
 
 
-\title{Algorithmic Collusion in Auctions: Evidence from Controlled Laboratory Experiments}
+\title{On the Design of Auctions when Algorithms Learn to Bid}
 \author{Pranjal Rawat}
 \date{\today}
 
@@ -27,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-Algorithms are increasingly being used to automate participation in online markets. Banchio and Skrzypacz (2022) demonstrate how exploration under identical valuation in first-price auctions may lead to spontaneous coupling into sub-competitive bidding. However, it is an open question if these findings extend to affiliated values, optimal exploration, and specifically which algorithmic details play a role in facilitating algorithmic collusion. This paper contributes to the literature by generating robust stylized facts to cover these gaps. Across four experiments spanning Q-learning, contextual bandits, and budget-constrained pacing algorithms, I find that first-price auctions systematically underperform second-price auctions, with revenue gaps ranging from -3.8\% to -47.2\% depending on algorithm and valuation structure. This cross-experiment robustness establishes first-price underperformance as a fundamental property of autonomous learning agents, not an artifact of specific algorithmic choices. I conduct a set of fully randomized experiments in a controlled laboratory setup and apply double machine learning to estimate granular conditional treatment effects of auction design on seller revenues. I find that first-price auctions lead to lower seller revenues and higher seller regret under identical values, affiliated values, and under both Q-learning and Bandits. There is more possibility of such tacit collusion under fewer bidders, Boltzmann exploration, asynchronous updating, and longer episodes; while high reserve prices can offset this. This evidence suggests that programmatic auctions, e.g. the Google Ad Exchange, which depend on first-price auctions, might be susceptible to coordinated bid suppression and significant revenue losses.
+Algorithms increasingly automate bidding in online auctions, raising concerns about tacit collusion. Prior work shows that reinforcement-learning agents can spontaneously converge to bid suppression, but it remains unclear which algorithmic and market design factors drive this phenomenon. This paper reports four controlled experiments, spanning Q-learning, contextual bandits, and budget-constrained pacing, that use factorial designs to isolate the effects of auction format, learning parameters, competitive pressure, and budget constraints on seller revenue. Across all settings, first-price auctions systematically underperform second-price auctions, with revenue losses driven by strategic bid shading rather than algorithmic artifacts. Collusion is amplified by fewer bidders, inefficient exploration, and tighter budgets, while reserve prices and second-price mechanisms provide robust mitigation. These results suggest that advertising exchanges relying on first-price auctions may be systematically vulnerable to coordinated bid suppression.
 \end{abstract}
 
 % Main sections
@@ -53,7 +52,3 @@ Algorithms are increasingly being used to automate participation in online marke
 \input{sections/equilibria}
 
 \end{document}
-
-
-cate: second price --> avg rev
-- rises slightly when alpha is lower

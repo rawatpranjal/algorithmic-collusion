@@ -1,33 +1,66 @@
-\section{Results: Experiment 2}
-
-This experiment tries to generalize the previous one to affliated values. The summary statistics of the data reveal no statistically significant correlation between \texttt{auction\_type\_code} and the main covariates (e.g., $\alpha$, $\gamma$, initialization, etc.); indicating that randomization went well. Unlike Experiment~1, the true valuations here are not fixed at 1, so some non-zero seller regret arises naturally. And we should not expect avg. revenues to ideally be 1. Nonetheless, our primary question remains: \emph{how does first-price compare to second-price} in terms of final revenue, regret, and other outcomes?
-
-\paragraph{First price auctions reduce revenues.}
-Table~\ref{tab:ate_exp2} summarizes the average treatment effects (ATEs) estimated via DoubleMLIRM. First-price auctions reduce final revenue by about $0.1185$ and increase seller regret by about $0.0627$, both at $p<0.001$. They also significantly raise price volatility ($+0.0360$) and produce a small but statistically significant uptick in winner entropy ($+0.0022$, $p\approx0.0415$). Neither time-to-converge nor no-sale rate changes meaningfully under first-price ($p>0.15$).
-
-\input{tables/exp2_ate}
-
-\paragraph{Private or common values do not matter.}
-Despite \(\eta\) spanning the entire range \([0,1]\), our regression results show no statistically significant impact on any primary outcome in Experiment~2. The CATE BLP estimates for \(\eta\) and its squared term (\(\eta^2\)) are consistently insignificant across revenue, regret, volatility, and winner entropy, all with \(p\)-values greater than 0.1. Hence, although we modeled valuations via a linear affiliation process, these data suggest that \(\eta\) does not materially alter the relative performance of first- and second-price auctions in this setting.
-
-\paragraph{More Bidders dampen the negative effects.}
-Conditional average treatment effect (CATE) plots indicate that having more bidders moderates the revenue penalty from first-price auctions, aligning with economic intuition that heightened competition partially offsets strategic underbidding. Meanwhile, the discount factor $\gamma$ has no robust effect on these outcome gaps in our data, suggesting that future-oriented learning does not substantially alter the discrepancy between first- and second-price formats.
+\section{Experiment II: Q-Learning under Affiliated Valuations}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.45\textwidth]{figures/e2_reg_bidder.png}
-\hfill
-\includegraphics[width=0.45\textwidth]{figures/e2_rev_bidder.png}
-\caption{Illustrative partial-dependence (CATE) plots}
-\label{fig:cate_bidders_exp2}
+  \centering
+  \includegraphics[width=\textwidth]{figures/e2_trace}
+  \caption{Representative learning trajectory for a single trial of Experiment~2 (first-price auction, $\eta = 0.5$, 2~bidders, 10{,}000 episodes). Top: rolling-mean revenue converging near the BNE prediction. Bottom: raw per-episode revenue in the final 2{,}000 episodes, illustrating residual variance around the equilibrium level.}
+  \label{fig:e2_trace}
 \end{figure}
 
-\paragraph{Exploration and Initialization matter.}
-We again find that exploration mode (\texttt{exploration\_code}) significantly shapes the revenue and regret gaps between first- and second-price. Table~\ref{tab:significant_gates} consolidates the statistically significant subgroup (GATE) differences across multiple outcomes.
+Experiment~2 generalises the Q-learning framework to affiliated valuations by introducing the affiliation parameter $\eta \in \{0, 1\}$. The design is a $2^{11-1}$ Resolution~V half-fraction with 11 factors and 2{,}048 observations. The primary question is whether valuation interdependence, ranging from purely private values ($\eta = 0$) to near-common values ($\eta = 1$), alters the relative performance of first-price and second-price auctions under algorithmic bidding.
 
-\input{tables/exp2_gate}
+\subsection{Revenue and Seller Regret}
 
-As in Experiment~1, Boltzmann exploration dramatically reduces the first-price shortfall, while $\varepsilon$-greedy agents intensify these negative effects. We also observe a new (albeit smaller) effect of initialization (\texttt{init\_code}) on price volatility: starting Q-values at zeros (versus random) slightly amplifies the first-price volatility gap ($p\approx0.042$).
+First-price auctions again significantly reduce revenue and increase seller regret. Table~\ref{tab:exp2_ranked_rev} confirms that auction type dominates the effect hierarchy, followed by exploration strategy and the number of bidders, replicating the factor ordering from Experiment~1. The main effects plots (Figures~\ref{fig:e2_main_rev} and~\ref{fig:e2_main_reg}) show that first-price auctions ($+1$) consistently underperform second-price auctions ($-1$) across both revenue and regret.
 
-\paragraph{Conclusion.}
-Even under affiliated valuations, first-price auctions yield significantly lower revenue, greater seller regret, and higher price volatility than second-price. Increasing the number of bidders alleviates some of these drawbacks, but does not fully eliminate them. Moreover, the choice of exploration policy remains pivotal: Boltzmann exploration consistently mitigates first-price losses, while $\varepsilon$-greedy exacerbates them. Notably, in this case we see a worsening of price volatility under first price auctions. From a practical standpoint, these results reinforce the conclusion that first-price auctions perform poorly once algorithms begin to learn.
+\input{tables/exp2_ranked_rev}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e2_main_rev}
+  \caption{Experiment~2: Main effects plot for average revenue. First-price auctions reduce revenue across all factor configurations.}
+  \label{fig:e2_main_rev}
+\end{figure}
+
+\input{tables/exp2_ranked_reg}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e2_main_reg}
+  \caption{Experiment~2: Main effects plot for seller regret.}
+  \label{fig:e2_main_reg}
+\end{figure}
+
+The affiliation parameter $\eta$ shows no statistically significant effect on any primary outcome. Despite spanning the full range from independent private values to near-common values, $\eta$ does not materially alter the relative performance of auction formats. This null result is striking: whether valuations are purely private or highly correlated, learning agents display similar bidding patterns, and the auction mechanism ($\text{first-price}$ vs.\ $\text{second-price}$) overshadows valuation interdependence in shaping long-run outcomes.
+
+Exploration strategy remains pivotal. As in Experiment~1, Boltzmann exploration dramatically reduces the first-price shortfall, while $\varepsilon$-greedy agents intensify the negative effects. The number of bidders continues to moderate the auction type effect, with more bidders dampening the revenue penalty from first-price auctions. The interaction plot (Figure~\ref{fig:e2_int_rev}) displays these moderating relationships, showing how auction format interacts with exploration and competitive pressure.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e2_int_rev}
+  \caption{Experiment~2: Interaction plot for average revenue. The auction type $\times$ exploration and auction type $\times$ number of bidders interactions are among the strongest two-way effects.}
+  \label{fig:e2_int_rev}
+\end{figure}
+
+\subsection{Price Volatility}
+
+Unlike Experiment~1, where auction type had minimal effect on volatility, first-price auctions now significantly raise price volatility under affiliated valuations. Table~\ref{tab:exp2_ranked_vol} shows auction type among the significant effects for volatility. The main effects plot (Figure~\ref{fig:e2_main_vol}) confirms the directional increase. Initialisation strategy also contributes: starting Q-values at zeros rather than random values slightly amplifies the first-price volatility gap.
+
+\input{tables/exp2_ranked_vol}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e2_main_vol}
+  \caption{Experiment~2: Main effects plot for price volatility.}
+  \label{fig:e2_main_vol}
+\end{figure}
+
+\subsection{Model Fit and Significant Effects}
+
+\input{tables/exp2_model_fit}
+
+\input{tables/exp2_significant}
+
+\subsection{Summary}
+
+Even under affiliated valuations, first-price auctions yield significantly lower revenue, greater seller regret, and higher price volatility than second-price auctions. The affiliation parameter $\eta$ has no significant impact on any primary outcome, implying that the private-versus-common value distinction is irrelevant to the collusion dynamics studied here. Increasing the number of bidders alleviates some first-price drawbacks but does not eliminate them, and exploration strategy remains the key moderator. These results reinforce the conclusion from Experiment~1 that first-price auctions perform poorly under algorithmic bidding, and demonstrate that this finding is robust to the introduction of valuation interdependence.

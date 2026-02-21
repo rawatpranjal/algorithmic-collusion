@@ -1,0 +1,35 @@
+======================================================================
+ROBUST ANALYSIS SUMMARY — Experiment 1
+======================================================================
+
+KEY FINDING: auction_type × exploration interaction
+--------------------------------------------------
+  avg_rev_last_1000|auction_type:exploration: raw p=2.8356e-13, holm p=2.7222e-11 → SURVIVES Holm-Bonferroni
+  time_to_converge|auction_type:exploration: raw p=7.7483e-02, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
+  avg_regret_of_seller|auction_type:exploration: raw p=3.2016e-32, holm p=3.1696e-30 → SURVIVES Holm-Bonferroni
+  price_volatility|auction_type:exploration: raw p=1.3254e-03, holm p=1.1001e-01 → does NOT survive Holm-Bonferroni
+  winner_entropy|auction_type:exploration: raw p=8.9146e-04, holm p=7.5226e-02 → does NOT survive Holm-Bonferroni
+
+MODEL ADEQUACY
+--------------------------------------------------
+  avg_rev_last_1000               R²=0.7878  Pred-R²=0.6906  Gap=0.0972
+  time_to_converge                R²=0.7015  Pred-R²=0.5647  Gap=0.1368
+  avg_regret_of_seller            R²=0.9661  Pred-R²=0.9506  Gap=0.0155
+  price_volatility                R²=0.9796  Pred-R²=0.9703  Gap=0.0093
+  winner_entropy                  R²=1.0000  Pred-R²=0.9999  Gap=0.0000
+
+LINEAR vs NONPARAMETRIC
+--------------------------------------------------
+  avg_rev_last_1000               OLS=0.7878  LGBM=0.6793  Gap=-0.1085
+  time_to_converge                OLS=0.7015  LGBM=0.5495  Gap=-0.1520
+  avg_regret_of_seller            OLS=0.9661  LGBM=0.9413  Gap=-0.0248
+  price_volatility                OLS=0.9796  LGBM=0.9736  Gap=-0.0060
+  winner_entropy                  OLS=1.0000  LGBM=0.9999  Gap=-0.0000
+
+POWER ANALYSIS (80% power, α=0.05)
+--------------------------------------------------
+  avg_rev_last_1000               MDE=0.017534 (2.1% of mean)
+  time_to_converge                MDE=4894.098223 (13.7% of mean)
+  avg_regret_of_seller            MDE=0.005008 (2.7% of mean)
+  price_volatility                MDE=0.002328 (1.2% of mean)
+  winner_entropy                  MDE=0.000612 (0.1% of mean)

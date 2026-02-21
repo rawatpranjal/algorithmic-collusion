@@ -2,20 +2,23 @@
 
 import numpy as np
 import pandas as pd
-import os
-import json
-import pickle
-import argparse
-import matplotlib.pyplot as plt
-from tqdm import trange
 
 # ---------------------------------------------------------------------
 # 1) Numeric Parameter Mappings
 # ---------------------------------------------------------------------
 param_mappings = {
     "auction_type": {"first": 1, "second": 0},
-    "use_median_of_others": {False: 0, True: 1},
-    "use_past_winner_bid": {False: 0, True: 1}
+    "algorithm": {"linucb": 0, "thompson": 1},
+    "context_richness": {"minimal": 0, "rich": 1},
+}
+
+# Algorithm-specific exploration parameter mapping
+# exploration_intensity "low"/"high" maps to different values per algorithm
+EXPLORATION_MAP = {
+    ("linucb", "low"):     0.5,   # c parameter
+    ("linucb", "high"):    2.0,
+    ("thompson", "low"):   0.1,   # sigma2 parameter
+    ("thompson", "high"):  1.0,
 }
 
 # ---------------------------------------------------------------------
@@ -70,7 +73,11 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
 
     # second-highest
     if len(valid_indices) == len(highest_idx_local):
-        second_highest_bid = highest_bid
+        # All valid bidders are tied at highest; in SPA use reserve price
+        if auction_type != "first" and len(valid_indices) == 1:
+            second_highest_bid = reserve_price
+        else:
+            second_highest_bid = highest_bid
     else:
         second_idx_local = None
         for idx_l in sorted_idx:
@@ -124,6 +131,40 @@ class LinUCB:
         self.A[action] += np.outer(context_vec, context_vec)
         self.b[action] += reward * context_vec
 
+
+# ---------------------------------------------------------------------
+# 4b) Contextual Thompson Sampling
+# ---------------------------------------------------------------------
+class ContextualThompsonSampling:
+    """
+    Bayesian linear regression per action.
+    A[a] = lambda*I + sum(x x^T), b[a] = sum(r x)
+    Sample theta ~ N(A^{-1} b, sigma2 * A^{-1}), pick argmax theta^T x.
+    """
+    def __init__(self, n_actions, context_dim, sigma2, lam, rng=None):
+        self.n_actions = n_actions
+        self.context_dim = context_dim
+        self.sigma2 = sigma2
+        self.lam = lam
+        self.A = [lam * np.eye(context_dim) for _ in range(n_actions)]
+        self.b = [np.zeros(context_dim) for _ in range(n_actions)]
+        self.rng = rng or np.random.default_rng()
+
+    def select_action(self, context_vec):
+        sampled_vals = []
+        for a in range(self.n_actions):
+            A_inv = np.linalg.inv(self.A[a])
+            theta_hat = A_inv @ self.b[a]
+            cov = self.sigma2 * A_inv
+            theta_sample = self.rng.multivariate_normal(theta_hat, cov)
+            sampled_vals.append(theta_sample @ context_vec)
+        return np.argmax(sampled_vals)
+
+    def update(self, action, reward, context_vec):
+        self.A[action] += np.outer(context_vec, context_vec)
+        self.b[action] += reward * context_vec
+
+
 # ---------------------------------------------------------------------
 # 5) Theoretical BNE Revenue (Linear Affiliation)
 # ---------------------------------------------------------------------
@@ -172,35 +213,47 @@ def simulate_linear_affiliation_revenue(N, eta, auction_type, M=50_000):
 # 6) Single Bandit Experiment
 # ---------------------------------------------------------------------
 def run_bandit_experiment(
-    eta, auction_type, c, lam,
+    eta, auction_type, lam,
     n_bidders, reserve_price, max_rounds,
-    use_median_of_others, use_past_winner_bid,
+    algorithm="linucb",
+    exploration_intensity="low",
+    context_richness="minimal",
     seed=0,
     progress_callback=None
 ):
     """
-    Key changes:
-     - We'll store 'revenues' each round to compute time_to_converge
-       with the ±5% band approach from Exp.1/2.
-     - We'll also track no_sale_count, the highest bid each round,
-       and the identity of the winner => can compute winner_entropy & price_volatility.
+    Run a single contextual bandit auction experiment.
+
+    Args:
+        algorithm: "linucb" or "thompson"
+        exploration_intensity: "low" or "high" (maps to algorithm-specific values)
+        context_richness: "minimal" (own signal) or "rich" (signal + median + winner + win_rate)
     """
     np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     n_val_bins = 6
     n_bid_bins = 6
     actions = np.linspace(0, 1, n_bid_bins)
 
-    # Build context dimension
-    # We'll treat signals[i] as mandatory 1-dim + optional median + optional past_winner
-    context_dim = 1
-    if use_median_of_others:
-        context_dim += 1
-    if use_past_winner_bid:
-        context_dim += 1
+    # Build context dimension based on context_richness
+    if context_richness == "rich":
+        context_dim = 4  # own_signal, median_others_bid, past_winner_bid, win_rate
+    else:
+        context_dim = 1  # own_signal only
 
-    bandits = [LinUCB(n_actions=n_bid_bins, context_dim=context_dim, c=c, lam=lam)
-               for _ in range(n_bidders)]
+    # Resolve exploration parameter from map
+    explore_val = EXPLORATION_MAP[(algorithm, exploration_intensity)]
+
+    if algorithm == "linucb":
+        bandits = [LinUCB(n_actions=n_bid_bins, context_dim=context_dim,
+                          c=explore_val, lam=lam)
+                   for _ in range(n_bidders)]
+    elif algorithm == "thompson":
+        bandits = [ContextualThompsonSampling(n_actions=n_bid_bins, context_dim=context_dim,
+                                              sigma2=explore_val, lam=lam,
+                                              rng=np.random.default_rng(seed + i))
+                   for i in range(n_bidders)]
 
     revenues = []
     winners_list = []
@@ -210,15 +263,16 @@ def run_bandit_experiment(
 
     past_bids = np.zeros(n_bidders)
     past_winner_bid = 0.0
+    win_counts = np.zeros(n_bidders)
 
-    def build_context(bidder_i, signals):
+    def build_context(bidder_i, signals, ep):
         ctx_list = [signals[bidder_i]]  # always include own signal
-        if use_median_of_others:
-            # median-of-others in last round
+        if context_richness == "rich":
             med_bid = np.median(np.delete(past_bids, bidder_i)) if n_bidders > 1 else 0.0
             ctx_list.append(med_bid)
-        if use_past_winner_bid:
             ctx_list.append(past_winner_bid)
+            win_rate = win_counts[bidder_i] / max(1, ep)
+            ctx_list.append(win_rate)
         return np.array(ctx_list)
 
     for ep in range(max_rounds):
@@ -236,7 +290,7 @@ def run_bandit_experiment(
         chosen_actions = []
         chosen_bids = []
         for i in range(n_bidders):
-            ctx_vec = build_context(i, signals)
+            ctx_vec = build_context(i, signals, ep)
             a_i = bandits[i].select_action(ctx_vec)
             chosen_actions.append((i, a_i, ctx_vec))
             chosen_bids.append(actions[a_i])
@@ -248,9 +302,17 @@ def run_bandit_experiment(
         for (i, a_idx, ctx_vec) in chosen_actions:
             bandits[i].update(a_idx, rew[i], ctx_vec)
 
-        # Revenue
+        # Revenue (auction-type aware)
         valid_bids = chosen_bids[chosen_bids >= reserve_price]
-        revenue_t = np.max(valid_bids) if len(valid_bids) > 0 else 0.0
+        if len(valid_bids) == 0:
+            revenue_t = 0.0
+        elif auction_type == "first":
+            revenue_t = float(np.max(valid_bids))
+        else:  # second-price: seller gets second-highest bid
+            if len(valid_bids) >= 2:
+                revenue_t = float(np.sort(valid_bids)[-2])
+            else:
+                revenue_t = float(valid_bids[0])
         revenues.append(revenue_t)
         winning_bids_list.append(highest_bid)
 
@@ -258,6 +320,7 @@ def run_bandit_experiment(
             no_sale_count += 1
         else:
             winners_list.append(winner)
+            win_counts[winner] += 1
 
         # log round
         for i in range(n_bidders):
@@ -334,215 +397,3 @@ def run_bandit_experiment(
         "winner_entropy": winner_entropy
     }
     return summary, revenues, round_history, bandits  # bandits hold final models
-
-# ---------------------------------------------------------------------
-# 7) Main Orchestrator: run_full_experiment
-# ---------------------------------------------------------------------
-def run_full_experiment(
-    experiment_id=3,
-    K=300,
-    eta_values=[0.0, 0.25, 0.5, 0.75, 1.0],
-    c_values=[0.01, 0.1, 0.5, 1.0, 2.0],
-    lam_values=[0.1, 1.0, 5.0],
-    n_bidders_values=[2, 4, 6],
-    reserve_price_values=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-    seed=1234,
-    max_rounds_values=[10000],
-    use_median_flags=[False, True],
-    use_winner_flags=[False, True],
-    output_dir=None
-):
-    """
-    Unify with Exp.2 style:
-     - param_mappings => store in param_mappings.json
-     - final data => data.csv
-     - store round_history in 'trials'
-     - store final LinUCB model in 'linucb_models'
-     - track the additional outcome metrics
-     - each run => do 'first' & 'second'
-
-    Now with rolling-average plots for each run (first vs second).
-    """
-    folder_name = output_dir if output_dir else f"results/exp{experiment_id}"
-    os.makedirs(folder_name, exist_ok=True)
-
-    # Save param mappings
-    with open(os.path.join(folder_name, "param_mappings.json"), "w") as f:
-        json.dump(param_mappings, f, indent=2)
-
-    trial_folder = os.path.join(folder_name, "trials")
-    os.makedirs(trial_folder, exist_ok=True)
-    models_folder = os.path.join(folder_name, "linucb_models")
-    os.makedirs(models_folder, exist_ok=True)
-
-    # (NEW) Subfolder for rolling-average plots
-    plots_folder = os.path.join(folder_name, "plots")
-    os.makedirs(plots_folder, exist_ok=True)
-
-    results = []
-    theory_cache = {}
-
-    rng = np.random.default_rng(seed)
-
-    for run_id in trange(K, desc="Overall Runs"):
-        eta = rng.choice(eta_values)
-        c = rng.choice(c_values)
-        lam = rng.choice(lam_values)
-        n_bidders = rng.choice(n_bidders_values)
-        r_price = rng.choice(reserve_price_values)
-        use_median = rng.choice(use_median_flags)
-        use_winner = rng.choice(use_winner_flags)
-        max_rounds = rng.choice(max_rounds_values)
-
-        # We'll track revenues from first & second auctions for rolling-average plots
-        revenues_dict = {}
-
-        for auc_str in ["first", "second"]:
-            # Theoretical revenue
-            key = (n_bidders, eta, auc_str)
-            if key not in theory_cache:
-                rev_theory = simulate_linear_affiliation_revenue(n_bidders, eta, auc_str)
-                theory_cache[key] = rev_theory
-            else:
-                rev_theory = theory_cache[key]
-
-            summary_out, revenues_list, round_hist, final_bandits = run_bandit_experiment(
-                eta=eta,
-                auction_type=auc_str,
-                c=c,
-                lam=lam,
-                n_bidders=n_bidders,
-                reserve_price=r_price,
-                max_rounds=max_rounds,
-                use_median_of_others=use_median,
-                use_past_winner_bid=use_winner,
-                seed=run_id
-            )
-
-            # Keep revenues_list for plotting
-            revenues_dict[auc_str] = revenues_list
-
-            # Build round logs
-            df_hist = pd.DataFrame(round_hist)
-            df_hist["run_id"] = run_id
-            df_hist["eta"] = eta
-            df_hist["c"] = c
-            df_hist["lam"] = lam
-            df_hist["n_bidders"] = n_bidders
-            df_hist["auction_type_code"] = param_mappings["auction_type"][auc_str]
-            df_hist["reserve_price"] = r_price
-            df_hist["max_rounds"] = max_rounds
-            df_hist["use_median_of_others_code"] = param_mappings["use_median_of_others"][use_median]
-            df_hist["use_past_winner_bid_code"] = param_mappings["use_past_winner_bid"][use_winner]
-            df_hist["theoretical_revenue"] = rev_theory
-
-            # Save round-level logs
-            hist_filename = f"history_run_{run_id}_{auc_str}.csv"
-            df_hist.to_csv(os.path.join(trial_folder, hist_filename), index=False)
-
-            # Save final LinUCB model
-            for b_i, bandit in enumerate(final_bandits):
-                model_dict = {
-                    "A_list": [bandit.A[a] for a in range(len(bandit.A))],
-                    "b_list": [bandit.b[a] for a in range(len(bandit.b))]
-                }
-                model_fname = f"LinUCB_run_{run_id}_{auc_str}_bidder_{b_i}.pkl"
-                with open(os.path.join(models_folder, model_fname), "wb") as fmod:
-                    pickle.dump(model_dict, fmod)
-
-            # Final outcome
-            outcome = dict(summary_out)
-            outcome["run_id"] = run_id
-            outcome["eta"] = eta
-            outcome["c"] = c
-            outcome["lam"] = lam
-            outcome["n_bidders"] = n_bidders
-            outcome["auction_type_code"] = param_mappings["auction_type"][auc_str]
-            outcome["reserve_price"] = r_price
-            outcome["max_rounds"] = max_rounds
-            outcome["use_median_of_others_code"] = param_mappings["use_median_of_others"][use_median]
-            outcome["use_past_winner_bid_code"] = param_mappings["use_past_winner_bid"][use_winner]
-            outcome["theoretical_revenue"] = rev_theory
-
-            # ratio
-            if rev_theory > 1e-8:
-                ratio = outcome["avg_rev_last_1000"] / rev_theory
-            else:
-                ratio = None
-            outcome["ratio_to_theory"] = ratio
-
-            results.append(outcome)
-
-        # -----------------------------------------------------------------
-        # PLOTTING: rolling-average of revenues for first vs second
-        # -----------------------------------------------------------------
-        fig, ax = plt.subplots(figsize=(8, 4))
-        window_size = 1000
-        for auc_type in ["first", "second"]:
-            rev_series = pd.Series(revenues_dict[auc_type])
-            roll_avg = rev_series.rolling(window=window_size, min_periods=1).mean()
-            label_str = "First-Price" if auc_type == "first" else "Second-Price"
-            ax.plot(roll_avg, label=label_str)
-
-        title_line_1 = f"Run {run_id}"
-        title_line_2 = (
-            f"eta={eta}, c={c}, lam={lam}, nb={n_bidders}, reserve={r_price}, max_rounds={max_rounds}"
-        )
-        ax.set_title(f"{title_line_1}\n{title_line_2}")
-        ax.set_xlabel("Round")
-        ax.set_ylabel("Rolling Avg Revenue (window=1000)")
-        ax.legend()
-        fig.tight_layout()
-
-        plot_filename = f"plot_run_{run_id}.png"
-        fig.savefig(os.path.join(plots_folder, plot_filename), bbox_inches='tight')
-        plt.close(fig)
-        # -----------------------------------------------------------------
-
-    # Summaries across all runs
-    df_results = pd.DataFrame(results)
-    csv_path = os.path.join(folder_name, "data.csv")
-    df_results.to_csv(csv_path, index=False)
-    print(f"\nAll done. Final summary => {csv_path}")
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Experiment 3: LinUCB Bandits with Affiliated Values')
-    parser.add_argument('--quick', action='store_true', help='Run quick test with reduced parameters')
-    args = parser.parse_args()
-
-    if args.quick:
-        # Quick test mode: reduced parameters for fast validation
-        print("=" * 50)
-        print("QUICK TEST MODE - Reduced parameters for fast validation")
-        print("=" * 50)
-        run_full_experiment(
-            experiment_id=3,
-            K=5,                                    # Reduced runs
-            eta_values=[0.0, 0.5],                  # Fewer eta values
-            c_values=[0.1, 1.0],                    # Fewer c values
-            lam_values=[1.0],                       # Single lambda
-            n_bidders_values=[2],                   # Single bidder count
-            reserve_price_values=[0.0],             # Single reserve price
-            seed=1234,
-            max_rounds_values=[1000],               # Reduced rounds
-            use_median_flags=[False],               # Single flag
-            use_winner_flags=[False],               # Single flag
-            output_dir="results/exp3/quick_test"
-        )
-    else:
-        # Full experiment mode
-        run_full_experiment(
-            experiment_id=3,
-            K=250,
-            eta_values=[0.0, 0.25, 0.5, 0.75, 1.0],
-            c_values=[0.01, 0.1, 0.5, 1.0, 2.0],
-            lam_values=[0.1, 1.0, 5.0],
-            n_bidders_values=[2, 4, 6],
-            reserve_price_values=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-            seed=1234,
-            max_rounds_values=[100_000],
-            use_median_flags=[False, True],
-            use_winner_flags=[False, True],
-            output_dir="results/exp3"
-        )

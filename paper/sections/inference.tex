@@ -1,108 +1,75 @@
-\section{Inference}
-\label{sec:appendix_dml}
+\section{Statistical Inference}
 
-In this section, we describe how we estimate heterogeneous treatment effects for first- vs.\ second-price auctions using \emph{Double Machine Learning} (DML) under the \emph{interactive regression model} (IRM). First, we outline the IRM specification and its identification assumptions (SUTVA, ignorability, and overlap). Then we explain how average (ATE), group (GATE), and conditional (CATE) treatment effects arise in this setup. Finally, we detail how sample-splitting and orthogonal moment conditions yield debiased estimates in the presence of flexible machine-learning regressors.
+\subsection{Factorial Design Framework}
 
-\paragraph{Interactive Regression Model (IRM).}
-We consider a binary treatment $D \in \{0,1\}$, a set of covariates $X$, and an outcome $Y$. In our application, the \emph{treatment} $D$ is the auction type (\texttt{auction\_type\_code}) indicating whether the format is first-price ($D=1$) or second-price ($D=0$). The covariates $X$ are all other experimental parameters (e.g., learning rate, number of bidders). Finally, $Y$ is one of the performance measures---for instance, average revenue over the last 1000 rounds or time-to-convergence. The IRM posits that
-\[
-Y \;=\; g_0(D, X) \;+\; U,
-\quad 
-\mathbb{E}[U \mid X, D] = 0,
-\]
-\[
-D \;=\; m_0(X) \;+\; V,
-\quad 
-\mathbb{E}[V \mid X] = 0,
-\]
-where $g_0(D, X)$ fully interacts $D$ with $X$, allowing treatment effects to vary arbitrarily across the covariates $X$. 
+We employ $2^k$ factorial designs to systematically explore the parameter space of each experiment. Every factor is coded as $x_i \in \{-1, +1\}$\footnote{Effects coding ($\{-1, +1\}$) differs from indicator (dummy) coding ($\{0, 1\}$). Under effects coding, the intercept $\beta_0$ equals the grand mean of all observations, and each $\beta_j$ measures the deviation of a factor level from that grand mean. This yields orthogonal contrasts in balanced designs, so that main effects and interactions are estimated independently. Indicator coding would confound the intercept with the reference level and introduce correlations between estimators in factorial models.}, representing its low and high levels respectively. This coding ensures orthogonality: factor estimates are uncorrelated, and the design provides balanced variance across the entire experimental region. The balanced structure guarantees that each main effect and two-way interaction can be estimated independently of all others, enabling clean attribution of outcome variation to specific factors.
 
-\paragraph{Estimands.} We focus on three main estimands:
+Experiments~1 and~2 each use a $2^{11-1}$ Resolution~V half-fraction with 11 factors and 1{,}024 design cells; they share eight core factors and differ in three (Experiment~1 includes bid-grid resolution, information feedback, and decay schedule, while Experiment~2 substitutes the affiliation parameter $\eta$ and two state-information indicators). Experiment~3 uses a $2^8$ full factorial with 8 factors and 256 cells, reflecting the smaller parameter space of the LinUCB contextual bandit. Experiment~4 uses a $2^{9-1}$ Resolution~IX half-fraction with 9 factors and 256 base cells, replicated three times to produce 768 observations. Each design cell in Experiments~1--3 is replicated twice, enabling pure error estimation and lack-of-fit testing. Total observations range from 512 (Experiment~3) to 2{,}048 (Experiments~1 and~2).
 
-\begin{enumerate}
-\item 
-\emph{Average Treatment Effect (ATE):} 
-\[
-\theta_{\mathrm{ATE}} 
-\;=\; 
-\mathbb{E}[\,Y(1) - Y(0)\,] 
-\;=\;
-\mathbb{E}\bigl[\,g_0(1,X) - g_0(0,X)\bigr].
-\]
-Here, $Y(1)$ and $Y(0)$ denote potential outcomes under first- and second-price auctions, respectively.
+\subsection{Estimation}
 
-\item 
-\emph{Group Average Treatment Effects (GATE):}
-If we partition the sample by a discrete characteristic $G \in \{1,2,\dots,K\}$ (e.g.\ high vs.\ low number of bidders), we define
-\[
-\mathrm{GATE}(g) 
-\;=\; 
-\mathbb{E}\bigl[Y(1) - Y(0)\,\big|\,G=g\bigr].
-\]
-This captures how treatment effects differ across subgroups.
+For each response variable $Y$ (e.g., average revenue, seller regret, convergence time), we fit a linear model with main effects and all two-way interactions via ordinary least squares (OLS):
+\begin{align}
+  Y_i = \beta_0 + \sum_{j=1}^{k} \beta_j\, x_{ji} + \sum_{1 \le j < l \le k} \beta_{jl}\, x_{ji}\, x_{li} + \varepsilon_i,
+  \label{eq:ols}
+\end{align}
+where $x_{ji} \in \{-1, +1\}$ is the coded level of factor $j$ in observation $i$, $\beta_j$ represents the main effect of factor $j$, and $\beta_{jl}$ captures the two-way interaction between factors $j$ and $l$. Under the coded parameterisation, $\beta_j$ equals half the change in mean response when factor $j$ moves from its low to its high level, holding all other factors at their centre values. Similarly, $\beta_{jl}$ equals half the difference in the effect of factor $j$ between the two levels of factor $l$.
 
-\item 
-\emph{Conditional Average Treatment Effects (CATE):}
-If a continuous covariate $Z \subset X$ is of interest (e.g.\ the learning rate $\alpha$), the CATE is
-\[
-\mathrm{CATE}(z) 
-\;=\; 
-\mathbb{E}[\,Y(1) - Y(0)\,\mid Z=z].
-\]
-A practical approach approximates $\mathrm{CATE}(z)$ by projecting $\hat{g}_0(1,X) - \hat{g}_0(0,X)$ onto a low-dimensional spline basis for $Z$.
-\end{enumerate}
+We use Type~III ANOVA decomposition to assess the marginal contribution of each term, testing each coefficient against the null $H_0\!: \beta = 0$ via the $t$-statistic $\hat{\beta}/\text{SE}(\hat{\beta})$. Model adequacy is validated by comparing OLS $R^2$ to a gradient-boosted machine (LightGBM) $R^2$ trained with five-fold cross-validation: if the gap is less than 0.05, the linear model with two-way interactions captures most of the signal without requiring higher-order terms or nonlinear transformations.
 
-\paragraph{Identification.} We impose three standard conditions:
-\begin{enumerate}
-\item \textit{Stable Unit Treatment Value Assumption (SUTVA):} 
-Each unit’s realized outcome $Y_i$ can be written as
-\[
-Y_i \;=\; D_i \,Y_i(1) \;+\; \bigl(1 - D_i\bigr)\,Y_i(0),
-\]
-where $Y_i(d)$ is well-defined for $d \in \{0,1\}$, and there is no interference among units. In our context, $D_i$ indicates whether unit $i$ received the “treatment” (e.g., first-price auction), ensuring no unit’s outcome depends on another unit’s treatment assignment.
+\subsection{Fractional Factorial Designs and Aliasing}
 
-\item 
-\textit{Ignorability:}
-\[
-D \;\perp\; (Y(0), Y(1)) \;\big|\; X.
-\]
-Once we condition on $X$, the choice of auction format $D$ is independent of the potential outcomes. Conceptually, this is satisfied because we manually randomized the treatment. We also check for any correlation between the treatment and covariates, that might arise due to faulty or poor randomization, but that is not the case. 
+Experiments~1, 2, and~4 use fractional factorial designs to reduce experimental burden. The key trade-off is aliasing: some higher-order interactions become confounded with lower-order terms.
 
-\item 
-\textit{Positivity:}
-\[
-0 
-\;<\; 
-P\bigl(D=1 \mid X=x\bigr) 
-\;<\;
-1, 
-\quad
-\text{for almost all } x.
-\]
-This ensures that for each $X=x$, there is a positive probability of both $D=1$ and $D=0$. This is again trivially satisfied due to randomization. 
-\end{enumerate}
+\subsubsection{Resolution~V (Experiments~1 and~2)}
 
-\paragraph{Orthogonal Moment Conditions} To estimate $\theta_{\mathrm{ATE}}$ robustly, we rely on \emph{orthogonal moment} conditions. Denote by $\pi(X)=\mathbb{E}[D\mid X]$ the propensity score and by $g_0(d,X)$ the outcome regression. A typical \emph{DoubleML} moment takes the form
-\[
-\psi\bigl(Y, D, X;\,\theta, g_0,\pi\bigr)
-\;=\;
-\Bigl[
-  \tfrac{D}{\pi(X)} - \tfrac{1-D}{1-\pi(X)}
-\Bigr]\bigl(Y - g_0(D,X)\bigr)
-\;+\;
-\bigl[g_0(1,X)-g_0(0,X)\bigr]
-\;-\;
-\theta.
-\]
-At the true functions $\bigl(g_0,\pi\bigr)$ and $\theta=\theta_{\mathrm{ATE}}$, the expectation of $\psi$ is zero. Substituting machine-learning estimates $\hat{g}_0,\hat{\pi}$ and solving $\tfrac{1}{n}\sum \hat{\psi}_i(\hat{\theta})=0$ yields a debiased estimator. \emph{Sample splitting} (cross-fitting) prevents overfitting bias by never using the same data fold for training and testing.
+In a Resolution~V\footnote{In a Resolution~$R$ design, no $p$-factor interaction is aliased with any interaction of fewer than $R - p$ factors. Resolution~V therefore guarantees that main effects are free of two-way interaction bias and two-way interactions are free of other two-way interaction bias.} design, no main effect is aliased with any interaction of fewer than four factors, and no two-way interaction is aliased with any interaction of fewer than three factors. This ensures that all main effects and two-way interactions are estimable without bias from three-way terms, which are assumed negligible under effect sparsity.
 
-\paragraph{Double Machine Learning} We implement DoubleML with LightGBM regressor for the outcome and classifier for the propensity model (we could have just used 0.5 for the propensity score). The procedure is:
-\begin{enumerate}
-\item 
-Randomly partition the data into $K$ folds. For each fold, train the nuisance functions $\hat{g}_0,\hat{\pi}$ on the remaining $K{-}1$ folds.
-\item 
-Use the fitted models to compute $\hat{\psi}_i$ in the held-out fold. Solve the orthogonal moment condition for $\hat{\theta}$ on that fold.
-\item 
-Average across folds to obtain the final estimates of ATE, and compute standard errors by plugging $\hat{\theta}$ back into the moment conditions.
-\end{enumerate}
-Our code also estimates GATEs by grouping observations according to binary covariates (such as “asynchronous vs.\ synchronous updates”) and CATEs by fitting spline expansions of continuous covariates (e.g.\ $\gamma$ or $\alpha$). We display these estimates in partial-dependence plots, along with 95\% confidence intervals. The results appear in the tables and figures that follow. 
+\subsubsection{Resolution~IX (Experiment~4)}
+
+Resolution~IX\footnote{At Resolution~IX, even four-way interactions cannot bias main effects or two-way interactions, making the fractional design virtually equivalent to a full factorial for the effects of interest.} provides near-complete information: main effects are unaliased with interactions of up to eight factors. This extremely high resolution means that even four-way interactions cannot bias the estimation of main effects or two-way interactions, making the fractional design nearly equivalent to a full factorial for the effects of interest.
+
+The assumption underlying both fractional designs is \emph{effect sparsity}: most variation in the response is explained by main effects and two-way interactions, with three-way and higher interactions contributing negligibly. We validate this assumption using LASSO variable selection and nonparametric model comparison.
+
+\subsection{Robustness Checks}
+
+\subsubsection{Inference Corrections}
+
+We compute HC3 robust standard errors (MacKinnon and White, 1985) to account for non-constant error variance across the design space. Comparing OLS standard errors to HC3 robust standard errors, we verify that significance claims hold under heteroscedasticity. Across all experiments, fewer than 5\% of effects change significance status under HC3 correction.
+
+With $k$ main effects, $\binom{k}{2}$ two-way interactions, and $m$ response variables, each experiment involves hundreds of hypothesis tests. For example, Experiment~2 tests 66 terms across 6 responses for a total of 396 tests. We apply Holm--Bonferroni sequential correction (Holm, 1979) to control the family-wise error rate at $\alpha = 0.05$. Key findings, including the auction type main effect and the auction type $\times$ exploration interaction, survive this stringent correction across all responses.
+
+For the top~10 effects by absolute $t$-statistic in each response, we compute Rademacher wild bootstrap $p$-values (1{,}000 iterations) to validate inference under minimal distributional assumptions. Bootstrap $p$-values align closely with HC3 asymptotic $p$-values (differences below 0.01), confirming robustness.
+
+\subsubsection{Model Adequacy}
+
+With two replicates per cell, we decompose the residual sum of squares into pure error (within-cell variation) and lack of fit (deviation of cell means from model predictions). The $F$-test $\text{MS}_{\text{LOF}} / \text{MS}_{\text{PE}}$ assesses whether the linear model with two-way interactions adequately fits the data. Non-significant $p$-values ($p > 0.10$) across all experiments validate model adequacy.
+
+We compute leave-one-out cross-validated $R^2$ using the PRESS statistic:
+\begin{align}
+  \text{PRESS} = \sum_{i=1}^{n} \left( \frac{e_i}{1 - h_{ii}} \right)^{\!2}, \qquad
+  \text{Pred-}R^2 = 1 - \frac{\text{PRESS}}{\text{SS}_{\text{Total}}},
+  \label{eq:press}
+\end{align}
+where $e_i$ is the $i$-th ordinary residual and $h_{ii}$ is the $i$-th diagonal element of the hat matrix. A gap between $R^2$ and Pred-$R^2$ smaller than 0.10 indicates minimal overfitting. Across all experiments, gaps are below 0.05, confirming that models generalise well to held-out observations.
+
+Gradient-boosted machines (LightGBM, 200 trees, maximum depth~4) are fit using five-fold cross-validation to establish a nonparametric upper bound on achievable $R^2$. If OLS $R^2$ is within 0.05 of LightGBM $R^2$, we conclude that the linear model with two-way interactions captures most of the signal and that higher-order or nonlinear terms contribute negligibly. Across all experiments and responses, OLS achieves 90--98\% of LightGBM $R^2$, validating model adequacy.
+
+\subsubsection{Variable Selection and Power}
+
+We fit five-fold cross-validated LASSO models with regularisation parameter $\lambda$ chosen to minimise mean squared error. Surviving variables are compared to OLS significance: in all experiments, LASSO retains auction type, exploration, and number of bidders, corroborating OLS effect selection. Heredity is verified by checking that no interaction survives whose parent main effects were dropped.
+
+We compute minimum detectable effects (MDE) at 80\% power and $\alpha = 0.05$ for balanced $2^k$ designs:
+\begin{align}
+  \text{MDE}_{\text{main}} = \bigl(t_{\text{crit}} + t_{0.80}\bigr) \times \frac{\hat{\sigma}}{\sqrt{n}},
+  \label{eq:mde}
+\end{align}
+where $t_{\text{crit}}$ is the critical value at $\alpha/2$, $t_{0.80}$ is the 80th percentile of the $t$-distribution, $\hat{\sigma}$ is the estimated residual standard deviation, and $n$ is the total number of observations. MDEs range from 2--5\% of the mean response, indicating that the designs have sufficient power to detect practically meaningful effects.
+
+\subsection{Diagnostic Visualisations}
+
+Four types of diagnostic plots accompany each response variable. Pareto charts rank effects by absolute $t$-statistic in descending order, with effects surpassing the critical threshold $t_{\alpha/2,\,\text{df}}$ shown in red, providing a visual hierarchy of effect importance. Main effects plots display the mean response at the low ($-1$) and high ($+1$) levels of each factor; steeper slopes correspond to larger $|\beta_j|$ values. Interaction plots show the mean response across the four combinations $(x_j, x_l) \in \{(-1,-1), (-1,+1), (+1,-1), (+1,+1)\}$ for the top six interactions by $|t|$-statistic; non-parallel lines indicate that the effect of one factor depends on the level of another. Half-normal probability plots display $|\hat{\beta}_j|$ against expected order statistics from a half-normal distribution, separating active effects (large departures from the reference line) from noise (points following the line). Residual diagnostics include quantile--quantile plots assessing normality and residuals-versus-fitted plots checking for heteroscedasticity and nonlinearity.
+
+\subsection{Reporting}
+
+All results report OLS coefficients with HC3 standard errors and Holm--Bonferroni corrected $p$-values. Effect sizes are interpreted as practical significance (magnitude relative to mean response) in addition to statistical significance ($p$-value threshold). Model adequacy is summarised via $R^2$, Pred-$R^2$, LightGBM $R^2$, and lack-of-fit $p$-value. All effects reported as statistically significant in the results sections survive multiple testing correction, heteroscedasticity correction, and nonparametric model comparison (LightGBM gap below 0.05).

@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Experiment 4: Budget-Constrained Pacing Algorithms in Auctions.
+Experiment 4: Autobidding with Regenerating Budgets.
 
-Compares PID controller vs multiplicative (Lagrangian dual) pacing agents
-bidding in repeated first-price and second-price auctions with affiliated
-private values. First factorial study combining budget constraints with
-algorithmic collusion analysis.
+Studies how auction format, bidder objective, and market thickness jointly
+determine welfare, revenue, and collusion when dual-based pacing agents
+learn with regenerating budgets over multiple episodes.
 
-Design: 2^(8-1) Resolution VIII half-fraction (H = ABCDEFG)
-Factors: algorithm, auction_type, n_bidders, budget_tightness, eta,
-         aggressiveness, update_frequency, initial_multiplier
+Motivated by the PoA literature (Balseiro & Gur 2019, Aggarwal et al. 2019,
+Deng et al. 2021): FPA achieves PoA=1 for value-maximizers while SPA
+achieves PoA=2.
+
+Design: 2^3 = 8 full factorial (auction_type x objective x n_bidders)
+Each cell is replicated across 50 independent seeds.
+Each run: D=100 episodes x T=1,000 rounds with budget regeneration.
 """
 
 import argparse
@@ -18,568 +21,459 @@ import os
 
 import numpy as np
 import pandas as pd
+from scipy import stats as scipy_stats
 
 # ---------------------------------------------------------------------
 # 1) Numeric Parameter Mappings
 # ---------------------------------------------------------------------
 param_mappings = {
     "auction_type": {"first": 1, "second": 0},
-    "algorithm": {"multiplicative": 0, "pid": 1},
+    "objective": {"value_max": 0, "utility_max": 1},
 }
 
-
-# ---------------------------------------------------------------------
-# 2) Valuation with eta (Affiliation) — same as exp2/exp3
-# ---------------------------------------------------------------------
-def get_valuation(eta, own_signal, others_signals):
-    """
-    Linear affiliation:
-      valuation = alpha * own_signal + beta * mean(others_signals),
-    alpha = 1.0 - 0.5 * eta, beta = 0.5 * eta.
-    """
-    alpha = 1.0 - 0.5 * eta
-    beta = 0.5 * eta
-    return alpha * own_signal + beta * np.mean(others_signals)
+DEFAULT_SIGMA = 0.3        # LogNormal sigma
+MU_RANGE = (0.5, 1.5)     # Bidder-specific mean range
+MU_CLIP = (1e-4, 100.0)   # Dual variable bounds
 
 
 # ---------------------------------------------------------------------
-# 3) Payoff with Reserve Price — same as exp2/exp3
+# 2) Auction Mechanism
 # ---------------------------------------------------------------------
-def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
+def run_auction(bids, valuations, auction_type):
     """
+    Run a single-item auction with no reserve price.
+
     Returns:
-      rewards: shape (n_bidders,) => payoff for each bidder
-      winner_global: int => index of winner or -1 if no sale
-      winner_bid: float => winning bid or 0.0 if no sale
-      second_price: float => payment in SPA (equals winner_bid in FPA)
+        winner: int index of winner, or -1 if no valid bids
+        payment: float, the price paid
+        rewards: ndarray of shape (n_bidders,), payoff for each bidder
     """
     n_bidders = len(bids)
     rewards = np.zeros(n_bidders)
 
-    valid_indices = np.where(bids >= reserve_price)[0]
-    if len(valid_indices) == 0:
-        return rewards, -1, 0.0, 0.0  # no sale
+    valid = np.where(bids > 0)[0]
+    if len(valid) == 0:
+        return -1, 0.0, rewards
 
-    valid_bids = bids[valid_indices]
+    valid_bids = bids[valid]
     sorted_idx = np.argsort(valid_bids)[::-1]
-    highest_idx_local = [sorted_idx[0]]
     highest_bid = valid_bids[sorted_idx[0]]
 
-    # tie among top bids (use exact equality to avoid false ties at very small bid values)
-    for idx_l in sorted_idx[1:]:
-        if valid_bids[idx_l] == highest_bid:
-            highest_idx_local.append(idx_l)
+    # Tie-breaking
+    tied = [sorted_idx[0]]
+    for idx in sorted_idx[1:]:
+        if valid_bids[idx] == highest_bid:
+            tied.append(idx)
         else:
             break
 
-    # pick winner randomly if tie
-    if len(highest_idx_local) > 1:
-        winner_local = np.random.choice(highest_idx_local)
-    else:
-        winner_local = highest_idx_local[0]
-    winner_global = valid_indices[winner_local]
-    winner_bid = bids[winner_global]
-
-    # second-highest bid for SPA payment
-    if len(valid_indices) == len(highest_idx_local):
-        second_highest_bid = highest_bid
-    else:
-        second_idx_local = None
-        for idx_l in sorted_idx:
-            if idx_l not in highest_idx_local:
-                second_idx_local = idx_l
-                break
-        if second_idx_local is None:
-            second_highest_bid = highest_bid
-        else:
-            second_highest_bid = valid_bids[second_idx_local]
-
-    # payoff
-    if auction_type == "first":
-        rewards[winner_global] = valuations[winner_global] - winner_bid
-        payment = winner_bid
-    else:  # second-price
-        rewards[winner_global] = valuations[winner_global] - second_highest_bid
-        payment = second_highest_bid
-
-    return rewards, winner_global, winner_bid, payment
-
-
-# ---------------------------------------------------------------------
-# 4) Theoretical BNE Revenue — same as exp3
-# ---------------------------------------------------------------------
-def simulate_linear_affiliation_revenue(N, eta, auction_type, M=50_000):
-    """
-    Monte Carlo estimate of BNE revenue under linear affiliation.
-    Used as theoretical benchmark for cross-experiment comparison.
-    """
-    if N < 1:
-        return 0.0
-
-    alpha = 1.0 - 0.5 * eta
-    beta = 0.5 * eta / max(N - 1, 1.0)
+    winner_local = np.random.choice(tied) if len(tied) > 1 else tied[0]
+    winner = valid[winner_local]
 
     if auction_type == "first":
-        factor = ((N - 1) / float(N)) * (alpha + (N / 2.0) * beta)
+        payment = bids[winner]
     else:
-        factor = alpha + (N / 2.0) * beta
-
-    rev_sum = 0.0
-    for _ in range(M):
-        t = np.random.rand(N)
-        bids = factor * t
-        max_bid = np.max(bids)
-        top_idx = np.where(np.isclose(bids, max_bid))[0]
-        winner = np.random.choice(top_idx)
-
-        if auction_type == "first":
-            price = max_bid
+        # Second-price: payment = second-highest bid
+        if len(valid) <= len(tied):
+            payment = highest_bid
         else:
-            if len(top_idx) == 1:
-                other_bids = np.delete(bids, winner)
-                second = np.max(other_bids) if len(other_bids) else 0.0
-                price = second
+            # Find highest bid not in the tied set
+            for idx in sorted_idx:
+                if idx not in tied:
+                    payment = valid_bids[idx]
+                    break
             else:
-                price = max_bid
-        rev_sum += price
+                payment = highest_bid
 
-    return rev_sum / M
+    rewards[winner] = valuations[winner] - payment
+    return winner, payment, rewards
 
 
 # ---------------------------------------------------------------------
-# 5) Pacing Agents
+# 3) Dual Pacing Agent
 # ---------------------------------------------------------------------
+class DualPacingAgent:
+    """
+    Multiplicative dual pacing agent for autobidding.
 
-class PacingAgent:
-    """Base class for budget-constrained pacing agents."""
+    Bid formulas:
+        value_max:   b = v / mu
+        utility_max: b = v / (1 + mu)
 
-    def __init__(self, budget, T, aggressiveness, initial_multiplier):
+    Dual update: mu = clip(mu * exp(eta * (payment - rho)), MU_CLIP)
+    where eta = 1/sqrt(T) and rho = budget/T (target spend rate).
+    """
+
+    def __init__(self, budget, T, objective, mu_init=1.0):
         self.budget = float(budget)
         self.T = int(T)
-        self.aggressiveness = float(aggressiveness)
-        self.multiplier = float(initial_multiplier)
+        self.objective = objective
+        self.mu = float(mu_init)
+        self.eta = 1.0 / np.sqrt(T)
+        self.rho = budget / T  # target per-round spend
+
         self.cumulative_spend = 0.0
-        self.t = 0  # rounds completed
-        self.multiplier_history = []  # sampled every 10 rounds
+        self.t = 0
+
+        # Per-episode tracking
+        self.mu_history = []
+        self.bid_history = []
+        self.payment_history = []
 
     def get_bid(self, valuation):
-        """Compute bid with hard budget constraint: bid <= min(v*mu, remaining)."""
-        bid = valuation * self.multiplier
+        """Compute bid with hard budget constraint."""
+        if self.objective == "value_max":
+            raw_bid = valuation / max(self.mu, 1e-8)
+        else:  # utility_max
+            raw_bid = valuation / (1.0 + self.mu)
+
         remaining = max(0.0, self.budget - self.cumulative_spend)
-        return float(np.clip(min(bid, remaining), 0.0, float(valuation)))
+        bid = min(raw_bid, remaining)
+        bid = max(bid, 0.0)
+        return float(bid)
 
-    def record_outcome(self, cost):
-        """Record payment and advance round counter."""
-        self.cumulative_spend += cost
+    def update(self, payment):
+        """Record payment and update dual variable."""
+        self.cumulative_spend += payment
         self.t += 1
+        self.payment_history.append(payment)
 
-    def update_multiplier(self, avg_round_cost):
-        """Subclasses implement specific pacing control law."""
-        raise NotImplementedError
+        # Multiplicative dual update
+        gradient = payment - self.rho
+        self.mu = self.mu * np.exp(self.eta * gradient)
+        self.mu = np.clip(self.mu, MU_CLIP[0], MU_CLIP[1])
+        self.mu_history.append(self.mu)
 
-
-class PIDPacer(PacingAgent):
-    """
-    Proportional-Integral controller for bid pacing.
-    K_D = 0 (literature consensus: derivative unhelpful in stochastic auctions).
-    Error signal: target_spend - actual_spend (underspend = positive error = raise bids).
-    """
-
-    def __init__(self, budget, T, aggressiveness, initial_multiplier):
-        super().__init__(budget, T, aggressiveness, initial_multiplier)
-        self.K_P = 0.30 * aggressiveness
-        self.K_I = 0.05 * aggressiveness
-        self.integral_error = 0.0
-
-    def update_multiplier(self, avg_round_cost):
-        """PI control law using cumulative spend vs target spend."""
-        # target_spend at current time: (t/T) * budget
-        target_spend = (self.t / self.T) * self.budget
-        error = target_spend - self.cumulative_spend
-        self.integral_error += error
-        delta = self.K_P * error + self.K_I * self.integral_error
-        self.multiplier = float(np.clip(self.multiplier + delta, 0.01, 1.5))
-
-
-class MultiplicativePacer(PacingAgent):
-    """
-    Multiplicative pacing via Lagrangian dual ascent.
-    mu_{t+1} = max(0, mu_t + eta_step * (cost - budget/T))
-    multiplier = 1 / (1 + mu)
-    """
-
-    def __init__(self, budget, T, aggressiveness, initial_multiplier):
-        super().__init__(budget, T, aggressiveness, initial_multiplier)
-        self.eta_step = (1.0 / np.sqrt(T)) * aggressiveness
-        self.mu = 0.0  # Lagrangian dual variable (lambda in some papers)
-
-    def update_multiplier(self, avg_round_cost):
-        """Dual ascent step using average per-round cost."""
-        target_cost = self.budget / self.T
-        self.mu = max(0.0, self.mu + self.eta_step * (avg_round_cost - target_cost))
-        self.multiplier = float(np.clip(1.0 / (1.0 + self.mu), 0.01, 1.5))
+    def reset_episode(self, new_budget):
+        """Reset budget/spend for new episode, keep mu (warm-start)."""
+        self.budget = float(new_budget)
+        self.rho = new_budget / self.T
+        self.cumulative_spend = 0.0
+        self.t = 0
+        self.mu_history = []
+        self.bid_history = []
+        self.payment_history = []
 
 
 # ---------------------------------------------------------------------
-# 6) Main Simulation: run_experiment
+# 4) Offline Optimum (for PoA denominator)
 # ---------------------------------------------------------------------
+def compute_offline_optimum(valuations_matrix, budgets, T):
+    """
+    Greedy offline optimum: each round, assign item to highest-value
+    bidder with remaining budget, payment = value (liquid welfare).
 
+    Args:
+        valuations_matrix: shape (T, N) matrix of valuations
+        budgets: shape (N,) array of budgets
+        T: number of rounds
+
+    Returns:
+        liquid_welfare: total value captured, capped at budgets
+    """
+    N = len(budgets)
+    remaining = budgets.copy().astype(float)
+    total_welfare = 0.0
+
+    for t in range(T):
+        vals = valuations_matrix[t]
+        # Sort bidders by valuation, descending
+        order = np.argsort(vals)[::-1]
+        for i in order:
+            if remaining[i] >= vals[i]:
+                total_welfare += vals[i]
+                remaining[i] -= vals[i]
+                break
+            elif remaining[i] > 0:
+                # Partial: can only spend remaining budget
+                total_welfare += remaining[i]
+                remaining[i] = 0.0
+                break
+
+    return total_welfare
+
+
+# ---------------------------------------------------------------------
+# 5) Episode Runner
+# ---------------------------------------------------------------------
+def run_episode(agents, N, T, auction_type, valuations_matrix):
+    """
+    Run T rounds of auction with given agents and valuations.
+
+    Returns dict with per-episode metrics.
+    """
+    winners = []
+    payments = []
+    bidder_bids = [[] for _ in range(N)]
+    bidder_vals = [[] for _ in range(N)]
+
+    for t in range(T):
+        valuations = valuations_matrix[t]
+        bids = np.array([agents[i].get_bid(valuations[i]) for i in range(N)])
+
+        for i in range(N):
+            bidder_bids[i].append(bids[i])
+            bidder_vals[i].append(valuations[i])
+            agents[i].bid_history.append(bids[i])
+
+        winner, payment, rewards = run_auction(bids, valuations, auction_type)
+
+        # Update agents: only winner pays
+        for i in range(N):
+            cost = payment if i == winner else 0.0
+            agents[i].update(cost)
+
+        winners.append(winner)
+        payments.append(payment)
+
+    # --- Compute episode metrics ---
+    total_revenue = sum(payments)
+
+    # Liquid welfare: sum of winner valuations capped at budget
+    liquid_welfare = 0.0
+    for t in range(T):
+        w = winners[t]
+        if w >= 0:
+            liquid_welfare += valuations_matrix[t, w]
+
+    # Allocative efficiency: fraction of rounds highest-value bidder wins
+    efficient_count = 0
+    for t in range(T):
+        w = winners[t]
+        if w >= 0 and w == np.argmax(valuations_matrix[t]):
+            efficient_count += 1
+    allocative_efficiency = efficient_count / T
+
+    # Budget utilization
+    budget_util = np.mean([
+        agents[i].cumulative_spend / max(agents[i].budget, 1e-10)
+        for i in range(N)
+    ])
+
+    # Bid-to-value ratio
+    btv_vals = []
+    for i in range(N):
+        for b, v in zip(bidder_bids[i], bidder_vals[i]):
+            if v > 1e-9:
+                btv_vals.append(b / v)
+    bid_to_value = float(np.mean(btv_vals)) if btv_vals else 0.0
+
+    # Dual variable stats (last 200 rounds)
+    dual_finals = []
+    dual_cvs = []
+    tail = min(200, T)
+    for i in range(N):
+        hist = agents[i].mu_history
+        if len(hist) >= tail:
+            tail_mu = hist[-tail:]
+        else:
+            tail_mu = hist
+        if tail_mu:
+            dual_finals.append(tail_mu[-1])
+            mean_mu = np.mean(tail_mu)
+            std_mu = np.std(tail_mu)
+            dual_cvs.append(std_mu / (abs(mean_mu) + 1e-10))
+
+    dual_final_mean = float(np.mean(dual_finals)) if dual_finals else 1.0
+    dual_cv = float(np.mean(dual_cvs)) if dual_cvs else 0.0
+
+    # No sale rate
+    no_sale_count = sum(1 for w in winners if w < 0)
+    no_sale_rate = no_sale_count / T
+
+    # Winner entropy
+    valid_winners = [w for w in winners if w >= 0]
+    if valid_winners:
+        unique_w, counts = np.unique(valid_winners, return_counts=True)
+        p = counts / counts.sum()
+        winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
+    else:
+        winner_entropy = 0.0
+
+    return {
+        "liquid_welfare": liquid_welfare,
+        "platform_revenue": total_revenue,
+        "allocative_efficiency": allocative_efficiency,
+        "budget_utilization": budget_util,
+        "bid_to_value": bid_to_value,
+        "dual_final_mean": dual_final_mean,
+        "dual_cv": dual_cv,
+        "no_sale_rate": no_sale_rate,
+        "winner_entropy": winner_entropy,
+    }
+
+
+# ---------------------------------------------------------------------
+# 6) Main Experiment
+# ---------------------------------------------------------------------
 def run_experiment(
-    algorithm,
     auction_type,
+    objective,
     n_bidders,
-    budget_tightness,
-    eta,
-    aggressiveness,
-    update_frequency,
-    initial_multiplier,
-    max_rounds=10_000,
-    reserve_price=0.0,
+    n_episodes=100,
+    T=1000,
+    sigma=0.3,
     seed=0,
     progress_callback=None,
 ):
     """
-    Run one cell of the budget-constrained pacing experiment.
+    Run one cell of the autobidding pacing experiment.
+
+    Episodic structure: D episodes x T rounds, budgets regenerate,
+    dual variables warm-start across episodes.
 
     Returns:
-      summary: dict with all response variables
-      revenues: list of per-round revenues (for convergence analysis)
-      round_history: list of per-round dicts (thin for memory efficiency)
-      agents: list of final PacingAgent objects
+        summary: dict with run-level aggregate metrics
+        episode_data: list of per-episode metric dicts
+        agents: list of final DualPacingAgent objects
     """
-    np.random.seed(seed)
+    rng = np.random.default_rng(seed)
+    # Also set global numpy seed for auction tie-breaking
+    np.random.seed(seed % (2**31))
 
-    T = int(max_rounds)
-    n_bidders = int(n_bidders)
-    update_frequency = int(update_frequency)
+    N = int(n_bidders)
+    D = int(n_episodes)
+    T = int(T)
 
-    # Budget per agent: budget_tightness * E[v] * T
-    # E[v] = 0.5 for U[0,1] marginals (both eta=0 and eta=1)
-    E_v = 0.5
-    budget_per_agent = float(budget_tightness) * E_v * T
+    # Draw bidder-specific means once per seed (creates asymmetry)
+    bidder_means = rng.uniform(MU_RANGE[0], MU_RANGE[1], size=N)
 
-    # Instantiate agents
-    agents = []
-    for _ in range(n_bidders):
-        if algorithm == "pid":
-            agent = PIDPacer(budget_per_agent, T, aggressiveness, initial_multiplier)
-        else:
-            agent = MultiplicativePacer(budget_per_agent, T, aggressiveness, initial_multiplier)
-        agents.append(agent)
+    # Compute budgets: 0.5 * E[v_i] * T where E[v] = exp(mu_i + sigma^2/2)
+    expected_values = np.exp(bidder_means + sigma**2 / 2.0)
+    budgets = 0.5 * expected_values * T
 
-    # Pre-allocate tracking arrays
-    revenues = []
-    winners_list = []
-    winning_bids_list = []
-    no_sale_count = 0
-
-    # Per-agent tracking for budget metrics
-    per_agent_bids = [[] for _ in range(n_bidders)]
-    per_agent_valuations = [[] for _ in range(n_bidders)]
-    per_agent_payments = [[] for _ in range(n_bidders)]
-
-    # Batch cost tracking for update_frequency > 1
-    batch_costs = [[] for _ in range(n_bidders)]
-
-    # Budget violation counter (sanity check: should stay 0)
-    violation_count = 0
-
-    for ep in range(T):
-        if progress_callback and ep % 1000 == 0:
-            progress_callback(current=ep, total=T)
-
-        # Draw private signals (iid U[0,1])
-        signals = np.random.uniform(0.0, 1.0, n_bidders)
-        valuations = np.zeros(n_bidders)
-        for i in range(n_bidders):
-            others = np.delete(signals, i)
-            valuations[i] = get_valuation(eta, signals[i], others)
-
-        # Compute bids (hard constraint enforced in get_bid)
-        bids = np.array([agents[i].get_bid(valuations[i]) for i in range(n_bidders)])
-
-        # Run auction; get_rewards extended to return actual payment
-        rew, winner, winner_bid, payment_amount = get_rewards(
-            bids, valuations, auction_type, reserve_price
-        )
-
-        # Determine per-agent costs: only winner pays
-        costs = np.zeros(n_bidders)
-        if winner >= 0:
-            costs[winner] = payment_amount
-
-        # Record outcomes
-        for i in range(n_bidders):
-            agents[i].record_outcome(costs[i])
-            batch_costs[i].append(costs[i])
-            per_agent_bids[i].append(bids[i])
-            per_agent_valuations[i].append(valuations[i])
-            per_agent_payments[i].append(costs[i])
-
-            # Budget violation check (should never trigger due to hard constraint)
-            if agents[i].cumulative_spend > agents[i].budget + 1e-9:
-                violation_count += 1
-
-        # Batch multiplier update
-        if (ep + 1) % update_frequency == 0 or ep == T - 1:
-            for i in range(n_bidders):
-                if batch_costs[i]:
-                    avg_cost = float(np.mean(batch_costs[i]))
-                    agents[i].update_multiplier(avg_cost)
-                    batch_costs[i] = []
-
-        # Sample multiplier every 10 rounds for convergence diagnostics
-        if ep % 10 == 0:
-            for i in range(n_bidders):
-                agents[i].multiplier_history.append(agents[i].multiplier)
-
-        # Revenue tracking (use winner_bid = highest bid, consistent with exp1-3)
-        if winner >= 0:
-            revenue_t = winner_bid
-            winners_list.append(winner)
-        else:
-            revenue_t = 0.0
-            no_sale_count += 1
-
-        revenues.append(revenue_t)
-        winning_bids_list.append(winner_bid)
-
-    if progress_callback:
-        progress_callback(current=T, total=T)
-
-    # ------------------------------------------------------------------
-    # Compute summary statistics
-    # ------------------------------------------------------------------
-    window_size = min(1000, T)
-    rev_series = pd.Series(revenues)
-
-    avg_rev_last_1000 = float(np.mean(revenues[-window_size:]))
-
-    # Time to converge: first episode where rolling-mean stays in ±5% band
-    roll_avg = rev_series.rolling(window=window_size).mean()
-    final_rev = avg_rev_last_1000
-    lower_band = 0.95 * final_rev
-    upper_band = 1.05 * final_rev
-    time_to_converge = T
-    for t_idx in range(len(revenues) - window_size):
-        window_val = roll_avg.iloc[t_idx + window_size - 1]
-        if lower_band <= window_val <= upper_band:
-            stay_in_band = True
-            for j in range(t_idx + window_size, len(revenues) - window_size):
-                v_j = roll_avg.iloc[j + window_size - 1]
-                if not (lower_band <= v_j <= upper_band):
-                    stay_in_band = False
-                    break
-            if stay_in_band:
-                time_to_converge = t_idx + window_size
-                break
-
-    # Standard metrics (matching Exp 1-2 naming)
-    avg_regret_of_seller = float(np.mean([1.0 - r for r in revenues]))
-    no_sale_rate = no_sale_count / T
-    price_volatility = float(np.std(winning_bids_list)) if winning_bids_list else 0.0
-
-    if len(winners_list) == 0:
-        winner_entropy = 0.0
-    else:
-        unique_w, counts = np.unique(winners_list, return_counts=True)
-        p = counts / counts.sum()
-        winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
-
-    # Budget-specific metrics
-    budget_utilization = float(np.mean([
-        agents[i].cumulative_spend / agents[i].budget
-        for i in range(n_bidders)
-    ]))
-
-    # Spend volatility: CV of per-period payments in last window_size rounds
-    last_payments = []
-    for i in range(n_bidders):
-        last_payments.extend(per_agent_payments[i][-window_size:])
-    spend_mean = float(np.mean(last_payments)) if last_payments else 0.0
-    spend_std = float(np.std(last_payments)) if last_payments else 0.0
-    spend_volatility = spend_std / (spend_mean + 1e-10)
-
-    # Budget violation rate (sanity: should = 0 due to hard constraint)
-    budget_violation_rate = violation_count / (T * n_bidders)
-
-    # Effective bid shading: mean(1 - bid/valuation) across all bids
-    shading_vals = []
-    for i in range(n_bidders):
-        for b, v in zip(per_agent_bids[i], per_agent_valuations[i]):
-            if v > 1e-9:
-                shading_vals.append(1.0 - b / v)
-    effective_bid_shading = float(np.mean(shading_vals)) if shading_vals else 0.0
-
-    # ------------------------------------------------------------------
-    # Multiplier convergence diagnostics (averaged across agents)
-    # ------------------------------------------------------------------
-    # multiplier_convergence_time: first sample index where CV of trailing
-    # 50 samples (500 rounds) stays below 0.02 for the rest of the run.
-    # Reported in units of rounds (sample_idx * 10).
-    multiplier_convergence_times = []
-    multiplier_final_means = []
-    multiplier_final_stds = []
-
-    n_samples = len(agents[0].multiplier_history)
-    window_samples = 50  # 50 samples = 500 rounds
-
-    for i in range(n_bidders):
-        hist = agents[i].multiplier_history
-        conv_time = T  # default: never converged
-
-        if n_samples >= window_samples:
-            for s in range(n_samples - window_samples):
-                window = hist[s:s + window_samples]
-                mean_w = float(np.mean(window))
-                std_w = float(np.std(window))
-                cv = std_w / (abs(mean_w) + 1e-10)
-                if cv < 0.02:
-                    # Check it stays stable for the rest of the history
-                    stay_stable = True
-                    for s2 in range(s + window_samples, n_samples - window_samples):
-                        w2 = hist[s2:s2 + window_samples]
-                        m2 = float(np.mean(w2))
-                        cv2 = float(np.std(w2)) / (abs(m2) + 1e-10)
-                        if cv2 >= 0.02:
-                            stay_stable = False
-                            break
-                    if stay_stable:
-                        conv_time = (s + window_samples) * 10  # convert to rounds
-                        break
-
-        multiplier_convergence_times.append(conv_time)
-
-        last_samples = hist[-window_samples:] if len(hist) >= window_samples else hist
-        multiplier_final_means.append(float(np.mean(last_samples)))
-        multiplier_final_stds.append(float(np.std(last_samples)))
-
-    multiplier_convergence_time = float(np.mean(multiplier_convergence_times))
-    multiplier_final_mean = float(np.mean(multiplier_final_means))
-    multiplier_final_std = float(np.mean(multiplier_final_stds))
-
-    summary = {
-        "avg_rev_last_1000": avg_rev_last_1000,
-        "time_to_converge": time_to_converge,
-        "avg_regret_of_seller": avg_regret_of_seller,
-        "no_sale_rate": no_sale_rate,
-        "price_volatility": price_volatility,
-        "winner_entropy": winner_entropy,
-        "budget_utilization": budget_utilization,
-        "spend_volatility": spend_volatility,
-        "budget_violation_rate": budget_violation_rate,
-        "effective_bid_shading": effective_bid_shading,
-        "multiplier_convergence_time": multiplier_convergence_time,
-        "multiplier_final_mean": multiplier_final_mean,
-        "multiplier_final_std": multiplier_final_std,
-    }
-
-    # Thin round history (episode-level summary only, to keep memory low)
-    round_history = [
-        {"episode": ep, "revenue": revenues[ep]}
-        for ep in range(T)
+    # Create agents
+    agents = [
+        DualPacingAgent(budgets[i], T, objective, mu_init=1.0)
+        for i in range(N)
     ]
 
-    return summary, revenues, round_history, agents
+    episode_data = []
+    all_revenues = []
+    all_btvs = []
+
+    for d in range(D):
+        if progress_callback and d % 10 == 0:
+            progress_callback(current=d, total=D)
+
+        # Draw valuations for this episode: LogNormal(bidder_means[i], sigma)
+        # shape: (T, N)
+        valuations_matrix = np.zeros((T, N))
+        for i in range(N):
+            valuations_matrix[:, i] = rng.lognormal(
+                mean=bidder_means[i], sigma=sigma, size=T
+            )
+
+        # Compute offline optimum for this episode
+        offline_opt = compute_offline_optimum(valuations_matrix, budgets, T)
+
+        # Reset agent budgets (warm-start mu)
+        for i in range(N):
+            agents[i].reset_episode(budgets[i])
+
+        # Run episode
+        ep_metrics = run_episode(agents, N, T, auction_type, valuations_matrix)
+
+        # Add PoA and offline optimum
+        if offline_opt > 1e-10:
+            ep_metrics["effective_poa"] = offline_opt / max(ep_metrics["liquid_welfare"], 1e-10)
+        else:
+            ep_metrics["effective_poa"] = 1.0
+        ep_metrics["offline_optimum"] = offline_opt
+        ep_metrics["episode"] = d
+
+        episode_data.append(ep_metrics)
+        all_revenues.append(ep_metrics["platform_revenue"])
+        all_btvs.append(ep_metrics["bid_to_value"])
+
+    if progress_callback:
+        progress_callback(current=D, total=D)
+
+    # ------------------------------------------------------------------
+    # Run-level summary (aggregated from episodes d >= 10, i.e. 90 eps)
+    # ------------------------------------------------------------------
+    burn_in = min(10, D)
+    post_burn = episode_data[burn_in:]
+
+    if not post_burn:
+        post_burn = episode_data  # fallback for very short runs
+
+    def mean_field(field):
+        return float(np.mean([ep[field] for ep in post_burn]))
+
+    summary = {
+        "mean_platform_revenue": mean_field("platform_revenue"),
+        "mean_liquid_welfare": mean_field("liquid_welfare"),
+        "mean_effective_poa": mean_field("effective_poa"),
+        "mean_budget_utilization": mean_field("budget_utilization"),
+        "mean_bid_to_value": mean_field("bid_to_value"),
+        "mean_allocative_efficiency": mean_field("allocative_efficiency"),
+        "mean_dual_cv": mean_field("dual_cv"),
+        "mean_no_sale_rate": mean_field("no_sale_rate"),
+        "mean_winner_entropy": mean_field("winner_entropy"),
+    }
+
+    # Learning metrics
+    if D >= 2:
+        summary["warm_start_benefit"] = (
+            episode_data[1]["platform_revenue"] - episode_data[0]["platform_revenue"]
+        )
+    else:
+        summary["warm_start_benefit"] = 0.0
+
+    post_burn_revs = [ep["platform_revenue"] for ep in post_burn]
+    rev_mean = np.mean(post_burn_revs)
+    rev_std = np.std(post_burn_revs)
+    summary["inter_episode_volatility"] = float(rev_std / (rev_mean + 1e-10))
+
+    # Collusion indicators
+    # Competitive bid-to-value: FPA competitive = (N-1)/N, SPA competitive = 1.0
+    if auction_type == "first":
+        competitive_btv = (N - 1) / N
+    else:
+        competitive_btv = 1.0
+    mean_btv = mean_field("bid_to_value")
+    summary["bid_suppression_ratio"] = mean_btv / (competitive_btv + 1e-10)
+
+    # Cross-episode drift: slope of btv across post-burn-in episodes
+    if len(post_burn) >= 2:
+        x = np.arange(len(post_burn))
+        y = np.array([ep["bid_to_value"] for ep in post_burn])
+        slope, _, _, _, _ = scipy_stats.linregress(x, y)
+        summary["cross_episode_drift"] = float(slope)
+    else:
+        summary["cross_episode_drift"] = 0.0
+
+    return summary, episode_data, agents
 
 
 # ---------------------------------------------------------------------
-# 7) Legacy Orchestrator (deprecated; kept for CLI compatibility)
+# 7) CLI Entry Point
 # ---------------------------------------------------------------------
-
-def run_full_experiment(
-    experiment_id=4,
-    K=50,
-    algorithm_values=("pid", "multiplicative"),
-    auction_type_values=("first", "second"),
-    n_bidders_values=(2, 4),
-    budget_tightness_values=(0.25, 0.75),
-    eta_values=(0.0, 1.0),
-    aggressiveness_values=(0.5, 2.0),
-    update_frequency_values=(1, 100),
-    initial_multiplier_values=(0.5, 1.0),
-    max_rounds=10_000,
-    seed=1234,
-    output_dir=None,
-):
-    """
-    Deprecated random-sampling orchestrator (retained for direct CLI use).
-    For factorial design, use scripts/run_experiment.py --exp 4.
-    """
-    folder = output_dir or f"results/exp{experiment_id}"
-    os.makedirs(folder, exist_ok=True)
-
-    with open(os.path.join(folder, "param_mappings.json"), "w") as f:
-        json.dump(param_mappings, f, indent=2)
-
-    rng = np.random.default_rng(seed)
-    results = []
-
-    for run_id in range(K):
-        kwargs = {
-            "algorithm": rng.choice(list(algorithm_values)),
-            "auction_type": rng.choice(list(auction_type_values)),
-            "n_bidders": int(rng.choice(list(n_bidders_values))),
-            "budget_tightness": float(rng.choice(list(budget_tightness_values))),
-            "eta": float(rng.choice(list(eta_values))),
-            "aggressiveness": float(rng.choice(list(aggressiveness_values))),
-            "update_frequency": int(rng.choice(list(update_frequency_values))),
-            "initial_multiplier": float(rng.choice(list(initial_multiplier_values))),
-            "max_rounds": max_rounds,
-            "seed": run_id,
-        }
-
-        summary, _, _, _ = run_experiment(**kwargs)
-        row = dict(summary)
-        row["run_id"] = run_id
-        for k, v in kwargs.items():
-            row[k] = v
-        results.append(row)
-        print(f"  Run {run_id + 1}/{K}: avg_rev={row['avg_rev_last_1000']:.4f}, "
-              f"budget_util={row['budget_utilization']:.4f}")
-
-    df = pd.DataFrame(results)
-    csv_path = os.path.join(folder, "data.csv")
-    df.to_csv(csv_path, index=False)
-    print(f"\nDone. {len(results)} runs => '{csv_path}'")
-
-
-# ---------------------------------------------------------------------
-# 8) CLI Entry Point
-# ---------------------------------------------------------------------
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Experiment 4: Budget-Constrained Pacing Algorithms"
+        description="Experiment 4: Autobidding with Regenerating Budgets"
     )
     parser.add_argument(
         "--quick", action="store_true",
-        help="Quick test: 10 random runs, 1000 rounds each"
+        help="Quick test: small number of episodes and rounds"
     )
     args = parser.parse_args()
 
-    if args.quick:
-        print("=" * 50)
-        print("QUICK TEST MODE - Budget-Constrained Pacing")
-        print("=" * 50)
-        run_full_experiment(
-            experiment_id=4,
-            K=5,
-            algorithm_values=("pid", "multiplicative"),
-            auction_type_values=("first", "second"),
-            n_bidders_values=(2,),
-            budget_tightness_values=(0.25, 0.75),
-            eta_values=(0.0,),
-            aggressiveness_values=(1.0,),
-            update_frequency_values=(1,),
-            initial_multiplier_values=(1.0,),
-            max_rounds=1000,
-            output_dir="results/exp4/quick_test",
+    configs = [
+        {"auction_type": "first", "objective": "value_max", "n_bidders": 2},
+        {"auction_type": "second", "objective": "utility_max", "n_bidders": 4},
+    ]
+
+    for cfg in configs:
+        print(f"\n{'='*50}")
+        print(f"Config: {cfg}")
+        print(f"{'='*50}")
+        summary, episodes, agents = run_experiment(
+            **cfg,
+            n_episodes=10 if args.quick else 100,
+            T=100 if args.quick else 1000,
+            seed=42,
         )
-    else:
-        run_full_experiment(
-            experiment_id=4,
-            K=100,
-            max_rounds=10_000,
-            output_dir="results/exp4",
-        )
+        for k, v in sorted(summary.items()):
+            print(f"  {k}: {v:.4f}" if isinstance(v, float) else f"  {k}: {v}")

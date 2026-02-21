@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
+"""
+Experiment 2: Affiliated-Values Q-Learning with BNE-Benchmarked Outcomes.
+
+Focuses on 4 structural factors (auction_type, eta, n_bidders, state_info)
+with Q-learning hyperparameters fixed at levels identified in Experiment 1.
+
+Design: 3 × 2^3 = 24 cells (eta has 3 levels; others have 2).
+"""
 
 import numpy as np
 import pandas as pd
 import os
 import json
 import argparse
-import matplotlib.pyplot as plt
-from tqdm import trange
 
 # ---------------------------------------------------------------------
 # 1) Parameter Mappings
 # ---------------------------------------------------------------------
 param_mappings = {
     "auction_type": {"first": 1, "second": 0},
-    "init": {"random": 0, "zeros": 1},
-    "exploration": {"egreedy": 0, "boltzmann": 1},
-    "asynchronous": {0: 0, 1: 1},
-    "median_opp_past_bid_index": {False: 0, True: 1},
-    "winner_bid_index_state": {False: 0, True: 1}
+    "state_info": {"signal_only": 0, "signal_winner": 1},
 }
 
 # ---------------------------------------------------------------------
@@ -35,7 +37,6 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
 
     valid_indices = np.where(bids >= reserve_price)[0]
     if len(valid_indices) == 0:
-        # No sale if nobody meets reserve
         return rewards, -1, 0.0
 
     valid_bids = bids[valid_indices]
@@ -43,14 +44,12 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
     highest_idx_local = [sorted_indices[0]]
     highest_bid = valid_bids[sorted_indices[0]]
 
-    # Tie-break among top
     for idx_l in sorted_indices[1:]:
         if np.isclose(valid_bids[idx_l], highest_bid):
             highest_idx_local.append(idx_l)
         else:
             break
 
-    # Resolve tie randomly
     if len(highest_idx_local) > 1:
         winner_local = np.random.choice(highest_idx_local)
     else:
@@ -58,9 +57,12 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
     winner_global = valid_indices[winner_local]
     winner_bid = bids[winner_global]
 
-    # Second-highest among valid
     if len(valid_indices) == len(highest_idx_local):
-        second_highest_bid = highest_bid
+        # All valid bidders are tied at highest; in SPA use reserve price
+        if auction_type != "first" and len(valid_indices) == 1:
+            second_highest_bid = reserve_price
+        else:
+            second_highest_bid = highest_bid
     else:
         second_idx_local = None
         for idx_l in sorted_indices:
@@ -69,7 +71,6 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
                 break
         second_highest_bid = highest_bid if second_idx_local is None else valid_bids[second_idx_local]
 
-    # Auction payoff
     if auction_type == "first":
         rewards[winner_global] = valuations[winner_global] - winner_bid
     else:
@@ -82,7 +83,7 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
 # ---------------------------------------------------------------------
 def get_valuation(eta, own_signal, others_signals):
     """
-    Linear affiliation: 
+    Linear affiliation:
       valuation = alpha * own_signal + beta * mean(others_signals),
     where alpha = 1 - 0.5*eta, beta = 0.5*eta.
     """
@@ -91,140 +92,77 @@ def get_valuation(eta, own_signal, others_signals):
     return alpha * own_signal + beta * np.mean(others_signals)
 
 # ---------------------------------------------------------------------
-# 4) Theoretical Revenue (Linear-Affiliation)
+# 4) Efficient Benchmark E[v_(1)] (Linear-Affiliation)
 # ---------------------------------------------------------------------
-def simulate_linear_affiliation_revenue(N, eta, auction_type, M=50_000):
+def efficient_benchmark_ev1(N, eta):
     """
-    Approximates BNE-based average revenue for 'first' or 'second' auctions
-    in a linear-affiliation model, via Monte Carlo.
+    Closed-form efficient benchmark: E[v_(1)] where v_i = alpha*s_i + beta_sum*sum_{j!=i} s_j.
+    Here alpha = 1 - 0.5*eta, beta_sum = 0.5*eta/(N-1).
+    E[v_(1)] = (alpha - beta_sum)*N/(N+1) + (N*beta_sum)/2.
     """
+    if N < 2:
+        alpha = 1.0 - 0.5 * eta
+        return alpha * (N / (N + 1.0))
     alpha = 1.0 - 0.5 * eta
-    beta = 0.5 * eta / max(N - 1, 1)
-    if auction_type == "first":
-        # factor = (N-1)/N * [alpha + (N/2)*beta]
-        factor = ((N - 1) / float(N)) * (alpha + (N / 2.0) * beta)
-    else:  # second
-        # factor = alpha + (N/2)*beta
-        factor = alpha + (N / 2.0) * beta
-
-    rev_sum = 0.0
-    for _ in range(M):
-        t = np.random.rand(N)  # signals in [0..1]
-        bids = factor * t
-        max_bid = np.max(bids)
-        top_idx = np.where(np.isclose(bids, max_bid))[0]
-        winner = np.random.choice(top_idx)
-
-        if auction_type == "first":
-            price = bids[winner]
-        else:
-            if len(top_idx) == 1:
-                tmp = np.delete(bids, winner)
-                price = np.max(tmp) if len(tmp) else 0.0
-            else:
-                price = max_bid
-        rev_sum += price
-
-    return rev_sum / M
+    beta_sum = 0.5 * eta / (N - 1)
+    return (alpha - beta_sum) * (N / (N + 1.0)) + (N * beta_sum) / 2.0
 
 # ---------------------------------------------------------------------
-# 5) Q-Learning: State-Space
-# ---------------------------------------------------------------------
-def build_state_space(median_opp_past_bid_index, winner_bid_index_state, n_actions):
-    """
-    If both flags= False -> 1
-    If exactly one= True -> n_actions
-    If both True -> n_actions * n_actions
-    """
-    if not median_opp_past_bid_index and not winner_bid_index_state:
-        return 1
-    elif median_opp_past_bid_index and not winner_bid_index_state:
-        return n_actions
-    elif not median_opp_past_bid_index and winner_bid_index_state:
-        return n_actions
-    else:
-        return n_actions * n_actions
-
-# ---------------------------------------------------------------------
-# 6) Single Q-Learning Experiment
+# 5) Q-Learning Experiment (Redesigned)
 # ---------------------------------------------------------------------
 def run_experiment(
-    eta,
-    auction_type,
-    alpha, gamma, episodes,
-    init, exploration, asynchronous, n_bidders,
-    median_opp_past_bid_index, winner_bid_index_state,
-    reserve_price, seed=0,
+    eta, auction_type, n_bidders, state_info,
+    alpha=0.1, gamma=0.95, episodes=100_000,
+    n_bid_actions=101, n_signal_bins=11,
+    reserve_price=0.0, seed=0,
     store_qtables=False, qtable_folder=None,
-    progress_callback=None
+    progress_callback=None,
 ):
     """
-    Q-learning experiment with:
-      - signals in [0..1]
-      - valuations ~ get_valuation(...)
-      - n_bid_bins=6 for discrete bids
-      - unify with Exp.1 logic:
-        => track winners/no-sale
-        => time_to_converge requires remain in ±5% band
-        => store Q table snapshots every 1000 episodes
-        => final summary includes:
-           avg_rev_last_1000, time_to_converge,
-           avg_regret_of_seller, no_sale_rate,
-           price_volatility, winner_entropy
+    Q-learning experiment with affiliated valuations and BNE-benchmarked outcomes.
+
+    Fixed hyperparameters: epsilon-greedy with linear decay, zero init, async TD.
+    4 design factors: eta, auction_type, n_bidders, state_info.
     """
     np.random.seed(seed)
 
-    n_val_bins = 6
-    n_bid_bins = 6
-    action_space = np.linspace(0, 1, n_bid_bins)
-    n_states = build_state_space(median_opp_past_bid_index, winner_bid_index_state, n_bid_bins)
+    action_space = np.linspace(0, 1, n_bid_actions)
 
-    # Initialize Q
-    if init == "random":
-        Q = np.random.rand(n_bidders, n_states, n_bid_bins)
+    # State space size
+    if state_info == "signal_winner":
+        n_states = n_signal_bins * n_bid_actions
     else:
-        Q = np.zeros((n_bidders, n_states, n_bid_bins))
+        n_states = n_signal_bins
 
-    # Stats
+    # Initialize Q-tables (zeros)
+    Q = np.zeros((n_bidders, n_states, n_bid_actions))
+
+    # Tracking
     revenues = []
     winning_bids_list = []
-    round_history = []
     no_sale_count = 0
     winners_list = []
 
+    # Epsilon schedule: linear decay from 1.0 to 0.0 over 90% of episodes
     eps_start, eps_end = 1.0, 0.0
     decay_end = int(0.9 * episodes)
 
-    past_bids = np.zeros(n_bidders)
-    past_winner_bid = 0.0
+    # For signal_winner state: track last winning bid bin
+    last_winner_bid_bin = 0
+
+    # Storage for final-window detailed data
+    window_size = min(1000, episodes)
+    final_window_bids = []
+    final_window_vals = []
+    final_window_winners = []
+    final_window_payments = []
+    final_window_signals = []
 
     save_interval = 1000
     if store_qtables and qtable_folder is not None:
         os.makedirs(qtable_folder, exist_ok=True)
 
-    # Function to convert (median_val, winner_val) -> state index
-    def state_index(median_val, winner_val):
-        if median_opp_past_bid_index:
-            med_idx = int(median_val * (n_bid_bins - 1) + 0.4999999)
-        else:
-            med_idx = 0
-
-        if winner_bid_index_state:
-            win_idx = int(winner_val * (n_bid_bins - 1) + 0.4999999)
-        else:
-            win_idx = 0
-
-        if (not median_opp_past_bid_index) and (not winner_bid_index_state):
-            return 0
-        elif median_opp_past_bid_index and (not winner_bid_index_state):
-            return med_idx
-        elif (not median_opp_past_bid_index) and winner_bid_index_state:
-            return win_idx
-        else:
-            return med_idx * n_bid_bins + win_idx
-
     for ep in range(episodes):
-        # Progress callback every 1000 episodes
         if progress_callback and ep % 1000 == 0:
             progress_callback(current=ep, total=episodes)
 
@@ -234,44 +172,47 @@ def run_experiment(
         else:
             eps = eps_end
 
-        # signals
-        signals = np.random.randint(n_val_bins, size=n_bidders) / (n_val_bins - 1)
+        # Continuous signals, discretized for Q-table
+        signals = np.random.uniform(0, 1, size=n_bidders)
+        signal_bins = np.round(signals * (n_signal_bins - 1)).astype(int)
+
+        # Valuations from continuous signals
         valuations = np.zeros(n_bidders)
         for i in range(n_bidders):
             others = np.delete(signals, i)
             valuations[i] = get_valuation(eta, signals[i], others)
 
-        # current state
-        median_val = np.median(past_bids) if median_opp_past_bid_index else 0.0
-        s = state_index(median_val, past_winner_bid)
+        # Construct states
+        if state_info == "signal_winner":
+            states = signal_bins * n_bid_actions + last_winner_bid_bin
+        else:
+            states = signal_bins
 
-        # pick actions
-        chosen_actions = []
+        # Pick actions (epsilon-greedy)
+        chosen_actions = np.zeros(n_bidders, dtype=int)
         for i in range(n_bidders):
-            qvals = Q[i, s]
-            if exploration == "boltzmann":
-                # Boltzmann
-                shifted = qvals - np.max(qvals)
-                ex = np.exp(shifted)
-                probs = ex / np.sum(ex)
-                a_i = np.random.choice(n_bid_bins, p=probs)
+            if np.random.rand() > eps:
+                chosen_actions[i] = np.argmax(Q[i, states[i]])
             else:
-                # E-greedy: if rand() > eps => exploit
-                if np.random.rand() > eps:
-                    a_i = np.argmax(qvals)
-                else:
-                    a_i = np.random.randint(n_bid_bins)
-            chosen_actions.append(a_i)
+                chosen_actions[i] = np.random.randint(n_bid_actions)
 
-        # Convert actions to bids
-        bids = np.array([action_space[a] for a in chosen_actions])
+        bids = action_space[chosen_actions]
 
-        # Auction payoff
+        # Auction
         rew, winner, winner_bid_val = get_rewards(bids, valuations, auction_type, reserve_price)
 
         # Seller revenue
         valid_bids = bids[bids >= reserve_price]
-        revenue_t = np.max(valid_bids) if len(valid_bids) > 0 else 0.0
+        if auction_type == "first":
+            revenue_t = float(np.max(valid_bids)) if len(valid_bids) > 0 else 0.0
+        else:
+            if len(valid_bids) >= 2:
+                sorted_valid = np.sort(valid_bids)
+                revenue_t = float(sorted_valid[-2])
+            elif len(valid_bids) == 1:
+                revenue_t = float(valid_bids[0])
+            else:
+                revenue_t = 0.0
         revenues.append(revenue_t)
         winning_bids_list.append(winner_bid_val)
 
@@ -280,67 +221,68 @@ def run_experiment(
         else:
             winners_list.append(winner)
 
+        # Track final-window detailed data
+        in_final_window = ep >= (episodes - window_size)
+        if in_final_window:
+            final_window_bids.append(bids.copy())
+            final_window_vals.append(valuations.copy())
+            final_window_winners.append(winner)
+            final_window_signals.append(signals.copy())
+            # Payment
+            if winner >= 0:
+                if auction_type == "first":
+                    final_window_payments.append(bids[winner])
+                else:
+                    # second-price payment
+                    if len(valid_bids) >= 2:
+                        sorted_valid = np.sort(valid_bids)
+                        final_window_payments.append(sorted_valid[-2])
+                    else:
+                        final_window_payments.append(bids[winner])
+            else:
+                final_window_payments.append(0.0)
+
         # Next state
-        next_winner_val = winner_bid_val if winner != -1 else 0.0
-        next_median_val = np.median(bids) if median_opp_past_bid_index else 0.0
-        s_next = state_index(next_median_val, next_winner_val)
-
-        # Q-update
-        if asynchronous == 1:
-            # Asynchronous
-            for i in range(n_bidders):
-                old_q = Q[i, s, chosen_actions[i]]
-                td_target = rew[i] + gamma * np.max(Q[i, s_next])
-                Q[i, s, chosen_actions[i]] = old_q + alpha * (td_target - old_q)
+        if winner >= 0:
+            new_winner_bid_bin = int(np.round(winner_bid_val * (n_bid_actions - 1)))
+            new_winner_bid_bin = min(max(new_winner_bid_bin, 0), n_bid_actions - 1)
         else:
-            # Synchronous
-            for i in range(n_bidders):
-                cf_rewards = np.zeros(n_bid_bins)
-                for alt_a in range(n_bid_bins):
-                    alt_bids = bids.copy()
-                    alt_bids[i] = action_space[alt_a]
-                    alt_r, _, _ = get_rewards(alt_bids, valuations, auction_type, reserve_price)
-                    cf_rewards[alt_a] = alt_r[i]
-                best_future = np.max(Q[i, s_next])
-                Q[i, s, :] = (1 - alpha)*Q[i, s, :] + alpha*(cf_rewards + gamma * best_future)
+            new_winner_bid_bin = 0
 
-        # Log each episode
+        if state_info == "signal_winner":
+            next_states = signal_bins * n_bid_actions + new_winner_bid_bin
+        else:
+            next_states = signal_bins
+
+        # Q-update (asynchronous TD)
         for i in range(n_bidders):
-            round_history.append({
-                "episode": ep,
-                "bidder_id": i,
-                "bid": bids[i],
-                "reward": rew[i],
-                "is_winner": (i == winner),
-                "valuation": valuations[i]
-            })
+            old_q = Q[i, states[i], chosen_actions[i]]
+            td_target = rew[i] + gamma * np.max(Q[i, next_states[i]])
+            Q[i, states[i], chosen_actions[i]] = old_q + alpha * (td_target - old_q)
 
-        # Advance
-        past_bids = bids
-        past_winner_bid = winner_bid_val if winner != -1 else 0.0
+        last_winner_bid_bin = new_winner_bid_bin
 
-        # Save Q snapshot every 1000 episodes
+        # Save Q snapshot
         if store_qtables and (ep % save_interval == 0) and (qtable_folder is not None):
             snap_path = os.path.join(qtable_folder, f"q_after_{ep}.npy")
             np.save(snap_path, Q)
 
-    # Final progress update
+    # Final progress
     if progress_callback:
         progress_callback(current=episodes, total=episodes)
 
-    # final Q
     if store_qtables and (qtable_folder is not None):
         final_path = os.path.join(qtable_folder, "q_after_final.npy")
         np.save(final_path, Q)
 
-    # Summaries: replicate Exp.1 approach
-    window_size = 1000
-    import pandas as pd
-    if len(revenues) >= window_size:
-        avg_rev_last_1000 = np.mean(revenues[-window_size:])
-    else:
-        avg_rev_last_1000 = np.mean(revenues)
+    # ---------------------------------------------------------------
+    # Compute summary metrics
+    # ---------------------------------------------------------------
 
+    # --- Carried-forward metrics ---
+    avg_rev_last_1000 = float(np.mean(revenues[-window_size:]))
+
+    # Time to converge
     rev_series = pd.Series(revenues)
     roll_avg = rev_series.rolling(window=window_size).mean()
     final_rev = avg_rev_last_1000
@@ -360,219 +302,165 @@ def run_experiment(
                 time_to_converge = t + window_size
                 break
 
-    regrets = [1.0 - r for r in revenues]
-    avg_regret_of_seller = np.mean(regrets)
     no_sale_rate = no_sale_count / episodes
-    price_volatility = np.std(winning_bids_list)
+
+    price_volatility = float(np.std(winning_bids_list))
+
     if len(winners_list) == 0:
         winner_entropy = 0.0
     else:
         unique_winners, counts = np.unique(winners_list, return_counts=True)
         p = counts / counts.sum()
-        winner_entropy = -np.sum(p * np.log(p + 1e-12))
+        winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
+
+    # --- BNE benchmarks (import from verification) ---
+    try:
+        from verification.bne_verify import (
+            analytical_revenue,
+            compute_bne_bid_coefficient,
+            grid_adjusted_bne_revenue,
+            bne_btv_benchmark,
+            bne_winners_curse_benchmark,
+            bne_bid_dispersion_benchmark,
+        )
+    except ImportError:
+        import sys
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+        from verification.bne_verify import (
+            analytical_revenue,
+            compute_bne_bid_coefficient,
+            grid_adjusted_bne_revenue,
+            bne_btv_benchmark,
+            bne_winners_curse_benchmark,
+            bne_bid_dispersion_benchmark,
+        )
+
+    R_bne = analytical_revenue(eta, n_bidders)
+    ev1 = efficient_benchmark_ev1(n_bidders, eta)
+    phi_bne = compute_bne_bid_coefficient(eta, n_bidders, auction_type)
+    # Grid-adjusted benchmark (captures discretization effects)
+    R_grid, R_grid_se, tie_top_rate = grid_adjusted_bne_revenue(
+        eta, n_bidders, auction_type, n_bid_actions=n_bid_actions, M=100_000, seed=seed + 1337
+    )
+
+    # --- Regret metrics ---
+    raw_regret = 1.0 - avg_rev_last_1000
+    efficient_regret = 1.0 - (avg_rev_last_1000 / ev1) if ev1 > 1e-12 else 0.0
+    excess_regret = 1.0 - (avg_rev_last_1000 / R_bne) if R_bne > 1e-12 else 0.0
+
+    # Revenue decomposition: structural + shading + excess = 1 - R_obs
+    structural_gap = 1.0 - ev1  # unavoidable gap
+    shading_gap = (ev1 - R_bne) if ev1 > 1e-12 else 0.0  # BNE shading
+    excess_gap = (R_bne - avg_rev_last_1000) if R_bne > 1e-12 else 0.0  # learning loss
+
+    # --- Distributional metrics from final window ---
+    fw_bids = np.array(final_window_bids)      # (W, N)
+    fw_vals = np.array(final_window_vals)       # (W, N)
+    fw_winners = np.array(final_window_winners) # (W,)
+    fw_payments = np.array(final_window_payments) # (W,)
+    fw_signals = np.array(final_window_signals) # (W, N)
+
+    # Bid-to-value ratio (for winners with positive valuations)
+    valid_rounds = fw_winners >= 0
+    if valid_rounds.sum() > 0:
+        w_idx = fw_winners[valid_rounds].astype(int)
+        rows = np.arange(valid_rounds.sum())
+        w_vals = fw_vals[valid_rounds][rows, w_idx]
+        w_payments = fw_payments[valid_rounds]
+        btv = np.where(w_vals > 1e-12, w_payments / w_vals, 0.0)
+        btv_median = float(np.median(btv))
+        btv_iqr = float(np.percentile(btv, 75) - np.percentile(btv, 25))
+    else:
+        btv_median = 0.0
+        btv_iqr = 0.0
+
+    # Winner's curse: payment > winner's valuation
+    if valid_rounds.sum() > 0:
+        w_idx = fw_winners[valid_rounds].astype(int)
+        rows = np.arange(valid_rounds.sum())
+        w_vals = fw_vals[valid_rounds][rows, w_idx]
+        w_payments = fw_payments[valid_rounds]
+        winners_curse_freq = float((w_payments > w_vals).mean())
+    else:
+        winners_curse_freq = 0.0
+
+    # Bid dispersion: mean within-round bid SD
+    if len(fw_bids) > 0:
+        round_sds = fw_bids.std(axis=1)
+        bid_dispersion = float(round_sds.mean())
+    else:
+        bid_dispersion = 0.0
+
+    # Signal responsiveness: OLS slope of bid on signal (across all bidders in final window)
+    if len(fw_signals) > 0 and len(fw_bids) > 0:
+        all_signals_flat = fw_signals.flatten()
+        all_bids_flat = fw_bids.flatten()
+        # OLS: slope = cov(x,y)/var(x)
+        cov_sb = np.cov(all_signals_flat, all_bids_flat)[0, 1]
+        var_s = np.var(all_signals_flat)
+        observed_slope = cov_sb / var_s if var_s > 1e-12 else 0.0
+        signal_slope_ratio = observed_slope / phi_bne if abs(phi_bne) > 1e-12 else 0.0
+    else:
+        signal_slope_ratio = 0.0
+
+    # Tie-at-top rate in final window (useful for SPA with coarse grids)
+    if len(fw_bids) > 0:
+        sorted_b = np.sort(fw_bids, axis=1)
+        if sorted_b.shape[1] >= 2:
+            tie_top_rate_fw = float((sorted_b[:, -1] == sorted_b[:, -2]).mean())
+        else:
+            tie_top_rate_fw = 0.0
+    else:
+        tie_top_rate_fw = 0.0
 
     summary = {
+        # Carried forward
         "avg_rev_last_1000": avg_rev_last_1000,
         "time_to_converge": time_to_converge,
-        "avg_regret_of_seller": avg_regret_of_seller,
         "no_sale_rate": no_sale_rate,
         "price_volatility": price_volatility,
-        "winner_entropy": winner_entropy
+        "winner_entropy": winner_entropy,
+        # Regret
+        "raw_regret": raw_regret,
+        "efficient_regret": efficient_regret,
+        "excess_regret": excess_regret,
+        # Revenue decomposition
+        "structural_gap": structural_gap,
+        "shading_gap": shading_gap,
+        "excess_gap": excess_gap,
+        # Distributional
+        "btv_median": btv_median,
+        "btv_iqr": btv_iqr,
+        "winners_curse_freq": winners_curse_freq,
+        "bid_dispersion": bid_dispersion,
+        "signal_slope_ratio": signal_slope_ratio,
+        # BNE references
+        "theoretical_revenue": R_bne,
+        "efficient_benchmark": ev1,
+        "bne_bid_coefficient": phi_bne,
+        # Grid-adjusted benchmark and tie-at-top rate
+        "theoretical_revenue_grid": R_grid,
+        "theoretical_revenue_grid_se": R_grid_se,
+        "tie_top_rate": tie_top_rate_fw,
     }
-    return summary, revenues, round_history, Q
-
-# ---------------------------------------------------------------------
-# 7) Full Orchestrator: run_full_experiment
-# ---------------------------------------------------------------------
-def run_full_experiment(
-    experiment_id=2,
-    K=300,
-    eta_values=[0.0, 0.25, 0.5, 0.75, 1.0],
-    alpha_values=[0.001, 0.005, 0.01, 0.05, 0.1],
-    gamma_values=[0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99],
-    episodes_values=[100_000],
-    reserve_price_values=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-    init_values=["random", "zeros"],
-    exploration_values=["egreedy", "boltzmann"],
-    async_values=[0, 1],
-    n_bidders_values=[2, 4, 6],
-    median_flags=[False, True],
-    winner_flags=[False, True],
-    seed=42,
-    output_dir=None
-):
-    """
-    Orchestrates Experiment 2, sampling discrete sets for
-    (eta, alpha, gamma, episodes, reserve_price, etc.), then running
-    'first' & 'second' auctions. Also calls the theoretical revenue
-    function. Stores final data in output_dir.
-    """
-    folder_name = output_dir if output_dir else f"results/exp{experiment_id}"
-    os.makedirs(folder_name, exist_ok=True)
-
-    # Save param mappings
-    with open(os.path.join(folder_name, "param_mappings.json"), "w") as f:
-        json.dump(param_mappings, f, indent=2)
-
-    trial_folder = os.path.join(folder_name, "trials")
-    os.makedirs(trial_folder, exist_ok=True)
-
-    q_tables_folder = os.path.join(folder_name, "q_tables")
-    os.makedirs(q_tables_folder, exist_ok=True)
-
-    # Cache for theoretical revenue
-    theory_cache = {}
-
-    results = []
-    rng = np.random.default_rng(seed)
-
-    # Outer loop: run K experiments
-    for run_id in trange(K, desc="Overall Runs"):
-        eta = rng.choice(eta_values)
-        alpha = rng.choice(alpha_values)
-        gamma = rng.choice(gamma_values)
-        episodes = rng.choice(episodes_values)
-        reserve_price = rng.choice(reserve_price_values)
-        init_str = rng.choice(init_values)
-        exploration_str = rng.choice(exploration_values)
-        async_val = rng.choice(async_values)
-        n_bidders_val = rng.choice(n_bidders_values)
-        median_flag = rng.choice(median_flags)
-        winner_flag = rng.choice(winner_flags)
-
-        # We'll do both first- & second-price auctions
-        for auction_type_str in ["first", "second"]:
-            # Check if theoretical revenue is cached
-            cache_key = (n_bidders_val, eta, auction_type_str)
-            if cache_key not in theory_cache:
-                rev_theory = simulate_linear_affiliation_revenue(n_bidders_val, eta, auction_type_str)
-                theory_cache[cache_key] = rev_theory
-            else:
-                rev_theory = theory_cache[cache_key]
-
-            # Folder to store Q-tables
-            q_run_folder = os.path.join(q_tables_folder, f"trial_{run_id}_{auction_type_str}")
-
-            # Run Q-learning
-            summary_out, rev_list, round_hist, Q_table = run_experiment(
-                eta=eta,
-                auction_type=auction_type_str,
-                alpha=alpha,
-                gamma=gamma,
-                episodes=episodes,
-                init=init_str,
-                exploration=exploration_str,
-                asynchronous=async_val,
-                n_bidders=n_bidders_val,
-                median_opp_past_bid_index=median_flag,
-                winner_bid_index_state=winner_flag,
-                reserve_price=reserve_price,
-                seed=run_id,
-                store_qtables=True,
-                qtable_folder=q_run_folder
-            )
-
-            # Build round-level logs
-            import pandas as pd
-            for row in round_hist:
-                row["run_id"] = run_id
-                row["eta"] = eta
-                row["alpha"] = alpha
-                row["gamma"] = gamma
-                row["episodes"] = episodes
-                row["reserve_price"] = reserve_price
-                row["auction_type_code"] = param_mappings["auction_type"][auction_type_str]
-                row["init_code"] = param_mappings["init"][init_str]
-                row["exploration_code"] = param_mappings["exploration"][exploration_str]
-                row["asynchronous_code"] = param_mappings["asynchronous"][async_val]
-                row["n_bidders"] = n_bidders_val
-                row["median_opp_past_bid_index_code"] = param_mappings["median_opp_past_bid_index"][median_flag]
-                row["winner_bid_index_state_code"] = param_mappings["winner_bid_index_state"][winner_flag]
-                row["theoretical_revenue"] = rev_theory
-
-            df_hist = pd.DataFrame(round_hist)
-            hist_filename = f"history_run_{run_id}_{auction_type_str}.csv"
-            df_hist.to_csv(os.path.join(trial_folder, hist_filename), index=False)
-
-            # Summarize
-            outcome = dict(summary_out)
-            outcome["run_id"] = run_id
-            outcome["eta"] = eta
-            outcome["alpha"] = alpha
-            outcome["gamma"] = gamma
-            outcome["episodes"] = episodes
-            outcome["reserve_price"] = reserve_price
-            outcome["auction_type_code"] = param_mappings["auction_type"][auction_type_str]
-            outcome["init_code"] = param_mappings["init"][init_str]
-            outcome["exploration_code"] = param_mappings["exploration"][exploration_str]
-            outcome["asynchronous_code"] = param_mappings["asynchronous"][async_val]
-            outcome["n_bidders"] = n_bidders_val
-            outcome["median_opp_past_bid_index_code"] = param_mappings["median_opp_past_bid_index"][median_flag]
-            outcome["winner_bid_index_state_code"] = param_mappings["winner_bid_index_state"][winner_flag]
-            outcome["theoretical_revenue"] = rev_theory
-
-            # ratio to theoretical
-            if rev_theory > 1e-8:
-                ratio = outcome["avg_rev_last_1000"] / rev_theory
-            else:
-                ratio = None
-            outcome["ratio_to_theory"] = ratio
-
-            results.append(outcome)
-
-    # Final summary DF
-    df_final = pd.DataFrame(results)
-    csv_path = os.path.join(folder_name, "data.csv")
-    df_final.to_csv(csv_path, index=False)
-    print(f"Data generation complete. Final summary => '{csv_path}'.")
+    return summary, revenues, [], Q
 
 
 # ------------------------------------
-#  Main
+#  Main (standalone test)
 # ------------------------------------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Experiment 2: Affiliated Values with Reserve Prices')
-    parser.add_argument('--quick', action='store_true', help='Run quick test with reduced parameters')
+    parser = argparse.ArgumentParser(description='Experiment 2: Affiliated Values Q-Learning (Redesigned)')
+    parser.add_argument('--quick', action='store_true', help='Run a quick single-cell test')
     args = parser.parse_args()
 
     if args.quick:
-        # Quick test mode: reduced parameters for fast validation
-        print("=" * 50)
-        print("QUICK TEST MODE - Reduced parameters for fast validation")
-        print("=" * 50)
-        run_full_experiment(
-            experiment_id=2,
-            K=5,                                    # Reduced runs
-            eta_values=[0.0, 0.5],                  # Fewer eta values
-            alpha_values=[0.01, 0.1],               # Fewer alpha values
-            gamma_values=[0.9],                     # Single gamma
-            episodes_values=[1000],                 # Reduced episodes
-            reserve_price_values=[0.0],             # Single reserve price
-            init_values=["random"],                 # Single init
-            exploration_values=["egreedy"],         # Single exploration
-            async_values=[0],                       # Single async value
-            n_bidders_values=[2],                   # Single bidder count
-            median_flags=[False],                   # Single flag
-            winner_flags=[False],                   # Single flag
-            seed=42,
-            output_dir="results/exp2/quick_test"
+        print("Quick single-cell test...")
+        summary, revs, _, Q = run_experiment(
+            eta=0.5, auction_type="second", n_bidders=2,
+            state_info="signal_only", episodes=2000, seed=42,
         )
+        for k, v in summary.items():
+            print(f"  {k}: {v}")
     else:
-        # Full experiment mode
-        run_full_experiment(
-            experiment_id=2,
-            K=250,
-            eta_values=[0.0, 0.25, 0.5, 0.75, 1.0],
-            alpha_values=[0.001, 0.005, 0.01, 0.05, 0.1],
-            gamma_values=[0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99],
-            episodes_values=[100_000],
-            reserve_price_values=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-            init_values=["random", "zeros"],
-            exploration_values=["egreedy", "boltzmann"],
-            async_values=[0, 1],
-            n_bidders_values=[2, 4, 6],
-            median_flags=[False, True],
-            winner_flags=[False, True],
-            seed=42,
-            output_dir="results/exp2"
-        )
+        print("Use scripts/run_experiment.py --exp 2 for factorial runs.")

@@ -1,0 +1,37 @@
+======================================================================
+ROBUST ANALYSIS SUMMARY — Experiment 3
+======================================================================
+
+KEY FINDINGS: auction_type and interactions
+--------------------------------------------------
+  avg_rev_last_1000|auction_type: raw p=7.8169e-12, holm p=5.7063e-10 → SURVIVES Holm-Bonferroni
+  time_to_converge|auction_type:eta: raw p=3.3218e-04, holm p=2.0595e-02 → SURVIVES Holm-Bonferroni
+  time_to_converge|auction_type:n_bidders: raw p=5.1196e-05, holm p=3.3277e-03 → SURVIVES Holm-Bonferroni
+  avg_regret_seller|auction_type: raw p=8.6913e-12, holm p=6.2577e-10 → SURVIVES Holm-Bonferroni
+  price_volatility|auction_type: raw p=2.6062e-07, holm p=1.7722e-05 → SURVIVES Holm-Bonferroni
+  price_volatility|auction_type:n_bidders: raw p=1.0210e-07, holm p=7.0449e-06 → SURVIVES Holm-Bonferroni
+  winner_entropy|auction_type: raw p=8.8610e-05, holm p=5.6710e-03 → SURVIVES Holm-Bonferroni
+
+MODEL ADEQUACY
+--------------------------------------------------
+  avg_rev_last_1000               R²=0.7676  Pred-R²=0.5869  Gap=0.1807
+  time_to_converge                R²=0.6908  Pred-R²=0.4504  Gap=0.2405
+  avg_regret_seller               R²=0.7658  Pred-R²=0.5836  Gap=0.1822
+  price_volatility                R²=0.8161  Pred-R²=0.6730  Gap=0.1430
+  winner_entropy                  R²=0.9570  Pred-R²=0.9235  Gap=0.0335
+
+LINEAR vs NONPARAMETRIC
+--------------------------------------------------
+  avg_rev_last_1000               OLS=0.7676  LGBM=0.5668  Gap=-0.2008
+  time_to_converge                OLS=0.6908  LGBM=0.0090  Gap=-0.6818
+  avg_regret_seller               OLS=0.7658  LGBM=0.5635  Gap=-0.2023
+  price_volatility                OLS=0.8161  LGBM=0.5300  Gap=-0.2861
+  winner_entropy                  OLS=0.9570  LGBM=0.9312  Gap=-0.0258
+
+POWER ANALYSIS (80% power, α=0.05)
+--------------------------------------------------
+  avg_rev_last_1000               MDE=0.049001 (9.7% of mean)
+  time_to_converge                MDE=8471.561742 (37.3% of mean)
+  avg_regret_seller               MDE=0.048969 (10.0% of mean)
+  price_volatility                MDE=0.009519 (14.7% of mean)
+  winner_entropy                  MDE=0.033855 (3.5% of mean)

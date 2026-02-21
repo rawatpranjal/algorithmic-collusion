@@ -1,25 +1,26 @@
 === Factorial Analysis: Experiment 3 ===
 Observations: 16
-Factors (8): ['auction_type_coded', 'eta_coded', 'c_coded', 'lam_coded', 'n_bidders_coded', 'reserve_price_coded', 'use_median_of_others_coded', 'use_past_winner_bid_coded']
+Factors (9): ['algorithm_coded', 'auction_type_coded', 'n_bidders_coded', 'reserve_price_coded', 'eta_linear_coded', 'eta_quadratic_coded', 'exploration_intensity_coded', 'context_richness_coded', 'lam_coded']
 Responses: ['avg_rev_last_1000', 'time_to_converge', 'avg_regret_seller', 'no_sale_rate', 'price_volatility', 'winner_entropy']
 
 === Summary Statistics ===
-|                            |   count |      mean |    std |       min |       25% |       50% |       75% |       max |
-|----------------------------|---------|-----------|--------|-----------|-----------|-----------|-----------|-----------|
-| auction_type_coded         | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| eta_coded                  | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| c_coded                    | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| lam_coded                  | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| n_bidders_coded            | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
-| reserve_price_coded        | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
-| use_median_of_others_coded | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
-| use_past_winner_bid_coded  | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
-| avg_rev_last_1000          | 16.0000 |    0.4467 | 0.2194 |    0.1660 |    0.3120 |    0.3859 |    0.6906 |    0.8726 |
-| time_to_converge           | 16.0000 | 1000.0000 | 0.0000 | 1000.0000 | 1000.0000 | 1000.0000 | 1000.0000 | 1000.0000 |
-| avg_regret_seller          | 16.0000 |    0.5533 | 0.2194 |    0.1274 |    0.3094 |    0.6141 |    0.6880 |    0.8340 |
-| no_sale_rate               | 16.0000 |    0.0000 | 0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |
-| price_volatility           | 16.0000 |    0.1745 | 0.0902 |    0.0467 |    0.0797 |    0.1938 |    0.2657 |    0.2887 |
-| winner_entropy             | 16.0000 |    0.6157 | 0.1494 |    0.2432 |    0.6531 |    0.6897 |    0.6929 |    0.6931 |
+|                             |   count |      mean |    std |       min |       25% |       50% |       75% |       max |
+|-----------------------------|---------|-----------|--------|-----------|-----------|-----------|-----------|-----------|
+| algorithm_coded             | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| auction_type_coded          | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| n_bidders_coded             | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| reserve_price_coded         | 16.0000 |    0.0000 | 1.0328 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| eta_linear_coded            | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| eta_quadratic_coded         | 16.0000 |    1.0000 | 0.0000 |    1.0000 |    1.0000 |    1.0000 |    1.0000 |    1.0000 |
+| exploration_intensity_coded | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| context_richness_coded      | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| lam_coded                   | 16.0000 |   -1.0000 | 0.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |   -1.0000 |
+| avg_rev_last_1000           | 16.0000 |    0.6278 | 0.1773 |    0.3134 |    0.5339 |    0.6240 |    0.7933 |    0.8714 |
+| time_to_converge            | 16.0000 | 1000.0000 | 0.0000 | 1000.0000 | 1000.0000 | 1000.0000 | 1000.0000 | 1000.0000 |
+| avg_regret_seller           | 16.0000 |    0.3722 | 0.1773 |    0.1286 |    0.2067 |    0.3760 |    0.4661 |    0.6866 |
+| no_sale_rate                | 16.0000 |    0.0134 | 0.0189 |    0.0000 |    0.0000 |    0.0045 |    0.0173 |    0.0530 |
+| price_volatility            | 16.0000 |    0.1442 | 0.0606 |    0.0686 |    0.1046 |    0.1254 |    0.1625 |    0.2793 |
+| winner_entropy              | 16.0000 |    1.0128 | 0.3794 |    0.4347 |    0.6916 |    1.0252 |    1.3775 |    1.3839 |
 
 
 ============================================================
@@ -29,124 +30,148 @@ RESPONSE: avg_rev_last_1000
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      avg_rev_last_1000   R-squared:                       0.690
-Model:                            OLS   Adj. R-squared:                  0.069
-Method:                 Least Squares   F-statistic:                     1.110
-Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.483
-Time:                        01:28:35   Log-Likelihood:                 11.438
-No. Observations:                  16   AIC:                           -0.8769
-Df Residuals:                       5   BIC:                             7.622
+Dep. Variable:      avg_rev_last_1000   R-squared:                       0.733
+Model:                            OLS   Adj. R-squared:                  0.199
+Method:                 Least Squares   F-statistic:                     1.373
+Date:                Sat, 21 Feb 2026   Prob (F-statistic):              0.382
+Time:                        17:05:44   Log-Likelihood:                 16.055
+No. Observations:                  16   AIC:                            -10.11
+Df Residuals:                       5   BIC:                            -1.611
 Df Model:                          10                                         
 Covariance Type:            nonrobust                                         
-========================================================================================================================
-                                                           coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                                0.0406      0.005      8.437      0.000       0.028       0.053
-auction_type_coded                                      -0.0240      0.011     -2.263      0.073      -0.051       0.003
-eta_coded                                               -0.0045      0.011     -0.423      0.690      -0.032       0.023
-c_coded                                                  0.0047      0.011      0.442      0.677      -0.023       0.032
-lam_coded                                               -0.0137      0.011     -1.297      0.251      -0.041       0.013
-n_bidders_coded                                         -0.0406      0.005     -8.437      0.000      -0.053      -0.028
-reserve_price_coded                                     -0.0406      0.005     -8.437      0.000      -0.053      -0.028
-use_median_of_others_coded                              -0.0406      0.005     -8.437      0.000      -0.053      -0.028
-use_past_winner_bid_coded                               -0.0406      0.005     -8.437      0.000      -0.053      -0.028
-auction_type_coded:eta_coded                             0.0232      0.053      0.438      0.680      -0.113       0.159
-auction_type_coded:c_coded                               0.0252      0.053      0.476      0.654      -0.111       0.161
-auction_type_coded:lam_coded                             0.0310      0.053      0.586      0.584      -0.105       0.167
-auction_type_coded:n_bidders_coded                       0.0240      0.011      2.263      0.073      -0.003       0.051
-auction_type_coded:reserve_price_coded                   0.0240      0.011      2.263      0.073      -0.003       0.051
-auction_type_coded:use_median_of_others_coded            0.0240      0.011      2.263      0.073      -0.003       0.051
-auction_type_coded:use_past_winner_bid_coded             0.0240      0.011      2.263      0.073      -0.003       0.051
-eta_coded:c_coded                                        0.0883      0.053      1.668      0.156      -0.048       0.224
-eta_coded:lam_coded                                      0.0306      0.053      0.579      0.588      -0.105       0.167
-eta_coded:n_bidders_coded                                0.0045      0.011      0.423      0.690      -0.023       0.032
-eta_coded:reserve_price_coded                            0.0045      0.011      0.423      0.690      -0.023       0.032
-eta_coded:use_median_of_others_coded                     0.0045      0.011      0.423      0.690      -0.023       0.032
-eta_coded:use_past_winner_bid_coded                      0.0045      0.011      0.423      0.690      -0.023       0.032
-c_coded:lam_coded                                        0.0116      0.053      0.218      0.836      -0.125       0.148
-c_coded:n_bidders_coded                                 -0.0047      0.011     -0.442      0.677      -0.032       0.023
-c_coded:reserve_price_coded                             -0.0047      0.011     -0.442      0.677      -0.032       0.023
-c_coded:use_median_of_others_coded                      -0.0047      0.011     -0.442      0.677      -0.032       0.023
-c_coded:use_past_winner_bid_coded                       -0.0047      0.011     -0.442      0.677      -0.032       0.023
-lam_coded:n_bidders_coded                                0.0137      0.011      1.297      0.251      -0.013       0.041
-lam_coded:reserve_price_coded                            0.0137      0.011      1.297      0.251      -0.013       0.041
-lam_coded:use_median_of_others_coded                     0.0137      0.011      1.297      0.251      -0.013       0.041
-lam_coded:use_past_winner_bid_coded                      0.0137      0.011      1.297      0.251      -0.013       0.041
-n_bidders_coded:reserve_price_coded                      0.0406      0.005      8.437      0.000       0.028       0.053
-n_bidders_coded:use_median_of_others_coded               0.0406      0.005      8.437      0.000       0.028       0.053
-n_bidders_coded:use_past_winner_bid_coded                0.0406      0.005      8.437      0.000       0.028       0.053
-reserve_price_coded:use_median_of_others_coded           0.0406      0.005      8.437      0.000       0.028       0.053
-reserve_price_coded:use_past_winner_bid_coded            0.0406      0.005      8.437      0.000       0.028       0.053
-use_median_of_others_coded:use_past_winner_bid_coded     0.0406      0.005      8.437      0.000       0.028       0.053
+======================================================================================================================
+                                                         coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------------------
+Intercept                                              0.0392      0.002     15.824      0.000       0.033       0.046
+algorithm_coded                                        0.0002      0.007      0.030      0.977      -0.017       0.017
+auction_type_coded                                     0.0061      0.007      0.922      0.399      -0.011       0.023
+n_bidders_coded                                       -0.0033      0.007     -0.502      0.637      -0.020       0.014
+reserve_price_coded                                -7.708e-05      0.007     -0.012      0.991      -0.017       0.017
+eta_linear_coded                                      -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+eta_quadratic_coded                                    0.0392      0.002     15.824      0.000       0.033       0.046
+exploration_intensity_coded                           -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+context_richness_coded                                -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+lam_coded                                             -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+algorithm_coded:auction_type_coded                     0.0592      0.040      1.491      0.196      -0.043       0.161
+algorithm_coded:n_bidders_coded                       -0.1113      0.040     -2.804      0.038      -0.213      -0.009
+algorithm_coded:reserve_price_coded                    0.0330      0.040      0.831      0.444      -0.069       0.135
+algorithm_coded:eta_linear_coded                      -0.0002      0.007     -0.030      0.977      -0.017       0.017
+algorithm_coded:eta_quadratic_coded                    0.0002      0.007      0.030      0.977      -0.017       0.017
+algorithm_coded:exploration_intensity_coded           -0.0002      0.007     -0.030      0.977      -0.017       0.017
+algorithm_coded:context_richness_coded                -0.0002      0.007     -0.030      0.977      -0.017       0.017
+algorithm_coded:lam_coded                             -0.0002      0.007     -0.030      0.977      -0.017       0.017
+auction_type_coded:n_bidders_coded                    -0.0298      0.040     -0.752      0.486      -0.132       0.072
+auction_type_coded:reserve_price_coded                -0.0442      0.040     -1.115      0.316      -0.146       0.058
+auction_type_coded:eta_linear_coded                   -0.0061      0.007     -0.922      0.399      -0.023       0.011
+auction_type_coded:eta_quadratic_coded                 0.0061      0.007      0.922      0.399      -0.011       0.023
+auction_type_coded:exploration_intensity_coded        -0.0061      0.007     -0.922      0.399      -0.023       0.011
+auction_type_coded:context_richness_coded             -0.0061      0.007     -0.922      0.399      -0.023       0.011
+auction_type_coded:lam_coded                          -0.0061      0.007     -0.922      0.399      -0.023       0.011
+n_bidders_coded:reserve_price_coded                    0.0082      0.040      0.206      0.845      -0.094       0.110
+n_bidders_coded:eta_linear_coded                       0.0033      0.007      0.502      0.637      -0.014       0.020
+n_bidders_coded:eta_quadratic_coded                   -0.0033      0.007     -0.502      0.637      -0.020       0.014
+n_bidders_coded:exploration_intensity_coded            0.0033      0.007      0.502      0.637      -0.014       0.020
+n_bidders_coded:context_richness_coded                 0.0033      0.007      0.502      0.637      -0.014       0.020
+n_bidders_coded:lam_coded                              0.0033      0.007      0.502      0.637      -0.014       0.020
+reserve_price_coded:eta_linear_coded                7.708e-05      0.007      0.012      0.991      -0.017       0.017
+reserve_price_coded:eta_quadratic_coded            -7.708e-05      0.007     -0.012      0.991      -0.017       0.017
+reserve_price_coded:exploration_intensity_coded     7.708e-05      0.007      0.012      0.991      -0.017       0.017
+reserve_price_coded:context_richness_coded          7.708e-05      0.007      0.012      0.991      -0.017       0.017
+reserve_price_coded:lam_coded                       7.708e-05      0.007      0.012      0.991      -0.017       0.017
+eta_linear_coded:eta_quadratic_coded                  -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+eta_linear_coded:exploration_intensity_coded           0.0392      0.002     15.824      0.000       0.033       0.046
+eta_linear_coded:context_richness_coded                0.0392      0.002     15.824      0.000       0.033       0.046
+eta_linear_coded:lam_coded                             0.0392      0.002     15.824      0.000       0.033       0.046
+eta_quadratic_coded:exploration_intensity_coded       -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+eta_quadratic_coded:context_richness_coded            -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+eta_quadratic_coded:lam_coded                         -0.0392      0.002    -15.824      0.000      -0.046      -0.033
+exploration_intensity_coded:context_richness_coded     0.0392      0.002     15.824      0.000       0.033       0.046
+exploration_intensity_coded:lam_coded                  0.0392      0.002     15.824      0.000       0.033       0.046
+context_richness_coded:lam_coded                       0.0392      0.002     15.824      0.000       0.033       0.046
 ==============================================================================
-Omnibus:                        0.157   Durbin-Watson:                   1.259
-Prob(Omnibus):                  0.925   Jarque-Bera (JB):                0.370
-Skew:                          -0.000   Prob(JB):                        0.831
-Kurtosis:                       2.255   Cond. No.                     2.57e+16
+Omnibus:                        0.064   Durbin-Watson:                   1.556
+Prob(Omnibus):                  0.968   Jarque-Bera (JB):                0.294
+Skew:                          -0.000   Prob(JB):                        0.863
+Kurtosis:                       2.336   Cond. No.                     4.33e+16
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The input rank is higher than the number of observations.
-[3] The smallest eigenvalue is 2.67e-31. This might indicate that there are
+[3] The smallest eigenvalue is 1.36e-31. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.6895
-Adj R² = 0.0686
+R² = 0.7331
+Adj R² = 0.1993
 
 --- ANOVA Table (Type III) ---
-|                                                      |   sum_sq |     df |        F |   PR(>F) |
-|------------------------------------------------------|----------|--------|----------|----------|
-| Intercept                                            |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| auction_type_coded                                   |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| eta_coded                                            |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| c_coded                                              |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| lam_coded                                            |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| n_bidders_coded                                      |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| reserve_price_coded                                  |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| use_median_of_others_coded                           |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| use_past_winner_bid_coded                            |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| auction_type_coded:eta_coded                         |   0.0086 | 1.0000 |   0.1916 |   0.6798 |
-| auction_type_coded:c_coded                           |   0.0101 | 1.0000 |   0.2261 |   0.6545 |
-| auction_type_coded:lam_coded                         |   0.0154 | 1.0000 |   0.3429 |   0.5836 |
-| auction_type_coded:n_bidders_coded                   |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| auction_type_coded:reserve_price_coded               |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| auction_type_coded:use_median_of_others_coded        |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| auction_type_coded:use_past_winner_bid_coded         |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| eta_coded:c_coded                                    |   0.1248 | 1.0000 |   2.7834 |   0.1561 |
-| eta_coded:lam_coded                                  |   0.0150 | 1.0000 |   0.3352 |   0.5877 |
-| eta_coded:n_bidders_coded                            |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| eta_coded:reserve_price_coded                        |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| eta_coded:use_median_of_others_coded                 |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| eta_coded:use_past_winner_bid_coded                  |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| c_coded:lam_coded                                    |   0.0021 | 1.0000 |   0.0476 |   0.8359 |
-| c_coded:n_bidders_coded                              |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| c_coded:reserve_price_coded                          |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| c_coded:use_median_of_others_coded                   |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| c_coded:use_past_winner_bid_coded                    |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| lam_coded:n_bidders_coded                            |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| lam_coded:reserve_price_coded                        |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| lam_coded:use_median_of_others_coded                 |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| lam_coded:use_past_winner_bid_coded                  |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| n_bidders_coded:reserve_price_coded                  |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| n_bidders_coded:use_median_of_others_coded           |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| n_bidders_coded:use_past_winner_bid_coded            |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| reserve_price_coded:use_median_of_others_coded       |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| reserve_price_coded:use_past_winner_bid_coded        |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| use_median_of_others_coded:use_past_winner_bid_coded |   3.1923 | 1.0000 |  71.1844 |   0.0004 |
-| Residual                                             |   0.2242 | 5.0000 | nan      | nan      |
+|                                                    |   sum_sq |     df |        F |   PR(>F) |
+|----------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                          |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| algorithm_coded                                    |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| auction_type_coded                                 |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| n_bidders_coded                                    |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| reserve_price_coded                                |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| eta_linear_coded                                   |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_quadratic_coded                                |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| exploration_intensity_coded                        |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| context_richness_coded                             |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| lam_coded                                          |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| algorithm_coded:auction_type_coded                 |   0.0560 | 1.0000 |   2.2238 |   0.1961 |
+| algorithm_coded:n_bidders_coded                    |   0.1981 | 1.0000 |   7.8651 |   0.0378 |
+| algorithm_coded:reserve_price_coded                |   0.0174 | 1.0000 |   0.6914 |   0.4436 |
+| algorithm_coded:eta_linear_coded                   |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:eta_quadratic_coded                |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:exploration_intensity_coded        |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:context_richness_coded             |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:lam_coded                          |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| auction_type_coded:n_bidders_coded                 |   0.0142 | 1.0000 |   0.5656 |   0.4859 |
+| auction_type_coded:reserve_price_coded             |   0.0313 | 1.0000 |   1.2433 |   0.3155 |
+| auction_type_coded:eta_linear_coded                |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:eta_quadratic_coded             |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:exploration_intensity_coded     |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:context_richness_coded          |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:lam_coded                       |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| n_bidders_coded:reserve_price_coded                |   0.0011 | 1.0000 |   0.0426 |   0.8446 |
+| n_bidders_coded:eta_linear_coded                   |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:eta_quadratic_coded                |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:exploration_intensity_coded        |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:context_richness_coded             |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:lam_coded                          |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| reserve_price_coded:eta_linear_coded               |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:eta_quadratic_coded            |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:exploration_intensity_coded    |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:context_richness_coded         |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:lam_coded                      |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| eta_linear_coded:eta_quadratic_coded               |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_linear_coded:exploration_intensity_coded       |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_linear_coded:context_richness_coded            |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_linear_coded:lam_coded                         |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_quadratic_coded:exploration_intensity_coded    |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_quadratic_coded:context_richness_coded         |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| eta_quadratic_coded:lam_coded                      |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| exploration_intensity_coded:context_richness_coded |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| exploration_intensity_coded:lam_coded              |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| context_richness_coded:lam_coded                   |   6.3059 | 1.0000 | 250.3979 |   0.0000 |
+| Residual                                           |   0.1259 | 5.0000 | nan      | nan      |
 
---- Significant Effects (p < 0.05): 10 ---
-  use_median_of_others                     coef=-0.0406  p=0.0004
-  n_bidders:reserve_price                  coef=+0.0406  p=0.0004
-  n_bidders:use_median_of_others           coef=+0.0406  p=0.0004
-  n_bidders:use_past_winner_bid            coef=+0.0406  p=0.0004
-  reserve_price:use_median_of_others       coef=+0.0406  p=0.0004
-  reserve_price:use_past_winner_bid        coef=+0.0406  p=0.0004
-  use_median_of_others:use_past_winner_bid coef=+0.0406  p=0.0004
-  reserve_price                            coef=-0.0406  p=0.0004
-  n_bidders                                coef=-0.0406  p=0.0004
-  use_past_winner_bid                      coef=-0.0406  p=0.0004
+--- Significant Effects (p < 0.05): 16 ---
+  eta_linear                               coef=-0.0392  p=0.0000
+  eta_quadratic                            coef=+0.0392  p=0.0000
+  lam                                      coef=-0.0392  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0392  p=0.0000
+  eta_linear:exploration_intensity         coef=+0.0392  p=0.0000
+  eta_linear:context_richness              coef=+0.0392  p=0.0000
+  eta_linear:lam                           coef=+0.0392  p=0.0000
+  eta_quadratic:exploration_intensity      coef=-0.0392  p=0.0000
+  eta_quadratic:context_richness           coef=-0.0392  p=0.0000
+  eta_quadratic:lam                        coef=-0.0392  p=0.0000
+  exploration_intensity:context_richness   coef=+0.0392  p=0.0000
+  exploration_intensity:lam                coef=+0.0392  p=0.0000
+  context_richness:lam                     coef=+0.0392  p=0.0000
+  exploration_intensity                    coef=-0.0392  p=0.0000
+  context_richness                         coef=-0.0392  p=0.0000
+  algorithm:n_bidders                      coef=-0.1113  p=0.0378
 
   Plots saved to results/exp3/
 
@@ -160,121 +185,144 @@ RESPONSE: time_to_converge
 Dep. Variable:       time_to_converge   R-squared:                        -inf
 Model:                            OLS   Adj. R-squared:                   -inf
 Method:                 Least Squares   F-statistic:                   -0.5000
-Date:                Mon, 16 Feb 2026   Prob (F-statistic):               1.00
-Time:                        01:28:36   Log-Likelihood:                 435.00
-No. Observations:                  16   AIC:                            -848.0
-Df Residuals:                       5   BIC:                            -839.5
+Date:                Sat, 21 Feb 2026   Prob (F-statistic):               1.00
+Time:                        17:05:45   Log-Likelihood:                 437.74
+No. Observations:                  16   AIC:                            -853.5
+Df Residuals:                       5   BIC:                            -845.0
 Df Model:                          10                                         
 Covariance Type:            nonrobust                                         
-========================================================================================================================
-                                                           coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                               90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
-auction_type_coded                                   -5.329e-15   3.37e-14     -0.158      0.881    -9.2e-14    8.14e-14
-eta_coded                                             1.776e-14   3.37e-14      0.527      0.621   -6.89e-14    1.04e-13
-c_coded                                               2.309e-14   3.37e-14      0.685      0.524   -6.36e-14     1.1e-13
-lam_coded                                             5.684e-14   3.37e-14      1.685      0.153   -2.98e-14    1.44e-13
-n_bidders_coded                                        -90.9091   1.53e-14  -5.93e+15      0.000     -90.909     -90.909
-reserve_price_coded                                    -90.9091   1.53e-14  -5.93e+15      0.000     -90.909     -90.909
-use_median_of_others_coded                             -90.9091   1.53e-14  -5.93e+15      0.000     -90.909     -90.909
-use_past_winner_bid_coded                              -90.9091   1.53e-14  -5.93e+15      0.000     -90.909     -90.909
-auction_type_coded:eta_coded                          -1.35e-13   1.69e-13     -0.801      0.460   -5.68e-13    2.98e-13
-auction_type_coded:c_coded                           -2.842e-14   1.69e-13     -0.169      0.873   -4.62e-13    4.05e-13
-auction_type_coded:lam_coded                         -8.527e-14   1.69e-13     -0.506      0.635   -5.19e-13    3.48e-13
-auction_type_coded:n_bidders_coded                    -3.02e-14   3.37e-14     -0.895      0.412   -1.17e-13    5.65e-14
-auction_type_coded:reserve_price_coded               -2.487e-14   3.37e-14     -0.737      0.494   -1.12e-13    6.18e-14
-auction_type_coded:use_median_of_others_coded        -2.487e-14   3.37e-14     -0.737      0.494   -1.12e-13    6.18e-14
-auction_type_coded:use_past_winner_bid_coded         -2.487e-14   3.37e-14     -0.737      0.494   -1.12e-13    6.18e-14
-eta_coded:c_coded                                    -1.208e-13   1.69e-13     -0.716      0.506   -5.54e-13    3.13e-13
-eta_coded:lam_coded                                  -9.237e-14   1.69e-13     -0.548      0.607   -5.26e-13    3.41e-13
-eta_coded:n_bidders_coded                            -3.553e-14   3.37e-14     -1.053      0.340   -1.22e-13    5.12e-14
-eta_coded:reserve_price_coded                        -3.553e-14   3.37e-14     -1.053      0.340   -1.22e-13    5.12e-14
-eta_coded:use_median_of_others_coded                 -3.553e-14   3.37e-14     -1.053      0.340   -1.22e-13    5.12e-14
-eta_coded:use_past_winner_bid_coded                  -3.553e-14   3.37e-14     -1.053      0.340   -1.22e-13    5.12e-14
-c_coded:lam_coded                                     -1.35e-13   1.69e-13     -0.801      0.460   -5.68e-13    2.98e-13
-c_coded:n_bidders_coded                              -7.105e-15   3.37e-14     -0.211      0.841   -9.38e-14    7.96e-14
-c_coded:reserve_price_coded                          -7.105e-15   3.37e-14     -0.211      0.841   -9.38e-14    7.96e-14
-c_coded:use_median_of_others_coded                   -7.105e-15   3.37e-14     -0.211      0.841   -9.38e-14    7.96e-14
-c_coded:use_past_winner_bid_coded                    -7.105e-15   3.37e-14     -0.211      0.841   -9.38e-14    7.96e-14
-lam_coded:n_bidders_coded                            -2.842e-14   3.37e-14     -0.843      0.438   -1.15e-13    5.83e-14
-lam_coded:reserve_price_coded                        -2.842e-14   3.37e-14     -0.843      0.438   -1.15e-13    5.83e-14
-lam_coded:use_median_of_others_coded                 -2.842e-14   3.37e-14     -0.843      0.438   -1.15e-13    5.83e-14
-lam_coded:use_past_winner_bid_coded                  -2.842e-14   3.37e-14     -0.843      0.438   -1.15e-13    5.83e-14
-n_bidders_coded:reserve_price_coded                     90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
-n_bidders_coded:use_median_of_others_coded              90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
-n_bidders_coded:use_past_winner_bid_coded               90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
-reserve_price_coded:use_median_of_others_coded          90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
-reserve_price_coded:use_past_winner_bid_coded           90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
-use_median_of_others_coded:use_past_winner_bid_coded    90.9091   1.53e-14   5.93e+15      0.000      90.909      90.909
+======================================================================================================================
+                                                         coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------------------
+Intercept                                             62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+algorithm_coded                                     1.954e-14   2.37e-14      0.825      0.447   -4.13e-14    8.04e-14
+auction_type_coded                                 -3.553e-14   2.37e-14     -1.500      0.194   -9.64e-14    2.54e-14
+n_bidders_coded                                    -3.908e-14   2.37e-14     -1.650      0.160      -1e-13    2.18e-14
+reserve_price_coded                                -1.421e-14   2.37e-14     -0.600      0.575   -7.51e-14    4.67e-14
+eta_linear_coded                                     -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+eta_quadratic_coded                                   62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+exploration_intensity_coded                          -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+context_richness_coded                               -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+lam_coded                                            -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+algorithm_coded:auction_type_coded                 -7.105e-14   1.42e-13     -0.500      0.638   -4.36e-13    2.94e-13
+algorithm_coded:n_bidders_coded                    -5.684e-14   1.42e-13     -0.400      0.706   -4.22e-13    3.08e-13
+algorithm_coded:reserve_price_coded                -4.974e-14   1.42e-13     -0.350      0.741   -4.15e-13    3.16e-13
+algorithm_coded:eta_linear_coded                    2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+algorithm_coded:eta_quadratic_coded                -2.842e-14   2.37e-14     -1.200      0.284   -8.93e-14    3.25e-14
+algorithm_coded:exploration_intensity_coded         2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+algorithm_coded:context_richness_coded              2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+algorithm_coded:lam_coded                           2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+auction_type_coded:n_bidders_coded                 -2.842e-14   1.42e-13     -0.200      0.849   -3.94e-13    3.37e-13
+auction_type_coded:reserve_price_coded             -2.842e-14   1.42e-13     -0.200      0.849   -3.94e-13    3.37e-13
+auction_type_coded:eta_linear_coded                 2.309e-14   2.37e-14      0.975      0.374   -3.78e-14     8.4e-14
+auction_type_coded:eta_quadratic_coded             -2.309e-14   2.37e-14     -0.975      0.374    -8.4e-14    3.78e-14
+auction_type_coded:exploration_intensity_coded      2.309e-14   2.37e-14      0.975      0.374   -3.78e-14     8.4e-14
+auction_type_coded:context_richness_coded           2.309e-14   2.37e-14      0.975      0.374   -3.78e-14     8.4e-14
+auction_type_coded:lam_coded                        2.309e-14   2.37e-14      0.975      0.374   -3.78e-14     8.4e-14
+n_bidders_coded:reserve_price_coded                -2.132e-14   1.42e-13     -0.150      0.887   -3.87e-13    3.44e-13
+n_bidders_coded:eta_linear_coded                    1.066e-14   2.37e-14      0.450      0.672   -5.02e-14    7.15e-14
+n_bidders_coded:eta_quadratic_coded                -1.066e-14   2.37e-14     -0.450      0.672   -7.15e-14    5.02e-14
+n_bidders_coded:exploration_intensity_coded         1.066e-14   2.37e-14      0.450      0.672   -5.02e-14    7.15e-14
+n_bidders_coded:context_richness_coded              1.066e-14   2.37e-14      0.450      0.672   -5.02e-14    7.15e-14
+n_bidders_coded:lam_coded                           1.066e-14   2.37e-14      0.450      0.672   -5.02e-14    7.15e-14
+reserve_price_coded:eta_linear_coded                2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+reserve_price_coded:eta_quadratic_coded            -2.842e-14   2.37e-14     -1.200      0.284   -8.93e-14    3.25e-14
+reserve_price_coded:exploration_intensity_coded     2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+reserve_price_coded:context_richness_coded          2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+reserve_price_coded:lam_coded                       2.842e-14   2.37e-14      1.200      0.284   -3.25e-14    8.93e-14
+eta_linear_coded:eta_quadratic_coded                 -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+eta_linear_coded:exploration_intensity_coded          62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+eta_linear_coded:context_richness_coded               62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+eta_linear_coded:lam_coded                            62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+eta_quadratic_coded:exploration_intensity_coded      -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+eta_quadratic_coded:context_richness_coded           -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+eta_quadratic_coded:lam_coded                        -62.5000   8.88e-15  -7.04e+15      0.000     -62.500     -62.500
+exploration_intensity_coded:context_richness_coded    62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+exploration_intensity_coded:lam_coded                 62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
+context_richness_coded:lam_coded                      62.5000   8.88e-15   7.04e+15      0.000      62.500      62.500
 ==============================================================================
-Omnibus:                       10.106   Durbin-Watson:                   1.102
-Prob(Omnibus):                  0.006   Jarque-Bera (JB):                6.611
-Skew:                           1.271   Prob(JB):                       0.0367
-Kurtosis:                       4.860   Cond. No.                     2.57e+16
+Omnibus:                        6.238   Durbin-Watson:                   0.928
+Prob(Omnibus):                  0.044   Jarque-Bera (JB):                3.386
+Skew:                           1.030   Prob(JB):                        0.184
+Kurtosis:                       3.916   Cond. No.                     4.33e+16
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The input rank is higher than the number of observations.
-[3] The smallest eigenvalue is 2.67e-31. This might indicate that there are
+[3] The smallest eigenvalue is 1.36e-31. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
 R² = -inf
 Adj R² = -inf
 
 --- ANOVA Table (Type III) ---
-|                                                      |        sum_sq |     df |                                     F |   PR(>F) |
-|------------------------------------------------------|---------------|--------|---------------------------------------|----------|
-| Intercept                                            | 16000000.0000 | 1.0000 | 35168751116061933895961957892096.0000 |   0.0000 |
-| auction_type_coded                                   |        0.0000 | 1.0000 |                                0.0250 |   0.8806 |
-| eta_coded                                            |        0.0000 | 1.0000 |                                0.2774 |   0.6209 |
-| c_coded                                              |        0.0000 | 1.0000 |                                0.4689 |   0.5240 |
-| lam_coded                                            |        0.0000 | 1.0000 |                                2.8409 |   0.1527 |
-| n_bidders_coded                                      | 16000000.0000 | 1.0000 | 35168751116061933895961957892096.0000 |   0.0000 |
-| reserve_price_coded                                  | 16000000.0000 | 1.0000 | 35168751116061929392362330521600.0000 |   0.0000 |
-| use_median_of_others_coded                           | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| use_past_winner_bid_coded                            | 16000000.0000 | 1.0000 | 35168751116061933895961957892096.0000 |   0.0000 |
-| auction_type_coded:eta_coded                         |        0.0000 | 1.0000 |                                0.6410 |   0.4597 |
-| auction_type_coded:c_coded                           |        0.0000 | 1.0000 |                                0.0284 |   0.8728 |
-| auction_type_coded:lam_coded                         |        0.0000 | 1.0000 |                                0.2557 |   0.6346 |
-| auction_type_coded:n_bidders_coded                   |        0.0000 | 1.0000 |                                0.8018 |   0.4116 |
-| auction_type_coded:reserve_price_coded               |        0.0000 | 1.0000 |                                0.5438 |   0.4940 |
-| auction_type_coded:use_median_of_others_coded        |        0.0000 | 1.0000 |                                0.5438 |   0.4940 |
-| auction_type_coded:use_past_winner_bid_coded         |        0.0000 | 1.0000 |                                0.5438 |   0.4940 |
-| eta_coded:c_coded                                    |        0.0000 | 1.0000 |                                0.5131 |   0.5058 |
-| eta_coded:lam_coded                                  |        0.0000 | 1.0000 |                                0.3001 |   0.6074 |
-| eta_coded:n_bidders_coded                            |        0.0000 | 1.0000 |                                1.1097 |   0.3404 |
-| eta_coded:reserve_price_coded                        |        0.0000 | 1.0000 |                                1.1097 |   0.3404 |
-| eta_coded:use_median_of_others_coded                 |        0.0000 | 1.0000 |                                1.1097 |   0.3404 |
-| eta_coded:use_past_winner_bid_coded                  |        0.0000 | 1.0000 |                                1.1097 |   0.3404 |
-| c_coded:lam_coded                                    |        0.0000 | 1.0000 |                                0.6410 |   0.4597 |
-| c_coded:n_bidders_coded                              |        0.0000 | 1.0000 |                                0.0444 |   0.8414 |
-| c_coded:reserve_price_coded                          |        0.0000 | 1.0000 |                                0.0444 |   0.8414 |
-| c_coded:use_median_of_others_coded                   |        0.0000 | 1.0000 |                                0.0444 |   0.8414 |
-| c_coded:use_past_winner_bid_coded                    |        0.0000 | 1.0000 |                                0.0444 |   0.8414 |
-| lam_coded:n_bidders_coded                            |        0.0000 | 1.0000 |                                0.7102 |   0.4378 |
-| lam_coded:reserve_price_coded                        |        0.0000 | 1.0000 |                                0.7102 |   0.4378 |
-| lam_coded:use_median_of_others_coded                 |        0.0000 | 1.0000 |                                0.7102 |   0.4378 |
-| lam_coded:use_past_winner_bid_coded                  |        0.0000 | 1.0000 |                                0.7102 |   0.4378 |
-| n_bidders_coded:reserve_price_coded                  | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| n_bidders_coded:use_median_of_others_coded           | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| n_bidders_coded:use_past_winner_bid_coded            | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| reserve_price_coded:use_median_of_others_coded       | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| reserve_price_coded:use_past_winner_bid_coded        | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| use_median_of_others_coded:use_past_winner_bid_coded | 16000000.0000 | 1.0000 | 35168751116061924888762703151104.0000 |   0.0000 |
-| Residual                                             |        0.0000 | 5.0000 |                              nan      | nan      |
+|                                                    |        sum_sq |     df |                                     F |   PR(>F) |
+|----------------------------------------------------|---------------|--------|---------------------------------------|----------|
+| Intercept                                          | 16000000.0000 | 1.0000 | 49517601571415201988765714219008.0000 |   0.0000 |
+| algorithm_coded                                    |        0.0000 | 1.0000 |                                0.6806 |   0.4469 |
+| auction_type_coded                                 |        0.0000 | 1.0000 |                                2.2500 |   0.1939 |
+| n_bidders_coded                                    |        0.0000 | 1.0000 |                                2.7225 |   0.1599 |
+| reserve_price_coded                                |        0.0000 | 1.0000 |                                0.3600 |   0.5747 |
+| eta_linear_coded                                   | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_quadratic_coded                                | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| exploration_intensity_coded                        | 16000000.0000 | 1.0000 | 49517601571415201988765714219008.0000 |   0.0000 |
+| context_richness_coded                             | 16000000.0000 | 1.0000 | 49517601571415201988765714219008.0000 |   0.0000 |
+| lam_coded                                          | 16000000.0000 | 1.0000 | 49517601571415192981566459478016.0000 |   0.0000 |
+| algorithm_coded:auction_type_coded                 |        0.0000 | 1.0000 |                                0.2500 |   0.6383 |
+| algorithm_coded:n_bidders_coded                    |        0.0000 | 1.0000 |                                0.1600 |   0.7057 |
+| algorithm_coded:reserve_price_coded                |        0.0000 | 1.0000 |                                0.1225 |   0.7406 |
+| algorithm_coded:eta_linear_coded                   |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| algorithm_coded:eta_quadratic_coded                |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| algorithm_coded:exploration_intensity_coded        |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| algorithm_coded:context_richness_coded             |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| algorithm_coded:lam_coded                          |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| auction_type_coded:n_bidders_coded                 |        0.0000 | 1.0000 |                                0.0400 |   0.8494 |
+| auction_type_coded:reserve_price_coded             |        0.0000 | 1.0000 |                                0.0400 |   0.8494 |
+| auction_type_coded:eta_linear_coded                |        0.0000 | 1.0000 |                                0.9506 |   0.3743 |
+| auction_type_coded:eta_quadratic_coded             |        0.0000 | 1.0000 |                                0.9506 |   0.3743 |
+| auction_type_coded:exploration_intensity_coded     |        0.0000 | 1.0000 |                                0.9506 |   0.3743 |
+| auction_type_coded:context_richness_coded          |        0.0000 | 1.0000 |                                0.9506 |   0.3743 |
+| auction_type_coded:lam_coded                       |        0.0000 | 1.0000 |                                0.9506 |   0.3743 |
+| n_bidders_coded:reserve_price_coded                |        0.0000 | 1.0000 |                                0.0225 |   0.8866 |
+| n_bidders_coded:eta_linear_coded                   |        0.0000 | 1.0000 |                                0.2025 |   0.6715 |
+| n_bidders_coded:eta_quadratic_coded                |        0.0000 | 1.0000 |                                0.2025 |   0.6715 |
+| n_bidders_coded:exploration_intensity_coded        |        0.0000 | 1.0000 |                                0.2025 |   0.6715 |
+| n_bidders_coded:context_richness_coded             |        0.0000 | 1.0000 |                                0.2025 |   0.6715 |
+| n_bidders_coded:lam_coded                          |        0.0000 | 1.0000 |                                0.2025 |   0.6715 |
+| reserve_price_coded:eta_linear_coded               |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| reserve_price_coded:eta_quadratic_coded            |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| reserve_price_coded:exploration_intensity_coded    |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| reserve_price_coded:context_richness_coded         |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| reserve_price_coded:lam_coded                      |        0.0000 | 1.0000 |                                1.4400 |   0.2839 |
+| eta_linear_coded:eta_quadratic_coded               | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_linear_coded:exploration_intensity_coded       | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_linear_coded:context_richness_coded            | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_linear_coded:lam_coded                         | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_quadratic_coded:exploration_intensity_coded    | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_quadratic_coded:context_richness_coded         | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| eta_quadratic_coded:lam_coded                      | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| exploration_intensity_coded:context_richness_coded | 16000000.0000 | 1.0000 | 49517601571415210995964968960000.0000 |   0.0000 |
+| exploration_intensity_coded:lam_coded              | 16000000.0000 | 1.0000 | 49517601571415229010363478441984.0000 |   0.0000 |
+| context_richness_coded:lam_coded                   | 16000000.0000 | 1.0000 | 49517601571415229010363478441984.0000 |   0.0000 |
+| Residual                                           |        0.0000 | 5.0000 |                              nan      | nan      |
 
---- Significant Effects (p < 0.05): 10 ---
-  n_bidders                                coef=-90.9091  p=0.0000
-  reserve_price                            coef=-90.9091  p=0.0000
-  use_median_of_others                     coef=-90.9091  p=0.0000
-  use_past_winner_bid                      coef=-90.9091  p=0.0000
-  n_bidders:reserve_price                  coef=+90.9091  p=0.0000
-  n_bidders:use_median_of_others           coef=+90.9091  p=0.0000
-  n_bidders:use_past_winner_bid            coef=+90.9091  p=0.0000
-  reserve_price:use_median_of_others       coef=+90.9091  p=0.0000
-  reserve_price:use_past_winner_bid        coef=+90.9091  p=0.0000
-  use_median_of_others:use_past_winner_bid coef=+90.9091  p=0.0000
+--- Significant Effects (p < 0.05): 15 ---
+  eta_linear                               coef=-62.5000  p=0.0000
+  eta_quadratic                            coef=+62.5000  p=0.0000
+  exploration_intensity                    coef=-62.5000  p=0.0000
+  context_richness                         coef=-62.5000  p=0.0000
+  lam                                      coef=-62.5000  p=0.0000
+  eta_linear:eta_quadratic                 coef=-62.5000  p=0.0000
+  eta_linear:exploration_intensity         coef=+62.5000  p=0.0000
+  eta_linear:context_richness              coef=+62.5000  p=0.0000
+  eta_linear:lam                           coef=+62.5000  p=0.0000
+  eta_quadratic:exploration_intensity      coef=-62.5000  p=0.0000
+  eta_quadratic:context_richness           coef=-62.5000  p=0.0000
+  eta_quadratic:lam                        coef=-62.5000  p=0.0000
+  exploration_intensity:context_richness   coef=+62.5000  p=0.0000
+  exploration_intensity:lam                coef=+62.5000  p=0.0000
+  context_richness:lam                     coef=+62.5000  p=0.0000
 
   Plots saved to results/exp3/
 
@@ -285,124 +333,148 @@ RESPONSE: avg_regret_seller
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      avg_regret_seller   R-squared:                       0.690
-Model:                            OLS   Adj. R-squared:                  0.069
-Method:                 Least Squares   F-statistic:                     1.110
-Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.483
-Time:                        01:28:36   Log-Likelihood:                 11.438
-No. Observations:                  16   AIC:                           -0.8769
-Df Residuals:                       5   BIC:                             7.622
+Dep. Variable:      avg_regret_seller   R-squared:                       0.733
+Model:                            OLS   Adj. R-squared:                  0.199
+Method:                 Least Squares   F-statistic:                     1.373
+Date:                Sat, 21 Feb 2026   Prob (F-statistic):              0.382
+Time:                        17:05:46   Log-Likelihood:                 16.055
+No. Observations:                  16   AIC:                            -10.11
+Df Residuals:                       5   BIC:                            -1.611
 Df Model:                          10                                         
 Covariance Type:            nonrobust                                         
-========================================================================================================================
-                                                           coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                                0.0503      0.005     10.452      0.000       0.038       0.063
-auction_type_coded                                       0.0240      0.011      2.263      0.073      -0.003       0.051
-eta_coded                                                0.0045      0.011      0.423      0.690      -0.023       0.032
-c_coded                                                 -0.0047      0.011     -0.442      0.677      -0.032       0.023
-lam_coded                                                0.0137      0.011      1.297      0.251      -0.013       0.041
-n_bidders_coded                                         -0.0503      0.005    -10.452      0.000      -0.063      -0.038
-reserve_price_coded                                     -0.0503      0.005    -10.452      0.000      -0.063      -0.038
-use_median_of_others_coded                              -0.0503      0.005    -10.452      0.000      -0.063      -0.038
-use_past_winner_bid_coded                               -0.0503      0.005    -10.452      0.000      -0.063      -0.038
-auction_type_coded:eta_coded                            -0.0232      0.053     -0.438      0.680      -0.159       0.113
-auction_type_coded:c_coded                              -0.0252      0.053     -0.476      0.654      -0.161       0.111
-auction_type_coded:lam_coded                            -0.0310      0.053     -0.586      0.584      -0.167       0.105
-auction_type_coded:n_bidders_coded                      -0.0240      0.011     -2.263      0.073      -0.051       0.003
-auction_type_coded:reserve_price_coded                  -0.0240      0.011     -2.263      0.073      -0.051       0.003
-auction_type_coded:use_median_of_others_coded           -0.0240      0.011     -2.263      0.073      -0.051       0.003
-auction_type_coded:use_past_winner_bid_coded            -0.0240      0.011     -2.263      0.073      -0.051       0.003
-eta_coded:c_coded                                       -0.0883      0.053     -1.668      0.156      -0.224       0.048
-eta_coded:lam_coded                                     -0.0307      0.053     -0.579      0.588      -0.167       0.105
-eta_coded:n_bidders_coded                               -0.0045      0.011     -0.423      0.690      -0.032       0.023
-eta_coded:reserve_price_coded                           -0.0045      0.011     -0.423      0.690      -0.032       0.023
-eta_coded:use_median_of_others_coded                    -0.0045      0.011     -0.423      0.690      -0.032       0.023
-eta_coded:use_past_winner_bid_coded                     -0.0045      0.011     -0.423      0.690      -0.032       0.023
-c_coded:lam_coded                                       -0.0116      0.053     -0.218      0.836      -0.148       0.125
-c_coded:n_bidders_coded                                  0.0047      0.011      0.442      0.677      -0.023       0.032
-c_coded:reserve_price_coded                              0.0047      0.011      0.442      0.677      -0.023       0.032
-c_coded:use_median_of_others_coded                       0.0047      0.011      0.442      0.677      -0.023       0.032
-c_coded:use_past_winner_bid_coded                        0.0047      0.011      0.442      0.677      -0.023       0.032
-lam_coded:n_bidders_coded                               -0.0137      0.011     -1.297      0.251      -0.041       0.013
-lam_coded:reserve_price_coded                           -0.0137      0.011     -1.297      0.251      -0.041       0.013
-lam_coded:use_median_of_others_coded                    -0.0137      0.011     -1.297      0.251      -0.041       0.013
-lam_coded:use_past_winner_bid_coded                     -0.0137      0.011     -1.297      0.251      -0.041       0.013
-n_bidders_coded:reserve_price_coded                      0.0503      0.005     10.452      0.000       0.038       0.063
-n_bidders_coded:use_median_of_others_coded               0.0503      0.005     10.452      0.000       0.038       0.063
-n_bidders_coded:use_past_winner_bid_coded                0.0503      0.005     10.452      0.000       0.038       0.063
-reserve_price_coded:use_median_of_others_coded           0.0503      0.005     10.452      0.000       0.038       0.063
-reserve_price_coded:use_past_winner_bid_coded            0.0503      0.005     10.452      0.000       0.038       0.063
-use_median_of_others_coded:use_past_winner_bid_coded     0.0503      0.005     10.452      0.000       0.038       0.063
+======================================================================================================================
+                                                         coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------------------
+Intercept                                              0.0233      0.002      9.382      0.000       0.017       0.030
+algorithm_coded                                       -0.0002      0.007     -0.030      0.977      -0.017       0.017
+auction_type_coded                                    -0.0061      0.007     -0.922      0.399      -0.023       0.011
+n_bidders_coded                                        0.0033      0.007      0.502      0.637      -0.014       0.020
+reserve_price_coded                                 7.708e-05      0.007      0.012      0.991      -0.017       0.017
+eta_linear_coded                                      -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+eta_quadratic_coded                                    0.0233      0.002      9.382      0.000       0.017       0.030
+exploration_intensity_coded                           -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+context_richness_coded                                -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+lam_coded                                             -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+algorithm_coded:auction_type_coded                    -0.0592      0.040     -1.491      0.196      -0.161       0.043
+algorithm_coded:n_bidders_coded                        0.1113      0.040      2.804      0.038       0.009       0.213
+algorithm_coded:reserve_price_coded                   -0.0330      0.040     -0.831      0.444      -0.135       0.069
+algorithm_coded:eta_linear_coded                       0.0002      0.007      0.030      0.977      -0.017       0.017
+algorithm_coded:eta_quadratic_coded                   -0.0002      0.007     -0.030      0.977      -0.017       0.017
+algorithm_coded:exploration_intensity_coded            0.0002      0.007      0.030      0.977      -0.017       0.017
+algorithm_coded:context_richness_coded                 0.0002      0.007      0.030      0.977      -0.017       0.017
+algorithm_coded:lam_coded                              0.0002      0.007      0.030      0.977      -0.017       0.017
+auction_type_coded:n_bidders_coded                     0.0298      0.040      0.752      0.486      -0.072       0.132
+auction_type_coded:reserve_price_coded                 0.0442      0.040      1.115      0.316      -0.058       0.146
+auction_type_coded:eta_linear_coded                    0.0061      0.007      0.922      0.399      -0.011       0.023
+auction_type_coded:eta_quadratic_coded                -0.0061      0.007     -0.922      0.399      -0.023       0.011
+auction_type_coded:exploration_intensity_coded         0.0061      0.007      0.922      0.399      -0.011       0.023
+auction_type_coded:context_richness_coded              0.0061      0.007      0.922      0.399      -0.011       0.023
+auction_type_coded:lam_coded                           0.0061      0.007      0.922      0.399      -0.011       0.023
+n_bidders_coded:reserve_price_coded                   -0.0082      0.040     -0.206      0.845      -0.110       0.094
+n_bidders_coded:eta_linear_coded                      -0.0033      0.007     -0.502      0.637      -0.020       0.014
+n_bidders_coded:eta_quadratic_coded                    0.0033      0.007      0.502      0.637      -0.014       0.020
+n_bidders_coded:exploration_intensity_coded           -0.0033      0.007     -0.502      0.637      -0.020       0.014
+n_bidders_coded:context_richness_coded                -0.0033      0.007     -0.502      0.637      -0.020       0.014
+n_bidders_coded:lam_coded                             -0.0033      0.007     -0.502      0.637      -0.020       0.014
+reserve_price_coded:eta_linear_coded               -7.708e-05      0.007     -0.012      0.991      -0.017       0.017
+reserve_price_coded:eta_quadratic_coded             7.708e-05      0.007      0.012      0.991      -0.017       0.017
+reserve_price_coded:exploration_intensity_coded    -7.708e-05      0.007     -0.012      0.991      -0.017       0.017
+reserve_price_coded:context_richness_coded         -7.708e-05      0.007     -0.012      0.991      -0.017       0.017
+reserve_price_coded:lam_coded                      -7.708e-05      0.007     -0.012      0.991      -0.017       0.017
+eta_linear_coded:eta_quadratic_coded                  -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+eta_linear_coded:exploration_intensity_coded           0.0233      0.002      9.382      0.000       0.017       0.030
+eta_linear_coded:context_richness_coded                0.0233      0.002      9.382      0.000       0.017       0.030
+eta_linear_coded:lam_coded                             0.0233      0.002      9.382      0.000       0.017       0.030
+eta_quadratic_coded:exploration_intensity_coded       -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+eta_quadratic_coded:context_richness_coded            -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+eta_quadratic_coded:lam_coded                         -0.0233      0.002     -9.382      0.000      -0.030      -0.017
+exploration_intensity_coded:context_richness_coded     0.0233      0.002      9.382      0.000       0.017       0.030
+exploration_intensity_coded:lam_coded                  0.0233      0.002      9.382      0.000       0.017       0.030
+context_richness_coded:lam_coded                       0.0233      0.002      9.382      0.000       0.017       0.030
 ==============================================================================
-Omnibus:                        0.157   Durbin-Watson:                   1.259
-Prob(Omnibus):                  0.925   Jarque-Bera (JB):                0.370
-Skew:                          -0.000   Prob(JB):                        0.831
-Kurtosis:                       2.255   Cond. No.                     2.57e+16
+Omnibus:                        0.064   Durbin-Watson:                   1.556
+Prob(Omnibus):                  0.968   Jarque-Bera (JB):                0.294
+Skew:                           0.000   Prob(JB):                        0.863
+Kurtosis:                       2.336   Cond. No.                     4.33e+16
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The input rank is higher than the number of observations.
-[3] The smallest eigenvalue is 2.67e-31. This might indicate that there are
+[3] The smallest eigenvalue is 1.36e-31. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.6895
-Adj R² = 0.0686
+R² = 0.7331
+Adj R² = 0.1993
 
 --- ANOVA Table (Type III) ---
-|                                                      |   sum_sq |     df |        F |   PR(>F) |
-|------------------------------------------------------|----------|--------|----------|----------|
-| Intercept                                            |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| auction_type_coded                                   |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| eta_coded                                            |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| c_coded                                              |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| lam_coded                                            |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| n_bidders_coded                                      |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| reserve_price_coded                                  |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| use_median_of_others_coded                           |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| use_past_winner_bid_coded                            |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| auction_type_coded:eta_coded                         |   0.0086 | 1.0000 |   0.1916 |   0.6798 |
-| auction_type_coded:c_coded                           |   0.0101 | 1.0000 |   0.2261 |   0.6545 |
-| auction_type_coded:lam_coded                         |   0.0154 | 1.0000 |   0.3429 |   0.5836 |
-| auction_type_coded:n_bidders_coded                   |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| auction_type_coded:reserve_price_coded               |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| auction_type_coded:use_median_of_others_coded        |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| auction_type_coded:use_past_winner_bid_coded         |   0.2296 | 1.0000 |   5.1205 |   0.0731 |
-| eta_coded:c_coded                                    |   0.1248 | 1.0000 |   2.7834 |   0.1561 |
-| eta_coded:lam_coded                                  |   0.0150 | 1.0000 |   0.3352 |   0.5877 |
-| eta_coded:n_bidders_coded                            |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| eta_coded:reserve_price_coded                        |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| eta_coded:use_median_of_others_coded                 |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| eta_coded:use_past_winner_bid_coded                  |   0.0080 | 1.0000 |   0.1790 |   0.6898 |
-| c_coded:lam_coded                                    |   0.0021 | 1.0000 |   0.0476 |   0.8359 |
-| c_coded:n_bidders_coded                              |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| c_coded:reserve_price_coded                          |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| c_coded:use_median_of_others_coded                   |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| c_coded:use_past_winner_bid_coded                    |   0.0088 | 1.0000 |   0.1954 |   0.6770 |
-| lam_coded:n_bidders_coded                            |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| lam_coded:reserve_price_coded                        |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| lam_coded:use_median_of_others_coded                 |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| lam_coded:use_past_winner_bid_coded                  |   0.0755 | 1.0000 |   1.6827 |   0.2512 |
-| n_bidders_coded:reserve_price_coded                  |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| n_bidders_coded:use_median_of_others_coded           |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| n_bidders_coded:use_past_winner_bid_coded            |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| reserve_price_coded:use_median_of_others_coded       |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| reserve_price_coded:use_past_winner_bid_coded        |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| use_median_of_others_coded:use_past_winner_bid_coded |   4.8987 | 1.0000 | 109.2350 |   0.0001 |
-| Residual                                             |   0.2242 | 5.0000 | nan      | nan      |
+|                                                    |   sum_sq |     df |        F |   PR(>F) |
+|----------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                          |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| algorithm_coded                                    |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| auction_type_coded                                 |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| n_bidders_coded                                    |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| reserve_price_coded                                |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| eta_linear_coded                                   |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_quadratic_coded                                |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| exploration_intensity_coded                        |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| context_richness_coded                             |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| lam_coded                                          |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| algorithm_coded:auction_type_coded                 |   0.0560 | 1.0000 |   2.2238 |   0.1961 |
+| algorithm_coded:n_bidders_coded                    |   0.1981 | 1.0000 |   7.8651 |   0.0378 |
+| algorithm_coded:reserve_price_coded                |   0.0174 | 1.0000 |   0.6914 |   0.4436 |
+| algorithm_coded:eta_linear_coded                   |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:eta_quadratic_coded                |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:exploration_intensity_coded        |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:context_richness_coded             |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| algorithm_coded:lam_coded                          |   0.0000 | 1.0000 |   0.0009 |   0.9773 |
+| auction_type_coded:n_bidders_coded                 |   0.0142 | 1.0000 |   0.5656 |   0.4859 |
+| auction_type_coded:reserve_price_coded             |   0.0313 | 1.0000 |   1.2433 |   0.3155 |
+| auction_type_coded:eta_linear_coded                |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:eta_quadratic_coded             |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:exploration_intensity_coded     |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:context_richness_coded          |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| auction_type_coded:lam_coded                       |   0.0214 | 1.0000 |   0.8493 |   0.3990 |
+| n_bidders_coded:reserve_price_coded                |   0.0011 | 1.0000 |   0.0426 |   0.8446 |
+| n_bidders_coded:eta_linear_coded                   |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:eta_quadratic_coded                |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:exploration_intensity_coded        |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:context_richness_coded             |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| n_bidders_coded:lam_coded                          |   0.0063 | 1.0000 |   0.2519 |   0.6370 |
+| reserve_price_coded:eta_linear_coded               |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:eta_quadratic_coded            |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:exploration_intensity_coded    |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:context_richness_coded         |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| reserve_price_coded:lam_coded                      |   0.0000 | 1.0000 |   0.0001 |   0.9911 |
+| eta_linear_coded:eta_quadratic_coded               |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_linear_coded:exploration_intensity_coded       |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_linear_coded:context_richness_coded            |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_linear_coded:lam_coded                         |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_quadratic_coded:exploration_intensity_coded    |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_quadratic_coded:context_richness_coded         |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| eta_quadratic_coded:lam_coded                      |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| exploration_intensity_coded:context_richness_coded |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| exploration_intensity_coded:lam_coded              |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| context_richness_coded:lam_coded                   |   2.2167 | 1.0000 |  88.0212 |   0.0002 |
+| Residual                                           |   0.1259 | 5.0000 | nan      | nan      |
 
---- Significant Effects (p < 0.05): 10 ---
-  use_past_winner_bid                      coef=-0.0503  p=0.0001
-  n_bidders                                coef=-0.0503  p=0.0001
-  reserve_price                            coef=-0.0503  p=0.0001
-  use_median_of_others                     coef=-0.0503  p=0.0001
-  n_bidders:reserve_price                  coef=+0.0503  p=0.0001
-  n_bidders:use_median_of_others           coef=+0.0503  p=0.0001
-  n_bidders:use_past_winner_bid            coef=+0.0503  p=0.0001
-  reserve_price:use_median_of_others       coef=+0.0503  p=0.0001
-  reserve_price:use_past_winner_bid        coef=+0.0503  p=0.0001
-  use_median_of_others:use_past_winner_bid coef=+0.0503  p=0.0001
+--- Significant Effects (p < 0.05): 16 ---
+  context_richness                         coef=-0.0233  p=0.0002
+  exploration_intensity                    coef=-0.0233  p=0.0002
+  eta_quadratic                            coef=+0.0233  p=0.0002
+  lam                                      coef=-0.0233  p=0.0002
+  eta_linear:eta_quadratic                 coef=-0.0233  p=0.0002
+  eta_linear:exploration_intensity         coef=+0.0233  p=0.0002
+  eta_linear:context_richness              coef=+0.0233  p=0.0002
+  eta_linear:lam                           coef=+0.0233  p=0.0002
+  eta_quadratic:exploration_intensity      coef=-0.0233  p=0.0002
+  eta_quadratic:context_richness           coef=-0.0233  p=0.0002
+  eta_quadratic:lam                        coef=-0.0233  p=0.0002
+  exploration_intensity:context_richness   coef=+0.0233  p=0.0002
+  exploration_intensity:lam                coef=+0.0233  p=0.0002
+  context_richness:lam                     coef=+0.0233  p=0.0002
+  eta_linear                               coef=-0.0233  p=0.0002
+  algorithm:n_bidders                      coef=+0.1113  p=0.0378
 
   Plots saved to results/exp3/
 
@@ -413,112 +485,130 @@ RESPONSE: no_sale_rate
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:           no_sale_rate   R-squared:                         nan
-Model:                            OLS   Adj. R-squared:                    nan
-Method:                 Least Squares   F-statistic:                       nan
-Date:                Mon, 16 Feb 2026   Prob (F-statistic):                nan
-Time:                        01:28:37   Log-Likelihood:                    inf
-No. Observations:                  16   AIC:                              -inf
-Df Residuals:                       5   BIC:                              -inf
+Dep. Variable:           no_sale_rate   R-squared:                       0.485
+Model:                            OLS   Adj. R-squared:                 -0.544
+Method:                 Least Squares   F-statistic:                    0.4717
+Date:                Sat, 21 Feb 2026   Prob (F-statistic):              0.854
+Time:                        17:05:47   Log-Likelihood:                 46.594
+No. Observations:                  16   AIC:                            -71.19
+Df Residuals:                       5   BIC:                            -62.69
 Df Model:                          10                                         
 Covariance Type:            nonrobust                                         
-========================================================================================================================
-                                                           coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                                     0          0        nan        nan           0           0
-auction_type_coded                                            0          0        nan        nan           0           0
-eta_coded                                                     0          0        nan        nan           0           0
-c_coded                                                       0          0        nan        nan           0           0
-lam_coded                                                     0          0        nan        nan           0           0
-n_bidders_coded                                               0          0        nan        nan           0           0
-reserve_price_coded                                           0          0        nan        nan           0           0
-use_median_of_others_coded                                    0          0        nan        nan           0           0
-use_past_winner_bid_coded                                     0          0        nan        nan           0           0
-auction_type_coded:eta_coded                                  0          0        nan        nan           0           0
-auction_type_coded:c_coded                                    0          0        nan        nan           0           0
-auction_type_coded:lam_coded                                  0          0        nan        nan           0           0
-auction_type_coded:n_bidders_coded                            0          0        nan        nan           0           0
-auction_type_coded:reserve_price_coded                        0          0        nan        nan           0           0
-auction_type_coded:use_median_of_others_coded                 0          0        nan        nan           0           0
-auction_type_coded:use_past_winner_bid_coded                  0          0        nan        nan           0           0
-eta_coded:c_coded                                             0          0        nan        nan           0           0
-eta_coded:lam_coded                                           0          0        nan        nan           0           0
-eta_coded:n_bidders_coded                                     0          0        nan        nan           0           0
-eta_coded:reserve_price_coded                                 0          0        nan        nan           0           0
-eta_coded:use_median_of_others_coded                          0          0        nan        nan           0           0
-eta_coded:use_past_winner_bid_coded                           0          0        nan        nan           0           0
-c_coded:lam_coded                                             0          0        nan        nan           0           0
-c_coded:n_bidders_coded                                       0          0        nan        nan           0           0
-c_coded:reserve_price_coded                                   0          0        nan        nan           0           0
-c_coded:use_median_of_others_coded                            0          0        nan        nan           0           0
-c_coded:use_past_winner_bid_coded                             0          0        nan        nan           0           0
-lam_coded:n_bidders_coded                                     0          0        nan        nan           0           0
-lam_coded:reserve_price_coded                                 0          0        nan        nan           0           0
-lam_coded:use_median_of_others_coded                          0          0        nan        nan           0           0
-lam_coded:use_past_winner_bid_coded                           0          0        nan        nan           0           0
-n_bidders_coded:reserve_price_coded                           0          0        nan        nan           0           0
-n_bidders_coded:use_median_of_others_coded                    0          0        nan        nan           0           0
-n_bidders_coded:use_past_winner_bid_coded                     0          0        nan        nan           0           0
-reserve_price_coded:use_median_of_others_coded                0          0        nan        nan           0           0
-reserve_price_coded:use_past_winner_bid_coded                 0          0        nan        nan           0           0
-use_median_of_others_coded:use_past_winner_bid_coded          0          0        nan        nan           0           0
+======================================================================================================================
+                                                         coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------------------
+Intercept                                              0.0008      0.000      2.284      0.071      -0.000       0.002
+algorithm_coded                                        0.0002      0.001      0.223      0.832      -0.002       0.003
+auction_type_coded                                    -0.0009      0.001     -0.924      0.398      -0.003       0.002
+n_bidders_coded                                       -0.0005      0.001     -0.499      0.639      -0.003       0.002
+reserve_price_coded                                    0.0013      0.001      1.307      0.248      -0.001       0.004
+eta_linear_coded                                      -0.0008      0.000     -2.284      0.071      -0.002       0.000
+eta_quadratic_coded                                    0.0008      0.000      2.284      0.071      -0.000       0.002
+exploration_intensity_coded                           -0.0008      0.000     -2.284      0.071      -0.002       0.000
+context_richness_coded                                -0.0008      0.000     -2.284      0.071      -0.002       0.000
+lam_coded                                             -0.0008      0.000     -2.284      0.071      -0.002       0.000
+algorithm_coded:auction_type_coded                    -0.0046      0.006     -0.776      0.473      -0.020       0.011
+algorithm_coded:n_bidders_coded                        0.0039      0.006      0.669      0.533      -0.011       0.019
+algorithm_coded:reserve_price_coded                   -0.0044      0.006     -0.754      0.485      -0.020       0.011
+algorithm_coded:eta_linear_coded                      -0.0002      0.001     -0.223      0.832      -0.003       0.002
+algorithm_coded:eta_quadratic_coded                    0.0002      0.001      0.223      0.832      -0.002       0.003
+algorithm_coded:exploration_intensity_coded           -0.0002      0.001     -0.223      0.832      -0.003       0.002
+algorithm_coded:context_richness_coded                -0.0002      0.001     -0.223      0.832      -0.003       0.002
+algorithm_coded:lam_coded                             -0.0002      0.001     -0.223      0.832      -0.003       0.002
+auction_type_coded:n_bidders_coded                     0.0004      0.006      0.074      0.944      -0.015       0.016
+auction_type_coded:reserve_price_coded                 0.0003      0.006      0.053      0.960      -0.015       0.015
+auction_type_coded:eta_linear_coded                    0.0009      0.001      0.924      0.398      -0.002       0.003
+auction_type_coded:eta_quadratic_coded                -0.0009      0.001     -0.924      0.398      -0.003       0.002
+auction_type_coded:exploration_intensity_coded         0.0009      0.001      0.924      0.398      -0.002       0.003
+auction_type_coded:context_richness_coded              0.0009      0.001      0.924      0.398      -0.002       0.003
+auction_type_coded:lam_coded                           0.0009      0.001      0.924      0.398      -0.002       0.003
+n_bidders_coded:reserve_price_coded                    0.0028      0.006      0.478      0.653      -0.012       0.018
+n_bidders_coded:eta_linear_coded                       0.0005      0.001      0.499      0.639      -0.002       0.003
+n_bidders_coded:eta_quadratic_coded                   -0.0005      0.001     -0.499      0.639      -0.003       0.002
+n_bidders_coded:exploration_intensity_coded            0.0005      0.001      0.499      0.639      -0.002       0.003
+n_bidders_coded:context_richness_coded                 0.0005      0.001      0.499      0.639      -0.002       0.003
+n_bidders_coded:lam_coded                              0.0005      0.001      0.499      0.639      -0.002       0.003
+reserve_price_coded:eta_linear_coded                  -0.0013      0.001     -1.307      0.248      -0.004       0.001
+reserve_price_coded:eta_quadratic_coded                0.0013      0.001      1.307      0.248      -0.001       0.004
+reserve_price_coded:exploration_intensity_coded       -0.0013      0.001     -1.307      0.248      -0.004       0.001
+reserve_price_coded:context_richness_coded            -0.0013      0.001     -1.307      0.248      -0.004       0.001
+reserve_price_coded:lam_coded                         -0.0013      0.001     -1.307      0.248      -0.004       0.001
+eta_linear_coded:eta_quadratic_coded                  -0.0008      0.000     -2.284      0.071      -0.002       0.000
+eta_linear_coded:exploration_intensity_coded           0.0008      0.000      2.284      0.071      -0.000       0.002
+eta_linear_coded:context_richness_coded                0.0008      0.000      2.284      0.071      -0.000       0.002
+eta_linear_coded:lam_coded                             0.0008      0.000      2.284      0.071      -0.000       0.002
+eta_quadratic_coded:exploration_intensity_coded       -0.0008      0.000     -2.284      0.071      -0.002       0.000
+eta_quadratic_coded:context_richness_coded            -0.0008      0.000     -2.284      0.071      -0.002       0.000
+eta_quadratic_coded:lam_coded                         -0.0008      0.000     -2.284      0.071      -0.002       0.000
+exploration_intensity_coded:context_richness_coded     0.0008      0.000      2.284      0.071      -0.000       0.002
+exploration_intensity_coded:lam_coded                  0.0008      0.000      2.284      0.071      -0.000       0.002
+context_richness_coded:lam_coded                       0.0008      0.000      2.284      0.071      -0.000       0.002
 ==============================================================================
-Omnibus:                          nan   Durbin-Watson:                     nan
-Prob(Omnibus):                    nan   Jarque-Bera (JB):                  nan
-Skew:                             nan   Prob(JB):                          nan
-Kurtosis:                         nan   Cond. No.                     2.57e+16
+Omnibus:                        0.242   Durbin-Watson:                   2.562
+Prob(Omnibus):                  0.886   Jarque-Bera (JB):                0.423
+Skew:                          -0.000   Prob(JB):                        0.809
+Kurtosis:                       2.203   Cond. No.                     4.33e+16
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The input rank is higher than the number of observations.
-[3] The smallest eigenvalue is 2.67e-31. This might indicate that there are
+[3] The smallest eigenvalue is 1.36e-31. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = nan
-Adj R² = nan
+R² = 0.4854
+Adj R² = -0.5437
 
 --- ANOVA Table (Type III) ---
-|                                                      |   sum_sq |     df |   F |   PR(>F) |
-|------------------------------------------------------|----------|--------|-----|----------|
-| Intercept                                            | nan      | 1.0000 | nan |      nan |
-| auction_type_coded                                   | nan      | 1.0000 | nan |      nan |
-| eta_coded                                            | nan      | 1.0000 | nan |      nan |
-| c_coded                                              | nan      | 1.0000 | nan |      nan |
-| lam_coded                                            | nan      | 1.0000 | nan |      nan |
-| n_bidders_coded                                      | nan      | 1.0000 | nan |      nan |
-| reserve_price_coded                                  | nan      | 1.0000 | nan |      nan |
-| use_median_of_others_coded                           | nan      | 1.0000 | nan |      nan |
-| use_past_winner_bid_coded                            | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:eta_coded                         | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:c_coded                           | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:lam_coded                         | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:n_bidders_coded                   | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:reserve_price_coded               | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:use_median_of_others_coded        | nan      | 1.0000 | nan |      nan |
-| auction_type_coded:use_past_winner_bid_coded         | nan      | 1.0000 | nan |      nan |
-| eta_coded:c_coded                                    | nan      | 1.0000 | nan |      nan |
-| eta_coded:lam_coded                                  | nan      | 1.0000 | nan |      nan |
-| eta_coded:n_bidders_coded                            | nan      | 1.0000 | nan |      nan |
-| eta_coded:reserve_price_coded                        | nan      | 1.0000 | nan |      nan |
-| eta_coded:use_median_of_others_coded                 | nan      | 1.0000 | nan |      nan |
-| eta_coded:use_past_winner_bid_coded                  | nan      | 1.0000 | nan |      nan |
-| c_coded:lam_coded                                    | nan      | 1.0000 | nan |      nan |
-| c_coded:n_bidders_coded                              | nan      | 1.0000 | nan |      nan |
-| c_coded:reserve_price_coded                          | nan      | 1.0000 | nan |      nan |
-| c_coded:use_median_of_others_coded                   | nan      | 1.0000 | nan |      nan |
-| c_coded:use_past_winner_bid_coded                    | nan      | 1.0000 | nan |      nan |
-| lam_coded:n_bidders_coded                            | nan      | 1.0000 | nan |      nan |
-| lam_coded:reserve_price_coded                        | nan      | 1.0000 | nan |      nan |
-| lam_coded:use_median_of_others_coded                 | nan      | 1.0000 | nan |      nan |
-| lam_coded:use_past_winner_bid_coded                  | nan      | 1.0000 | nan |      nan |
-| n_bidders_coded:reserve_price_coded                  | nan      | 1.0000 | nan |      nan |
-| n_bidders_coded:use_median_of_others_coded           | nan      | 1.0000 | nan |      nan |
-| n_bidders_coded:use_past_winner_bid_coded            | nan      | 1.0000 | nan |      nan |
-| reserve_price_coded:use_median_of_others_coded       | nan      | 1.0000 | nan |      nan |
-| reserve_price_coded:use_past_winner_bid_coded        | nan      | 1.0000 | nan |      nan |
-| use_median_of_others_coded:use_past_winner_bid_coded | nan      | 1.0000 | nan |      nan |
-| Residual                                             |   0.0000 | 5.0000 | nan |      nan |
+|                                                    |   sum_sq |     df |        F |   PR(>F) |
+|----------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                          |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| algorithm_coded                                    |   0.0000 | 1.0000 |   0.0498 |   0.8323 |
+| auction_type_coded                                 |   0.0005 | 1.0000 |   0.8544 |   0.3977 |
+| n_bidders_coded                                    |   0.0001 | 1.0000 |   0.2494 |   0.6387 |
+| reserve_price_coded                                |   0.0009 | 1.0000 |   1.7078 |   0.2481 |
+| eta_linear_coded                                   |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_quadratic_coded                                |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| exploration_intensity_coded                        |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| context_richness_coded                             |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| lam_coded                                          |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| algorithm_coded:auction_type_coded                 |   0.0003 | 1.0000 |   0.6016 |   0.4731 |
+| algorithm_coded:n_bidders_coded                    |   0.0002 | 1.0000 |   0.4480 |   0.5329 |
+| algorithm_coded:reserve_price_coded                |   0.0003 | 1.0000 |   0.5691 |   0.4846 |
+| algorithm_coded:eta_linear_coded                   |   0.0000 | 1.0000 |   0.0498 |   0.8323 |
+| algorithm_coded:eta_quadratic_coded                |   0.0000 | 1.0000 |   0.0498 |   0.8323 |
+| algorithm_coded:exploration_intensity_coded        |   0.0000 | 1.0000 |   0.0498 |   0.8323 |
+| algorithm_coded:context_richness_coded             |   0.0000 | 1.0000 |   0.0498 |   0.8323 |
+| algorithm_coded:lam_coded                          |   0.0000 | 1.0000 |   0.0498 |   0.8323 |
+| auction_type_coded:n_bidders_coded                 |   0.0000 | 1.0000 |   0.0055 |   0.9436 |
+| auction_type_coded:reserve_price_coded             |   0.0000 | 1.0000 |   0.0028 |   0.9597 |
+| auction_type_coded:eta_linear_coded                |   0.0005 | 1.0000 |   0.8544 |   0.3977 |
+| auction_type_coded:eta_quadratic_coded             |   0.0005 | 1.0000 |   0.8544 |   0.3977 |
+| auction_type_coded:exploration_intensity_coded     |   0.0005 | 1.0000 |   0.8544 |   0.3977 |
+| auction_type_coded:context_richness_coded          |   0.0005 | 1.0000 |   0.8544 |   0.3977 |
+| auction_type_coded:lam_coded                       |   0.0005 | 1.0000 |   0.8544 |   0.3977 |
+| n_bidders_coded:reserve_price_coded                |   0.0001 | 1.0000 |   0.2286 |   0.6527 |
+| n_bidders_coded:eta_linear_coded                   |   0.0001 | 1.0000 |   0.2494 |   0.6387 |
+| n_bidders_coded:eta_quadratic_coded                |   0.0001 | 1.0000 |   0.2494 |   0.6387 |
+| n_bidders_coded:exploration_intensity_coded        |   0.0001 | 1.0000 |   0.2494 |   0.6387 |
+| n_bidders_coded:context_richness_coded             |   0.0001 | 1.0000 |   0.2494 |   0.6387 |
+| n_bidders_coded:lam_coded                          |   0.0001 | 1.0000 |   0.2494 |   0.6387 |
+| reserve_price_coded:eta_linear_coded               |   0.0009 | 1.0000 |   1.7078 |   0.2481 |
+| reserve_price_coded:eta_quadratic_coded            |   0.0009 | 1.0000 |   1.7078 |   0.2481 |
+| reserve_price_coded:exploration_intensity_coded    |   0.0009 | 1.0000 |   1.7078 |   0.2481 |
+| reserve_price_coded:context_richness_coded         |   0.0009 | 1.0000 |   1.7078 |   0.2481 |
+| reserve_price_coded:lam_coded                      |   0.0009 | 1.0000 |   1.7078 |   0.2481 |
+| eta_linear_coded:eta_quadratic_coded               |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_linear_coded:exploration_intensity_coded       |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_linear_coded:context_richness_coded            |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_linear_coded:lam_coded                         |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_quadratic_coded:exploration_intensity_coded    |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_quadratic_coded:context_richness_coded         |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| eta_quadratic_coded:lam_coded                      |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| exploration_intensity_coded:context_richness_coded |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| exploration_intensity_coded:lam_coded              |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| context_richness_coded:lam_coded                   |   0.0029 | 1.0000 |   5.2181 |   0.0712 |
+| Residual                                           |   0.0028 | 5.0000 | nan      | nan      |
 
 --- Significant Effects (p < 0.05): 0 ---
 
@@ -531,124 +621,153 @@ RESPONSE: price_volatility
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:       price_volatility   R-squared:                       0.688
-Model:                            OLS   Adj. R-squared:                  0.064
-Method:                 Least Squares   F-statistic:                     1.102
-Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.487
-Time:                        01:28:38   Log-Likelihood:                 25.629
-No. Observations:                  16   AIC:                            -29.26
-Df Residuals:                       5   BIC:                            -20.76
+Dep. Variable:       price_volatility   R-squared:                       0.813
+Model:                            OLS   Adj. R-squared:                  0.440
+Method:                 Least Squares   F-statistic:                     2.178
+Date:                Sat, 21 Feb 2026   Prob (F-statistic):              0.202
+Time:                        17:05:48   Log-Likelihood:                 36.080
+No. Observations:                  16   AIC:                            -50.16
+Df Residuals:                       5   BIC:                            -41.66
 Df Model:                          10                                         
 Covariance Type:            nonrobust                                         
-========================================================================================================================
-                                                           coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                                0.0159      0.002      8.003      0.000       0.011       0.021
-auction_type_coded                                      -0.0065      0.004     -1.489      0.197      -0.018       0.005
-eta_coded                                               -0.0021      0.004     -0.473      0.656      -0.013       0.009
-c_coded                                                  0.0087      0.004      2.002      0.102      -0.002       0.020
-lam_coded                                               -0.0033      0.004     -0.753      0.485      -0.014       0.008
-n_bidders_coded                                         -0.0159      0.002     -8.003      0.000      -0.021      -0.011
-reserve_price_coded                                     -0.0159      0.002     -8.003      0.000      -0.021      -0.011
-use_median_of_others_coded                              -0.0159      0.002     -8.003      0.000      -0.021      -0.011
-use_past_winner_bid_coded                               -0.0159      0.002     -8.003      0.000      -0.021      -0.011
-auction_type_coded:eta_coded                             0.0044      0.022      0.201      0.848      -0.052       0.060
-auction_type_coded:c_coded                               0.0209      0.022      0.959      0.381      -0.035       0.077
-auction_type_coded:lam_coded                             0.0029      0.022      0.133      0.900      -0.053       0.059
-auction_type_coded:n_bidders_coded                       0.0065      0.004      1.489      0.197      -0.005       0.018
-auction_type_coded:reserve_price_coded                   0.0065      0.004      1.489      0.197      -0.005       0.018
-auction_type_coded:use_median_of_others_coded            0.0065      0.004      1.489      0.197      -0.005       0.018
-auction_type_coded:use_past_winner_bid_coded             0.0065      0.004      1.489      0.197      -0.005       0.018
-eta_coded:c_coded                                        0.0331      0.022      1.518      0.189      -0.023       0.089
-eta_coded:lam_coded                                      0.0142      0.022      0.649      0.545      -0.042       0.070
-eta_coded:n_bidders_coded                                0.0021      0.004      0.473      0.656      -0.009       0.013
-eta_coded:reserve_price_coded                            0.0021      0.004      0.473      0.656      -0.009       0.013
-eta_coded:use_median_of_others_coded                     0.0021      0.004      0.473      0.656      -0.009       0.013
-eta_coded:use_past_winner_bid_coded                      0.0021      0.004      0.473      0.656      -0.009       0.013
-c_coded:lam_coded                                       -0.0119      0.022     -0.547      0.608      -0.068       0.044
-c_coded:n_bidders_coded                                 -0.0087      0.004     -2.002      0.102      -0.020       0.002
-c_coded:reserve_price_coded                             -0.0087      0.004     -2.002      0.102      -0.020       0.002
-c_coded:use_median_of_others_coded                      -0.0087      0.004     -2.002      0.102      -0.020       0.002
-c_coded:use_past_winner_bid_coded                       -0.0087      0.004     -2.002      0.102      -0.020       0.002
-lam_coded:n_bidders_coded                                0.0033      0.004      0.753      0.485      -0.008       0.014
-lam_coded:reserve_price_coded                            0.0033      0.004      0.753      0.485      -0.008       0.014
-lam_coded:use_median_of_others_coded                     0.0033      0.004      0.753      0.485      -0.008       0.014
-lam_coded:use_past_winner_bid_coded                      0.0033      0.004      0.753      0.485      -0.008       0.014
-n_bidders_coded:reserve_price_coded                      0.0159      0.002      8.003      0.000       0.011       0.021
-n_bidders_coded:use_median_of_others_coded               0.0159      0.002      8.003      0.000       0.011       0.021
-n_bidders_coded:use_past_winner_bid_coded                0.0159      0.002      8.003      0.000       0.011       0.021
-reserve_price_coded:use_median_of_others_coded           0.0159      0.002      8.003      0.000       0.011       0.021
-reserve_price_coded:use_past_winner_bid_coded            0.0159      0.002      8.003      0.000       0.011       0.021
-use_median_of_others_coded:use_past_winner_bid_coded     0.0159      0.002      8.003      0.000       0.011       0.021
+======================================================================================================================
+                                                         coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------------------
+Intercept                                              0.0090      0.001     12.705      0.000       0.007       0.011
+algorithm_coded                                        0.0033      0.002      1.770      0.137      -0.002       0.008
+auction_type_coded                                    -0.0056      0.002     -2.936      0.032      -0.010      -0.001
+n_bidders_coded                                    -5.737e-05      0.002     -0.030      0.977      -0.005       0.005
+reserve_price_coded                                   -0.0001      0.002     -0.078      0.941      -0.005       0.005
+eta_linear_coded                                      -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+eta_quadratic_coded                                    0.0090      0.001     12.705      0.000       0.007       0.011
+exploration_intensity_coded                           -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+context_richness_coded                                -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+lam_coded                                             -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+algorithm_coded:auction_type_coded                    -0.0012      0.011     -0.103      0.922      -0.030       0.028
+algorithm_coded:n_bidders_coded                       -0.0224      0.011     -1.974      0.105      -0.052       0.007
+algorithm_coded:reserve_price_coded                    0.0136      0.011      1.197      0.285      -0.016       0.043
+algorithm_coded:eta_linear_coded                      -0.0033      0.002     -1.770      0.137      -0.008       0.002
+algorithm_coded:eta_quadratic_coded                    0.0033      0.002      1.770      0.137      -0.002       0.008
+algorithm_coded:exploration_intensity_coded           -0.0033      0.002     -1.770      0.137      -0.008       0.002
+algorithm_coded:context_richness_coded                -0.0033      0.002     -1.770      0.137      -0.008       0.002
+algorithm_coded:lam_coded                             -0.0033      0.002     -1.770      0.137      -0.008       0.002
+auction_type_coded:n_bidders_coded                     0.0023      0.011      0.200      0.850      -0.027       0.031
+auction_type_coded:reserve_price_coded                 0.0135      0.011      1.190      0.288      -0.016       0.043
+auction_type_coded:eta_linear_coded                    0.0056      0.002      2.936      0.032       0.001       0.010
+auction_type_coded:eta_quadratic_coded                -0.0056      0.002     -2.936      0.032      -0.010      -0.001
+auction_type_coded:exploration_intensity_coded         0.0056      0.002      2.936      0.032       0.001       0.010
+auction_type_coded:context_richness_coded              0.0056      0.002      2.936      0.032       0.001       0.010
+auction_type_coded:lam_coded                           0.0056      0.002      2.936      0.032       0.001       0.010
+n_bidders_coded:reserve_price_coded                   -0.0204      0.011     -1.794      0.133      -0.050       0.009
+n_bidders_coded:eta_linear_coded                    5.737e-05      0.002      0.030      0.977      -0.005       0.005
+n_bidders_coded:eta_quadratic_coded                -5.737e-05      0.002     -0.030      0.977      -0.005       0.005
+n_bidders_coded:exploration_intensity_coded         5.737e-05      0.002      0.030      0.977      -0.005       0.005
+n_bidders_coded:context_richness_coded              5.737e-05      0.002      0.030      0.977      -0.005       0.005
+n_bidders_coded:lam_coded                           5.737e-05      0.002      0.030      0.977      -0.005       0.005
+reserve_price_coded:eta_linear_coded                   0.0001      0.002      0.078      0.941      -0.005       0.005
+reserve_price_coded:eta_quadratic_coded               -0.0001      0.002     -0.078      0.941      -0.005       0.005
+reserve_price_coded:exploration_intensity_coded        0.0001      0.002      0.078      0.941      -0.005       0.005
+reserve_price_coded:context_richness_coded             0.0001      0.002      0.078      0.941      -0.005       0.005
+reserve_price_coded:lam_coded                          0.0001      0.002      0.078      0.941      -0.005       0.005
+eta_linear_coded:eta_quadratic_coded                  -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+eta_linear_coded:exploration_intensity_coded           0.0090      0.001     12.705      0.000       0.007       0.011
+eta_linear_coded:context_richness_coded                0.0090      0.001     12.705      0.000       0.007       0.011
+eta_linear_coded:lam_coded                             0.0090      0.001     12.705      0.000       0.007       0.011
+eta_quadratic_coded:exploration_intensity_coded       -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+eta_quadratic_coded:context_richness_coded            -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+eta_quadratic_coded:lam_coded                         -0.0090      0.001    -12.705      0.000      -0.011      -0.007
+exploration_intensity_coded:context_richness_coded     0.0090      0.001     12.705      0.000       0.007       0.011
+exploration_intensity_coded:lam_coded                  0.0090      0.001     12.705      0.000       0.007       0.011
+context_richness_coded:lam_coded                       0.0090      0.001     12.705      0.000       0.007       0.011
 ==============================================================================
-Omnibus:                        0.751   Durbin-Watson:                   1.203
-Prob(Omnibus):                  0.687   Jarque-Bera (JB):                0.639
-Skew:                          -0.000   Prob(JB):                        0.726
-Kurtosis:                       2.021   Cond. No.                     2.57e+16
+Omnibus:                        0.000   Durbin-Watson:                   2.439
+Prob(Omnibus):                  1.000   Jarque-Bera (JB):                0.177
+Skew:                          -0.000   Prob(JB):                        0.915
+Kurtosis:                       2.484   Cond. No.                     4.33e+16
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The input rank is higher than the number of observations.
-[3] The smallest eigenvalue is 2.67e-31. This might indicate that there are
+[3] The smallest eigenvalue is 1.36e-31. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.6879
-Adj R² = 0.0638
+R² = 0.8133
+Adj R² = 0.4398
 
 --- ANOVA Table (Type III) ---
-|                                                      |   sum_sq |     df |        F |   PR(>F) |
-|------------------------------------------------------|----------|--------|----------|----------|
-| Intercept                                            |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| auction_type_coded                                   |   0.0169 | 1.0000 |   2.2181 |   0.1966 |
-| eta_coded                                            |   0.0017 | 1.0000 |   0.2238 |   0.6561 |
-| c_coded                                              |   0.0305 | 1.0000 |   4.0090 |   0.1016 |
-| lam_coded                                            |   0.0043 | 1.0000 |   0.5673 |   0.4853 |
-| n_bidders_coded                                      |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| reserve_price_coded                                  |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| use_median_of_others_coded                           |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| use_past_winner_bid_coded                            |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| auction_type_coded:eta_coded                         |   0.0003 | 1.0000 |   0.0405 |   0.8484 |
-| auction_type_coded:c_coded                           |   0.0070 | 1.0000 |   0.9204 |   0.3814 |
-| auction_type_coded:lam_coded                         |   0.0001 | 1.0000 |   0.0176 |   0.8995 |
-| auction_type_coded:n_bidders_coded                   |   0.0169 | 1.0000 |   2.2181 |   0.1966 |
-| auction_type_coded:reserve_price_coded               |   0.0169 | 1.0000 |   2.2181 |   0.1966 |
-| auction_type_coded:use_median_of_others_coded        |   0.0169 | 1.0000 |   2.2181 |   0.1966 |
-| auction_type_coded:use_past_winner_bid_coded         |   0.0169 | 1.0000 |   2.2181 |   0.1966 |
-| eta_coded:c_coded                                    |   0.0175 | 1.0000 |   2.3049 |   0.1894 |
-| eta_coded:lam_coded                                  |   0.0032 | 1.0000 |   0.4215 |   0.5448 |
-| eta_coded:n_bidders_coded                            |   0.0017 | 1.0000 |   0.2238 |   0.6561 |
-| eta_coded:reserve_price_coded                        |   0.0017 | 1.0000 |   0.2238 |   0.6561 |
-| eta_coded:use_median_of_others_coded                 |   0.0017 | 1.0000 |   0.2238 |   0.6561 |
-| eta_coded:use_past_winner_bid_coded                  |   0.0017 | 1.0000 |   0.2238 |   0.6561 |
-| c_coded:lam_coded                                    |   0.0023 | 1.0000 |   0.2992 |   0.6079 |
-| c_coded:n_bidders_coded                              |   0.0305 | 1.0000 |   4.0090 |   0.1016 |
-| c_coded:reserve_price_coded                          |   0.0305 | 1.0000 |   4.0090 |   0.1016 |
-| c_coded:use_median_of_others_coded                   |   0.0305 | 1.0000 |   4.0090 |   0.1016 |
-| c_coded:use_past_winner_bid_coded                    |   0.0305 | 1.0000 |   4.0090 |   0.1016 |
-| lam_coded:n_bidders_coded                            |   0.0043 | 1.0000 |   0.5673 |   0.4853 |
-| lam_coded:reserve_price_coded                        |   0.0043 | 1.0000 |   0.5673 |   0.4853 |
-| lam_coded:use_median_of_others_coded                 |   0.0043 | 1.0000 |   0.5673 |   0.4853 |
-| lam_coded:use_past_winner_bid_coded                  |   0.0043 | 1.0000 |   0.5673 |   0.4853 |
-| n_bidders_coded:reserve_price_coded                  |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| n_bidders_coded:use_median_of_others_coded           |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| n_bidders_coded:use_past_winner_bid_coded            |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| reserve_price_coded:use_median_of_others_coded       |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| reserve_price_coded:use_past_winner_bid_coded        |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| use_median_of_others_coded:use_past_winner_bid_coded |   0.4873 | 1.0000 |  64.0409 |   0.0005 |
-| Residual                                             |   0.0380 | 5.0000 | nan      | nan      |
+|                                                    |   sum_sq |     df |        F |   PR(>F) |
+|----------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                          |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| algorithm_coded                                    |   0.0065 | 1.0000 |   3.1327 |   0.1370 |
+| auction_type_coded                                 |   0.0178 | 1.0000 |   8.6194 |   0.0324 |
+| n_bidders_coded                                    |   0.0000 | 1.0000 |   0.0009 |   0.9770 |
+| reserve_price_coded                                |   0.0000 | 1.0000 |   0.0061 |   0.9409 |
+| eta_linear_coded                                   |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_quadratic_coded                                |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| exploration_intensity_coded                        |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| context_richness_coded                             |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| lam_coded                                          |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| algorithm_coded:auction_type_coded                 |   0.0000 | 1.0000 |   0.0106 |   0.9219 |
+| algorithm_coded:n_bidders_coded                    |   0.0080 | 1.0000 |   3.8982 |   0.1053 |
+| algorithm_coded:reserve_price_coded                |   0.0030 | 1.0000 |   1.4336 |   0.2848 |
+| algorithm_coded:eta_linear_coded                   |   0.0065 | 1.0000 |   3.1327 |   0.1370 |
+| algorithm_coded:eta_quadratic_coded                |   0.0065 | 1.0000 |   3.1327 |   0.1370 |
+| algorithm_coded:exploration_intensity_coded        |   0.0065 | 1.0000 |   3.1327 |   0.1370 |
+| algorithm_coded:context_richness_coded             |   0.0065 | 1.0000 |   3.1327 |   0.1370 |
+| algorithm_coded:lam_coded                          |   0.0065 | 1.0000 |   3.1327 |   0.1370 |
+| auction_type_coded:n_bidders_coded                 |   0.0001 | 1.0000 |   0.0399 |   0.8495 |
+| auction_type_coded:reserve_price_coded             |   0.0029 | 1.0000 |   1.4152 |   0.2876 |
+| auction_type_coded:eta_linear_coded                |   0.0178 | 1.0000 |   8.6194 |   0.0324 |
+| auction_type_coded:eta_quadratic_coded             |   0.0178 | 1.0000 |   8.6194 |   0.0324 |
+| auction_type_coded:exploration_intensity_coded     |   0.0178 | 1.0000 |   8.6194 |   0.0324 |
+| auction_type_coded:context_richness_coded          |   0.0178 | 1.0000 |   8.6194 |   0.0324 |
+| auction_type_coded:lam_coded                       |   0.0178 | 1.0000 |   8.6194 |   0.0324 |
+| n_bidders_coded:reserve_price_coded                |   0.0066 | 1.0000 |   3.2195 |   0.1327 |
+| n_bidders_coded:eta_linear_coded                   |   0.0000 | 1.0000 |   0.0009 |   0.9770 |
+| n_bidders_coded:eta_quadratic_coded                |   0.0000 | 1.0000 |   0.0009 |   0.9770 |
+| n_bidders_coded:exploration_intensity_coded        |   0.0000 | 1.0000 |   0.0009 |   0.9770 |
+| n_bidders_coded:context_richness_coded             |   0.0000 | 1.0000 |   0.0009 |   0.9770 |
+| n_bidders_coded:lam_coded                          |   0.0000 | 1.0000 |   0.0009 |   0.9770 |
+| reserve_price_coded:eta_linear_coded               |   0.0000 | 1.0000 |   0.0061 |   0.9409 |
+| reserve_price_coded:eta_quadratic_coded            |   0.0000 | 1.0000 |   0.0061 |   0.9409 |
+| reserve_price_coded:exploration_intensity_coded    |   0.0000 | 1.0000 |   0.0061 |   0.9409 |
+| reserve_price_coded:context_richness_coded         |   0.0000 | 1.0000 |   0.0061 |   0.9409 |
+| reserve_price_coded:lam_coded                      |   0.0000 | 1.0000 |   0.0061 |   0.9409 |
+| eta_linear_coded:eta_quadratic_coded               |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_linear_coded:exploration_intensity_coded       |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_linear_coded:context_richness_coded            |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_linear_coded:lam_coded                         |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_quadratic_coded:exploration_intensity_coded    |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_quadratic_coded:context_richness_coded         |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| eta_quadratic_coded:lam_coded                      |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| exploration_intensity_coded:context_richness_coded |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| exploration_intensity_coded:lam_coded              |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| context_richness_coded:lam_coded                   |   0.3326 | 1.0000 | 161.4285 |   0.0001 |
+| Residual                                           |   0.0103 | 5.0000 | nan      | nan      |
 
---- Significant Effects (p < 0.05): 10 ---
-  use_median_of_others                     coef=-0.0159  p=0.0005
-  n_bidders:reserve_price                  coef=+0.0159  p=0.0005
-  n_bidders:use_median_of_others           coef=+0.0159  p=0.0005
-  n_bidders:use_past_winner_bid            coef=+0.0159  p=0.0005
-  reserve_price:use_median_of_others       coef=+0.0159  p=0.0005
-  reserve_price:use_past_winner_bid        coef=+0.0159  p=0.0005
-  use_median_of_others:use_past_winner_bid coef=+0.0159  p=0.0005
-  reserve_price                            coef=-0.0159  p=0.0005
-  n_bidders                                coef=-0.0159  p=0.0005
-  use_past_winner_bid                      coef=-0.0159  p=0.0005
+--- Significant Effects (p < 0.05): 21 ---
+  eta_quadratic                            coef=+0.0090  p=0.0001
+  context_richness                         coef=-0.0090  p=0.0001
+  eta_linear                               coef=-0.0090  p=0.0001
+  lam                                      coef=-0.0090  p=0.0001
+  context_richness:lam                     coef=+0.0090  p=0.0001
+  exploration_intensity:context_richness   coef=+0.0090  p=0.0001
+  eta_quadratic:lam                        coef=-0.0090  p=0.0001
+  eta_quadratic:context_richness           coef=-0.0090  p=0.0001
+  eta_quadratic:exploration_intensity      coef=-0.0090  p=0.0001
+  exploration_intensity:lam                coef=+0.0090  p=0.0001
+  eta_linear:eta_quadratic                 coef=-0.0090  p=0.0001
+  eta_linear:exploration_intensity         coef=+0.0090  p=0.0001
+  eta_linear:context_richness              coef=+0.0090  p=0.0001
+  eta_linear:lam                           coef=+0.0090  p=0.0001
+  exploration_intensity                    coef=-0.0090  p=0.0001
+  auction_type:lam                         coef=+0.0056  p=0.0324
+  auction_type:exploration_intensity       coef=+0.0056  p=0.0324
+  auction_type:eta_quadratic               coef=-0.0056  p=0.0324
+  auction_type:eta_linear                  coef=+0.0056  p=0.0324
+  auction_type:context_richness            coef=+0.0056  p=0.0324
+  auction_type                             coef=-0.0056  p=0.0324
 
   Plots saved to results/exp3/
 
@@ -659,124 +778,153 @@ RESPONSE: winner_entropy
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:         winner_entropy   R-squared:                       0.479
-Model:                            OLS   Adj. R-squared:                 -0.563
-Method:                 Least Squares   F-statistic:                    0.4600
-Date:                Mon, 16 Feb 2026   Prob (F-statistic):              0.861
-Time:                        01:28:38   Log-Likelihood:                 13.447
-No. Observations:                  16   AIC:                            -4.894
-Df Residuals:                       5   BIC:                             3.604
+Dep. Variable:         winner_entropy   R-squared:                       0.843
+Model:                            OLS   Adj. R-squared:                  0.530
+Method:                 Least Squares   F-statistic:                     2.688
+Date:                Sat, 21 Feb 2026   Prob (F-statistic):              0.143
+Time:                        17:05:48   Log-Likelihood:                 8.1407
+No. Observations:                  16   AIC:                             5.719
+Df Residuals:                       5   BIC:                             14.22
 Df Model:                          10                                         
 Covariance Type:            nonrobust                                         
-========================================================================================================================
-                                                           coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                                0.0560      0.004     13.186      0.000       0.045       0.067
-auction_type_coded                                       0.0021      0.009      0.226      0.830      -0.022       0.026
-eta_coded                                                0.0126      0.009      1.354      0.234      -0.011       0.037
-c_coded                                                  0.0054      0.009      0.583      0.585      -0.019       0.029
-lam_coded                                               -0.0069      0.009     -0.735      0.495      -0.031       0.017
-n_bidders_coded                                         -0.0560      0.004    -13.186      0.000      -0.067      -0.045
-reserve_price_coded                                     -0.0560      0.004    -13.186      0.000      -0.067      -0.045
-use_median_of_others_coded                              -0.0560      0.004    -13.186      0.000      -0.067      -0.045
-use_past_winner_bid_coded                               -0.0560      0.004    -13.186      0.000      -0.067      -0.045
-auction_type_coded:eta_coded                            -0.0174      0.047     -0.373      0.725      -0.137       0.103
-auction_type_coded:c_coded                               0.0388      0.047      0.832      0.443      -0.081       0.159
-auction_type_coded:lam_coded                            -0.0122      0.047     -0.262      0.804      -0.132       0.108
-auction_type_coded:n_bidders_coded                      -0.0021      0.009     -0.226      0.830      -0.026       0.022
-auction_type_coded:reserve_price_coded                  -0.0021      0.009     -0.226      0.830      -0.026       0.022
-auction_type_coded:use_median_of_others_coded           -0.0021      0.009     -0.226      0.830      -0.026       0.022
-auction_type_coded:use_past_winner_bid_coded            -0.0021      0.009     -0.226      0.830      -0.026       0.022
-eta_coded:c_coded                                       -0.0143      0.047     -0.305      0.772      -0.134       0.106
-eta_coded:lam_coded                                      0.0406      0.047      0.869      0.424      -0.079       0.161
-eta_coded:n_bidders_coded                               -0.0126      0.009     -1.354      0.234      -0.037       0.011
-eta_coded:reserve_price_coded                           -0.0126      0.009     -1.354      0.234      -0.037       0.011
-eta_coded:use_median_of_others_coded                    -0.0126      0.009     -1.354      0.234      -0.037       0.011
-eta_coded:use_past_winner_bid_coded                     -0.0126      0.009     -1.354      0.234      -0.037       0.011
-c_coded:lam_coded                                       -0.0138      0.047     -0.296      0.779      -0.134       0.106
-c_coded:n_bidders_coded                                 -0.0054      0.009     -0.583      0.585      -0.029       0.019
-c_coded:reserve_price_coded                             -0.0054      0.009     -0.583      0.585      -0.029       0.019
-c_coded:use_median_of_others_coded                      -0.0054      0.009     -0.583      0.585      -0.029       0.019
-c_coded:use_past_winner_bid_coded                       -0.0054      0.009     -0.583      0.585      -0.029       0.019
-lam_coded:n_bidders_coded                                0.0069      0.009      0.735      0.495      -0.017       0.031
-lam_coded:reserve_price_coded                            0.0069      0.009      0.735      0.495      -0.017       0.031
-lam_coded:use_median_of_others_coded                     0.0069      0.009      0.735      0.495      -0.017       0.031
-lam_coded:use_past_winner_bid_coded                      0.0069      0.009      0.735      0.495      -0.017       0.031
-n_bidders_coded:reserve_price_coded                      0.0560      0.004     13.186      0.000       0.045       0.067
-n_bidders_coded:use_median_of_others_coded               0.0560      0.004     13.186      0.000       0.045       0.067
-n_bidders_coded:use_past_winner_bid_coded                0.0560      0.004     13.186      0.000       0.045       0.067
-reserve_price_coded:use_median_of_others_coded           0.0560      0.004     13.186      0.000       0.045       0.067
-reserve_price_coded:use_past_winner_bid_coded            0.0560      0.004     13.186      0.000       0.045       0.067
-use_median_of_others_coded:use_past_winner_bid_coded     0.0560      0.004     13.186      0.000       0.045       0.067
+======================================================================================================================
+                                                         coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------------------------------------------
+Intercept                                              0.0633      0.004     15.567      0.000       0.053       0.074
+algorithm_coded                                        0.0015      0.011      0.137      0.896      -0.026       0.029
+auction_type_coded                                     0.0462      0.011      4.264      0.008       0.018       0.074
+n_bidders_coded                                        0.0125      0.011      1.155      0.300      -0.015       0.040
+reserve_price_coded                                    0.0020      0.011      0.181      0.863      -0.026       0.030
+eta_linear_coded                                      -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+eta_quadratic_coded                                    0.0633      0.004     15.567      0.000       0.053       0.074
+exploration_intensity_coded                           -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+context_richness_coded                                -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+lam_coded                                             -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+algorithm_coded:auction_type_coded                     0.0718      0.065      1.104      0.320      -0.095       0.239
+algorithm_coded:n_bidders_coded                       -0.0634      0.065     -0.975      0.374      -0.231       0.104
+algorithm_coded:reserve_price_coded                   -0.0198      0.065     -0.304      0.773      -0.187       0.147
+algorithm_coded:eta_linear_coded                      -0.0015      0.011     -0.137      0.896      -0.029       0.026
+algorithm_coded:eta_quadratic_coded                    0.0015      0.011      0.137      0.896      -0.026       0.029
+algorithm_coded:exploration_intensity_coded           -0.0015      0.011     -0.137      0.896      -0.029       0.026
+algorithm_coded:context_richness_coded                -0.0015      0.011     -0.137      0.896      -0.029       0.026
+algorithm_coded:lam_coded                             -0.0015      0.011     -0.137      0.896      -0.029       0.026
+auction_type_coded:n_bidders_coded                     0.0124      0.065      0.191      0.856      -0.155       0.180
+auction_type_coded:reserve_price_coded                -0.1025      0.065     -1.575      0.176      -0.270       0.065
+auction_type_coded:eta_linear_coded                   -0.0462      0.011     -4.264      0.008      -0.074      -0.018
+auction_type_coded:eta_quadratic_coded                 0.0462      0.011      4.264      0.008       0.018       0.074
+auction_type_coded:exploration_intensity_coded        -0.0462      0.011     -4.264      0.008      -0.074      -0.018
+auction_type_coded:context_richness_coded             -0.0462      0.011     -4.264      0.008      -0.074      -0.018
+auction_type_coded:lam_coded                          -0.0462      0.011     -4.264      0.008      -0.074      -0.018
+n_bidders_coded:reserve_price_coded                    0.1036      0.065      1.592      0.172      -0.064       0.271
+n_bidders_coded:eta_linear_coded                      -0.0125      0.011     -1.155      0.300      -0.040       0.015
+n_bidders_coded:eta_quadratic_coded                    0.0125      0.011      1.155      0.300      -0.015       0.040
+n_bidders_coded:exploration_intensity_coded           -0.0125      0.011     -1.155      0.300      -0.040       0.015
+n_bidders_coded:context_richness_coded                -0.0125      0.011     -1.155      0.300      -0.040       0.015
+n_bidders_coded:lam_coded                             -0.0125      0.011     -1.155      0.300      -0.040       0.015
+reserve_price_coded:eta_linear_coded                  -0.0020      0.011     -0.181      0.863      -0.030       0.026
+reserve_price_coded:eta_quadratic_coded                0.0020      0.011      0.181      0.863      -0.026       0.030
+reserve_price_coded:exploration_intensity_coded       -0.0020      0.011     -0.181      0.863      -0.030       0.026
+reserve_price_coded:context_richness_coded            -0.0020      0.011     -0.181      0.863      -0.030       0.026
+reserve_price_coded:lam_coded                         -0.0020      0.011     -0.181      0.863      -0.030       0.026
+eta_linear_coded:eta_quadratic_coded                  -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+eta_linear_coded:exploration_intensity_coded           0.0633      0.004     15.567      0.000       0.053       0.074
+eta_linear_coded:context_richness_coded                0.0633      0.004     15.567      0.000       0.053       0.074
+eta_linear_coded:lam_coded                             0.0633      0.004     15.567      0.000       0.053       0.074
+eta_quadratic_coded:exploration_intensity_coded       -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+eta_quadratic_coded:context_richness_coded            -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+eta_quadratic_coded:lam_coded                         -0.0633      0.004    -15.567      0.000      -0.074      -0.053
+exploration_intensity_coded:context_richness_coded     0.0633      0.004     15.567      0.000       0.053       0.074
+exploration_intensity_coded:lam_coded                  0.0633      0.004     15.567      0.000       0.053       0.074
+context_richness_coded:lam_coded                       0.0633      0.004     15.567      0.000       0.053       0.074
 ==============================================================================
-Omnibus:                        0.169   Durbin-Watson:                   2.410
-Prob(Omnibus):                  0.919   Jarque-Bera (JB):                0.378
-Skew:                           0.000   Prob(JB):                        0.828
-Kurtosis:                       2.247   Cond. No.                     2.57e+16
+Omnibus:                        0.546   Durbin-Watson:                   2.668
+Prob(Omnibus):                  0.761   Jarque-Bera (JB):                0.564
+Skew:                          -0.000   Prob(JB):                        0.754
+Kurtosis:                       2.080   Cond. No.                     4.33e+16
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The input rank is higher than the number of observations.
-[3] The smallest eigenvalue is 2.67e-31. This might indicate that there are
+[3] The smallest eigenvalue is 1.36e-31. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.4792
-Adj R² = -0.5625
+R² = 0.8432
+Adj R² = 0.5295
 
 --- ANOVA Table (Type III) ---
-|                                                      |   sum_sq |     df |        F |   PR(>F) |
-|------------------------------------------------------|----------|--------|----------|----------|
-| Intercept                                            |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| auction_type_coded                                   |   0.0018 | 1.0000 |   0.0512 |   0.8300 |
-| eta_coded                                            |   0.0639 | 1.0000 |   1.8329 |   0.2338 |
-| c_coded                                              |   0.0119 | 1.0000 |   0.3398 |   0.5852 |
-| lam_coded                                            |   0.0188 | 1.0000 |   0.5399 |   0.4955 |
-| n_bidders_coded                                      |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| reserve_price_coded                                  |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| use_median_of_others_coded                           |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| use_past_winner_bid_coded                            |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| auction_type_coded:eta_coded                         |   0.0048 | 1.0000 |   0.1389 |   0.7247 |
-| auction_type_coded:c_coded                           |   0.0241 | 1.0000 |   0.6917 |   0.4435 |
-| auction_type_coded:lam_coded                         |   0.0024 | 1.0000 |   0.0688 |   0.8036 |
-| auction_type_coded:n_bidders_coded                   |   0.0018 | 1.0000 |   0.0512 |   0.8300 |
-| auction_type_coded:reserve_price_coded               |   0.0018 | 1.0000 |   0.0512 |   0.8300 |
-| auction_type_coded:use_median_of_others_coded        |   0.0018 | 1.0000 |   0.0512 |   0.8300 |
-| auction_type_coded:use_past_winner_bid_coded         |   0.0018 | 1.0000 |   0.0512 |   0.8300 |
-| eta_coded:c_coded                                    |   0.0033 | 1.0000 |   0.0933 |   0.7723 |
-| eta_coded:lam_coded                                  |   0.0264 | 1.0000 |   0.7560 |   0.4243 |
-| eta_coded:n_bidders_coded                            |   0.0639 | 1.0000 |   1.8329 |   0.2338 |
-| eta_coded:reserve_price_coded                        |   0.0639 | 1.0000 |   1.8329 |   0.2338 |
-| eta_coded:use_median_of_others_coded                 |   0.0639 | 1.0000 |   1.8329 |   0.2338 |
-| eta_coded:use_past_winner_bid_coded                  |   0.0639 | 1.0000 |   1.8329 |   0.2338 |
-| c_coded:lam_coded                                    |   0.0030 | 1.0000 |   0.0873 |   0.7795 |
-| c_coded:n_bidders_coded                              |   0.0119 | 1.0000 |   0.3398 |   0.5852 |
-| c_coded:reserve_price_coded                          |   0.0119 | 1.0000 |   0.3398 |   0.5852 |
-| c_coded:use_median_of_others_coded                   |   0.0119 | 1.0000 |   0.3398 |   0.5852 |
-| c_coded:use_past_winner_bid_coded                    |   0.0119 | 1.0000 |   0.3398 |   0.5852 |
-| lam_coded:n_bidders_coded                            |   0.0188 | 1.0000 |   0.5399 |   0.4955 |
-| lam_coded:reserve_price_coded                        |   0.0188 | 1.0000 |   0.5399 |   0.4955 |
-| lam_coded:use_median_of_others_coded                 |   0.0188 | 1.0000 |   0.5399 |   0.4955 |
-| lam_coded:use_past_winner_bid_coded                  |   0.0188 | 1.0000 |   0.5399 |   0.4955 |
-| n_bidders_coded:reserve_price_coded                  |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| n_bidders_coded:use_median_of_others_coded           |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| n_bidders_coded:use_past_winner_bid_coded            |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| reserve_price_coded:use_median_of_others_coded       |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| reserve_price_coded:use_past_winner_bid_coded        |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| use_median_of_others_coded:use_past_winner_bid_coded |   6.0658 | 1.0000 | 173.8634 |   0.0000 |
-| Residual                                             |   0.1744 | 5.0000 | nan      | nan      |
+|                                                    |   sum_sq |     df |        F |   PR(>F) |
+|----------------------------------------------------|----------|--------|----------|----------|
+| Intercept                                          |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| algorithm_coded                                    |   0.0013 | 1.0000 |   0.0189 |   0.8961 |
+| auction_type_coded                                 |   1.2315 | 1.0000 |  18.1843 |   0.0080 |
+| n_bidders_coded                                    |   0.0904 | 1.0000 |   1.3351 |   0.3001 |
+| reserve_price_coded                                |   0.0022 | 1.0000 |   0.0329 |   0.8631 |
+| eta_linear_coded                                   |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_quadratic_coded                                |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| exploration_intensity_coded                        |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| context_richness_coded                             |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| lam_coded                                          |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| algorithm_coded:auction_type_coded                 |   0.0826 | 1.0000 |   1.2190 |   0.3198 |
+| algorithm_coded:n_bidders_coded                    |   0.0644 | 1.0000 |   0.9504 |   0.3744 |
+| algorithm_coded:reserve_price_coded                |   0.0063 | 1.0000 |   0.0924 |   0.7733 |
+| algorithm_coded:eta_linear_coded                   |   0.0013 | 1.0000 |   0.0189 |   0.8961 |
+| algorithm_coded:eta_quadratic_coded                |   0.0013 | 1.0000 |   0.0189 |   0.8961 |
+| algorithm_coded:exploration_intensity_coded        |   0.0013 | 1.0000 |   0.0189 |   0.8961 |
+| algorithm_coded:context_richness_coded             |   0.0013 | 1.0000 |   0.0189 |   0.8961 |
+| algorithm_coded:lam_coded                          |   0.0013 | 1.0000 |   0.0189 |   0.8961 |
+| auction_type_coded:n_bidders_coded                 |   0.0025 | 1.0000 |   0.0365 |   0.8561 |
+| auction_type_coded:reserve_price_coded             |   0.1679 | 1.0000 |   2.4799 |   0.1761 |
+| auction_type_coded:eta_linear_coded                |   1.2315 | 1.0000 |  18.1843 |   0.0080 |
+| auction_type_coded:eta_quadratic_coded             |   1.2315 | 1.0000 |  18.1843 |   0.0080 |
+| auction_type_coded:exploration_intensity_coded     |   1.2315 | 1.0000 |  18.1843 |   0.0080 |
+| auction_type_coded:context_richness_coded          |   1.2315 | 1.0000 |  18.1843 |   0.0080 |
+| auction_type_coded:lam_coded                       |   1.2315 | 1.0000 |  18.1843 |   0.0080 |
+| n_bidders_coded:reserve_price_coded                |   0.1716 | 1.0000 |   2.5335 |   0.1723 |
+| n_bidders_coded:eta_linear_coded                   |   0.0904 | 1.0000 |   1.3351 |   0.3001 |
+| n_bidders_coded:eta_quadratic_coded                |   0.0904 | 1.0000 |   1.3351 |   0.3001 |
+| n_bidders_coded:exploration_intensity_coded        |   0.0904 | 1.0000 |   1.3351 |   0.3001 |
+| n_bidders_coded:context_richness_coded             |   0.0904 | 1.0000 |   1.3351 |   0.3001 |
+| n_bidders_coded:lam_coded                          |   0.0904 | 1.0000 |   1.3351 |   0.3001 |
+| reserve_price_coded:eta_linear_coded               |   0.0022 | 1.0000 |   0.0329 |   0.8631 |
+| reserve_price_coded:eta_quadratic_coded            |   0.0022 | 1.0000 |   0.0329 |   0.8631 |
+| reserve_price_coded:exploration_intensity_coded    |   0.0022 | 1.0000 |   0.0329 |   0.8631 |
+| reserve_price_coded:context_richness_coded         |   0.0022 | 1.0000 |   0.0329 |   0.8631 |
+| reserve_price_coded:lam_coded                      |   0.0022 | 1.0000 |   0.0329 |   0.8631 |
+| eta_linear_coded:eta_quadratic_coded               |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_linear_coded:exploration_intensity_coded       |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_linear_coded:context_richness_coded            |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_linear_coded:lam_coded                         |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_quadratic_coded:exploration_intensity_coded    |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_quadratic_coded:context_richness_coded         |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| eta_quadratic_coded:lam_coded                      |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| exploration_intensity_coded:context_richness_coded |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| exploration_intensity_coded:lam_coded              |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| context_richness_coded:lam_coded                   |  16.4118 | 1.0000 | 242.3343 |   0.0000 |
+| Residual                                           |   0.3386 | 5.0000 | nan      | nan      |
 
---- Significant Effects (p < 0.05): 10 ---
-  use_past_winner_bid                      coef=-0.0560  p=0.0000
-  n_bidders                                coef=-0.0560  p=0.0000
-  reserve_price                            coef=-0.0560  p=0.0000
-  use_median_of_others                     coef=-0.0560  p=0.0000
-  n_bidders:reserve_price                  coef=+0.0560  p=0.0000
-  n_bidders:use_median_of_others           coef=+0.0560  p=0.0000
-  n_bidders:use_past_winner_bid            coef=+0.0560  p=0.0000
-  reserve_price:use_median_of_others       coef=+0.0560  p=0.0000
-  reserve_price:use_past_winner_bid        coef=+0.0560  p=0.0000
-  use_median_of_others:use_past_winner_bid coef=+0.0560  p=0.0000
+--- Significant Effects (p < 0.05): 21 ---
+  context_richness:lam                     coef=+0.0633  p=0.0000
+  lam                                      coef=-0.0633  p=0.0000
+  exploration_intensity:context_richness   coef=+0.0633  p=0.0000
+  eta_quadratic:lam                        coef=-0.0633  p=0.0000
+  eta_quadratic:context_richness           coef=-0.0633  p=0.0000
+  eta_quadratic:exploration_intensity      coef=-0.0633  p=0.0000
+  exploration_intensity:lam                coef=+0.0633  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0633  p=0.0000
+  eta_linear:exploration_intensity         coef=+0.0633  p=0.0000
+  eta_linear:context_richness              coef=+0.0633  p=0.0000
+  eta_linear:lam                           coef=+0.0633  p=0.0000
+  eta_linear                               coef=-0.0633  p=0.0000
+  eta_quadratic                            coef=+0.0633  p=0.0000
+  exploration_intensity                    coef=-0.0633  p=0.0000
+  context_richness                         coef=-0.0633  p=0.0000
+  auction_type:lam                         coef=-0.0462  p=0.0080
+  auction_type:exploration_intensity       coef=-0.0462  p=0.0080
+  auction_type:eta_quadratic               coef=+0.0462  p=0.0080
+  auction_type:eta_linear                  coef=-0.0462  p=0.0080
+  auction_type:context_richness            coef=-0.0462  p=0.0080
+  auction_type                             coef=+0.0462  p=0.0080
 
   Plots saved to results/exp3/
 

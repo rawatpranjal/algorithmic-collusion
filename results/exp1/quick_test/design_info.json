@@ -1,6 +1,6 @@
 {
   "experiment": 1,
-  "n_factors": 10,
+  "n_factors": 11,
   "factors": {
     "auction_type": {
       "low": "second",
@@ -20,7 +20,7 @@
     },
     "init": {
       "low": "zeros",
-      "high": "random"
+      "high": "optimistic"
     },
     "exploration": {
       "low": "egreedy",
@@ -34,13 +34,17 @@
       "low": 2,
       "high": 4
     },
-    "median_opp_past_bid_index": {
-      "low": false,
-      "high": true
+    "n_actions": {
+      "low": 11,
+      "high": 21
     },
-    "winner_bid_index_state": {
-      "low": false,
-      "high": true
+    "info_feedback": {
+      "low": "minimal",
+      "high": "full"
+    },
+    "decay_type": {
+      "low": "linear",
+      "high": "exponential"
     }
   }
 }

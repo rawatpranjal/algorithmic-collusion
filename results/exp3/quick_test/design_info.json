@@ -1,38 +1,64 @@
 {
   "experiment": 3,
+  "design": "3 x 2^7 = 384 cells (mixed-level factorial)",
   "n_factors": 8,
   "factors": {
+    "algorithm": {
+      "levels": [
+        "linucb",
+        "thompson"
+      ],
+      "coding": "binary +-1"
+    },
     "auction_type": {
-      "low": "second",
-      "high": "first"
-    },
-    "eta": {
-      "low": 0.0,
-      "high": 1.0
-    },
-    "c": {
-      "low": 0.1,
-      "high": 2.0
-    },
-    "lam": {
-      "low": 0.1,
-      "high": 5.0
+      "levels": [
+        "second",
+        "first"
+      ],
+      "coding": "binary +-1"
     },
     "n_bidders": {
-      "low": 2,
-      "high": 4
+      "levels": [
+        2,
+        4
+      ],
+      "coding": "binary +-1"
     },
     "reserve_price": {
-      "low": 0.0,
-      "high": 0.5
+      "levels": [
+        0.0,
+        0.3
+      ],
+      "coding": "binary +-1"
     },
-    "use_median_of_others": {
-      "low": false,
-      "high": true
+    "eta": {
+      "levels": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "coding": "orthogonal contrasts: eta_linear (-1,0,+1), eta_quadratic (+1,-2,+1)"
     },
-    "use_past_winner_bid": {
-      "low": false,
-      "high": true
+    "exploration_intensity": {
+      "levels": [
+        "low",
+        "high"
+      ],
+      "coding": "binary +-1"
+    },
+    "context_richness": {
+      "levels": [
+        "minimal",
+        "rich"
+      ],
+      "coding": "binary +-1"
+    },
+    "lam": {
+      "levels": [
+        0.1,
+        5.0
+      ],
+      "coding": "binary +-1"
     }
   }
 }

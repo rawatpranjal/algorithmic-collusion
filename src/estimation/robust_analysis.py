@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Robust Statistical Analysis for Experiment 4.
+Robust Statistical Analysis (shared module for all experiments).
 
 Extends the baseline factorial OLS with:
   A. HC3 robust standard errors
@@ -9,7 +9,7 @@ Extends the baseline factorial OLS with:
   D. PRESS / predicted R²
   E. Box-Cox transformation
   F. Mixed-effects model (replicate as random intercept)
-  G. Quantile regression (τ = 0.10 … 0.90)
+  G. Quantile regression (t = 0.10 ... 0.90)
   H. LASSO with cross-validation
   I. LightGBM nonparametric R² upper bound
   J. Wild bootstrap p-values
@@ -17,15 +17,15 @@ Extends the baseline factorial OLS with:
   L. Response dependency analysis
   M. Summary comparison table
 
-Usage:
-    PYTHONPATH=src python3 src/estimation/robust_analysis4.py
+Public API:
+    run_robust_analysis(df, coded_cols, response_cols, output_dir,
+                        experiment_id=None)
 
-Reads:  results/exp4/data.csv, results/exp4/design_info.json
-Writes: results/exp4/robust/robust_results.json
-        results/exp4/robust/*.png
-        results/exp4/robust/robust_summary.txt
+Standalone usage:
+    PYTHONPATH=src python3 src/estimation/robust_analysis.py --exp 1
 """
 
+import argparse
 import itertools
 import json
 import os
@@ -43,42 +43,10 @@ from scipy import stats
 from statsmodels.stats.multitest import multipletests
 from tabulate import tabulate
 
+
 # ---------------------------------------------------------------------------
-# Constants (mirrored from est1.py)
+# Utilities
 # ---------------------------------------------------------------------------
-
-CODED_COLS = [
-    "algorithm_coded",
-    "auction_type_coded",
-    "n_bidders_coded",
-    "budget_tightness_coded",
-    "eta_coded",
-    "aggressiveness_coded",
-    "update_frequency_coded",
-    "initial_multiplier_coded",
-    "reserve_price_coded",
-]
-
-RESPONSE_COLS = [
-    "avg_rev_last_1000",
-    "time_to_converge",
-    "avg_regret_of_seller",
-    "no_sale_rate",
-    "price_volatility",
-    "winner_entropy",
-    "budget_utilization",
-    "spend_volatility",
-    "budget_violation_rate",
-    "effective_bid_shading",
-    "multiplier_convergence_time",
-    "multiplier_final_mean",
-    "multiplier_final_std",
-]
-
-DATA_PATH = "results/exp4/data.csv"
-DESIGN_INFO_PATH = "results/exp4/design_info.json"
-OUTPUT_DIR = "results/exp4/robust"
-
 
 def _clean(name):
     """Remove _coded suffix for display."""
@@ -86,7 +54,7 @@ def _clean(name):
 
 
 def _build_formula(response, coded_cols):
-    """Y ~ X1 + X2 + … + X1:X2 + X1:X3 + …"""
+    """Y ~ X1 + X2 + ... + X1:X2 + X1:X3 + ..."""
     main = coded_cols
     interactions = [f"{a}:{b}" for a, b in itertools.combinations(coded_cols, 2)]
     return f"{response} ~ {' + '.join(main + interactions)}"
@@ -103,6 +71,29 @@ def _json_safe(obj):
     if isinstance(obj, (np.bool_,)):
         return bool(obj)
     return str(obj)
+
+
+def _auto_detect_qr_responses(response_cols):
+    """Pick responses containing 'rev', 'regret', or 'revenue' for quantile regression."""
+    keywords = ("rev", "regret", "revenue")
+    return [r for r in response_cols if any(k in r.lower() for k in keywords)]
+
+
+def _find_key_interaction(all_results):
+    """Find the interaction with smallest raw p-value across all multiplicity tests."""
+    if "multiplicity" not in all_results:
+        return None, []
+    tests = all_results["multiplicity"]["tests"]
+    interaction_tests = [t for t in tests if ":" in t["label"]]
+    if not interaction_tests:
+        return None, []
+    best = min(interaction_tests, key=lambda t: t["raw_p"])
+    # Extract interaction name from "response|interaction_name"
+    parts = best["label"].split("|", 1)
+    interaction_name = parts[1] if len(parts) > 1 else best["label"]
+    # Gather all tests matching this interaction
+    matching = [t for t in tests if interaction_name in t["label"]]
+    return interaction_name, matching
 
 
 # ===================================================================
@@ -194,7 +185,7 @@ def section_multiplicity(df, coded_cols, response_cols):
     n_bh = int(np.sum(bh_reject))
 
     print(f"\n  Total tests: {len(pvals)}")
-    print(f"  Significant at raw α=0.05:        {n_raw}")
+    print(f"  Significant at raw a=0.05:        {n_raw}")
     print(f"  Significant after Holm-Bonferroni: {n_holm}")
     print(f"  Significant after Benjamini-Hochberg: {n_bh}")
 
@@ -287,7 +278,7 @@ def section_lack_of_fit(df, coded_cols, response_cols):
 
         sig = ""
         if np.isfinite(p_lof) and p_lof < 0.05:
-            sig = " *** SIGNIFICANT — linear model may be inadequate"
+            sig = " *** SIGNIFICANT -- linear model may be inadequate"
         print(f"\n  {resp}:")
         print(f"    SS_LOF={ss_lof:.6f}  SS_PE={ss_pe:.6f}  "
               f"F({df_lof},{df_pe})={f_lof:.3f}  p={p_lof:.4f}{sig}")
@@ -302,7 +293,7 @@ def section_lack_of_fit(df, coded_cols, response_cols):
 def section_press(df, coded_cols, response_cols):
     """Compute PRESS statistic and predicted R² via hat matrix."""
     print("\n" + "=" * 60)
-    print("D. PRESS / PREDICTED R²")
+    print("D. PRESS / PREDICTED R-SQUARED")
     print("=" * 60)
 
     results = {}
@@ -323,7 +314,7 @@ def section_press(df, coded_cols, response_cols):
 
         flag = ""
         if gap > 0.10:
-            flag = " ⚠ GAP > 0.10 (possible overfitting)"
+            flag = " WARNING: GAP > 0.10 (possible overfitting)"
 
         results[resp] = {
             "r_squared": float(model.rsquared),
@@ -334,8 +325,8 @@ def section_press(df, coded_cols, response_cols):
         }
 
         print(f"\n  {resp}:")
-        print(f"    R²={model.rsquared:.4f}  Adj-R²={model.rsquared_adj:.4f}  "
-              f"Pred-R²={pred_r2:.4f}  Gap={gap:.4f}{flag}")
+        print(f"    R2={model.rsquared:.4f}  Adj-R2={model.rsquared_adj:.4f}  "
+              f"Pred-R2={pred_r2:.4f}  Gap={gap:.4f}{flag}")
 
     return results
 
@@ -386,10 +377,10 @@ def section_boxcox(df, coded_cols, response_cols):
             "n_sig_boxcox": n_sig_bc,
         }
 
-        lam_interp = "log" if abs(lam) < 0.05 else f"λ={lam:.3f}"
-        print(f"\n  {resp}: optimal λ={lam:.3f} ({lam_interp})")
-        print(f"    Original R²={ols_orig.rsquared:.4f} ({n_sig_orig} sig effects)  →  "
-              f"Box-Cox R²={ols_bc.rsquared:.4f} ({n_sig_bc} sig effects)")
+        lam_interp = "log" if abs(lam) < 0.05 else f"lam={lam:.3f}"
+        print(f"\n  {resp}: optimal lam={lam:.3f} ({lam_interp})")
+        print(f"    Original R2={ols_orig.rsquared:.4f} ({n_sig_orig} sig effects)  ->  "
+              f"Box-Cox R2={ols_bc.rsquared:.4f} ({n_sig_bc} sig effects)")
 
     return results
 
@@ -415,9 +406,6 @@ def section_mixed_effects(df, coded_cols, response_cols):
         ols_model = smf.ols(formula, data=df_work).fit()
 
         # Build explicit design matrix for MixedLM
-        main = coded_cols
-        interactions = [f"{a}:{b}" for a, b in itertools.combinations(coded_cols, 2)]
-
         X = df_work[coded_cols].copy()
         for a, b in itertools.combinations(coded_cols, 2):
             X[f"{a}:{b}"] = df_work[a] * df_work[b]
@@ -440,14 +428,14 @@ def section_mixed_effects(df, coded_cols, response_cols):
             }
 
             print(f"\n  {resp}:")
-            print(f"    σ_cell={sigma_u:.6f}  σ_resid={sigma_e:.6f}  ICC={icc:.4f}")
+            print(f"    sigma_cell={sigma_u:.6f}  sigma_resid={sigma_e:.6f}  ICC={icc:.4f}")
             if icc < 0.05:
-                print(f"    → Random effects negligible (ICC < 0.05)")
+                print(f"    -> Random effects negligible (ICC < 0.05)")
             else:
-                print(f"    → Non-negligible cell-level variation")
+                print(f"    -> Non-negligible cell-level variation")
         except Exception as e:
             results[resp] = {"converged": False, "error": str(e)}
-            print(f"\n  {resp}: MixedLM failed — {e}")
+            print(f"\n  {resp}: MixedLM failed -- {e}")
 
     return results
 
@@ -463,9 +451,11 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
     print("=" * 60)
 
     quantiles = [0.10, 0.25, 0.50, 0.75, 0.90]
-    # Focus on revenue and regret
-    qr_responses = [r for r in ["avg_rev_last_1000", "avg_regret_of_seller"]
-                    if r in response_cols]
+    # Auto-detect revenue/regret responses
+    qr_responses = _auto_detect_qr_responses(response_cols)
+    if not qr_responses:
+        # Fallback: use first two responses
+        qr_responses = response_cols[:2]
 
     results = {}
     for resp in qr_responses:
@@ -503,7 +493,7 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
             for qi, (q, c, col) in enumerate(zip(quantiles, coef_vals, colors)):
                 ax.scatter([q], [c], color=col, s=40, zorder=5)
             ax.axhline(0, color="gray", linestyle="--", alpha=0.5)
-            ax.set_xlabel("Quantile (τ)")
+            ax.set_xlabel("Quantile (tau)")
             ax.set_ylabel("Coefficient")
             ax.set_title(term, fontsize=9)
             ax.set_xticks(quantiles)
@@ -514,13 +504,6 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
         fig.savefig(path, dpi=150, bbox_inches="tight")
         plt.close(fig)
         print(f"\n  {resp}: Plot saved to {path}")
-
-        # Print key finding: auction_type:exploration at tails
-        key = "auction_type:exploration"
-        if key in coefs_by_q.get(0.10, {}):
-            c10 = coefs_by_q[0.10][key]["coef"]
-            c90 = coefs_by_q[0.90][key]["coef"]
-            print(f"    auction_type×exploration: τ=0.10 coef={c10:.4f}, τ=0.90 coef={c90:.4f}")
 
     return results
 
@@ -570,7 +553,7 @@ def section_lasso(df, coded_cols, response_cols, output_dir):
                         heredity_violations.append(name)
                         break
 
-        # OLS R² for comparison
+        # OLS R2 for comparison
         formula = _build_formula(resp, coded_cols)
         ols = smf.ols(formula, data=df).fit()
 
@@ -585,9 +568,9 @@ def section_lasso(df, coded_cols, response_cols, output_dir):
             "ols_r2": float(ols.rsquared),
         }
 
-        print(f"\n  {resp}: α_CV={lasso.alpha_:.6f}")
+        print(f"\n  {resp}: alpha_CV={lasso.alpha_:.6f}")
         print(f"    Surviving: {len(surviving)}/{len(feature_names)}  "
-              f"LASSO R²={lasso.score(X_scaled, y):.4f}  OLS R²={ols.rsquared:.4f}")
+              f"LASSO R2={lasso.score(X_scaled, y):.4f}  OLS R2={ols.rsquared:.4f}")
         if heredity_violations:
             print(f"    Heredity violations: {heredity_violations}")
 
@@ -598,10 +581,10 @@ def section_lasso(df, coded_cols, response_cols, output_dir):
 # I. LightGBM Nonparametric R² Upper Bound
 # ===================================================================
 
-def section_lightgbm(df, coded_cols, response_cols):
+def section_lightgbm(df, coded_cols, response_cols, output_dir):
     """LightGBM 5-fold CV R² as upper bound for linear model adequacy."""
     print("\n" + "=" * 60)
-    print("I. LIGHTGBM NONPARAMETRIC R² UPPER BOUND")
+    print("I. LIGHTGBM NONPARAMETRIC R-SQUARED UPPER BOUND")
     print("=" * 60)
 
     import lightgbm as lgb
@@ -613,7 +596,7 @@ def section_lightgbm(df, coded_cols, response_cols):
     for resp in response_cols:
         y = df[resp].values
 
-        # OLS R²
+        # OLS R2
         formula = _build_formula(resp, coded_cols)
         ols = smf.ols(formula, data=df).fit()
 
@@ -628,7 +611,7 @@ def section_lightgbm(df, coded_cols, response_cols):
         gap = lgbm_r2 - ols.rsquared
         flag = ""
         if gap > 0.05:
-            flag = " ⚠ Nonlinear signal detected"
+            flag = " WARNING: Nonlinear signal detected"
 
         results[resp] = {
             "ols_r2": float(ols.rsquared),
@@ -638,8 +621,8 @@ def section_lightgbm(df, coded_cols, response_cols):
         }
 
         print(f"\n  {resp}:")
-        print(f"    OLS R²={ols.rsquared:.4f}  LightGBM CV R²={lgbm_r2:.4f} "
-              f"(±{np.std(cv_scores):.4f})  Gap={gap:.4f}{flag}")
+        print(f"    OLS R2={ols.rsquared:.4f}  LightGBM CV R2={lgbm_r2:.4f} "
+              f"(+/-{np.std(cv_scores):.4f})  Gap={gap:.4f}{flag}")
 
     # Plot comparison bar chart
     fig, ax = plt.subplots(figsize=(8, 4))
@@ -651,12 +634,12 @@ def section_lightgbm(df, coded_cols, response_cols):
     ax.bar(x + w / 2, lgbm_vals, w, label="LightGBM 5-fold CV", color="#27ae60")
     ax.set_xticks(x)
     ax.set_xticklabels([_clean(r) for r in response_cols], fontsize=8, rotation=15)
-    ax.set_ylabel("R²")
+    ax.set_ylabel("R-squared")
     ax.set_title("Linear vs Nonparametric Model Adequacy")
     ax.legend()
     ax.set_ylim(0, 1.05)
     fig.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "lgbm_comparison.png")
+    path = os.path.join(output_dir, "lgbm_comparison.png")
     fig.savefig(path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"\n  Plot saved to {path}")
@@ -685,7 +668,6 @@ def section_wild_bootstrap(df, coded_cols, response_cols, n_boot=1000):
         tvals = model.tvalues.drop("Intercept", errors="ignore")
         top10_names = tvals.abs().sort_values(ascending=False).head(10).index.tolist()
 
-        # Restricted residuals (under H0: beta_j = 0 for each term tested)
         X = model.model.exog
         y = model.model.endog
         n = len(y)
@@ -693,7 +675,6 @@ def section_wild_bootstrap(df, coded_cols, response_cols, n_boot=1000):
         boot_results = {}
         for term in top10_names:
             observed_t = float(model.tvalues[term])
-            # Full model t-stat; bootstrap under full model
             fitted = model.fittedvalues.values
             resid = model.resid.values
 
@@ -709,8 +690,6 @@ def section_wild_bootstrap(df, coded_cols, response_cols, n_boot=1000):
                 except Exception:
                     boot_ts[b] = observed_t  # conservative: don't count as extreme
 
-            # Recenter: unrestricted bootstrap centers around observed_t
-            # Under H0, test statistic ~ 0, so use |t*_boot - t_obs| >= |t_obs|
             boot_p = float(np.mean(np.abs(boot_ts - observed_t) >= np.abs(observed_t)))
 
             boot_results[_clean(term)] = {
@@ -735,7 +714,7 @@ def section_wild_bootstrap(df, coded_cols, response_cols, n_boot=1000):
 # K. Power Analysis
 # ===================================================================
 
-def section_power(df, coded_cols, response_cols):
+def section_power(df, coded_cols, response_cols, output_dir):
     """Compute minimum detectable effect sizes at 80% power."""
     print("\n" + "=" * 60)
     print("K. POWER ANALYSIS")
@@ -751,20 +730,12 @@ def section_power(df, coded_cols, response_cols):
         sigma = float(np.sqrt(model.mse_resid))
         df_resid = int(model.df_resid)
 
-        # For coded ±1 design, SE of a main effect = sigma / sqrt(n)
-        # For interaction, same if balanced
         se_main = sigma / np.sqrt(n)
-
-        # t critical for two-sided alpha=0.05
         t_crit = stats.t.ppf(0.975, df_resid)
-
-        # Minimum detectable effect at 80% power (approx: need |beta| > (t_crit + t_80%) * SE)
-        # t_80% = z_{0.80} ≈ 0.842
         t_power = stats.norm.ppf(0.80)
         mde_main = (t_crit + t_power) * se_main
         mde_interaction = mde_main  # same SE for balanced 2^k
 
-        # As fraction of response mean and std
         resp_mean = float(df[resp].mean())
         resp_std = float(df[resp].std())
 
@@ -780,7 +751,7 @@ def section_power(df, coded_cols, response_cols):
         }
 
         print(f"\n  {resp}:")
-        print(f"    σ_error={sigma:.6f}  SE_main={se_main:.6f}")
+        print(f"    sigma_error={sigma:.6f}  SE_main={se_main:.6f}")
         print(f"    MDE (80% power): main={mde_main:.6f}  "
               f"interaction={mde_interaction:.6f}")
         if resp_mean != 0:
@@ -791,12 +762,12 @@ def section_power(df, coded_cols, response_cols):
     resp_labels = [_clean(r) for r in response_cols]
     mdes = [results[r]["mde_main_effect"] for r in response_cols]
     ax.barh(resp_labels, mdes, color="#e67e22")
-    ax.set_xlabel("Minimum Detectable Effect (80% power, α=0.05)")
+    ax.set_xlabel("Minimum Detectable Effect (80% power, alpha=0.05)")
     ax.set_title("Power Analysis: Detectable Effect Sizes")
     for i, v in enumerate(mdes):
         ax.text(v + 0.001, i, f"{v:.4f}", va="center", fontsize=8)
     fig.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "power_analysis.png")
+    path = os.path.join(output_dir, "power_analysis.png")
     fig.savefig(path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"\n  Plot saved to {path}")
@@ -828,30 +799,30 @@ def section_response_deps(df, response_cols, output_dir):
                 r = corr.loc[r1, r2]
                 if abs(r) > 0.80:
                     pairs.append((r1, r2, float(r)))
-                    print(f"\n  ⚠ High correlation: {_clean(r1)} ↔ {_clean(r2)}: r={r:.3f}")
+                    print(f"\n  High correlation: {_clean(r1)} <-> {_clean(r2)}: r={r:.3f}")
 
     # Check winner_entropy vs n_bidders (known deterministic mapping)
     if "winner_entropy" in df.columns and "n_bidders_coded" in df.columns:
         r2_ent = df[["winner_entropy", "n_bidders_coded"]].corr().iloc[0, 1] ** 2
-        print(f"\n  winner_entropy ~ n_bidders: R²={r2_ent:.4f}")
+        print(f"\n  winner_entropy ~ n_bidders: R2={r2_ent:.4f}")
         if r2_ent > 0.95:
-            print("    → Near-deterministic mapping; winner_entropy largely redundant with n_bidders")
+            print("    -> Near-deterministic mapping; winner_entropy largely redundant with n_bidders")
 
-    # Exp4-specific sanity checks: budget constraint satisfaction
+    # Exp4 sanity checks (conditional on column presence)
     if "budget_violation_rate" in df.columns:
         max_viol = df["budget_violation_rate"].max()
-        print(f"\n  Sanity check — budget_violation_rate max={max_viol:.6f} "
-              f"({'PASS' if max_viol < 1e-6 else 'FAIL — violations detected!'})")
+        status = "PASS" if max_viol < 1e-6 else "FAIL -- violations detected!"
+        print(f"\n  Sanity check -- budget_violation_rate max={max_viol:.6f} ({status})")
     if "budget_utilization" in df.columns:
         util_range = (df["budget_utilization"].min(), df["budget_utilization"].max())
         ok = (0.0 <= util_range[0]) and (util_range[1] <= 1.0 + 1e-6)
-        print(f"  Sanity check — budget_utilization ∈ [{util_range[0]:.3f}, {util_range[1]:.3f}] "
-              f"({'PASS' if ok else 'FAIL — out of [0,1]!'})")
+        status = "PASS" if ok else "FAIL -- out of [0,1]!"
+        print(f"  Sanity check -- budget_utilization in [{util_range[0]:.3f}, {util_range[1]:.3f}] ({status})")
     if "effective_bid_shading" in df.columns:
         shade_range = (df["effective_bid_shading"].min(), df["effective_bid_shading"].max())
         ok = (shade_range[0] >= -0.01) and (shade_range[1] <= 1.01)
-        print(f"  Sanity check — effective_bid_shading ∈ [{shade_range[0]:.3f}, {shade_range[1]:.3f}] "
-              f"({'PASS' if ok else 'FAIL — out of [0,1]!'})")
+        status = "PASS" if ok else "FAIL -- out of [0,1]!"
+        print(f"  Sanity check -- effective_bid_shading in [{shade_range[0]:.3f}, {shade_range[1]:.3f}] ({status})")
 
     # Heatmap
     fig, ax = plt.subplots(figsize=(7, 5))
@@ -882,7 +853,8 @@ def section_response_deps(df, response_cols, output_dir):
 # M. Summary & Comparison Table
 # ===================================================================
 
-def section_summary(all_results, df, coded_cols, response_cols, output_dir):
+def section_summary(all_results, df, coded_cols, response_cols, output_dir,
+                    experiment_id=None):
     """Master comparison table across all methods."""
     print("\n" + "=" * 60)
     print("M. SUMMARY & COMPARISON TABLE")
@@ -892,13 +864,13 @@ def section_summary(all_results, df, coded_cols, response_cols, output_dir):
     for resp in response_cols:
         row = {"response": _clean(resp)}
 
-        # R² metrics
+        # R2 metrics
         if "press" in all_results and resp in all_results["press"]:
             pr = all_results["press"][resp]
-            row["R²"] = f"{pr['r_squared']:.4f}"
-            row["Pred-R²"] = f"{pr['predicted_r_squared']:.4f}"
+            row["R2"] = f"{pr['r_squared']:.4f}"
+            row["Pred-R2"] = f"{pr['predicted_r_squared']:.4f}"
         if "lightgbm" in all_results and resp in all_results["lightgbm"]:
-            row["LGBM R²"] = f"{all_results['lightgbm'][resp]['lgbm_cv_r2']:.4f}"
+            row["LGBM R2"] = f"{all_results['lightgbm'][resp]['lgbm_cv_r2']:.4f}"
         if "lack_of_fit" in all_results and resp in all_results["lack_of_fit"]:
             lof = all_results["lack_of_fit"][resp]
             p = lof.get("p_lack_of_fit")
@@ -906,9 +878,9 @@ def section_summary(all_results, df, coded_cols, response_cols, output_dir):
         if "boxcox" in all_results and resp in all_results["boxcox"]:
             bc = all_results["boxcox"][resp]
             if not bc.get("skipped"):
-                row["Box-Cox λ"] = f"{bc['optimal_lambda']:.3f}"
+                row["Box-Cox lam"] = f"{bc['optimal_lambda']:.3f}"
             else:
-                row["Box-Cox λ"] = "N/A"
+                row["Box-Cox lam"] = "N/A"
 
         # Count significant effects by method
         if "hc3" in all_results and resp in all_results["hc3"]:
@@ -932,59 +904,62 @@ def section_summary(all_results, df, coded_cols, response_cols, output_dir):
     print("\n" + tabulate(rows, headers="keys", tablefmt="github"))
 
     # Write human-readable summary
+    exp_label = f"Experiment {experiment_id}" if experiment_id else "All Experiments"
     summary_lines = []
     summary_lines.append("=" * 70)
-    summary_lines.append("ROBUST ANALYSIS SUMMARY — Experiment 4")
+    summary_lines.append(f"ROBUST ANALYSIS SUMMARY -- {exp_label}")
     summary_lines.append("=" * 70)
     summary_lines.append("")
 
-    # Key finding: algorithm × budget_tightness (Exp4's primary interaction)
-    summary_lines.append("KEY FINDING: algorithm × budget_tightness interaction")
-    summary_lines.append("-" * 50)
-    if "multiplicity" in all_results:
-        tests = all_results["multiplicity"]["tests"]
-        for t in tests:
-            if "algorithm:budget_tightness" in t["label"]:
-                status = "SURVIVES" if t["holm_sig"] else "does NOT survive"
-                summary_lines.append(
-                    f"  {t['label']}: raw p={t['raw_p']:.4e}, holm p={t['holm_p']:.4e} "
-                    f"→ {status} Holm-Bonferroni"
-                )
-    summary_lines.append("")
+    # Auto-detect key interaction
+    key_interaction, matching_tests = _find_key_interaction(all_results)
+    if key_interaction:
+        summary_lines.append(f"KEY FINDING: {key_interaction} interaction")
+        summary_lines.append("-" * 50)
+        for t in matching_tests:
+            status = "SURVIVES" if t["holm_sig"] else "does NOT survive"
+            summary_lines.append(
+                f"  {t['label']}: raw p={t['raw_p']:.4e}, holm p={t['holm_p']:.4e} "
+                f"-> {status} Holm-Bonferroni"
+            )
+        summary_lines.append("")
 
     # Model adequacy
     summary_lines.append("MODEL ADEQUACY")
     summary_lines.append("-" * 50)
     if "press" in all_results:
         for resp in response_cols:
-            pr = all_results["press"][resp]
-            summary_lines.append(
-                f"  {_clean(resp):30s}  R²={pr['r_squared']:.4f}  "
-                f"Pred-R²={pr['predicted_r_squared']:.4f}  Gap={pr['gap_r2_pred_r2']:.4f}"
-            )
+            if resp in all_results["press"]:
+                pr = all_results["press"][resp]
+                summary_lines.append(
+                    f"  {_clean(resp):30s}  R2={pr['r_squared']:.4f}  "
+                    f"Pred-R2={pr['predicted_r_squared']:.4f}  Gap={pr['gap_r2_pred_r2']:.4f}"
+                )
     summary_lines.append("")
 
     if "lightgbm" in all_results:
         summary_lines.append("LINEAR vs NONPARAMETRIC")
         summary_lines.append("-" * 50)
         for resp in response_cols:
-            lg = all_results["lightgbm"][resp]
-            summary_lines.append(
-                f"  {_clean(resp):30s}  OLS={lg['ols_r2']:.4f}  "
-                f"LGBM={lg['lgbm_cv_r2']:.4f}  Gap={lg['gap']:.4f}"
-            )
+            if resp in all_results["lightgbm"]:
+                lg = all_results["lightgbm"][resp]
+                summary_lines.append(
+                    f"  {_clean(resp):30s}  OLS={lg['ols_r2']:.4f}  "
+                    f"LGBM={lg['lgbm_cv_r2']:.4f}  Gap={lg['gap']:.4f}"
+                )
         summary_lines.append("")
 
     if "power" in all_results:
-        summary_lines.append("POWER ANALYSIS (80% power, α=0.05)")
+        summary_lines.append("POWER ANALYSIS (80% power, alpha=0.05)")
         summary_lines.append("-" * 50)
         for resp in response_cols:
-            pw = all_results["power"][resp]
-            pct = pw.get("mde_as_pct_mean")
-            pct_str = f"({pct:.1f}% of mean)" if pct is not None else ""
-            summary_lines.append(
-                f"  {_clean(resp):30s}  MDE={pw['mde_main_effect']:.6f} {pct_str}"
-            )
+            if resp in all_results["power"]:
+                pw = all_results["power"][resp]
+                pct = pw.get("mde_as_pct_mean")
+                pct_str = f"({pct:.1f}% of mean)" if pct is not None else ""
+                summary_lines.append(
+                    f"  {_clean(resp):30s}  MDE={pw['mde_main_effect']:.6f} {pct_str}"
+                )
 
     summary_text = "\n".join(summary_lines)
     summary_path = os.path.join(output_dir, "robust_summary.txt")
@@ -996,31 +971,50 @@ def section_summary(all_results, df, coded_cols, response_cols, output_dir):
 
 
 # ===================================================================
-# Main
+# Public API
 # ===================================================================
 
-def main():
+def run_robust_analysis(df, coded_cols, response_cols, output_dir,
+                        experiment_id=None):
+    """
+    Run the full 13-section robustness analysis.
+
+    Parameters
+    ----------
+    df : DataFrame
+        Experiment data with coded columns and response columns.
+    coded_cols : list[str]
+        Coded factor column names (e.g. ["auction_type_coded", ...]).
+    response_cols : list[str]
+        Response variable column names.
+    output_dir : str
+        Base output directory (robust/ subdirectory is created automatically).
+    experiment_id : int, optional
+        Experiment number for labeling.
+
+    Returns
+    -------
+    dict
+        All robustness results keyed by section name.
+    """
+    exp_label = f"Experiment {experiment_id}" if experiment_id else "Robust Analysis"
     print("=" * 70)
-    print("ROBUST STATISTICAL ANALYSIS — Experiment 4")
+    print(f"ROBUST STATISTICAL ANALYSIS -- {exp_label}")
     print("=" * 70)
 
-    # Load data
-    df = pd.read_csv(DATA_PATH)
-    print(f"\nLoaded {len(df)} rows from {DATA_PATH}")
-
-    # Normalize time_to_converge
-    if "time_to_converge" in df.columns and "max_rounds" in df.columns:
-        df["time_to_converge"] = df["time_to_converge"] / df["max_rounds"]
+    # Output goes into robust/ subdirectory
+    robust_dir = os.path.join(output_dir, "robust")
+    os.makedirs(robust_dir, exist_ok=True)
 
     # Verify coded columns exist
-    missing = [c for c in CODED_COLS if c not in df.columns]
+    missing = [c for c in coded_cols if c not in df.columns]
     if missing:
         print(f"ERROR: Missing coded columns: {missing}")
-        sys.exit(1)
+        return {}
 
-    # Filter to available responses (skip no_sale_rate if all zeros)
+    # Filter to available, non-constant responses
     active_responses = []
-    for r in RESPONSE_COLS:
+    for r in response_cols:
         if r not in df.columns:
             print(f"  Skipping {r}: not in data")
             continue
@@ -1030,41 +1024,139 @@ def main():
         active_responses.append(r)
 
     print(f"\nActive responses: {active_responses}")
-    print(f"Coded factors: {CODED_COLS}")
-
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    print(f"Coded factors: {coded_cols}")
 
     all_results = {}
 
     # Run all sections
-    all_results["hc3"] = section_hc3(df, CODED_COLS, active_responses)
-    all_results["multiplicity"] = section_multiplicity(df, CODED_COLS, active_responses)
-    all_results["lack_of_fit"] = section_lack_of_fit(df, CODED_COLS, active_responses)
-    all_results["press"] = section_press(df, CODED_COLS, active_responses)
-    all_results["boxcox"] = section_boxcox(df, CODED_COLS, active_responses)
-    all_results["mixed_effects"] = section_mixed_effects(df, CODED_COLS, active_responses)
+    all_results["hc3"] = section_hc3(df, coded_cols, active_responses)
+    all_results["multiplicity"] = section_multiplicity(df, coded_cols, active_responses)
+    all_results["lack_of_fit"] = section_lack_of_fit(df, coded_cols, active_responses)
+    all_results["press"] = section_press(df, coded_cols, active_responses)
+    all_results["boxcox"] = section_boxcox(df, coded_cols, active_responses)
+    all_results["mixed_effects"] = section_mixed_effects(df, coded_cols, active_responses)
     all_results["quantile_regression"] = section_quantile_regression(
-        df, CODED_COLS, active_responses, OUTPUT_DIR
+        df, coded_cols, active_responses, robust_dir
     )
-    all_results["lasso"] = section_lasso(df, CODED_COLS, active_responses, OUTPUT_DIR)
-    all_results["lightgbm"] = section_lightgbm(df, CODED_COLS, active_responses)
+    all_results["lasso"] = section_lasso(df, coded_cols, active_responses, robust_dir)
+    all_results["lightgbm"] = section_lightgbm(
+        df, coded_cols, active_responses, robust_dir
+    )
     all_results["wild_bootstrap"] = section_wild_bootstrap(
-        df, CODED_COLS, active_responses, n_boot=1000
+        df, coded_cols, active_responses, n_boot=1000
     )
-    all_results["power"] = section_power(df, CODED_COLS, active_responses)
-    all_results["response_deps"] = section_response_deps(df, active_responses, OUTPUT_DIR)
+    all_results["power"] = section_power(
+        df, coded_cols, active_responses, robust_dir
+    )
+    all_results["response_deps"] = section_response_deps(
+        df, active_responses, robust_dir
+    )
     all_results["summary"] = section_summary(
-        all_results, df, CODED_COLS, active_responses, OUTPUT_DIR
+        all_results, df, coded_cols, active_responses, robust_dir,
+        experiment_id=experiment_id,
     )
 
     # Save JSON
-    json_path = os.path.join(OUTPUT_DIR, "robust_results.json")
+    json_path = os.path.join(robust_dir, "robust_results.json")
     with open(json_path, "w") as f:
         json.dump(all_results, f, indent=2, default=_json_safe)
     print(f"\n{'=' * 70}")
     print(f"All results saved to {json_path}")
-    print(f"Plots saved to {OUTPUT_DIR}/")
+    print(f"Plots saved to {robust_dir}/")
     print(f"{'=' * 70}")
+
+    return all_results
+
+
+# ===================================================================
+# Standalone CLI
+# ===================================================================
+
+# Per-experiment defaults for standalone mode
+_EXP_DEFAULTS = {
+    1: {
+        "coded_cols": [
+            "auction_type_coded", "alpha_coded", "gamma_coded",
+            "exploration_coded", "asynchronous_coded", "n_bidders_coded",
+        ],
+        "response_cols": [
+            "avg_rev_last_1000", "time_to_converge", "avg_regret_of_seller",
+            "price_volatility", "winner_entropy",
+        ],
+        "data_path": "results/exp1/data.csv",
+        "output_dir": "results/exp1",
+        "time_norm_col": "episodes",
+    },
+    2: {
+        "coded_cols": [
+            "auction_type_coded", "eta_linear_coded", "eta_quadratic_coded",
+            "n_bidders_coded", "state_info_coded",
+        ],
+        "response_cols": [
+            "avg_rev_last_1000", "time_to_converge", "no_sale_rate",
+            "price_volatility", "winner_entropy", "excess_regret",
+            "efficient_regret", "btv_median", "winners_curse_freq",
+            "bid_dispersion", "signal_slope_ratio",
+        ],
+        "data_path": "results/exp2/data.csv",
+        "output_dir": "results/exp2",
+        "time_norm_col": "episodes",
+    },
+    3: {
+        "coded_cols": [
+            "algorithm_coded", "auction_type_coded", "n_bidders_coded",
+            "reserve_price_coded", "eta_linear_coded", "eta_quadratic_coded",
+            "exploration_intensity_coded", "context_richness_coded", "lam_coded",
+        ],
+        "response_cols": [
+            "avg_rev_last_1000", "time_to_converge", "avg_regret_seller",
+            "no_sale_rate", "price_volatility", "winner_entropy",
+        ],
+        "data_path": "results/exp3/data.csv",
+        "output_dir": "results/exp3",
+        "time_norm_col": "max_rounds",
+    },
+    4: {
+        "coded_cols": [
+            "auction_type_coded", "objective_coded", "n_bidders_coded",
+        ],
+        "response_cols": [
+            "mean_platform_revenue", "mean_liquid_welfare", "mean_effective_poa",
+            "mean_budget_utilization", "mean_bid_to_value",
+            "mean_allocative_efficiency", "mean_dual_cv", "mean_no_sale_rate",
+            "mean_winner_entropy", "warm_start_benefit",
+            "inter_episode_volatility", "bid_suppression_ratio",
+            "cross_episode_drift",
+        ],
+        "data_path": "results/exp4/data.csv",
+        "output_dir": "results/exp4",
+        "time_norm_col": None,
+    },
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Robust statistical analysis")
+    parser.add_argument("--exp", type=int, required=True, choices=[1, 2, 3, 4],
+                        help="Experiment number")
+    args = parser.parse_args()
+
+    cfg = _EXP_DEFAULTS[args.exp]
+    df = pd.read_csv(cfg["data_path"])
+    print(f"\nLoaded {len(df)} rows from {cfg['data_path']}")
+
+    # Normalize time_to_converge if applicable
+    norm_col = cfg["time_norm_col"]
+    if norm_col and "time_to_converge" in df.columns and norm_col in df.columns:
+        df["time_to_converge"] = df["time_to_converge"] / df[norm_col]
+
+    run_robust_analysis(
+        df,
+        coded_cols=cfg["coded_cols"],
+        response_cols=cfg["response_cols"],
+        output_dir=cfg["output_dir"],
+        experiment_id=args.exp,
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,34 @@
+{
+  "experiment": 2,
+  "n_factors": 7,
+  "factors": {
+    "auction_type": {
+      "low": "second",
+      "high": "first"
+    },
+    "alpha": {
+      "low": 0.01,
+      "high": 0.1
+    },
+    "gamma": {
+      "low": 0.0,
+      "high": 0.95
+    },
+    "exploration": {
+      "low": "egreedy",
+      "high": "boltzmann"
+    },
+    "asynchronous": {
+      "low": 0,
+      "high": 1
+    },
+    "n_bidders": {
+      "low": 2,
+      "high": 4
+    },
+    "eta": {
+      "low": 0.0,
+      "high": 1.0
+    }
+  }
+}

@@ -10,25 +10,24 @@ from estimation.factorial_analysis import run_factorial_analysis
 
 CODED_COLS = [
     "auction_type_coded",
-    "alpha_coded",
-    "gamma_coded",
-    "reserve_price_coded",
-    "init_coded",
-    "exploration_coded",
-    "asynchronous_coded",
+    "eta_linear_coded",
+    "eta_quadratic_coded",
     "n_bidders_coded",
-    "median_opp_past_bid_index_coded",
-    "winner_bid_index_state_coded",
-    "eta_coded",
+    "state_info_coded",
 ]
 
 RESPONSE_COLS = [
     "avg_rev_last_1000",
     "time_to_converge",
-    "avg_regret_of_seller",
     "no_sale_rate",
     "price_volatility",
     "winner_entropy",
+    "excess_regret",
+    "efficient_regret",
+    "btv_median",
+    "winners_curse_freq",
+    "bid_dispersion",
+    "signal_slope_ratio",
 ]
 
 if __name__ == "__main__":
@@ -44,3 +43,7 @@ if __name__ == "__main__":
         output_dir="results/exp2",
         experiment_id=2,
     )
+
+    from estimation.robust_analysis import run_robust_analysis
+    run_robust_analysis(df, coded_cols=CODED_COLS, response_cols=RESPONSE_COLS,
+                        output_dir="results/exp2", experiment_id=2)

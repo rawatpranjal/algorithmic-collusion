@@ -1,64 +1,81 @@
-\section{Results: Experiment 4}
+\section{Experiment IV: Autobidding with Regenerating Budgets}
 \label{sec:exp4_results}
 
-\subsection{Setup and Design}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/e4_trace}
+  \caption{Representative learning trajectory for a single trial of Experiment~4 (first-price auction, value-maximizer objective, 2~bidders, 100 episodes $\times$ 100 rounds). Top: platform revenue per episode. Middle: dual variable trajectories for each agent within the final episode. Bottom: mean bid-to-value ratio per episode with the competitive benchmark.}
+  \label{fig:e4_trace}
+\end{figure}
 
-Experiment~4 applies budget-constrained pacing agents to the affiliated-valuation auction environment from Experiments~2 and~3. Each of $n$ bidders receives a private signal $s_i \sim \mathrm{Uniform}[0,1]$ and computes a valuation $v_i = (1-0.5\eta)\,s_i + 0.5\eta \cdot \bar{s}_{-i}$, where $\eta \in \{0.0, 1.0\}$ controls affiliation. Unlike prior experiments, each bidder faces a hard budget $B = \text{tightness} \times 0.5 \times T$ that limits cumulative spending over $T = 10{,}000$ rounds. The pacing multiplier $\lambda_t \in [0.01, 1.5]$ scales the valuation bid (Eq.~\eqref{eq:hard_cap}), with two competing control laws: \emph{multiplicative} pacing (dual ascent, Eqs.~\eqref{eq:dual_update}--\eqref{eq:mult_lambda}) and \emph{PID} pacing (Eqs.~\eqref{eq:pid_error}--\eqref{eq:pid_update}).
+Experiment~4 shifts from tabular learners to dual-based autobidding agents operating under regenerating budget constraints. Each of $N$ advertisers bids in $D = 100$ episodes of $T = 1{,}000$ auctions, with budgets resetting between episodes while dual variables warm-start, mimicking daily budget cycles in ad exchanges. Valuations are drawn from bidder-specific log-normal distributions, introducing persistent asymmetry. The $2^3$ factorial crosses auction format (first-price vs.\ second-price), bidder objective (value-maximizer vs.\ utility-maximizer), and market thickness ($N = 2$ vs.\ $N = 4$), replicated across 50 seeds per cell (400 runs total). This design is motivated by the Price of Anarchy literature: first-price auctions with value-maximizers are predicted to achieve PoA $= 1$, while second-price auctions may reach PoA $= 2$.
 
-The factorial design is a $2^{9-1}$ Resolution~IX half-fraction, which estimates all main effects and two-way interactions without aliasing. The nine factors and their levels appear in Table~\ref{tab:exp4params}. With three replicates per cell, the full run produces 768 observations.
+\subsection{Efficiency and Welfare}
 
-\subsection{Convergence}
+The effective Price of Anarchy, measured as the ratio of the offline optimum to realised liquid welfare, varies substantially across factor combinations. Tables~\ref{tab:exp4_ranked_rev} and~\ref{tab:exp4_ranked_reg} report the ranked significant effects for platform revenue and effective PoA, respectively.
 
-\paragraph{Revenue convergence.}
-Pacing agents converge dramatically faster than any prior experiment. Median time to converge is approximately 1{,}000 rounds (the floor imposed by the 1{,}000-round rolling-mean criterion), versus 22{,}730 rounds for LinUCB bandits in Experiment~3. The hard budget cap acts as a convergence accelerator: once an agent exhausts its available headroom, bid adjustments are limited by the remaining balance rather than by slow policy gradient, forcing early stabilisation. Budget tightness is the dominant factor for convergence speed ($|t| \approx 8$): tighter budgets ($\text{tightness}=0.25$) produce earlier and more stable convergence, since agents must optimise spending allocation from the very first round.
-
-\paragraph{Multiplier convergence.}
-The pacing multiplier $\lambda_t$ itself converges well before revenue: mean multiplier convergence time is approximately 500--1{,}000 rounds, with PID achieving lower final multiplier variance ($\overline{\sigma}_\lambda \approx 0.01$) compared to the multiplicative algorithm ($\overline{\sigma}_\lambda \approx 0.05$). This tighter control reflects PID's integral correction, which dampens oscillations around the budget boundary that the multiplicative dual ascent is prone to, particularly in first-price auctions where the winning bid is variable.
-
-\subsection{Main Effects}
-
-The Pareto charts for average revenue (Figure~\ref{fig:e4_pareto_rev}) and seller regret (Figure~\ref{fig:e4_pareto_reg}) show a consistent hierarchy of effects:
-
-\begin{enumerate}
-  \item \textbf{Budget tightness} dominates all nine response variables. Tighter budgets raise revenue by constraining bid shading below the unconstrained optimum.
-  \item \textbf{Algorithm} (PID vs.\ multiplicative) is the second strongest main effect for revenue: PID generates approximately 35\% higher average revenue in the final 1{,}000 rounds.
-  \item \textbf{Auction type} retains its effect from Experiments~1--3: first-price auctions yield lower revenue than second-price, though the gap is attenuated relative to unconstrained settings.
-  \item \textbf{Number of bidders} and \textbf{aggressiveness} are consistently significant across responses.
-\end{enumerate}
+\input{tables/exp4_ranked_rev}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.48\textwidth]{figures/e4_pareto_rev}
-  \includegraphics[width=0.48\textwidth]{figures/e4_main_rev}
-  \caption{Experiment~4: Pareto chart (left) and main-effects plot (right) for average revenue in the final 1{,}000 rounds. Budget tightness and algorithm are the two dominant factors.}
-  \label{fig:e4_pareto_rev}
+  \includegraphics[width=0.7\textwidth]{figures/e4_main_rev}
+  \caption{Experiment~4: Main effects plot for platform revenue across the three factors.}
+  \label{fig:e4_main_rev}
 \end{figure}
+
+Allocative efficiency, the fraction of rounds in which the highest-value bidder wins, provides a complementary view. Under value-maximizing objectives, agents bid proportional to value divided by the dual variable, preserving the value ranking in bids. Under utility-maximizing objectives, the additional $1 + \lambda$ denominator can distort bid rankings relative to valuations, reducing allocative efficiency.
+
+\input{tables/exp4_ranked_reg}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.48\textwidth]{figures/e4_pareto_reg}
-  \includegraphics[width=0.48\textwidth]{figures/e4_main_reg}
-  \caption{Experiment~4: Pareto chart (left) and main-effects plot (right) for average seller regret. The mirror image of the revenue pattern confirms budget tightness as the primary lever.}
-  \label{fig:e4_pareto_reg}
+  \includegraphics[width=0.7\textwidth]{figures/e4_main_reg}
+  \caption{Experiment~4: Main effects plot for effective Price of Anarchy.}
+  \label{fig:e4_main_reg}
 \end{figure}
 
-\subsection{Budget Dynamics}
+\subsection{Revenue and Budget Dynamics}
 
-\paragraph{Algorithm $\times$ budget tightness interaction.}
-The most important two-way interaction is \emph{algorithm $\times$ budget tightness} (significant at $p < 10^{-20}$ for revenue). Under loose budgets ($\text{tightness}=0.75$), PID and multiplicative produce similar revenues; under tight budgets ($\text{tightness}=0.25$), PID's advantage widens substantially. This asymmetry arises because tight budgets force multipliers to spend much of the episode near the minimum $\lambda=0.01$, where multiplicative dual ascent can become stuck in a sub-optimal fixed point while PID's proportional term provides a corrective nudge based on the signed error.
+Platform revenue reflects the total payments collected by the auctioneer. Auction format exerts a direct effect through the payment rule: first-price auctions charge the winning bid, while second-price auctions charge the second-highest bid. Budget utilisation, the mean ratio of spend to budget across bidders, captures how tightly agents consume their allocated budgets. High utilisation indicates that budgets are binding constraints, while low utilisation suggests that the competitive environment does not require full budget expenditure.
 
-\paragraph{Budget utilisation.}
-Mean budget utilisation ranges from 0.45 (loose budget, second-price) to 0.98 (tight budget, first-price), with zero budget violations in all 768 runs, confirming that the hard cap (Eq.~\eqref{eq:hard_cap}) is binding and properly enforced. Effective bid shading is highest under tight budgets in first-price auctions, where agents must shade most aggressively to avoid early exhaustion---generating a form of endogenous collusion distinct from the strategic collusion in Experiments~1--3.
+The interaction plot (Figure~\ref{fig:e4_int_rev}) reveals how factor combinations jointly shape revenue outcomes. Market thickness interacts with auction format because additional bidders intensify competition differently under the two payment rules.
 
-\subsection{Cross-Experiment Bridge}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e4_int_rev}
+  \caption{Experiment~4: Interaction plot for platform revenue.}
+  \label{fig:e4_int_rev}
+\end{figure}
 
-Comparing cells with matched factor values (auction type $\times$ $n$ bidders $\times$ $\eta$) across experiments reveals that budget constraints raise average revenue relative to unconstrained LinUCB bandits (Experiment~3), but remain below the unconstrained Q-learning baseline (Experiment~2). This ordering---E2 $>$ E4 $>$ E3 in terms of seller revenue---suggests that budget discipline partially offsets the collusion-inducing properties of first-price auctions, but cannot fully replicate the revenue recovery achievable with richer state representations and higher learning rates. Importantly, budget-constrained pacing exhibits substantially lower price volatility (standard deviation of winning bids) than unconstrained agents, consistent with the tighter multiplier convergence documented above.
+\subsection{Bidding Behaviour and Collusion Indicators}
 
-\subsection{Robustness}
+The bid-to-value ratio (mean $b/v$) measures the aggressiveness of bidding relative to true valuations. Under competitive equilibrium, value-maximizers in first-price auctions bid $(N-1)/N$ of their value, while second-price bidders should bid truthfully ($b/v = 1$). The bid suppression ratio compares observed bid-to-value against these competitive benchmarks: values below one indicate that agents have learned to suppress bids below the competitive level, a signature of tacit collusion via budget-pacing dynamics.
 
-Robustness checks validate the statistical integrity of our factorial design and protect against common threats to inference. HC3 heteroscedasticity-robust standard errors confirm that significance claims hold even under non-constant variance across factor levels—critical when budget tightness creates dramatically different spending regimes (utilisation ranging from 0.45 to 0.98). Holm-Bonferroni corrections protect against false discoveries across the 45 two-way interactions tested, ensuring that reported effects survive multiple-comparison adjustments. Model adequacy diagnostics ($R^2$ versus Predicted-$R^2$, OLS versus LGBM comparison) verify that linear main effects and two-way interactions adequately capture the data-generating process without requiring higher-order terms or nonlinear transformations.
+\input{tables/exp4_ranked_vol}
 
-The full robustness analysis (Section~L in \texttt{results/exp4/robust/}) confirms significance of all main effects and the algorithm $\times$ budget tightness interaction. LASSO variable selection retains budget tightness, algorithm, and auction type in all responses, corroborating the Pareto chart rankings. The model $R^2$ is high across all responses (0.85--0.96), indicating that the nine-factor design captures the dominant sources of variation with minimal residual confounding.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e4_main_vol}
+  \caption{Experiment~4: Main effects plot for bid-to-value ratio.}
+  \label{fig:e4_main_vol}
+\end{figure}
+
+Cross-episode drift, measured as the slope of the bid-to-value ratio across post-burn-in episodes, tests whether agents progressively learn to suppress bids over repeated interactions. A negative drift indicates increasing bid suppression over the course of the experiment, consistent with emergent collusive dynamics. The dual variable coefficient of variation captures within-episode stability: lower CV indicates more stable pacing, which is a prerequisite for consistent strategic behaviour.
+
+\subsection{Learning Dynamics}
+
+The warm-start benefit, measured as the revenue improvement from episode~1 to episode~2, quantifies how much dual variable persistence accelerates convergence. Inter-episode volatility (the coefficient of variation of revenue across post-burn-in episodes) captures the stability of learned behaviour: low volatility indicates that the pacing algorithm has converged to a stable equilibrium across the episodic structure.
+
+\subsection{Cross-Experiment Comparison}
+
+The autobidding framework in Experiment~4 produces qualitatively different collusion dynamics from the tabular Q-learning of Experiments~1 and~2 and the contextual bandits of Experiment~3. Budget constraints impose an exogenous form of bid discipline that interacts with the endogenous strategic learning studied in prior experiments. The episodic structure with warm-starting creates a multi-timescale learning process: within-episode dual convergence on the fast timescale, and cross-episode strategy refinement on the slow timescale.
+
+\subsection{Model Fit and Significant Effects}
 
 \input{tables/exp4_model_fit}
+
 \input{tables/exp4_significant}
+
+\subsection{Summary}
+
+Autobidding with regenerating budgets introduces budget-mediated bid suppression that is qualitatively distinct from the strategic collusion in Experiments~1 through~3. Auction format, bidder objective, and market thickness jointly determine the welfare-revenue trade-off. The Price of Anarchy framework provides a natural benchmark for evaluating efficiency losses, connecting the simulation results to the theoretical predictions of Balseiro and Gur (2019), Aggarwal et al.\ (2019), and Deng et al.\ (2021).

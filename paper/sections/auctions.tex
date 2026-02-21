@@ -1,6 +1,6 @@
 \section{Auctions}
 
-We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome---who wins and how much is paid---depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximize her per-round payoff, given by her valuation minus her payment. The experiments differ in how valuations are set---ranging from everyone having a fixed value of 1 to signals that are partially ``affiliated'' across bidders---and in the specific informational states that bidders may observe between rounds.
+We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome (who wins and how much is paid) depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximize her per-round payoff, given by her valuation minus her payment. The experiments differ in how valuations are set, ranging from everyone having a fixed value of 1 to signals that are partially ``affiliated'' across bidders, and in the specific informational states that bidders may observe between rounds.
 
 \medskip
 
@@ -36,4 +36,13 @@ and is zero for those bidders who do not win.
 
 \medskip
 
-Across all three experiments, the auctions are repeated for many rounds, allowing for long-run behavior to emerge under different reserve price levels and different degrees of valuation interdependence. The discrete setup (both for signals and for bids) is maintained for computational tractability, but the core elements of a standard first- or second-price auction---with or without a reserve---are preserved, and the ultimate allocation and payment follow the standard textbook rules.
+\noindent \textbf{Budget Constraints and Pacing (Experiment 4).}
+Experiment~4 introduces hard budget constraints and pacing algorithms to the affiliated-valuation environment from Experiments~2 and~3. Each bidder faces a budget $B = \text{tightness} \times 0.5 \times T$ that limits cumulative spending over $T = 10{,}000$ rounds, where tightness $\in \{0.25, 0.75\}$. To comply with the budget constraint, bidders use a pacing multiplier $\lambda_t \in [0.01, 1.5]$ that scales their valuation-based bid:
+\[
+b_t = \min(\lambda_t \cdot v_t, \text{bid grid max}).
+\]
+The multiplier adjusts dynamically according to one of two control algorithms: (1) \emph{multiplicative pacing} uses dual ascent to update $\lambda_t$ based on cumulative spending deviation from the target pacing curve, or (2) \emph{PID pacing} uses proportional-integral-derivative control with error-based corrections. The hard budget cap ensures that if cumulative spending would exceed $B$, the agent bids zero. This setup allows us to study how budget discipline interacts with auction format and learning dynamics, bridging the collusion literature with the pacing efficiency literature.
+
+\medskip
+
+Across all four experiments, the auctions are repeated for many rounds, allowing for long-run behavior to emerge under different reserve price levels, different degrees of valuation interdependence, and varying budget regimes. The discrete setup (both for signals and for bids) is maintained for computational tractability, but the core elements of a standard first- or second-price auction, with or without a reserve, are preserved, and the ultimate allocation and payment follow the standard textbook rules.

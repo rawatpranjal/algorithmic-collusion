@@ -1,64 +1,68 @@
-\section{Results: Experiment 3}
-
-In Experiment 3, which swaps Q-learning for LinUCB contextual bandits, the range of possible outcomes becomes notably wider than in Experiment 2. Certain runs converge to very poor equilibria, yielding near-zero average revenue or almost universal no-sales, while others perform as well or better than before. Overall, the mean revenue drops (to roughly 0.58 from 0.64) and the mean seller regret rises (to about 0.42 from 0.27), but the system also exhibits more polarized extremes of volatility, winner entropy, and no-sale rates. This highlights how more “sophisticated” context-based exploration can in fact magnify variability in autonomous first- vs. second-price auctions, rather than reliably benefiting the seller. This is not good because one criticism often given to Q-learning based studies is that firms would not implement such forms of algorithms as they have higher regret (do not explore efficiently). But these results show that the outcomes do not improve when we switch to efficient exploration. 
-
-In Experiment 3, the correlation matrix again shows no link between \texttt{auction\_type\_code} and the main model parameters (\(\eta\), \(c\), \(\lambda\), reserve price, etc.), confirming effective randomization. By contrast, \texttt{auction\_type\_code} correlates strongly with the key outcomes: first-price auctions are associated with notably lower final revenue (correlation \(\approx -0.57\)) and higher seller regret (\(\approx +0.57\)), both at extremely small \(p\)-values (\(\sim 10^{-44}\)). There is also a weaker negative correlation (\(\approx -0.22\)) with \(\texttt{price\_volatility}\). No significant correlation emerges with time-to-converge, no-sale rate, or winner entropy, mirroring the pattern of robust revenue and regret differences seen in previous experiments.
-
-\paragraph{First price auctions reduce revenue, regret and reduce price volatility.}
-Table~\ref{tab:ate_exp3} shows the estimated average treatment effects (ATEs) of being in a first-price auction (\texttt{auction\_type\_code}\,$=1$) rather than second-price (\texttt{auction\_type\_code}\,$=0$). Unsurprisingly, first-price yields substantially lower final revenue (\(-0.2140\), \(p<0.0001\)) and higher seller regret (\(+0.2084\), \(p<0.0001\)). The no-sale rate and convergence time do not differ in a meaningful way (\(p>0.4\)). Interestingly, under LinUCB, price volatility is slightly \emph{lower} in first-price auctions (\(-0.0259\), \(p=0.0001\))—the opposite direction from previous experiments—but still indicates a significant format effect.
-
-\input{tables/exp3_ate}
-
-
-\paragraph{Affiliation (\(\eta\)) Does Not Alter Outcomes.}
-In Experiment~3, we again vary \(\eta\) from 0 (independent private values) to 1 (purely common-value affiliation). However, across the regression and CATE analyses, the estimated coefficients on \(\eta\) and \(\eta^2\) are all statistically insignificant (\(p>0.05\)) for revenue, regret, volatility, and winner entropy. Thus, even in this bandit-based setting, increasing affiliation does not appear to meaningfully change the outcome gaps between first- and second-price auctions.
-
-\paragraph{More bidders do not dampen the negative effects.}
-Conditional average treatment effect (CATE) plots reveal that contrary to intuition, having more bidders exacerbates the revenue penalty and seller regret under first-price auctions. Increased competition does not mitigate strategic underbidding; instead, it appears to amplify it, leading to worse outcomes for revenue and regret as the number of bidders rises. However, for price volatility, the effect aligns with expectations: greater competition reduces volatility, likely by stabilizing winning bids. This result is fairly opposite to what we found in experiments 1 and 2; suggesting that bandit-based exploration may be fundamentally different from Q-learning. 
+\section{Experiment III: Contextual Bandits}
 
 \begin{figure}[H]
-\centering
-\begin{minipage}{0.3\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/e3_reg_bidder.png}
-\end{minipage}
-\hfill
-\begin{minipage}{0.3\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/e3_rev_bidder.png}
-\end{minipage}
-\hfill
-\begin{minipage}{0.3\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/e3_vol_bidder.png}
-\end{minipage}
-\caption{Illustrative partial-dependence (CATE) plots in a 1$\times$3 layout.}
-\label{fig:cate_bidders_exp2}
+  \includegraphics[width=\textwidth]{figures/e3_trace}
+  \caption{Representative learning trajectory for a single trial of Experiment~3 (LinUCB, first-price auction, $\eta = 0.5$, 2~bidders, 5{,}000 rounds). Top: rolling-mean revenue with BNE benchmark. Middle: bid versus signal in the final 1{,}000 rounds, overlaid with the BNE bid function. Bottom: cumulative average reward per bidder.}
+  \label{fig:e3_trace}
 \end{figure}
 
-\paragraph{More exploration makes things worse.}
-The exploration parameter \(c\) for LinUCB exhibits a statistically significant influence on two outcomes. For average revenue (\(\texttt{avg\_rev\_last\_1000}\)), \(c\) has a negative effect (\(-0.148\), \(p \approx 0.042\)), indicating that higher exploration incentives slightly reduce final revenues. Additionally, \(c\) shows a marginally significant positive effect on winner entropy (\(0.155\), \(p \approx 0.081\)), suggesting that increased exploration might modestly raise the unpredictability of auction winners, though this result is near the threshold of significance. For other outcomes, including seller regret, volatility, and convergence metrics, \(c\) does not show statistically significant effects (\(p > 0.1\)), implying that its primary impact is limited to revenue and, to a lesser extent, winner entropy.
+Experiment~3 replaces Q-learning with LinUCB contextual bandits, testing whether a more sophisticated exploration mechanism improves seller outcomes. The design is a $2^8$ full factorial with 8 factors and 512 observations. The outcome range widens substantially relative to Experiment~2: certain runs converge to near-zero revenue or universal no-sales, while others perform comparably to Q-learning. Mean revenue drops and mean seller regret rises, with more polarised extremes of volatility, winner entropy, and no-sale rates. This highlights how contextual exploration can magnify variability in auction outcomes rather than reliably benefiting the seller; a finding that challenges the common criticism of Q-learning studies, which argues that firms would adopt more efficient exploration algorithms to improve outcomes.
+
+\subsection{Revenue and Seller Regret}
+
+Auction type remains the dominant factor, with the largest absolute $t$-statistic ($|t| \approx 12$) for both revenue and regret. Table~\ref{tab:exp3_ranked_rev} shows that auction type is followed by number of bidders and the exploration parameter $c$. First-price auctions yield substantially lower final revenue and higher seller regret, as the main effects plots (Figures~\ref{fig:e3_main_rev} and~\ref{fig:e3_main_reg}) confirm.
+
+\input{tables/exp3_ranked_rev}
 
 \begin{figure}[H]
-\centering
-\begin{minipage}{0.45\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/e3_reg_c.png}
-\end{minipage}
-\hfill
-\begin{minipage}{0.45\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/e3_rev_c.png}
-\end{minipage}
-\\[1em] % Optional vertical spacing if needed
-\caption{Illustrative partial-dependence (CATE) plots in a 1$\times$2 layout.}
-\label{fig:cate_bidders_exp2}
+  \includegraphics[width=0.7\textwidth]{figures/e3_main_rev}
+  \caption{Experiment~3: Main effects plot for average revenue. First-price auctions produce markedly lower revenue than second-price.}
+  \label{fig:e3_main_rev}
 \end{figure}
 
-\paragraph{Other details.} The GATE analyses reveal two notable patterns. First, the inclusion of the median-of-others in the context (\texttt{use\_median\_of\_others\_code}) significantly reduces winner entropy (\(p \approx 0.036\)) in the first price auction, indicating that adding this feature to the bandit's decision-making process leads to slightly more predictable auction outcomes. Second, the reserve price demonstrates a significant negative effect on price volatility (\(-0.478\), \(p \approx 0.024\)), suggesting that higher reserve prices stabilize winning bids by reducing aggressive bidding behavior in the first price auction.
+\input{tables/exp3_ranked_reg}
 
-\input{tables/exp3_gate}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3_main_reg}
+  \caption{Experiment~3: Main effects plot for seller regret. The mirror image of the revenue pattern.}
+  \label{fig:e3_main_reg}
+\end{figure}
 
+The affiliation parameter $\eta$ again shows no statistically significant effect on any primary outcome, consistent with Experiment~2. Even in this bandit-based setting, increasing affiliation does not meaningfully change the outcome gaps between auction formats.
 
-\paragraph{Summary.}
-Experiment 3 demonstrates that replacing Q-learning with LinUCB contextual bandits amplifies variability in auction outcomes. While median-of-others in the context reduces winner entropy and higher reserve prices stabilize winning bids, these benefits are outweighed by overall declines in revenue and increases in seller regret. The exploration parameter \(c\) further reduces revenue, challenging the assumption that efficient exploration benefits sellers. These findings highlight that while contextual bandits introduce sophistication, they do not inherently mitigate the disadvantages of first-price auctions and can even exacerbate negative outcomes.
+Contrary to Q-learning experiments, more bidders \emph{worsen} first-price performance under LinUCB. Increased competition does not mitigate strategic underbidding; instead, it amplifies it, leading to worse revenue and regret as the number of bidders rises. This reversal from Experiments~1 and~2 suggests that optimism-based exploration interacts with competitive pressure differently than $\varepsilon$-greedy or Boltzmann exploration.
+
+The exploration parameter $c$ has a significant negative effect on revenue, indicating that higher exploration incentives reduce final revenues. This challenges the assumption that efficient exploration benefits sellers: LinUCB's optimism-based mechanism may reinforce risk-averse bidding by inflating uncertainty estimates around aggressive actions that rarely win. The interaction plot (Figure~\ref{fig:e3_int_rev}) shows these moderating effects and the departures from additivity among the top factorial interactions.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3_int_rev}
+  \caption{Experiment~3: Interaction plot for average revenue under LinUCB. Non-parallel lines indicate factor interdependencies, including the bidder-count reversal.}
+  \label{fig:e3_int_rev}
+\end{figure}
+
+\subsection{Price Volatility}
+
+Under LinUCB bandits, price volatility is \emph{lower} in first-price auctions, the opposite direction from Experiment~2. Table~\ref{tab:exp3_ranked_vol} and the main effects plot (Figure~\ref{fig:e3_main_vol}) confirm this reversal. The result suggests that first-price auctions under LinUCB produce more uniform (though lower) winning bids, as agents converge to stable but suboptimal bid-shading equilibria. Reserve prices also show a significant negative effect on volatility, stabilising winning bids by disqualifying extreme low bids.
+
+\input{tables/exp3_ranked_vol}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3_main_vol}
+  \caption{Experiment~3: Main effects plot for price volatility.}
+  \label{fig:e3_main_vol}
+\end{figure}
+
+\subsection{Model Fit and Significant Effects}
+
+\input{tables/exp3_model_fit}
+
+\input{tables/exp3_significant}
+
+\subsection{Summary}
+
+Replacing Q-learning with LinUCB contextual bandits amplifies variability in auction outcomes and does not improve seller welfare. First-price auctions produce substantially lower revenue and higher regret under bandits than under Q-learning, with the revenue gap widening dramatically. The exploration parameter $c$ reduces rather than improves revenue, and more bidders worsen first-price performance; both reversals from Q-learning experiments. These findings demonstrate that algorithmic sophistication does not inherently mitigate the disadvantages of first-price auctions and can exacerbate negative outcomes when the exploration mechanism reinforces conservative bidding.

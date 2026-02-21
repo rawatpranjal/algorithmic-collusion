@@ -17,8 +17,9 @@ CODED_COLS = [
     "exploration_coded",
     "asynchronous_coded",
     "n_bidders_coded",
-    "median_opp_past_bid_index_coded",
-    "winner_bid_index_state_coded",
+    "n_actions_coded",
+    "info_feedback_coded",
+    "decay_type_coded",
 ]
 
 RESPONSE_COLS = [
@@ -44,3 +45,7 @@ if __name__ == "__main__":
         output_dir="results/exp1",
         experiment_id=1,
     )
+
+    from estimation.robust_analysis import run_robust_analysis
+    run_robust_analysis(df, coded_cols=CODED_COLS, response_cols=RESPONSE_COLS,
+                        output_dir="results/exp1", experiment_id=1)

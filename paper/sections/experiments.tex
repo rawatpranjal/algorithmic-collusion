@@ -2,7 +2,7 @@
 
 We design three experiments to study repeated sealed-bid auctions under varying valuations and learning strategies. In all experiments, $n$ bidders submit discrete bids $b_i\in[0,1]$ each round. A reserve price $r\ge 0$ may invalidate low bids below $r$. If no valid bid meets $r$, no sale occurs and the revenue is zero; otherwise, the highest valid bid wins, and any tie among top bids is broken at random. We compare first-price (winner pays her own bid) and second-price (winner pays the second-highest bid) formats. When multiple bids tie for the highest valid bid, our implementation selects a single winner uniformly at random among those tied. Each experiment allows multiple parameter configurations, as described in corresponding tables, and collects the outcome metrics listed below.
 
-\paragraph{Experiment 1.} Here each bidder has a constant valuation $v_i=1.0$. This isolates how standard Q-learning responds to first- vs.\ second-price incentives when all players share the same private value of 1.0. Bidders maintain $Q$-values for pairs $(s,a)$, where $s$ can encode none, some, or all of the following: (i) the median of other bidders' previous-round bids and (ii) the previous winning bid. They update these $Q$-values either asynchronously (only the chosen action is updated per step) or synchronously (all actions are updated using counterfactual rewards). Table~\ref{tab:exp1params} summarizes the main parameters, including the learning rate $\alpha$, discount factor $\gamma$, exploration mode ($\varepsilon$-greedy or Boltzmann), number of bidders, reserve prices, and total training episodes. The combination of these factors tests how quickly bidders learn to match or shade their bids under the two payment rules.
+\subsection{Experiment I: Constant Valuations} Here each bidder has a constant valuation $v_i=1.0$. This isolates how standard Q-learning responds to first- vs.\ second-price incentives when all players share the same private value of 1.0. Bidders maintain $Q$-values for pairs $(s,a)$, where $s$ can encode none, some, or all of the following: (i) the median of other bidders' previous-round bids and (ii) the previous winning bid. They update these $Q$-values either asynchronously (only the chosen action is updated per step) or synchronously (all actions are updated using counterfactual rewards). Table~\ref{tab:exp1params} summarizes the main parameters, including the learning rate $\alpha$, discount factor $\gamma$, exploration mode ($\varepsilon$-greedy or Boltzmann), number of bidders, reserve prices, and total training episodes. The combination of these factors tests how quickly bidders learn to match or shade their bids under the two payment rules.
 
 \begin{table}[h]
 \centering
@@ -19,12 +19,14 @@ Discount factor ($\gamma$) & e.g.\ $\{0.0,0.5,0.9,0.99\}$\\
 Exploration & $\varepsilon$-greedy or Boltzmann\\
 Q-update mode & Asynchronous or synchronous\\
 State features & None / median-of-others / previous-winner\\
+Bid grid resolution  & $\{11, 21\}$ discrete actions\\
+Epsilon decay schedule & Linear or exponential\\
 Number of episodes & e.g.\ $10^4$ or $10^5$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Experiment 2.} Here bidders instead receive private signals $s_i\in[0,1]$, and their valuations become interdependent through an affiliation parameter $\eta\in[0,1]$ via $v_i=(1-0.5\,\eta)\,s_i + 0.5\,\eta\,\bigl(\tfrac{1}{n-1}\sum_{j\neq i}s_j\bigr)$. This lets $\eta=0$ represent purely private values and $\eta=1$ represent strong common-value elements, since each bidder’s valuation then weighs her own signal equally with that of her opponents. We again apply Q-learning with updates similar to Experiment\,1 but allow the current signal $s_i$ to appear in the bidder’s state. Table~\ref{tab:exp2params} highlights the key parameters, which still include choices for $\alpha$, $\gamma$, exploration strategy, number of bidders, reserve prices, and total episodes. By contrasting outcomes at different $\eta$ values, we observe how stronger affiliation (and thus more common-value features) affects revenue and convergence under first- vs.\ second-price rules.
+\subsection{Experiment II: Affiliated Valuations with Q-Learning} Here bidders instead receive private signals $s_i\in[0,1]$, and their valuations become interdependent through an affiliation parameter $\eta\in[0,1]$ via $v_i=(1-0.5\,\eta)\,s_i + 0.5\,\eta\,\bigl(\tfrac{1}{n-1}\sum_{j\neq i}s_j\bigr)$. This lets $\eta=0$ represent purely private values and $\eta=1$ represent strong common-value elements, since each bidder’s valuation then weighs her own signal equally with that of her opponents. We again apply Q-learning with updates similar to Experiment\,1 but allow the current signal $s_i$ to appear in the bidder’s state. Table~\ref{tab:exp2params} highlights the key parameters, which still include choices for $\alpha$, $\gamma$, exploration strategy, number of bidders, reserve prices, and total episodes. By contrasting outcomes at different $\eta$ values, we observe how stronger affiliation (and thus more common-value features) affects revenue and convergence under first- vs.\ second-price rules.
 
 \begin{table}[h]
 \centering
@@ -47,7 +49,7 @@ Number of episodes & e.g.\ $10^5$\\
 \end{tabular}
 \end{table}
 
-\paragraph{Experiment 3.} Here we preserve the signal-based, affiliated valuation model from Experiment\,2 but abandon Q-learning in favor of bandit-based methods. Each bidder treats possible bids as arms in either a standard multi-armed bandit or a linear contextual bandit (LinUCB), where the context could include the current signal plus optional median-of-others and winner-bid features. Exploration is controlled through an optimism bonus parameter $c$ rather than a learning rate or discount factor. A regularization parameter $\lambda$ may also be set to stabilize the bandit's linear estimates. Table~\ref{tab:exp3params} summarizes these parameters. This design highlights how structured bandit approaches might converge more efficiently than Q-learning, especially when valuations fluctuate with signals.
+\subsection{Experiment III: Affiliated Valuations with Bandits} Here we preserve the signal-based, affiliated valuation model from Experiment\,2 but abandon Q-learning in favor of bandit-based methods. Each bidder treats possible bids as arms in either a standard multi-armed bandit or a linear contextual bandit (LinUCB), where the context could include the current signal plus optional median-of-others and winner-bid features. Exploration is controlled through an optimism bonus parameter $c$ rather than a learning rate or discount factor. A regularization parameter $\lambda$ may also be set to stabilize the bandit's linear estimates. Table~\ref{tab:exp3params} summarizes these parameters. This design highlights how structured bandit approaches might converge more efficiently than Q-learning, especially when valuations fluctuate with signals.
 
 \begin{table}[H]
 \centering
@@ -69,7 +71,7 @@ Number of rounds & e.g.\ $10^5$\\
 \end{tabular}
 \end{table}
 
-\paragraph{Experiment 4.} Building on the affiliated-valuation model of Experiments~2 and~3, Experiment~4 introduces explicit budget constraints on each bidder. Rather than unconstrained learning, each of $n$ bidders must allocate a finite budget $B$ across $T$ rounds. We study two pacing algorithms: \emph{multiplicative pacing} (Lagrangian dual ascent, following Balseiro and Gur 2019) and a \emph{PID controller} (see Section~\ref{sec:algorithms}). Both apply a multiplier $\lambda_t$ to the raw valuation bid, with a hard cap enforcing that cumulative spending never exceeds $B$. The design retains the same affiliation parameter $\eta$ and auction format (first vs.\ second price) as bridge factors to connect with prior experiments. Three new factors---budget tightness, pacing aggressiveness, and update frequency---govern how the pacing control law responds to observed spending patterns. Table~\ref{tab:exp4params} details the factor levels.
+\subsection{Experiment IV: Budget-Constrained Pacing} Building on the affiliated-valuation model of Experiments~2 and~3, Experiment~4 introduces explicit budget constraints on each bidder. Rather than unconstrained learning, each of $n$ bidders must allocate a finite budget $B$ across $T$ rounds. We study two pacing algorithms: \emph{multiplicative pacing} (Lagrangian dual ascent, following Balseiro and Gur 2019) and a \emph{PID controller} (see Section~\ref{sec:algorithms}). Both apply a multiplier $\lambda_t$ to the raw valuation bid, with a hard cap enforcing that cumulative spending never exceeds $B$. The design retains the same affiliation parameter $\eta$ and auction format (first vs.\ second price) as bridge factors to connect with prior experiments. Three new factors (budget tightness, pacing aggressiveness, and update frequency) govern how the pacing control law responds to observed spending patterns. Table~\ref{tab:exp4params} details the factor levels.
 
 \begin{table}[H]
 \centering
@@ -99,31 +101,34 @@ Table~\ref{tab:params} summarizes the parameters used across all experiments, th
 \centering
 \caption{Parameter Ranges and Their Usage Across Experiments}
 \label{tab:params}
-\begin{tabular}{l l l c c c c}
+\small
+\begin{tabular}{l l c c c c}
 \toprule
-\textbf{Name} & \textbf{Description} & \textbf{Range} & \textbf{E1} & \textbf{E2} & \textbf{E3} & \textbf{E4}\\
+\textbf{Name} & \textbf{Description} & \textbf{E1} & \textbf{E2} & \textbf{E3} & \textbf{E4}\\
 \midrule
-$\alpha$ & Q-learning rate & $\{0.001,0.005,0.01,0.05,0.1\}$ & \checkmark & \checkmark & & \\
-$\gamma$ & Discount factor & $\{0.0,0.25,0.5,0.75,0.9,0.95,0.99\}$ & \checkmark & \checkmark & & \\
-$\varepsilon$ & E-greedy exploration prob & Typically decays from 1 to 0 & \checkmark & \checkmark & & \\
-Boltzmann & Softmax exploration & Weight factor over $Q$-values & \checkmark & \checkmark & & \\
-$c$ & Bandit exploration param & E.g.\ $[0.01,2.0]$ &  &  & \checkmark & \\
-$r$ & Reserve price & $\{0.0,0.1,0.2,0.3,0.4,0.5\}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
-$n$ & Number of bidders & $\{2,4,6\}$ or similar & \checkmark & \checkmark & \checkmark & \checkmark \\
-$\eta$ & Affiliation parameter & $[0,1]$ &  & \checkmark & \checkmark & \checkmark \\
-\textit{Episodes} & Total training rounds & E.g.\ $\{10{,}000, 50{,}000, 100{,}000\}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
-\textit{Sync/Async} & Q-learning modes & N/A (binary choice) & \checkmark & \checkmark & & \\
-\textit{Median/Winner} & State features & N/A (binary choice) & \checkmark & \checkmark & \checkmark & \\
-Budget tightness & Fraction of max feasible budget & $\{0.25, 0.75\}$ & & & & \checkmark \\
-Algorithm & Pacing control law & Multiplicative / PID & & & & \checkmark \\
-Aggressiveness & Step-size multiplier & $\{0.5, 2.0\}$ & & & & \checkmark \\
-Update frequency & Rounds per multiplier update & $\{1, 100\}$ & & & & \checkmark \\
-Initial multiplier & Starting $\lambda_0$ & $\{0.5, 1.0\}$ & & & & \checkmark \\
+$\alpha$ & Q-learning rate & \checkmark & \checkmark & & \\
+$\gamma$ & Discount factor & \checkmark & \checkmark & & \\
+$\varepsilon$ & E-greedy exploration prob & \checkmark & \checkmark & & \\
+Boltzmann & Softmax exploration & \checkmark & \checkmark & & \\
+$c$ & Bandit exploration param &  &  & \checkmark & \\
+$r$ & Reserve price & \checkmark & \checkmark & \checkmark & \checkmark \\
+$n$ & Number of bidders & \checkmark & \checkmark & \checkmark & \checkmark \\
+$\eta$ & Affiliation parameter &  & \checkmark & \checkmark & \checkmark \\
+\textit{Episodes} & Total training rounds & \checkmark & \checkmark & \checkmark & \checkmark \\
+\textit{Sync/Async} & Q-learning modes & \checkmark & \checkmark & & \\
+\textit{Median/Winner} & State features & \checkmark & \checkmark & \checkmark & \\
+\textit{Bid grid}   & Number of discrete bid levels  & \checkmark & & & \\
+\textit{Decay type}  & Epsilon decay schedule         & \checkmark & & & \\
+Budget tightness & Fraction of max feasible budget & & & & \checkmark \\
+Algorithm & Pacing control law & & & & \checkmark \\
+Aggressiveness & Step-size multiplier & & & & \checkmark \\
+Update frequency & Rounds per multiplier update & & & & \checkmark \\
+Initial multiplier & Starting $\lambda_0$ & & & & \checkmark \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Outcome Metrics.} Our outcome metrics are consistent across all three experiments. We measure the \emph{average revenue in later rounds}, typically by averaging the revenue over the final 1000 episodes, which reflects how well the auction performs after strategies have stabilized. We also determine the \emph{time to converge} as the earliest round after which the rolling-average revenue remains within $\pm 5\%$ of its final mean. We define \emph{seller regret} as $1 - (\text{observed revenue})$ per round to gauge how far earnings fall below the maximal payoff of 1. We compute a \emph{no-sale rate} by noting the fraction of rounds in which no valid bid exceeds the reserve. We track \emph{price volatility} by taking the sample standard deviation of winning bids in later rounds. Finally, we measure \emph{winner entropy} to see whether a particular bidder tends to dominate, calculating the Shannon entropy of the empirical distribution of winners. Table~\ref{tab:outcomes} provides a concise summary of these common metrics that allow systematic comparisons of convergence speed, bidding stability, and revenue performance across all experiments.
+\subsection{Outcome Metrics} Our outcome metrics are consistent across all three experiments. We measure the \emph{average revenue in later rounds}, typically by averaging the revenue over the final 1000 episodes, which reflects how well the auction performs after strategies have stabilized. We also determine the \emph{time to converge} as the earliest round after which the rolling-average revenue remains within $\pm 5\%$ of its final mean. We define \emph{seller regret} as $1 - (\text{observed revenue})$ per round to gauge how far earnings fall below the maximal payoff of 1. We compute a \emph{no-sale rate} by noting the fraction of rounds in which no valid bid exceeds the reserve. We track \emph{price volatility} by taking the sample standard deviation of winning bids in later rounds. Finally, we measure \emph{winner entropy} to see whether a particular bidder tends to dominate, calculating the Shannon entropy of the empirical distribution of winners. Table~\ref{tab:outcomes} provides a concise summary of these common metrics that allow systematic comparisons of convergence speed, bidding stability, and revenue performance across all experiments.
 
 \begin{table}[h]
 \centering

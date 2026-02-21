@@ -3,7 +3,7 @@
 
 Reinforcement learning (RL) typically involves an agent interacting with an environment through states, actions, and rewards. In \emph{Q-learning}, the agent learns to approximate an optimal action-value function $Q(s,a)$, which represents the expected discounted reward for taking action $a$ in state $s$. By comparison, \emph{bandit} algorithms (including multi-armed and contextual bandits) consider no or minimal state transitions, learning directly which action maximizes the expected payoff.
 
-\paragraph{Asynchronous Q-learning.}
+\subsection{Q-Learning}
 An \emph{asynchronous} Q-learning agent updates its $Q$-values only for the action actually taken at each step. Let $s_t$ be the current state, $a_t$ the chosen action, and $r_t$ the immediate reward upon transitioning to $s_{t+1}$. The Q-update is:
 \begin{equation}
 Q(s_t,a_t) 
@@ -21,7 +21,7 @@ Q(s_t,a_t)
 \end{equation}
 where $\alpha$ is the learning rate and $\gamma$ the discount factor. Only $Q(s_t,a_t)$ changes, reflecting the experience from action $a_t$.
 
-\paragraph{Synchronous Q-learning.}
+\subsubsection{Synchronous Updates}
 In \emph{synchronous} Q-learning, the agent updates the Q-values for \emph{all} actions from the same state. Let $A$ be the set of possible actions. If the agent took action $a_t$ but also computes hypothetical rewards $r_t(a)$ for each $a \in A$, the synchronous update is:
 \begin{equation}
 Q\bigl(s_t,a\bigr) 
@@ -39,7 +39,7 @@ Q\bigl(s_t,a\bigr)
 \end{equation}
 Thus every $Q(s_t,a)$ is updated in a single step, including actions the agent did not actually choose.
 
-\paragraph{Boltzmann Exploration.}
+\subsection{Exploration Strategies}
 When selecting actions, \emph{Boltzmann} (or \emph{softmax}) exploration draws an action $a$ from a distribution favoring higher estimated $Q$-values:
 \begin{equation}
 P\bigl(a \mid s\bigr) 
@@ -49,7 +49,7 @@ P\bigl(a \mid s\bigr)
 \end{equation}
 where $\beta > 0$ is a temperature parameter. Larger $\beta$ makes the distribution flatter, promoting more exploration; smaller $\beta$ makes the policy greedier with respect to $Q$.
 
-\paragraph{Epsilon-greedy Exploration.}
+\subsubsection{Epsilon-Greedy Exploration}
 An alternative is \emph{$\varepsilon$-greedy} exploration, which selects the action that maximizes $Q(s,a)$ with probability $1-\varepsilon$ and picks an action uniformly at random with probability $\varepsilon$. Formally,
 \begin{equation}
 P\bigl(a \mid s\bigr)
@@ -62,7 +62,7 @@ P\bigl(a \mid s\bigr)
 \end{equation}
 As $\varepsilon$ diminishes, the policy exploits more aggressively based on current $Q$-estimates. In our experiments, $\varepsilon$ (or the Boltzmann temperature $\beta$) starts near 1.0 to encourage exploration and decays linearly over the first 90\% of the episodes to a near-zero value in the final phase, thus allowing the agents to exploit what they have learned.
 
-\paragraph{Bandits.}
+\subsection{Bandit Algorithms}
 A \emph{multi-armed bandit} scenario omits state transitions, focusing instead on learning which of several actions (arms) maximizes expected reward. Let $\hat{\mu}_a$ be the estimated mean reward of arm $a$, and $u_a$ be an uncertainty term. A typical approach is Upper Confidence Bound (UCB), which selects
 \begin{equation}
 a_t 
@@ -71,7 +71,7 @@ a_t
 \end{equation}
 then updates $\hat{\mu}_a$ and $u_a$ using the reward observed after pulling arm $a$. This encourages exploration of actions whose rewards are still uncertain. In our implementation, we initialize $\mathbf{A}_a = \lambda \mathbf{I}$ and $\mathbf{b}_a = \mathbf{0}$ for each arm $a$. The regularization parameter $\lambda$ ensures that $\mathbf{A}_a$ is invertible from the start and provides numerical stability.
 
-\paragraph{Contextual Bandits.}
+\subsubsection{Contextual Bandits}
 \emph{Contextual bandits} generalize the bandit problem by providing a context vector $\mathbf{x}\in\mathbb{R}^d$ prior to choosing an action. The \emph{LinUCB} algorithm assumes a linear payoff model, so each action $a$ has parameters $\boldsymbol{\theta}_a$, and the reward is approximately $\boldsymbol{\theta}_a^\top \mathbf{x}$. For each action $a$, one maintains a matrix $\mathbf{A}_a$ and vector $\mathbf{b}_a$. The algorithm selects $a$ via:
 \begin{equation}
 a_t 
@@ -86,6 +86,13 @@ c\sqrt{\mathbf{x}^\top \mathbf{A}_a^{-1}\mathbf{x}}\Bigr],
 \end{equation}
 and $c>0$ controls exploration. After observing the reward, $\mathbf{A}_a$ and $\mathbf{b}_a$ are updated, refining the estimate of $\boldsymbol{\theta}_a$ and thus improving action selection over time.
 
+\subsubsection{Contextual Thompson Sampling}
+As an alternative to the optimism-based exploration of LinUCB, \emph{Contextual Thompson Sampling} (CTS) uses posterior sampling to balance exploration and exploitation. Each action $a$ maintains a Bayesian linear regression model with posterior $\boldsymbol{\theta}_a \mid \text{data} \sim \mathcal{N}(\hat{\boldsymbol{\theta}}_a,\, \sigma^2 \mathbf{A}_a^{-1})$, where $\hat{\boldsymbol{\theta}}_a = \mathbf{A}_a^{-1}\mathbf{b}_a$ and $\sigma^2$ is a noise variance parameter. At each step, the algorithm draws a sample $\tilde{\boldsymbol{\theta}}_a$ from the posterior for every action and selects greedily with respect to the samples:
+\begin{equation}
+a_t \;=\; \arg\max_{a}\; \tilde{\boldsymbol{\theta}}_a^\top \mathbf{x}, \quad \tilde{\boldsymbol{\theta}}_a \sim \mathcal{N}\!\bigl(\hat{\boldsymbol{\theta}}_a,\, \sigma^2 \mathbf{A}_a^{-1}\bigr).
+\end{equation}
+The parameter $\sigma^2$ plays an analogous role to $c$ in LinUCB: larger $\sigma^2$ produces wider posterior draws, encouraging more exploration; smaller values exploit the current estimates more aggressively. Comparing LinUCB (deterministic optimism) with CTS (stochastic posterior sampling) directly tests whether the exploration mechanism affects the emergence of collusive outcomes, as suggested by Bichler et al.\ (2024).
+
 A few other implementation choices may affect performance. Each experiment runs for a set number of \emph{episodes}, during which agents collect rewards and update their parameters. Both $\varepsilon$-greedy and Boltzmann exploration typically begin with higher randomness (e.g., $\varepsilon=1.0$ or high temperature $\beta$) and decay linearly or exponentially across the first 90\% of episodes, settling to zero thereafter for purely greedy actions in the final phase. Q-tables may be initialized to all zeros or to small random values, influencing early exploration. In any given state, if multiple actions share the same $Q$-value, ties are broken uniformly at random. In the bandit setting, particularly with \emph{LinUCB}, two key parameters shape the agent's behavior: the regularization parameter $\lambda$, which scales the identity matrix added to the design matrix $\mathbf{X}^\top \mathbf{X}$ to stabilize estimates, and the exploration coefficient $c$, which controls the width of the confidence interval around each action's estimated reward. Larger $c$ promotes more exploration, whereas smaller $c$ favors exploiting the current reward estimates.
 
 \subsection{Budget-Constrained Pacing (Experiment~4)}
@@ -97,7 +104,7 @@ b_t^i \;=\; \min\!\bigl(\lambda_t^i\, v_t^i,\; B^i - {\textstyle\sum_{\tau<t}} c
 \end{equation}
 where $c_\tau^i$ is the payment made by agent~$i$ in round~$\tau$ (zero unless $i$ wins).
 
-\paragraph{Multiplicative Pacing (Lagrangian dual ascent).}
+\subsubsection{Multiplicative Pacing}
 Following Balseiro and Gur (2019), the pacing multiplier is derived from a Lagrangian dual variable $\mu_t^i \geq 0$:
 \begin{align}
 \mu_{t+1}^i &\;=\; \max\!\bigl(0,\; \mu_t^i + \alpha_p\,(c_t^i - B^i/T)\bigr), \label{eq:dual_update}\\
@@ -105,7 +112,7 @@ Following Balseiro and Gur (2019), the pacing multiplier is derived from a Lagra
 \end{align}
 where $\alpha_p = \text{aggressiveness}/\!\sqrt{T}$ is the dual step size. When the per-round cost exceeds the average budget $B^i/T$, the dual variable rises, reducing $\lambda$ and hence future bids; underspending reverses this adjustment.
 
-\paragraph{PID Pacing (Proportional-Integral controller).}
+\subsubsection{PID Pacing}
 An alternative controller computes the signed spending error and applies proportional--integral (PI) corrections:
 \begin{align}
 e_t^i &\;=\; \tfrac{t}{T}\,B^i \;-\; {\textstyle\sum_{\tau \le t}} c_\tau^i, \label{eq:pid_error}\\
@@ -113,7 +120,6 @@ e_t^i &\;=\; \tfrac{t}{T}\,B^i \;-\; {\textstyle\sum_{\tau \le t}} c_\tau^i, \la
 \end{align}
 where $K_P = 0.30\times\text{aggressiveness}$ and $K_I = 0.05\times\text{aggressiveness}$. A positive error (underspending) raises $\lambda$, encouraging higher bids; overspending drives $\lambda$ down. The derivative term is omitted ($K_D = 0$) following the literature consensus that it is counterproductive in stochastic auction environments.
 
-\paragraph{Feedback loop structure.}
 Both algorithms implement the same closed-loop pacing structure illustrated in Figure~\ref{fig:pacing_loop}: the multiplier governs bids, the auction determines payments, and the control law updates the multiplier in response. They differ only in how the error signal is defined and propagated.
 
 \begin{figure}[H]

@@ -29,14 +29,14 @@ EXP_TITLES = {
     1: "Q-Learning with Constant Valuations",
     2: "Q-Learning with Affiliated Values",
     3: "LinUCB Bandits with Affiliated Values",
-    4: "Budget-Constrained Pacing (PID vs Multiplicative)",
+    4: "Autobidding Pacing: Auction Format, Objective, and Market Thickness",
 }
 
 EXP_DESIGNS = {
-    1: {"design": "$2^{10}$ full factorial", "k": 10},
-    2: {"design": "$2^{11-1}$ half-fraction (Res V)", "k": 11},
+    1: {"design": "$2^{11-1}$ half-fraction (Res~V)", "k": 11},
+    2: {"design": "$3 \\times 2^3 = 24$ mixed-level factorial", "k": 4},
     3: {"design": "$2^{8}$ full factorial", "k": 8},
-    4: {"design": "$2^{9-1}$ half-fraction (Res IX)", "k": 9},
+    4: {"design": "$2 \\times 2 \\times 2 = 8$ cells $\\times$ 50 seeds", "k": 3},
 }
 
 # Response variables expected per experiment
@@ -52,10 +52,15 @@ EXP_RESPONSES = {
     2: [
         "avg_rev_last_1000",
         "time_to_converge",
-        "avg_regret_of_seller",
         "no_sale_rate",
         "price_volatility",
         "winner_entropy",
+        "excess_regret",
+        "efficient_regret",
+        "btv_median",
+        "winners_curse_freq",
+        "bid_dispersion",
+        "signal_slope_ratio",
     ],
     3: [
         "avg_rev_last_1000",
@@ -66,19 +71,19 @@ EXP_RESPONSES = {
         "winner_entropy",
     ],
     4: [
-        "avg_rev_last_1000",
-        "time_to_converge",
-        "avg_regret_of_seller",
-        "no_sale_rate",
-        "price_volatility",
-        "winner_entropy",
-        "budget_utilization",
-        "spend_volatility",
-        "budget_violation_rate",
-        "effective_bid_shading",
-        "multiplier_convergence_time",
-        "multiplier_final_mean",
-        "multiplier_final_std",
+        "mean_platform_revenue",
+        "mean_liquid_welfare",
+        "mean_effective_poa",
+        "mean_budget_utilization",
+        "mean_bid_to_value",
+        "mean_allocative_efficiency",
+        "mean_dual_cv",
+        "mean_no_sale_rate",
+        "mean_winner_entropy",
+        "warm_start_benefit",
+        "inter_episode_volatility",
+        "bid_suppression_ratio",
+        "cross_episode_drift",
     ],
 }
 
@@ -196,6 +201,15 @@ def find_plot(exp_num, subdir, filename_pattern, response):
     return None
 
 
+def load_robust_results(exp_num):
+    """Load robust/robust_results.json if it exists."""
+    path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "robust", "robust_results.json")
+    if not os.path.exists(path):
+        return None
+    with open(path) as f:
+        return json.load(f)
+
+
 # ---------------------------------------------------------------------------
 # Section generators
 # ---------------------------------------------------------------------------
@@ -214,10 +228,14 @@ def gen_design_summary(exp_num, design_info):
     n_factors = design_info.get("n_factors", len(factors))
     design_desc = EXP_DESIGNS.get(exp_num, {}).get("design", f"$2^{{{n_factors}}}$")
     k = EXP_DESIGNS.get(exp_num, {}).get("k", n_factors)
-    n_cells = 2 ** k if k <= 11 else 2 ** (k - 1)
-    # For Exp2 (half-fraction), adjust
     if exp_num == 2:
-        n_cells = 2 ** (k - 1)
+        n_cells = 24  # 3 × 2^3 mixed-level
+    elif exp_num == 4:
+        n_cells = 8  # 2^3 full factorial
+    elif exp_num in (1,):
+        n_cells = 2 ** (k - 1)  # half-fraction
+    else:
+        n_cells = 2 ** k if k <= 11 else 2 ** (k - 1)
 
     lines.append(f"Design: {design_desc} with {n_factors} factors.")
     lines.append("")
@@ -581,6 +599,140 @@ def gen_plot_section(exp_num, est_data, plot_type_label, subdir, filename_patter
     return "\n".join(lines)
 
 
+def gen_robustness_summary(exp_num, robust_data):
+    """Generate a robustness analysis subsection from robust_results.json."""
+    lines = []
+    lines.append(r"\subsection{Robustness Analysis}")
+
+    if robust_data is None:
+        lines.append(
+            r"\textit{No robustness results available. "
+            r"Run \texttt{est" + str(exp_num) + r".py} to generate.}"
+        )
+        return "\n".join(lines)
+
+    # --- Model adequacy table ---
+    press_data = robust_data.get("press", {})
+    lgbm_data = robust_data.get("lightgbm", {})
+    lof_data = robust_data.get("lack_of_fit", {})
+    responses = list(press_data.keys()) or list(lgbm_data.keys())
+
+    if responses:
+        lines.append(r"\subsubsection{Model Adequacy}")
+        lines.append(r"\begin{table}[H]")
+        lines.append(r"\centering")
+        lines.append(
+            f"\\caption{{Model adequacy diagnostics for Experiment {exp_num}.}}"
+        )
+        lines.append(f"\\label{{tab:exp{exp_num}_robust_adequacy}}")
+        lines.append(r"\begin{tabular}{lrrrr}")
+        lines.append(r"\toprule")
+        lines.append(
+            r"\textbf{Response} & \textbf{$R^2$} & \textbf{Pred-$R^2$} "
+            r"& \textbf{LGBM $R^2$} & \textbf{LOF $p$} \\"
+        )
+        lines.append(r"\midrule")
+
+        for resp in responses:
+            r2 = safe_float(press_data.get(resp, {}).get("r_squared"))
+            pred_r2 = safe_float(press_data.get(resp, {}).get("predicted_r_squared"))
+            lgbm_r2 = safe_float(lgbm_data.get(resp, {}).get("lgbm_cv_r2"))
+            lof_p = lof_data.get(resp, {}).get("p_lack_of_fit")
+            lof_str = format_pval(lof_p) if lof_p is not None else "---"
+
+            lines.append(
+                f"  {escape_latex(resp)} & {format_number(r2)} "
+                f"& {format_number(pred_r2)} & {format_number(lgbm_r2)} "
+                f"& {lof_str} \\\\"
+            )
+
+        lines.append(r"\bottomrule")
+        lines.append(r"\end{tabular}")
+        lines.append(r"\end{table}")
+        lines.append("")
+
+    # --- Inference robustness table ---
+    hc3_data = robust_data.get("hc3", {})
+    mult_data = robust_data.get("multiplicity", {})
+
+    if hc3_data and mult_data:
+        lines.append(r"\subsubsection{Inference Robustness}")
+        lines.append(r"\begin{table}[H]")
+        lines.append(r"\centering")
+        lines.append(
+            f"\\caption{{Inference robustness for Experiment {exp_num}: "
+            f"effect counts by correction method.}}"
+        )
+        lines.append(f"\\label{{tab:exp{exp_num}_robust_inference}}")
+        lines.append(r"\begin{tabular}{lrrrr}")
+        lines.append(r"\toprule")
+        lines.append(
+            r"\textbf{Response} & \textbf{\# HC3 Flipped} "
+            r"& \textbf{\# Sig OLS} & \textbf{\# Sig Holm} "
+            r"& \textbf{\# Sig BH} \\"
+        )
+        lines.append(r"\midrule")
+
+        tests = mult_data.get("tests", [])
+        for resp in hc3_data:
+            n_flipped = hc3_data[resp].get("n_flipped", 0)
+            hc3_terms = hc3_data[resp].get("terms", {})
+            n_ols_sig = sum(1 for t in hc3_terms.values() if t.get("ols_p", 1) < 0.05)
+            resp_tests = [t for t in tests if t["label"].startswith(resp + "|")]
+            n_holm = sum(1 for t in resp_tests if t.get("holm_sig", False))
+            n_bh = sum(1 for t in resp_tests if t.get("bh_sig", False))
+
+            lines.append(
+                f"  {escape_latex(resp)} & {n_flipped} & {n_ols_sig} "
+                f"& {n_holm} & {n_bh} \\\\"
+            )
+
+        lines.append(r"\bottomrule")
+        lines.append(r"\end{tabular}")
+        lines.append(r"\end{table}")
+        lines.append("")
+
+        # Global summary
+        n_total = mult_data.get("n_tests", 0)
+        n_raw = mult_data.get("n_raw_sig", 0)
+        n_holm_total = mult_data.get("n_holm_sig", 0)
+        n_bh_total = mult_data.get("n_bh_sig", 0)
+        lines.append(
+            f"Across {n_total} total tests: {n_raw} significant at raw "
+            f"$\\alpha=0.05$, {n_holm_total} survive Holm-Bonferroni, "
+            f"{n_bh_total} survive Benjamini-Hochberg."
+        )
+        lines.append("")
+
+    # --- Robustness plots ---
+    robust_plots = [
+        ("lgbm_comparison.png", "Linear vs.~nonparametric model comparison"),
+        ("response_correlations.png", "Response variable correlation matrix"),
+        ("power_analysis.png", "Minimum detectable effect sizes (80\\% power)"),
+    ]
+
+    found_plots = False
+    for filename, caption_text in robust_plots:
+        abs_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "robust", filename)
+        if os.path.exists(abs_path):
+            if not found_plots:
+                lines.append(r"\subsubsection{Robustness Diagnostics}")
+                found_plots = True
+            rel_path = os.path.relpath(abs_path, PAPER_DIR)
+            label_stem = filename.replace(".png", "").replace("_", "")
+            lines.append(r"\begin{figure}[H]")
+            lines.append(r"\centering")
+            lines.append(f"\\includegraphics[width=0.85\\textwidth]{{{rel_path}}}")
+            lines.append(
+                f"\\caption{{{caption_text} (Experiment {exp_num}).}}"
+            )
+            lines.append(f"\\label{{fig:exp{exp_num}_robust_{label_stem}}}")
+            lines.append(r"\end{figure}")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
 # ---------------------------------------------------------------------------
 # Document assembly
 # ---------------------------------------------------------------------------
@@ -596,6 +748,7 @@ def generate_experiment_section(exp_num):
     design_info = load_design_info(exp_num)
     est_data = load_estimation_results(exp_num)
     df = load_data_csv(exp_num)
+    robust_data = load_robust_results(exp_num)
 
     # 1. Design Summary
     lines.append(gen_design_summary(exp_num, design_info))
@@ -626,6 +779,82 @@ def generate_experiment_section(exp_num):
             )
         )
         lines.append("")
+
+    # 11. Robustness Analysis
+    lines.append(gen_robustness_summary(exp_num, robust_data))
+    lines.append("")
+
+    return "\n".join(lines)
+
+
+def gen_verification_section():
+    """Generate BNE verification section from JSON results."""
+    lines = []
+    lines.append(r"\section{BNE Verification}")
+
+    json_path = os.path.join(RESULTS_DIR, "verification", "bne_verification_results.json")
+    if not os.path.exists(json_path):
+        lines.append(r"\textit{No verification results found. Run src/verification/bne\_verify.py first.}")
+        return "\n".join(lines)
+
+    with open(json_path) as f:
+        results = json.load(f)
+
+    params = results.get("parameters", {})
+    lines.append(
+        f"Verification ran with {params.get('M_deviation', '?')} MC draws for deviation checks "
+        f"and {params.get('M_revenue', '?')} draws for revenue validation."
+    )
+    lines.append("")
+
+    # Deviation table
+    lines.append(r"\subsection{Deviation Checks}")
+    lines.append(r"\begin{table}[H]")
+    lines.append(r"\centering")
+    lines.append(r"\caption{Maximum payoff gain from unilateral deviation from BNE.}")
+    lines.append(r"\label{tab:results_bne_deviation}")
+    lines.append(r"\begin{tabular}{cccccc}")
+    lines.append(r"\toprule")
+    lines.append(r"\textbf{$\eta$} & \textbf{N} & \textbf{Auction} & \textbf{$\phi$} & \textbf{Max Gain} & \textbf{Status} \\")
+    lines.append(r"\midrule")
+
+    for check in results.get("deviation_checks", []):
+        eta = check["eta"]
+        N = check["N"]
+        atype = check["auction_type"].upper()
+        phi = check["phi"]
+        gain = check["max_gain"]
+        status = "Pass" if gain < 0.005 else "Fail"
+        lines.append(f"  {eta} & {N} & {atype} & {phi:.4f} & {gain:.6f} & {status} \\\\")
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{table}")
+    lines.append("")
+
+    # Revenue table
+    lines.append(r"\subsection{Revenue Formula Validation}")
+    lines.append(r"\begin{table}[H]")
+    lines.append(r"\centering")
+    lines.append(r"\caption{Analytical vs.\ Monte Carlo revenue with revenue equivalence check.}")
+    lines.append(r"\label{tab:results_bne_revenue}")
+    lines.append(r"\begin{tabular}{cccccc}")
+    lines.append(r"\toprule")
+    lines.append(r"\textbf{$\eta$} & \textbf{N} & \textbf{Analytical} & \textbf{FPA MC} & \textbf{SPA MC} & \textbf{$|$FPA$-$SPA$|$} \\")
+    lines.append(r"\midrule")
+
+    for entry in results.get("revenue_checks", []):
+        eta = entry["eta"]
+        N = entry["N"]
+        ana = entry["analytical"]
+        fpa = entry["fpa_mc"]
+        spa = entry["spa_mc"]
+        gap = entry["fpa_spa_gap"]
+        lines.append(f"  {eta} & {N} & {ana:.4f} & {fpa:.4f} & {spa:.4f} & {gap:.4f} \\\\")
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{table}")
 
     return "\n".join(lines)
 
@@ -670,6 +899,12 @@ def generate_results_tex():
         parts.append(generate_experiment_section(exp_num))
         parts.append(r"\newpage")
         parts.append("")
+
+    # BNE Verification section
+    print("  Processing BNE Verification...")
+    parts.append(gen_verification_section())
+    parts.append(r"\newpage")
+    parts.append("")
 
     # End document
     parts.append(r"\end{document}")

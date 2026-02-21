@@ -19,11 +19,11 @@ from tqdm import trange
 # ---------------------------------------------------------------------
 param_mappings = {
     "auction_type": {"first": 1, "second": 0},
-    "init": {"random": 0, "zeros": 1},
+    "init": {"zeros": 0, "optimistic": 1},
     "exploration": {"egreedy": 0, "boltzmann": 1},
     "asynchronous": {0: 0, 1: 1},
-    "median_opp_past_bid_index": {False: 0, True: 1},
-    "winner_bid_index_state": {False: 0, True: 1}
+    "info_feedback": {"minimal": 0, "full": 1},
+    "decay_type": {"linear": 0, "exponential": 1},
 }
 
 # ---------------------------------------------------------------------
@@ -66,7 +66,11 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
 
     # Second-highest among valid
     if len(valid_indices) == len(highest_idx_local):
-        second_highest_bid = highest_bid
+        # All valid bidders are tied at highest; in SPA use reserve price
+        if auction_type != "first" and len(valid_indices) == 1:
+            second_highest_bid = reserve_price
+        else:
+            second_highest_bid = highest_bid
     else:
         second_idx_local = None
         for idx_l in sorted_indices:
@@ -86,43 +90,29 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
 # ---------------------------------------------------------------------
 # 3) Theoretical Revenue for Constant Valuations
 # ---------------------------------------------------------------------
-def theoretical_revenue_constant_valuation(n_bidders, auction_type, reserve_price=0.0):
+def theoretical_revenue_constant_valuation(n_bidders, auction_type):
     """
-    For v_i = 1.0:
+    For v_i = 1.0 (no reserve price):
       - FPA BNE: Each bidder bids (n-1)/n, so revenue = (n-1)/n
       - SPA BNE: Each bidder bids 1.0, second price = 1.0, so revenue = 1.0
-
-    With reserve price:
-      - If BNE bid < reserve_price, no sale (revenue = 0)
     """
     if auction_type == "first":
-        bne_bid = (n_bidders - 1) / n_bidders
-        if bne_bid < reserve_price:
-            return 0.0
-        return bne_bid
+        return (n_bidders - 1) / n_bidders
     else:  # second price
-        # In SPA with v=1, everyone bids 1, second price = 1
-        if 1.0 < reserve_price:
-            return 0.0
         return 1.0
 
 # ---------------------------------------------------------------------
 # 4) Q-Learning: State-Space
 # ---------------------------------------------------------------------
-def build_state_space(median_opp_past_bid_index, winner_bid_index_state, n_actions):
+def build_state_space(info_feedback, n_actions):
     """
-    If both flags= False -> 1
-    If exactly one= True -> n_actions
-    If both True -> n_actions * n_actions
+    info_feedback="minimal" -> 1 state (no opponent info)
+    info_feedback="full"    -> n_actions states (discretised winner bid)
     """
-    if not median_opp_past_bid_index and not winner_bid_index_state:
+    if info_feedback == "minimal":
         return 1
-    elif median_opp_past_bid_index and not winner_bid_index_state:
+    else:  # "full"
         return n_actions
-    elif not median_opp_past_bid_index and winner_bid_index_state:
-        return n_actions
-    else:
-        return n_actions * n_actions
 
 # ---------------------------------------------------------------------
 # 5) Single Q-Learning Experiment
@@ -131,33 +121,36 @@ def run_experiment(
     auction_type,
     alpha, gamma, episodes,
     init, exploration, asynchronous, n_bidders,
-    median_opp_past_bid_index, winner_bid_index_state,
-    reserve_price, seed=0,
+    n_actions, info_feedback,
+    reserve_price=0.0,
+    decay_type="linear",
+    seed=0,
     store_qtables=False, qtable_folder=None,
-    progress_callback=None
+    progress_callback=None,
 ):
     """
     Q-learning experiment with constant valuations (v_i = 1.0):
-      - n_bid_bins=6 for discrete bids
+      - n_actions controls action space granularity (11 or 21)
+      - info_feedback controls state representation:
+        "minimal" = single state, "full" = discretised winner bid
+      - reserve_price: seller's minimum acceptable bid (0.0 or 0.5)
+      - decay_type: epsilon decay schedule ("linear" or "exponential")
       - track winners/no-sale
       - time_to_converge requires remain in +/-5% band
       - store Q table snapshots every 1000 episodes
-      - final summary includes:
-         avg_rev_last_1000, time_to_converge,
-         avg_regret_of_seller, no_sale_rate,
-         price_volatility, winner_entropy
     """
     np.random.seed(seed)
 
-    n_bid_bins = 6
-    action_space = np.linspace(0, 1, n_bid_bins)
-    n_states = build_state_space(median_opp_past_bid_index, winner_bid_index_state, n_bid_bins)
+    n_actions = int(n_actions)
+    action_space = np.linspace(0, 1, n_actions)
+    n_states = build_state_space(info_feedback, n_actions)
 
     # Initialize Q
-    if init == "random":
-        Q = np.random.rand(n_bidders, n_states, n_bid_bins)
-    else:
-        Q = np.zeros((n_bidders, n_states, n_bid_bins))
+    if init == "optimistic":
+        opt_val = 1.0 / (1.0 - gamma + 1e-10)
+        Q = np.full((n_bidders, n_states, n_actions), opt_val)
+    else:  # "zeros"
+        Q = np.zeros((n_bidders, n_states, n_actions))
 
     # Stats
     revenues = []
@@ -166,36 +159,24 @@ def run_experiment(
     no_sale_count = 0
     winners_list = []
 
-    eps_start, eps_end = 1.0, 0.0
+    eps_start = 1.0
+    eps_end = 0.01  # floor for exponential decay (avoids log(0))
     decay_end = int(0.9 * episodes)
 
-    past_bids = np.zeros(n_bidders)
     past_winner_bid = 0.0
 
     save_interval = 1000
     if store_qtables and qtable_folder is not None:
         os.makedirs(qtable_folder, exist_ok=True)
 
-    # Function to convert (median_val, winner_val) -> state index
-    def state_index(median_val, winner_val):
-        if median_opp_past_bid_index:
-            med_idx = int(median_val * (n_bid_bins - 1) + 0.4999999)
-        else:
-            med_idx = 0
-
-        if winner_bid_index_state:
-            win_idx = int(winner_val * (n_bid_bins - 1) + 0.4999999)
-        else:
-            win_idx = 0
-
-        if (not median_opp_past_bid_index) and (not winner_bid_index_state):
+    # Function to convert winner bid to state index
+    def state_index(winner_bid):
+        if info_feedback == "minimal":
             return 0
-        elif median_opp_past_bid_index and (not winner_bid_index_state):
-            return med_idx
-        elif (not median_opp_past_bid_index) and winner_bid_index_state:
-            return win_idx
-        else:
-            return med_idx * n_bid_bins + win_idx
+        else:  # "full"
+            if winner_bid > 0:
+                return min(int(winner_bid * (n_actions - 1) + 0.5), n_actions - 1)
+            return 0
 
     for ep in range(episodes):
         # Progress callback every 1000 episodes
@@ -204,16 +185,18 @@ def run_experiment(
 
         # Epsilon decay
         if ep < decay_end:
-            eps = eps_start - (ep / decay_end) * (eps_start - eps_end)
+            if decay_type == "linear":
+                eps = eps_start - (ep / decay_end) * eps_start
+            else:  # "exponential"
+                eps = eps_start * (eps_end / eps_start) ** (ep / decay_end)
         else:
-            eps = eps_end
+            eps = 0.0  # Pure exploitation after decay
 
         # Constant valuations: v_i = 1.0 for all bidders
         valuations = np.ones(n_bidders)
 
         # current state
-        median_val = np.median(past_bids) if median_opp_past_bid_index else 0.0
-        s = state_index(median_val, past_winner_bid)
+        s = state_index(past_winner_bid)
 
         # pick actions
         chosen_actions = []
@@ -224,13 +207,13 @@ def run_experiment(
                 shifted = qvals - np.max(qvals)
                 ex = np.exp(shifted)
                 probs = ex / np.sum(ex)
-                a_i = np.random.choice(n_bid_bins, p=probs)
+                a_i = np.random.choice(n_actions, p=probs)
             else:
                 # E-greedy: if rand() > eps => exploit
                 if np.random.rand() > eps:
                     a_i = np.argmax(qvals)
                 else:
-                    a_i = np.random.randint(n_bid_bins)
+                    a_i = np.random.randint(n_actions)
             chosen_actions.append(a_i)
 
         # Convert actions to bids
@@ -239,9 +222,17 @@ def run_experiment(
         # Auction payoff
         rew, winner, winner_bid_val = get_rewards(bids, valuations, auction_type, reserve_price)
 
-        # Seller revenue
+        # Seller revenue (auction-type aware)
         valid_bids = bids[bids >= reserve_price]
-        revenue_t = np.max(valid_bids) if len(valid_bids) > 0 else 0.0
+        if len(valid_bids) == 0:
+            revenue_t = 0.0
+        elif auction_type == "first":
+            revenue_t = float(np.max(valid_bids))
+        else:  # second-price: seller gets second-highest bid
+            if len(valid_bids) >= 2:
+                revenue_t = float(np.sort(valid_bids)[-2])
+            else:
+                revenue_t = float(valid_bids[0])
         revenues.append(revenue_t)
         winning_bids_list.append(winner_bid_val)
 
@@ -252,27 +243,27 @@ def run_experiment(
 
         # Next state
         next_winner_val = winner_bid_val if winner != -1 else 0.0
-        next_median_val = np.median(bids) if median_opp_past_bid_index else 0.0
-        s_next = state_index(next_median_val, next_winner_val)
+        s_next = state_index(next_winner_val)
 
         # Q-update
-        if asynchronous == 1:
-            # Asynchronous
+        if asynchronous == 0 and info_feedback == "full":
+            # Full synchronous: compute counterfactual reward for ALL actions
             for i in range(n_bidders):
-                old_q = Q[i, s, chosen_actions[i]]
-                td_target = rew[i] + gamma * np.max(Q[i, s_next])
-                Q[i, s, chosen_actions[i]] = old_q + alpha * (td_target - old_q)
-        else:
-            # Synchronous
-            for i in range(n_bidders):
-                cf_rewards = np.zeros(n_bid_bins)
-                for alt_a in range(n_bid_bins):
+                cf_rewards = np.zeros(n_actions)
+                for alt_a in range(n_actions):
                     alt_bids = bids.copy()
                     alt_bids[i] = action_space[alt_a]
                     alt_r, _, _ = get_rewards(alt_bids, valuations, auction_type, reserve_price)
                     cf_rewards[alt_a] = alt_r[i]
                 best_future = np.max(Q[i, s_next])
                 Q[i, s, :] = (1 - alpha)*Q[i, s, :] + alpha*(cf_rewards + gamma * best_future)
+        else:
+            # Asynchronous (or minimal feedback with sync flag):
+            # only update the action that was actually taken
+            for i in range(n_bidders):
+                old_q = Q[i, s, chosen_actions[i]]
+                td_target = rew[i] + gamma * np.max(Q[i, s_next])
+                Q[i, s, chosen_actions[i]] = old_q + alpha * (td_target - old_q)
 
         # Log each episode
         for i in range(n_bidders):
@@ -286,7 +277,6 @@ def run_experiment(
             })
 
         # Advance
-        past_bids = bids
         past_winner_bid = winner_bid_val if winner != -1 else 0.0
 
         # Save Q snapshot every 1000 episodes
@@ -359,19 +349,18 @@ def run_full_experiment(
     alpha_values=[0.001, 0.005, 0.01, 0.05, 0.1],
     gamma_values=[0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99],
     episodes_values=[100_000],
-    reserve_price_values=[0.0, 0.1, 0.2, 0.3, 0.5],
-    init_values=["random", "zeros"],
+    init_values=["zeros", "optimistic"],
     exploration_values=["egreedy", "boltzmann"],
     async_values=[0, 1],
-    n_bidders_values=[2, 4, 6],
-    median_flags=[False, True],
-    winner_flags=[False, True],
+    n_bidders_values=[2, 4],
+    n_actions_values=[6, 21],
+    info_feedback_values=["minimal", "full"],
     seed=42,
     output_dir=None
 ):
     """
     Orchestrates Experiment 1, sampling discrete sets for
-    (alpha, gamma, episodes, reserve_price, etc.), then running
+    (alpha, gamma, episodes, etc.), then running
     'first' & 'second' auctions with constant valuations (v_i = 1.0).
     Stores final data in output_dir.
     """
@@ -399,21 +388,20 @@ def run_full_experiment(
         alpha = rng.choice(alpha_values)
         gamma = rng.choice(gamma_values)
         episodes = rng.choice(episodes_values)
-        reserve_price = rng.choice(reserve_price_values)
         init_str = rng.choice(init_values)
         exploration_str = rng.choice(exploration_values)
         async_val = rng.choice(async_values)
         n_bidders_val = rng.choice(n_bidders_values)
-        median_flag = rng.choice(median_flags)
-        winner_flag = rng.choice(winner_flags)
+        n_actions_val = rng.choice(n_actions_values)
+        info_feedback_val = rng.choice(info_feedback_values)
 
         # We'll do both first- & second-price auctions
         for auction_type_str in ["first", "second"]:
             # Check if theoretical revenue is cached
-            cache_key = (n_bidders_val, auction_type_str, reserve_price)
+            cache_key = (n_bidders_val, auction_type_str)
             if cache_key not in theory_cache:
                 rev_theory = theoretical_revenue_constant_valuation(
-                    n_bidders_val, auction_type_str, reserve_price
+                    n_bidders_val, auction_type_str
                 )
                 theory_cache[cache_key] = rev_theory
             else:
@@ -432,9 +420,8 @@ def run_full_experiment(
                 exploration=exploration_str,
                 asynchronous=async_val,
                 n_bidders=n_bidders_val,
-                median_opp_past_bid_index=median_flag,
-                winner_bid_index_state=winner_flag,
-                reserve_price=reserve_price,
+                n_actions=n_actions_val,
+                info_feedback=info_feedback_val,
                 seed=run_id,
                 store_qtables=True,
                 qtable_folder=q_run_folder
@@ -446,14 +433,13 @@ def run_full_experiment(
                 row["alpha"] = alpha
                 row["gamma"] = gamma
                 row["episodes"] = episodes
-                row["reserve_price"] = reserve_price
                 row["auction_type_code"] = param_mappings["auction_type"][auction_type_str]
                 row["init_code"] = param_mappings["init"][init_str]
                 row["exploration_code"] = param_mappings["exploration"][exploration_str]
                 row["asynchronous_code"] = param_mappings["asynchronous"][async_val]
                 row["n_bidders"] = n_bidders_val
-                row["median_opp_past_bid_index_code"] = param_mappings["median_opp_past_bid_index"][median_flag]
-                row["winner_bid_index_state_code"] = param_mappings["winner_bid_index_state"][winner_flag]
+                row["n_actions"] = n_actions_val
+                row["info_feedback_code"] = param_mappings["info_feedback"][info_feedback_val]
                 row["theoretical_revenue"] = rev_theory
 
             df_hist = pd.DataFrame(round_hist)
@@ -466,14 +452,13 @@ def run_full_experiment(
             outcome["alpha"] = alpha
             outcome["gamma"] = gamma
             outcome["episodes"] = episodes
-            outcome["reserve_price"] = reserve_price
             outcome["auction_type_code"] = param_mappings["auction_type"][auction_type_str]
             outcome["init_code"] = param_mappings["init"][init_str]
             outcome["exploration_code"] = param_mappings["exploration"][exploration_str]
             outcome["asynchronous_code"] = param_mappings["asynchronous"][async_val]
             outcome["n_bidders"] = n_bidders_val
-            outcome["median_opp_past_bid_index_code"] = param_mappings["median_opp_past_bid_index"][median_flag]
-            outcome["winner_bid_index_state_code"] = param_mappings["winner_bid_index_state"][winner_flag]
+            outcome["n_actions"] = n_actions_val
+            outcome["info_feedback_code"] = param_mappings["info_feedback"][info_feedback_val]
             outcome["theoretical_revenue"] = rev_theory
 
             # ratio to theoretical
@@ -496,7 +481,7 @@ def run_full_experiment(
 #  Main
 # ------------------------------------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Experiment 1: Constant Valuations with Reserve Prices')
+    parser = argparse.ArgumentParser(description='Experiment 1: Constant Valuations Q-learning')
     parser.add_argument('--quick', action='store_true', help='Run quick test with reduced parameters')
     args = parser.parse_args()
 
@@ -507,17 +492,16 @@ if __name__ == "__main__":
         print("=" * 50)
         run_full_experiment(
             experiment_id=1,
-            K=5,                                    # Reduced runs
-            alpha_values=[0.01, 0.1],               # Fewer alpha values
-            gamma_values=[0.9],                     # Single gamma
-            episodes_values=[1000],                 # Reduced episodes
-            reserve_price_values=[0.0],             # Single reserve price
-            init_values=["random"],                 # Single init
-            exploration_values=["egreedy"],         # Single exploration
-            async_values=[0],                       # Single async value
-            n_bidders_values=[2],                   # Single bidder count
-            median_flags=[False],                   # Single flag
-            winner_flags=[False],                   # Single flag
+            K=5,
+            alpha_values=[0.01, 0.1],
+            gamma_values=[0.9],
+            episodes_values=[1000],
+            init_values=["zeros"],
+            exploration_values=["egreedy"],
+            async_values=[0],
+            n_bidders_values=[2],
+            n_actions_values=[6],
+            info_feedback_values=["minimal"],
             seed=42,
             output_dir="results/exp1/quick_test"
         )
@@ -529,13 +513,12 @@ if __name__ == "__main__":
             alpha_values=[0.001, 0.005, 0.01, 0.05, 0.1],
             gamma_values=[0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99],
             episodes_values=[100_000],
-            reserve_price_values=[0.0, 0.1, 0.2, 0.3, 0.5],
-            init_values=["random", "zeros"],
+            init_values=["zeros", "optimistic"],
             exploration_values=["egreedy", "boltzmann"],
             async_values=[0, 1],
-            n_bidders_values=[2, 4, 6],
-            median_flags=[False, True],
-            winner_flags=[False, True],
+            n_bidders_values=[2, 4],
+            n_actions_values=[6, 21],
+            info_feedback_values=["minimal", "full"],
             seed=42,
             output_dir="results/exp1"
         )
