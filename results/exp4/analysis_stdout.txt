@@ -1,27 +1,27 @@
 === Factorial Analysis: Experiment 4 ===
-Observations: 200
+Observations: 120
 Factors (3): ['auction_type_coded', 'objective_coded', 'n_bidders_coded']
 Responses: ['mean_platform_revenue', 'mean_liquid_welfare', 'mean_effective_poa', 'mean_budget_utilization', 'mean_bid_to_value', 'mean_allocative_efficiency', 'mean_dual_cv', 'mean_no_sale_rate', 'mean_winner_entropy', 'warm_start_benefit', 'inter_episode_volatility', 'bid_suppression_ratio', 'cross_episode_drift']
 
 === Summary Statistics ===
 |                            |    count |      mean |       std |       min |       25% |       50% |       75% |       max |
 |----------------------------|----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-| auction_type_coded         | 200.0000 |    0.0000 |    1.0025 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| objective_coded            | 200.0000 |    0.0000 |    1.0025 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| n_bidders_coded            | 200.0000 |    0.0000 |    1.0025 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
-| mean_platform_revenue      | 200.0000 | 3800.8894 | 1598.7574 | 1614.1494 | 2590.6899 | 3266.8513 | 4848.2197 | 7839.0098 |
-| mean_liquid_welfare        | 200.0000 | 3860.4036 |  803.6362 | 2039.6091 | 3352.8797 | 3917.5419 | 4582.2352 | 5463.5229 |
-| mean_effective_poa         | 200.0000 |    0.9132 |    0.0896 |    0.7100 |    0.8483 |    0.8720 |    0.9985 |    1.0695 |
-| mean_budget_utilization    | 200.0000 |    0.8423 |    0.2121 |    0.3946 |    0.6334 |    0.9997 |    1.0000 |    1.0000 |
-| mean_bid_to_value          | 200.0000 |    1.1779 |    0.3587 |    0.7998 |    0.9334 |    0.9997 |    1.4375 |    2.0363 |
-| mean_allocative_efficiency | 200.0000 |    0.8155 |    0.1439 |    0.5105 |    0.7053 |    0.8331 |    0.9591 |    1.0000 |
-| mean_dual_cv               | 200.0000 |    0.1342 |    0.0477 |    0.0120 |    0.0980 |    0.1330 |    0.1665 |    0.2587 |
-| mean_no_sale_rate          | 200.0000 |    0.0010 |    0.0020 |    0.0000 |    0.0000 |    0.0000 |    0.0010 |    0.0108 |
-| mean_winner_entropy        | 200.0000 |    0.9219 |    0.3318 |    0.1026 |    0.6803 |    0.7136 |    1.3276 |    1.3842 |
-| warm_start_benefit         | 200.0000 |   67.6075 |   52.4890 |   -3.8201 |   20.3892 |   66.4880 |  106.0527 |  252.2462 |
-| inter_episode_volatility   | 200.0000 |    0.0035 |    0.0041 |    0.0000 |    0.0001 |    0.0007 |    0.0069 |    0.0150 |
-| bid_suppression_ratio      | 200.0000 |    1.4972 |    0.3852 |    0.9846 |    1.1645 |    1.5146 |    1.8802 |    2.0941 |
-| cross_episode_drift        | 200.0000 |    0.0000 |    0.0000 |   -0.0001 |   -0.0000 |    0.0000 |    0.0000 |    0.0003 |
+| auction_type_coded         | 120.0000 |    0.0000 |    1.0042 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| objective_coded            | 120.0000 |    0.0000 |    1.0042 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| n_bidders_coded            | 120.0000 |    0.0000 |    1.0042 |   -1.0000 |   -1.0000 |    0.0000 |    1.0000 |    1.0000 |
+| mean_platform_revenue      | 120.0000 | 3875.4691 | 1649.1683 | 1614.1494 | 2731.0964 | 3268.0410 | 4866.1406 | 7733.4093 |
+| mean_liquid_welfare        | 120.0000 | 3929.1479 |  795.9478 | 2168.5696 | 3429.9170 | 4022.7858 | 4620.3797 | 5171.8268 |
+| mean_effective_poa         | 120.0000 |    0.9126 |    0.0899 |    0.7512 |    0.8483 |    0.8720 |    0.9994 |    1.0695 |
+| mean_budget_utilization    | 120.0000 |    0.8405 |    0.2140 |    0.3958 |    0.6369 |    0.9997 |    1.0000 |    1.0000 |
+| mean_bid_to_value          | 120.0000 |    1.1765 |    0.3608 |    0.7998 |    0.9334 |    0.9997 |    1.4258 |    2.0363 |
+| mean_allocative_efficiency | 120.0000 |    0.8144 |    0.1445 |    0.5140 |    0.7019 |    0.8244 |    0.9603 |    1.0000 |
+| mean_dual_cv               | 120.0000 |    0.1336 |    0.0481 |    0.0452 |    0.0958 |    0.1330 |    0.1678 |    0.2587 |
+| mean_no_sale_rate          | 120.0000 |    0.0009 |    0.0019 |    0.0000 |    0.0000 |    0.0000 |    0.0010 |    0.0090 |
+| mean_winner_entropy        | 120.0000 |    0.9170 |    0.3302 |    0.2537 |    0.6811 |    0.7136 |    1.3276 |    1.3842 |
+| warm_start_benefit         | 120.0000 |   67.1223 |   53.4380 |   -0.6596 |   19.7064 |   63.8297 |  105.2946 |  252.2462 |
+| inter_episode_volatility   | 120.0000 |    0.0034 |    0.0040 |    0.0000 |    0.0001 |    0.0007 |    0.0068 |    0.0150 |
+| bid_suppression_ratio      | 120.0000 |    1.4957 |    0.3893 |    0.9846 |    1.1651 |    1.5030 |    1.8802 |    2.0941 |
+| cross_episode_drift        | 120.0000 |    0.0000 |    0.0000 |   -0.0001 |   -0.0000 |    0.0000 |    0.0000 |    0.0001 |
 
 
 ============================================================
@@ -31,56 +31,56 @@ RESPONSE: mean_platform_revenue
 --- OLS Regression Summary ---
                               OLS Regression Results                             
 =================================================================================
-Dep. Variable:     mean_platform_revenue   R-squared:                       0.799
-Model:                               OLS   Adj. R-squared:                  0.793
-Method:                    Least Squares   F-statistic:                     128.2
-Date:                   Sat, 21 Feb 2026   Prob (F-statistic):           1.44e-64
-Time:                           22:41:45   Log-Likelihood:                -1598.0
-No. Observations:                    200   AIC:                             3210.
-Df Residuals:                        193   BIC:                             3233.
+Dep. Variable:     mean_platform_revenue   R-squared:                       0.829
+Model:                               OLS   Adj. R-squared:                  0.820
+Method:                    Least Squares   F-statistic:                     91.26
+Date:                   Sun, 22 Feb 2026   Prob (F-statistic):           5.48e-41
+Time:                           03:26:18   Log-Likelihood:                -952.79
+No. Observations:                    120   AIC:                             1920.
+Df Residuals:                        113   BIC:                             1939.
 Df Model:                              6                                         
 Covariance Type:               nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                           3800.8894     51.410     73.933      0.000    3699.492    3902.286
-auction_type_coded                   233.8327     51.410      4.548      0.000     132.436     335.230
-objective_coded                     -681.0503     51.410    -13.248      0.000    -782.447    -579.653
-n_bidders_coded                     1077.3915     51.410     20.957      0.000     975.995    1178.789
-auction_type_coded:objective_coded   217.1323     51.410      4.224      0.000     115.735     318.529
-auction_type_coded:n_bidders_coded   -23.9551     51.410     -0.466      0.642    -125.352      77.442
-objective_coded:n_bidders_coded     -553.3117     51.410    -10.763      0.000    -654.709    -451.915
+Intercept                           3875.4691     63.898     60.651      0.000    3748.876    4002.062
+auction_type_coded                   290.3643     63.898      4.544      0.000     163.772     416.957
+objective_coded                     -739.9911     63.898    -11.581      0.000    -866.584    -613.398
+n_bidders_coded                     1089.2952     63.898     17.048      0.000     962.703    1215.888
+auction_type_coded:objective_coded   264.5670     63.898      4.140      0.000     137.974     391.160
+auction_type_coded:n_bidders_coded   -44.6009     63.898     -0.698      0.487    -171.194      81.992
+objective_coded:n_bidders_coded     -587.6025     63.898     -9.196      0.000    -714.195    -461.010
 ==============================================================================
-Omnibus:                        0.113   Durbin-Watson:                   2.185
-Prob(Omnibus):                  0.945   Jarque-Bera (JB):                0.029
-Skew:                           0.028   Prob(JB):                        0.986
-Kurtosis:                       3.017   Cond. No.                         1.00
+Omnibus:                        0.701   Durbin-Watson:                   2.285
+Prob(Omnibus):                  0.704   Jarque-Bera (JB):                0.375
+Skew:                          -0.113   Prob(JB):                        0.829
+Kurtosis:                       3.156   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.7994
-Adj R² = 0.7932
+R² = 0.8289
+Adj R² = 0.8199
 
 --- ANOVA Table (Type III) ---
 |                                    |          sum_sq |       df |         F |   PR(>F) |
 |------------------------------------|-----------------|----------|-----------|----------|
-| Intercept                          | 2889352057.2624 |   1.0000 | 5466.1315 |   0.0000 |
-| auction_type_coded                 |   10935544.8607 |   1.0000 |   20.6881 |   0.0000 |
-| objective_coded                    |   92765903.2489 |   1.0000 |  175.4963 |   0.0000 |
-| n_bidders_coded                    |  232154499.8820 |   1.0000 |  439.1943 |   0.0000 |
-| auction_type_coded:objective_coded |    9429289.7700 |   1.0000 |   17.8385 |   0.0000 |
-| auction_type_coded:n_bidders_coded |     114768.9177 |   1.0000 |    0.2171 |   0.6418 |
-| objective_coded:n_bidders_coded    |   61230773.2763 |   1.0000 |  115.8375 |   0.0000 |
-| Residual                           |  102018209.4031 | 193.0000 |  nan      | nan      |
+| Intercept                          | 1802311291.6404 |   1.0000 | 3678.5770 |   0.0000 |
+| auction_type_coded                 |   10117369.3842 |   1.0000 |   20.6499 |   0.0000 |
+| objective_coded                    |   65710417.8654 |   1.0000 |  134.1171 |   0.0000 |
+| n_bidders_coded                    |  142387676.7745 |   1.0000 |  290.6180 |   0.0000 |
+| auction_type_coded:objective_coded |    8399484.0922 |   1.0000 |   17.1436 |   0.0001 |
+| auction_type_coded:n_bidders_coded |     238709.3496 |   1.0000 |    0.4872 |   0.4866 |
+| objective_coded:n_bidders_coded    |   41433208.1641 |   1.0000 |   84.5665 |   0.0000 |
+| Residual                           |   55364119.1179 | 113.0000 |  nan      | nan      |
 
 --- Significant Effects (p < 0.05): 5 ---
-  n_bidders                                coef=+1077.3915  p=0.0000
-  objective                                coef=-681.0503  p=0.0000
-  objective:n_bidders                      coef=-553.3117  p=0.0000
-  auction_type                             coef=+233.8327  p=0.0000
-  auction_type:objective                   coef=+217.1323  p=0.0000
+  n_bidders                                coef=+1089.2952  p=0.0000
+  objective                                coef=-739.9911  p=0.0000
+  objective:n_bidders                      coef=-587.6025  p=0.0000
+  auction_type                             coef=+290.3643  p=0.0000
+  auction_type:objective                   coef=+264.5670  p=0.0001
 
   Plots saved to results/exp4/
 
@@ -91,53 +91,53 @@ RESPONSE: mean_liquid_welfare
 --- OLS Regression Summary ---
                              OLS Regression Results                            
 ===============================================================================
-Dep. Variable:     mean_liquid_welfare   R-squared:                       0.228
-Model:                             OLS   Adj. R-squared:                  0.204
-Method:                  Least Squares   F-statistic:                     9.481
-Date:                 Sat, 21 Feb 2026   Prob (F-statistic):           3.98e-09
-Time:                         22:41:46   Log-Likelihood:                -1595.3
-No. Observations:                  200   AIC:                             3205.
-Df Residuals:                      193   BIC:                             3228.
+Dep. Variable:     mean_liquid_welfare   R-squared:                       0.261
+Model:                             OLS   Adj. R-squared:                  0.222
+Method:                  Least Squares   F-statistic:                     6.661
+Date:                 Sun, 22 Feb 2026   Prob (F-statistic):           4.70e-06
+Time:                         03:26:18   Log-Likelihood:                -953.14
+No. Observations:                  120   AIC:                             1920.
+Df Residuals:                      113   BIC:                             1940.
 Df Model:                            6                                         
 Covariance Type:             nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                           3860.4036     50.711     76.126      0.000    3760.385    3960.422
-auction_type_coded                    47.1524     50.711      0.930      0.354     -52.866     147.171
-objective_coded                      118.4567     50.711      2.336      0.021      18.438     218.475
-n_bidders_coded                      358.9972     50.711      7.079      0.000     258.979     459.016
-auction_type_coded:objective_coded    -8.7935     50.711     -0.173      0.863    -108.812      91.225
-auction_type_coded:n_bidders_coded   -28.8845     50.711     -0.570      0.570    -128.903      71.134
-objective_coded:n_bidders_coded       15.5335     50.711      0.306      0.760     -84.485     115.552
+Intercept                           3929.1479     64.087     61.310      0.000    3802.180    4056.115
+auction_type_coded                   136.3208     64.087      2.127      0.036       9.353     263.288
+objective_coded                       79.4640     64.087      1.240      0.218     -47.504     206.431
+n_bidders_coded                      365.1284     64.087      5.697      0.000     238.161     492.096
+auction_type_coded:objective_coded    49.5343     64.087      0.773      0.441     -77.433     176.502
+auction_type_coded:n_bidders_coded   -58.9830     64.087     -0.920      0.359    -185.951      67.984
+objective_coded:n_bidders_coded        0.3539     64.087      0.006      0.996    -126.614     127.321
 ==============================================================================
-Omnibus:                       13.158   Durbin-Watson:                   2.156
-Prob(Omnibus):                  0.001   Jarque-Bera (JB):                5.628
-Skew:                          -0.130   Prob(JB):                       0.0600
-Kurtosis:                       2.220   Cond. No.                         1.00
+Omnibus:                        2.959   Durbin-Watson:                   2.017
+Prob(Omnibus):                  0.228   Jarque-Bera (JB):                2.060
+Skew:                          -0.127   Prob(JB):                        0.357
+Kurtosis:                       2.411   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.2276
-Adj R² = 0.2036
+R² = 0.2613
+Adj R² = 0.2221
 
 --- ANOVA Table (Type III) ---
 |                                    |          sum_sq |       df |         F |   PR(>F) |
 |------------------------------------|-----------------|----------|-----------|----------|
-| Intercept                          | 2980543212.8798 |   1.0000 | 5795.1624 |   0.0000 |
-| auction_type_coded                 |     444670.6629 |   1.0000 |    0.8646 |   0.3536 |
-| objective_coded                    |    2806397.8194 |   1.0000 |    5.4566 |   0.0205 |
-| n_bidders_coded                    |   25775799.5320 |   1.0000 |   50.1167 |   0.0000 |
-| auction_type_coded:objective_coded |      15465.2650 |   1.0000 |    0.0301 |   0.8625 |
-| auction_type_coded:n_bidders_coded |     166862.9482 |   1.0000 |    0.3244 |   0.5696 |
-| objective_coded:n_bidders_coded    |      48258.0301 |   1.0000 |    0.0938 |   0.7597 |
-| Residual                           |   99262936.1610 | 193.0000 |  nan      | nan      |
+| Intercept                          | 1852584351.0391 |   1.0000 | 3758.8915 |   0.0000 |
+| auction_type_coded                 |    2230003.0467 |   1.0000 |    4.5247 |   0.0356 |
+| objective_coded                    |     757742.6998 |   1.0000 |    1.5375 |   0.2176 |
+| n_bidders_coded                    |   15998246.5614 |   1.0000 |   32.4604 |   0.0000 |
+| auction_type_coded:objective_coded |     294437.6485 |   1.0000 |    0.5974 |   0.4412 |
+| auction_type_coded:n_bidders_coded |     417479.8312 |   1.0000 |    0.8471 |   0.3593 |
+| objective_coded:n_bidders_coded    |         15.0333 |   1.0000 |    0.0000 |   0.9956 |
+| Residual                           |   55692491.5196 | 113.0000 |  nan      | nan      |
 
 --- Significant Effects (p < 0.05): 2 ---
-  n_bidders                                coef=+358.9972  p=0.0000
-  objective                                coef=+118.4567  p=0.0205
+  n_bidders                                coef=+365.1284  p=0.0000
+  auction_type                             coef=+136.3208  p=0.0356
 
   Plots saved to results/exp4/
 
@@ -148,55 +148,54 @@ RESPONSE: mean_effective_poa
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:     mean_effective_poa   R-squared:                       0.876
-Model:                            OLS   Adj. R-squared:                  0.872
-Method:                 Least Squares   F-statistic:                     227.7
-Date:                Sat, 21 Feb 2026   Prob (F-statistic):           1.03e-84
-Time:                        22:41:46   Log-Likelihood:                 408.02
-No. Observations:                 200   AIC:                            -802.0
-Df Residuals:                     193   BIC:                            -779.0
+Dep. Variable:     mean_effective_poa   R-squared:                       0.868
+Model:                            OLS   Adj. R-squared:                  0.861
+Method:                 Least Squares   F-statistic:                     123.9
+Date:                Sun, 22 Feb 2026   Prob (F-statistic):           2.52e-47
+Time:                        03:26:18   Log-Likelihood:                 240.84
+No. Observations:                 120   AIC:                            -467.7
+Df Residuals:                     113   BIC:                            -448.2
 Df Model:                           6                                         
 Covariance Type:            nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.9132      0.002    403.275      0.000       0.909       0.918
-auction_type_coded                     0.0039      0.002      1.722      0.087      -0.001       0.008
-objective_coded                       -0.0233      0.002    -10.300      0.000      -0.028      -0.019
-n_bidders_coded                        0.0782      0.002     34.540      0.000       0.074       0.083
-auction_type_coded:objective_coded     0.0053      0.002      2.332      0.021       0.001       0.010
-auction_type_coded:n_bidders_coded    -0.0036      0.002     -1.575      0.117      -0.008       0.001
-objective_coded:n_bidders_coded       -0.0170      0.002     -7.491      0.000      -0.021      -0.012
+Intercept                              0.9126      0.003    298.319      0.000       0.907       0.919
+auction_type_coded                     0.0032      0.003      1.047      0.297      -0.003       0.009
+objective_coded                       -0.0271      0.003     -8.873      0.000      -0.033      -0.021
+n_bidders_coded                        0.0765      0.003     25.018      0.000       0.070       0.083
+auction_type_coded:objective_coded     0.0042      0.003      1.377      0.171      -0.002       0.010
+auction_type_coded:n_bidders_coded    -0.0008      0.003     -0.252      0.801      -0.007       0.005
+objective_coded:n_bidders_coded       -0.0183      0.003     -5.995      0.000      -0.024      -0.012
 ==============================================================================
-Omnibus:                       23.025   Durbin-Watson:                   2.069
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):               27.822
-Skew:                          -0.907   Prob(JB):                     9.09e-07
-Kurtosis:                       3.212   Cond. No.                         1.00
+Omnibus:                        9.806   Durbin-Watson:                   2.374
+Prob(Omnibus):                  0.007   Jarque-Bera (JB):               10.646
+Skew:                          -0.713   Prob(JB):                      0.00488
+Kurtosis:                       2.686   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.8762
-Adj R² = 0.8724
+R² = 0.8681
+Adj R² = 0.8611
 
 --- ANOVA Table (Type III) ---
-|                                    |   sum_sq |       df |           F |   PR(>F) |
-|------------------------------------|----------|----------|-------------|----------|
-| Intercept                          | 166.7915 |   1.0000 | 162630.4138 |   0.0000 |
-| auction_type_coded                 |   0.0030 |   1.0000 |      2.9638 |   0.0867 |
-| objective_coded                    |   0.1088 |   1.0000 |    106.0995 |   0.0000 |
-| n_bidders_coded                    |   1.2235 |   1.0000 |   1193.0199 |   0.0000 |
-| auction_type_coded:objective_coded |   0.0056 |   1.0000 |      5.4376 |   0.0207 |
-| auction_type_coded:n_bidders_coded |   0.0025 |   1.0000 |      2.4821 |   0.1168 |
-| objective_coded:n_bidders_coded    |   0.0575 |   1.0000 |     56.1090 |   0.0000 |
-| Residual                           |   0.1979 | 193.0000 |    nan      | nan      |
+|                                    |   sum_sq |       df |          F |   PR(>F) |
+|------------------------------------|----------|----------|------------|----------|
+| Intercept                          |  99.9393 |   1.0000 | 88994.1163 |   0.0000 |
+| auction_type_coded                 |   0.0012 |   1.0000 |     1.0961 |   0.2974 |
+| objective_coded                    |   0.0884 |   1.0000 |    78.7358 |   0.0000 |
+| n_bidders_coded                    |   0.7029 |   1.0000 |   625.9021 |   0.0000 |
+| auction_type_coded:objective_coded |   0.0021 |   1.0000 |     1.8973 |   0.1711 |
+| auction_type_coded:n_bidders_coded |   0.0001 |   1.0000 |     0.0636 |   0.8014 |
+| objective_coded:n_bidders_coded    |   0.0404 |   1.0000 |    35.9370 |   0.0000 |
+| Residual                           |   0.1269 | 113.0000 |   nan      | nan      |
 
---- Significant Effects (p < 0.05): 4 ---
-  n_bidders                                coef=+0.0782  p=0.0000
-  objective                                coef=-0.0233  p=0.0000
-  objective:n_bidders                      coef=-0.0170  p=0.0000
-  auction_type:objective                   coef=+0.0053  p=0.0207
+--- Significant Effects (p < 0.05): 3 ---
+  n_bidders                                coef=+0.0765  p=0.0000
+  objective                                coef=-0.0271  p=0.0000
+  objective:n_bidders                      coef=-0.0183  p=0.0000
 
   Plots saved to results/exp4/
 
@@ -207,57 +206,57 @@ RESPONSE: mean_budget_utilization
 --- OLS Regression Summary ---
                                OLS Regression Results                              
 ===================================================================================
-Dep. Variable:     mean_budget_utilization   R-squared:                       0.950
-Model:                                 OLS   Adj. R-squared:                  0.948
-Method:                      Least Squares   F-statistic:                     609.9
-Date:                     Sat, 21 Feb 2026   Prob (F-statistic):          1.47e-122
-Time:                             22:41:47   Log-Likelihood:                 326.27
-No. Observations:                      200   AIC:                            -638.5
-Df Residuals:                          193   BIC:                            -615.5
+Dep. Variable:     mean_budget_utilization   R-squared:                       0.948
+Model:                                 OLS   Adj. R-squared:                  0.946
+Method:                      Least Squares   F-statistic:                     345.6
+Date:                     Sun, 22 Feb 2026   Prob (F-statistic):           3.03e-70
+Time:                             03:26:19   Log-Likelihood:                 193.01
+No. Observations:                      120   AIC:                            -372.0
+Df Residuals:                          113   BIC:                            -352.5
 Df Model:                                6                                         
 Covariance Type:                 nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.8423      0.003    247.170      0.000       0.836       0.849
-auction_type_coded                     0.0516      0.003     15.129      0.000       0.045       0.058
-objective_coded                       -0.1576      0.003    -46.234      0.000      -0.164      -0.151
-n_bidders_coded                       -0.0778      0.003    -22.843      0.000      -0.085      -0.071
-auction_type_coded:objective_coded     0.0515      0.003     15.104      0.000       0.045       0.058
-auction_type_coded:n_bidders_coded    -0.0155      0.003     -4.558      0.000      -0.022      -0.009
-objective_coded:n_bidders_coded       -0.0779      0.003    -22.856      0.000      -0.085      -0.071
+Intercept                              0.8405      0.005    184.444      0.000       0.832       0.850
+auction_type_coded                     0.0493      0.005     10.820      0.000       0.040       0.058
+objective_coded                       -0.1594      0.005    -34.971      0.000      -0.168      -0.150
+n_bidders_coded                       -0.0793      0.005    -17.408      0.000      -0.088      -0.070
+auction_type_coded:objective_coded     0.0492      0.005     10.802      0.000       0.040       0.058
+auction_type_coded:n_bidders_coded    -0.0148      0.005     -3.242      0.002      -0.024      -0.006
+objective_coded:n_bidders_coded       -0.0794      0.005    -17.417      0.000      -0.088      -0.070
 ==============================================================================
-Omnibus:                       90.787   Durbin-Watson:                   1.890
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              515.581
-Skew:                          -1.650   Prob(JB):                    1.10e-112
-Kurtosis:                      10.140   Cond. No.                         1.00
+Omnibus:                       26.149   Durbin-Watson:                   2.162
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               43.336
+Skew:                          -0.995   Prob(JB):                     3.89e-10
+Kurtosis:                       5.170   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.9499
-Adj R² = 0.9483
+R² = 0.9483
+Adj R² = 0.9456
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |          F |   PR(>F) |
 |------------------------------------|----------|----------|------------|----------|
-| Intercept                          | 141.9081 |   1.0000 | 61093.0388 |   0.0000 |
-| auction_type_coded                 |   0.5316 |   1.0000 |   228.8807 |   0.0000 |
-| objective_coded                    |   4.9652 |   1.0000 |  2137.5732 |   0.0000 |
-| n_bidders_coded                    |   1.2121 |   1.0000 |   521.8188 |   0.0000 |
-| auction_type_coded:objective_coded |   0.5299 |   1.0000 |   228.1300 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   0.0483 |   1.0000 |    20.7763 |   0.0000 |
-| objective_coded:n_bidders_coded    |   1.2135 |   1.0000 |   522.4158 |   0.0000 |
-| Residual                           |   0.4483 | 193.0000 |   nan      | nan      |
+| Intercept                          |  84.7809 |   1.0000 | 34019.4204 |   0.0000 |
+| auction_type_coded                 |   0.2918 |   1.0000 |   117.0738 |   0.0000 |
+| objective_coded                    |   3.0478 |   1.0000 |  1222.9802 |   0.0000 |
+| n_bidders_coded                    |   0.7552 |   1.0000 |   303.0502 |   0.0000 |
+| auction_type_coded:objective_coded |   0.2908 |   1.0000 |   116.6936 |   0.0000 |
+| auction_type_coded:n_bidders_coded |   0.0262 |   1.0000 |    10.5105 |   0.0016 |
+| objective_coded:n_bidders_coded    |   0.7560 |   1.0000 |   303.3590 |   0.0000 |
+| Residual                           |   0.2816 | 113.0000 |   nan      | nan      |
 
 --- Significant Effects (p < 0.05): 6 ---
-  objective                                coef=-0.1576  p=0.0000
-  objective:n_bidders                      coef=-0.0779  p=0.0000
-  n_bidders                                coef=-0.0778  p=0.0000
-  auction_type                             coef=+0.0516  p=0.0000
-  auction_type:objective                   coef=+0.0515  p=0.0000
-  auction_type:n_bidders                   coef=-0.0155  p=0.0000
+  objective                                coef=-0.1594  p=0.0000
+  objective:n_bidders                      coef=-0.0794  p=0.0000
+  n_bidders                                coef=-0.0793  p=0.0000
+  auction_type                             coef=+0.0493  p=0.0000
+  auction_type:objective                   coef=+0.0492  p=0.0000
+  auction_type:n_bidders                   coef=-0.0148  p=0.0016
 
   Plots saved to results/exp4/
 
@@ -270,55 +269,55 @@ RESPONSE: mean_bid_to_value
 ==============================================================================
 Dep. Variable:      mean_bid_to_value   R-squared:                       0.990
 Model:                            OLS   Adj. R-squared:                  0.990
-Method:                 Least Squares   F-statistic:                     3161.
-Date:                Sat, 21 Feb 2026   Prob (F-statistic):          9.55e-190
-Time:                        22:41:47   Log-Likelihood:                 381.55
-No. Observations:                 200   AIC:                            -749.1
-Df Residuals:                     193   BIC:                            -726.0
+Method:                 Least Squares   F-statistic:                     1905.
+Date:                Sun, 22 Feb 2026   Prob (F-statistic):          5.01e-111
+Time:                        03:26:19   Log-Likelihood:                 230.14
+No. Observations:                 120   AIC:                            -446.3
+Df Residuals:                     113   BIC:                            -426.8
 Df Model:                           6                                         
 Covariance Type:            nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              1.1779      0.003    455.674      0.000       1.173       1.183
-auction_type_coded                    -0.1256      0.003    -48.585      0.000      -0.131      -0.120
-objective_coded                       -0.2248      0.003    -86.955      0.000      -0.230      -0.220
-n_bidders_coded                        0.1771      0.003     68.509      0.000       0.172       0.182
-auction_type_coded:objective_coded     0.0831      0.003     32.160      0.000       0.078       0.088
-auction_type_coded:n_bidders_coded     0.0123      0.003      4.740      0.000       0.007       0.017
-objective_coded:n_bidders_coded       -0.1484      0.003    -57.394      0.000      -0.153      -0.143
+Intercept                              1.1765      0.003    351.804      0.000       1.170       1.183
+auction_type_coded                    -0.1238      0.003    -37.008      0.000      -0.130      -0.117
+objective_coded                       -0.2248      0.003    -67.207      0.000      -0.231      -0.218
+n_bidders_coded                        0.1799      0.003     53.785      0.000       0.173       0.186
+auction_type_coded:objective_coded     0.0797      0.003     23.830      0.000       0.073       0.086
+auction_type_coded:n_bidders_coded     0.0104      0.003      3.110      0.002       0.004       0.017
+objective_coded:n_bidders_coded       -0.1522      0.003    -45.511      0.000      -0.159      -0.146
 ==============================================================================
-Omnibus:                       11.598   Durbin-Watson:                   1.470
-Prob(Omnibus):                  0.003   Jarque-Bera (JB):               15.662
-Skew:                           0.391   Prob(JB):                     0.000397
-Kurtosis:                       4.126   Cond. No.                         1.00
+Omnibus:                       12.071   Durbin-Watson:                   1.561
+Prob(Omnibus):                  0.002   Jarque-Bera (JB):               13.008
+Skew:                           0.673   Prob(JB):                      0.00150
+Kurtosis:                       3.888   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.9899
-Adj R² = 0.9896
+R² = 0.9902
+Adj R² = 0.9897
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |           F |   PR(>F) |
 |------------------------------------|----------|----------|-------------|----------|
-| Intercept                          | 277.5070 |   1.0000 | 207638.7991 |   0.0000 |
-| auction_type_coded                 |   3.1548 |   1.0000 |   2360.5402 |   0.0000 |
-| objective_coded                    |  10.1055 |   1.0000 |   7561.2456 |   0.0000 |
-| n_bidders_coded                    |   6.2727 |   1.0000 |   4693.4249 |   0.0000 |
-| auction_type_coded:objective_coded |   1.3823 |   1.0000 |   1034.2712 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   0.0300 |   1.0000 |     22.4654 |   0.0000 |
-| objective_coded:n_bidders_coded    |   4.4024 |   1.0000 |   3294.0362 |   0.0000 |
-| Residual                           |   0.2579 | 193.0000 |    nan      | nan      |
+| Intercept                          | 166.1062 |   1.0000 | 123765.8408 |   0.0000 |
+| auction_type_coded                 |   1.8381 |   1.0000 |   1369.5564 |   0.0000 |
+| objective_coded                    |   6.0620 |   1.0000 |   4516.8242 |   0.0000 |
+| n_bidders_coded                    |   3.8824 |   1.0000 |   2892.7955 |   0.0000 |
+| auction_type_coded:objective_coded |   0.7621 |   1.0000 |    567.8726 |   0.0000 |
+| auction_type_coded:n_bidders_coded |   0.0130 |   1.0000 |      9.6704 |   0.0024 |
+| objective_coded:n_bidders_coded    |   2.7798 |   1.0000 |   2071.2425 |   0.0000 |
+| Residual                           |   0.1517 | 113.0000 |    nan      | nan      |
 
 --- Significant Effects (p < 0.05): 6 ---
   objective                                coef=-0.2248  p=0.0000
-  n_bidders                                coef=+0.1771  p=0.0000
-  objective:n_bidders                      coef=-0.1484  p=0.0000
-  auction_type                             coef=-0.1256  p=0.0000
-  auction_type:objective                   coef=+0.0831  p=0.0000
-  auction_type:n_bidders                   coef=+0.0123  p=0.0000
+  n_bidders                                coef=+0.1799  p=0.0000
+  objective:n_bidders                      coef=-0.1522  p=0.0000
+  auction_type                             coef=-0.1238  p=0.0000
+  auction_type:objective                   coef=+0.0797  p=0.0000
+  auction_type:n_bidders                   coef=+0.0104  p=0.0024
 
   Plots saved to results/exp4/
 
@@ -329,56 +328,56 @@ RESPONSE: mean_allocative_efficiency
 --- OLS Regression Summary ---
                                 OLS Regression Results                                
 ======================================================================================
-Dep. Variable:     mean_allocative_efficiency   R-squared:                       0.851
-Model:                                    OLS   Adj. R-squared:                  0.846
-Method:                         Least Squares   F-statistic:                     183.3
-Date:                        Sat, 21 Feb 2026   Prob (F-statistic):           6.82e-77
-Time:                                22:41:47   Log-Likelihood:                 294.61
-No. Observations:                         200   AIC:                            -575.2
-Df Residuals:                             193   BIC:                            -552.1
+Dep. Variable:     mean_allocative_efficiency   R-squared:                       0.856
+Model:                                    OLS   Adj. R-squared:                  0.848
+Method:                         Least Squares   F-statistic:                     111.5
+Date:                        Sun, 22 Feb 2026   Prob (F-statistic):           4.15e-45
+Time:                                03:26:20   Log-Likelihood:                 178.42
+No. Observations:                         120   AIC:                            -342.8
+Df Residuals:                             113   BIC:                            -323.3
 Df Model:                                   6                                         
 Covariance Type:                    nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.8155      0.004    204.257      0.000       0.808       0.823
-auction_type_coded                    -0.0369      0.004     -9.236      0.000      -0.045      -0.029
-objective_coded                        0.1074      0.004     26.907      0.000       0.100       0.115
-n_bidders_coded                       -0.0372      0.004     -9.319      0.000      -0.045      -0.029
-auction_type_coded:objective_coded    -0.0290      0.004     -7.264      0.000      -0.037      -0.021
-auction_type_coded:n_bidders_coded     0.0057      0.004      1.421      0.157      -0.002       0.014
-objective_coded:n_bidders_coded        0.0487      0.004     12.204      0.000       0.041       0.057
+Intercept                              0.8144      0.005    158.246      0.000       0.804       0.825
+auction_type_coded                    -0.0398      0.005     -7.725      0.000      -0.050      -0.030
+objective_coded                        0.1063      0.005     20.657      0.000       0.096       0.117
+n_bidders_coded                       -0.0404      0.005     -7.845      0.000      -0.051      -0.030
+auction_type_coded:objective_coded    -0.0281      0.005     -5.456      0.000      -0.038      -0.018
+auction_type_coded:n_bidders_coded     0.0087      0.005      1.693      0.093      -0.001       0.019
+objective_coded:n_bidders_coded        0.0485      0.005      9.417      0.000       0.038       0.059
 ==============================================================================
-Omnibus:                        0.288   Durbin-Watson:                   2.123
-Prob(Omnibus):                  0.866   Jarque-Bera (JB):                0.441
-Skew:                           0.036   Prob(JB):                        0.802
-Kurtosis:                       2.781   Cond. No.                         1.00
+Omnibus:                        0.257   Durbin-Watson:                   2.247
+Prob(Omnibus):                  0.880   Jarque-Bera (JB):                0.042
+Skew:                          -0.010   Prob(JB):                        0.979
+Kurtosis:                       3.089   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.8507
-Adj R² = 0.8461
+R² = 0.8555
+Adj R² = 0.8479
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |          F |   PR(>F) |
 |------------------------------------|----------|----------|------------|----------|
-| Intercept                          | 133.0050 |   1.0000 | 41720.7385 |   0.0000 |
-| auction_type_coded                 |   0.2720 |   1.0000 |    85.3124 |   0.0000 |
-| objective_coded                    |   2.3081 |   1.0000 |   723.9994 |   0.0000 |
-| n_bidders_coded                    |   0.2768 |   1.0000 |    86.8368 |   0.0000 |
-| auction_type_coded:objective_coded |   0.1682 |   1.0000 |    52.7663 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   0.0064 |   1.0000 |     2.0180 |   0.1571 |
-| objective_coded:n_bidders_coded    |   0.4748 |   1.0000 |   148.9306 |   0.0000 |
-| Residual                           |   0.6153 | 193.0000 |   nan      | nan      |
+| Intercept                          |  79.5855 |   1.0000 | 25041.9103 |   0.0000 |
+| auction_type_coded                 |   0.1896 |   1.0000 |    59.6705 |   0.0000 |
+| objective_coded                    |   1.3561 |   1.0000 |   426.6986 |   0.0000 |
+| n_bidders_coded                    |   0.1956 |   1.0000 |    61.5435 |   0.0000 |
+| auction_type_coded:objective_coded |   0.0946 |   1.0000 |    29.7715 |   0.0000 |
+| auction_type_coded:n_bidders_coded |   0.0091 |   1.0000 |     2.8651 |   0.0933 |
+| objective_coded:n_bidders_coded    |   0.2818 |   1.0000 |    88.6781 |   0.0000 |
+| Residual                           |   0.3591 | 113.0000 |   nan      | nan      |
 
 --- Significant Effects (p < 0.05): 5 ---
-  objective                                coef=+0.1074  p=0.0000
-  objective:n_bidders                      coef=+0.0487  p=0.0000
-  n_bidders                                coef=-0.0372  p=0.0000
-  auction_type                             coef=-0.0369  p=0.0000
-  auction_type:objective                   coef=-0.0290  p=0.0000
+  objective                                coef=+0.1063  p=0.0000
+  objective:n_bidders                      coef=+0.0485  p=0.0000
+  n_bidders                                coef=-0.0404  p=0.0000
+  auction_type                             coef=-0.0398  p=0.0000
+  auction_type:objective                   coef=-0.0281  p=0.0000
 
   Plots saved to results/exp4/
 
@@ -389,55 +388,55 @@ RESPONSE: mean_dual_cv
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:           mean_dual_cv   R-squared:                       0.593
-Model:                            OLS   Adj. R-squared:                  0.580
-Method:                 Least Squares   F-statistic:                     46.80
-Date:                Sat, 21 Feb 2026   Prob (F-statistic):           3.95e-35
-Time:                        22:41:48   Log-Likelihood:                 414.88
-No. Observations:                 200   AIC:                            -815.8
-Df Residuals:                     193   BIC:                            -792.7
+Dep. Variable:           mean_dual_cv   R-squared:                       0.584
+Model:                            OLS   Adj. R-squared:                  0.562
+Method:                 Least Squares   F-statistic:                     26.45
+Date:                Sun, 22 Feb 2026   Prob (F-statistic):           1.75e-19
+Time:                        03:26:20   Log-Likelihood:                 247.04
+No. Observations:                 120   AIC:                            -480.1
+Df Residuals:                     113   BIC:                            -460.6
 Df Model:                           6                                         
 Covariance Type:            nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.1342      0.002     61.308      0.000       0.130       0.138
-auction_type_coded                     0.0078      0.002      3.548      0.000       0.003       0.012
-objective_coded                       -0.0010      0.002     -0.480      0.632      -0.005       0.003
-n_bidders_coded                       -0.0005      0.002     -0.240      0.810      -0.005       0.004
-auction_type_coded:objective_coded     0.0337      0.002     15.420      0.000       0.029       0.038
-auction_type_coded:n_bidders_coded     0.0098      0.002      4.494      0.000       0.006       0.014
-objective_coded:n_bidders_coded       -0.0069      0.002     -3.151      0.002      -0.011      -0.003
+Intercept                              0.1336      0.003     46.000      0.000       0.128       0.139
+auction_type_coded                     0.0090      0.003      3.105      0.002       0.003       0.015
+objective_coded                       -0.0024      0.003     -0.834      0.406      -0.008       0.003
+n_bidders_coded                        0.0007      0.003      0.246      0.806      -0.005       0.006
+auction_type_coded:objective_coded     0.0339      0.003     11.654      0.000       0.028       0.040
+auction_type_coded:n_bidders_coded     0.0073      0.003      2.508      0.014       0.002       0.013
+objective_coded:n_bidders_coded       -0.0072      0.003     -2.486      0.014      -0.013      -0.001
 ==============================================================================
-Omnibus:                        2.906   Durbin-Watson:                   1.937
-Prob(Omnibus):                  0.234   Jarque-Bera (JB):                2.575
-Skew:                          -0.190   Prob(JB):                        0.276
-Kurtosis:                       3.406   Cond. No.                         1.00
+Omnibus:                        0.416   Durbin-Watson:                   2.306
+Prob(Omnibus):                  0.812   Jarque-Bera (JB):                0.121
+Skew:                           0.016   Prob(JB):                        0.941
+Kurtosis:                       3.152   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.5926
-Adj R² = 0.5800
+R² = 0.5841
+Adj R² = 0.5620
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |         F |   PR(>F) |
 |------------------------------------|----------|----------|-----------|----------|
-| Intercept                          |   3.5995 |   1.0000 | 3758.6434 |   0.0000 |
-| auction_type_coded                 |   0.0121 |   1.0000 |   12.5868 |   0.0005 |
-| objective_coded                    |   0.0002 |   1.0000 |    0.2300 |   0.6321 |
-| n_bidders_coded                    |   0.0001 |   1.0000 |    0.0577 |   0.8104 |
-| auction_type_coded:objective_coded |   0.2277 |   1.0000 |  237.7794 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   0.0193 |   1.0000 |   20.1951 |   0.0000 |
-| objective_coded:n_bidders_coded    |   0.0095 |   1.0000 |    9.9312 |   0.0019 |
-| Residual                           |   0.1848 | 193.0000 |  nan      | nan      |
+| Intercept                          |   2.1428 |   1.0000 | 2116.0131 |   0.0000 |
+| auction_type_coded                 |   0.0098 |   1.0000 |    9.6390 |   0.0024 |
+| objective_coded                    |   0.0007 |   1.0000 |    0.6951 |   0.4062 |
+| n_bidders_coded                    |   0.0001 |   1.0000 |    0.0606 |   0.8060 |
+| auction_type_coded:objective_coded |   0.1375 |   1.0000 |  135.8256 |   0.0000 |
+| auction_type_coded:n_bidders_coded |   0.0064 |   1.0000 |    6.2915 |   0.0136 |
+| objective_coded:n_bidders_coded    |   0.0063 |   1.0000 |    6.1801 |   0.0144 |
+| Residual                           |   0.1144 | 113.0000 |  nan      | nan      |
 
 --- Significant Effects (p < 0.05): 4 ---
-  auction_type:objective                   coef=+0.0337  p=0.0000
-  auction_type:n_bidders                   coef=+0.0098  p=0.0000
-  auction_type                             coef=+0.0078  p=0.0005
-  objective:n_bidders                      coef=-0.0069  p=0.0019
+  auction_type:objective                   coef=+0.0339  p=0.0000
+  auction_type                             coef=+0.0090  p=0.0024
+  auction_type:n_bidders                   coef=+0.0073  p=0.0136
+  objective:n_bidders                      coef=-0.0072  p=0.0144
 
   Plots saved to results/exp4/
 
@@ -448,57 +447,57 @@ RESPONSE: mean_no_sale_rate
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      mean_no_sale_rate   R-squared:                       0.629
-Model:                            OLS   Adj. R-squared:                  0.618
-Method:                 Least Squares   F-statistic:                     54.61
-Date:                Sat, 21 Feb 2026   Prob (F-statistic):           4.96e-39
-Time:                        22:41:48   Log-Likelihood:                 1063.5
-No. Observations:                 200   AIC:                            -2113.
-Df Residuals:                     193   BIC:                            -2090.
+Dep. Variable:      mean_no_sale_rate   R-squared:                       0.634
+Model:                            OLS   Adj. R-squared:                  0.615
+Method:                 Least Squares   F-statistic:                     32.69
+Date:                Sun, 22 Feb 2026   Prob (F-statistic):           1.40e-22
+Time:                        03:26:20   Log-Likelihood:                 645.27
+No. Observations:                 120   AIC:                            -1277.
+Df Residuals:                     113   BIC:                            -1257.
 Df Model:                           6                                         
 Covariance Type:            nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.0010   8.54e-05     11.426      0.000       0.001       0.001
-auction_type_coded                     0.0010   8.54e-05     11.426      0.000       0.001       0.001
-objective_coded                        0.0002   8.54e-05      2.574      0.011    5.14e-05       0.000
-n_bidders_coded                       -0.0008   8.54e-05     -8.877      0.000      -0.001      -0.001
-auction_type_coded:objective_coded     0.0002   8.54e-05      2.574      0.011    5.14e-05       0.000
-auction_type_coded:n_bidders_coded    -0.0008   8.54e-05     -8.877      0.000      -0.001      -0.001
-objective_coded:n_bidders_coded       -0.0004   8.54e-05     -5.122      0.000      -0.001      -0.000
+Intercept                              0.0009      0.000      8.844      0.000       0.001       0.001
+auction_type_coded                     0.0009      0.000      8.844      0.000       0.001       0.001
+objective_coded                        0.0002      0.000      2.028      0.045    4.96e-06       0.000
+n_bidders_coded                       -0.0007      0.000     -6.832      0.000      -0.001      -0.001
+auction_type_coded:objective_coded     0.0002      0.000      2.028      0.045    4.96e-06       0.000
+auction_type_coded:n_bidders_coded    -0.0007      0.000     -6.832      0.000      -0.001      -0.001
+objective_coded:n_bidders_coded       -0.0004      0.000     -4.041      0.000      -0.001      -0.000
 ==============================================================================
-Omnibus:                       51.699   Durbin-Watson:                   2.222
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              676.787
-Skew:                           0.471   Prob(JB):                    1.09e-147
-Kurtosis:                      11.962   Cond. No.                         1.00
+Omnibus:                       27.715   Durbin-Watson:                   2.241
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              252.810
+Skew:                           0.174   Prob(JB):                     1.27e-55
+Kurtosis:                      10.102   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.6293
-Adj R² = 0.6178
+R² = 0.6344
+Adj R² = 0.6150
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |        F |   PR(>F) |
 |------------------------------------|----------|----------|----------|----------|
-| Intercept                          |   0.0002 |   1.0000 | 130.5487 |   0.0000 |
-| auction_type_coded                 |   0.0002 |   1.0000 | 130.5487 |   0.0000 |
-| objective_coded                    |   0.0000 |   1.0000 |   6.6234 |   0.0108 |
-| n_bidders_coded                    |   0.0001 |   1.0000 |  78.7993 |   0.0000 |
-| auction_type_coded:objective_coded |   0.0000 |   1.0000 |   6.6234 |   0.0108 |
-| auction_type_coded:n_bidders_coded |   0.0001 |   1.0000 |  78.7993 |   0.0000 |
-| objective_coded:n_bidders_coded    |   0.0000 |   1.0000 |  26.2399 |   0.0000 |
-| Residual                           |   0.0003 | 193.0000 | nan      | nan      |
+| Intercept                          |   0.0001 |   1.0000 |  78.2170 |   0.0000 |
+| auction_type_coded                 |   0.0001 |   1.0000 |  78.2170 |   0.0000 |
+| objective_coded                    |   0.0000 |   1.0000 |   4.1141 |   0.0449 |
+| n_bidders_coded                    |   0.0001 |   1.0000 |  46.6701 |   0.0000 |
+| auction_type_coded:objective_coded |   0.0000 |   1.0000 |   4.1141 |   0.0449 |
+| auction_type_coded:n_bidders_coded |   0.0001 |   1.0000 |  46.6701 |   0.0000 |
+| objective_coded:n_bidders_coded    |   0.0000 |   1.0000 |  16.3283 |   0.0001 |
+| Residual                           |   0.0002 | 113.0000 | nan      | nan      |
 
 --- Significant Effects (p < 0.05): 6 ---
-  auction_type                             coef=+0.0010  p=0.0000
-  auction_type:n_bidders                   coef=-0.0008  p=0.0000
-  n_bidders                                coef=-0.0008  p=0.0000
-  objective:n_bidders                      coef=-0.0004  p=0.0000
-  objective                                coef=+0.0002  p=0.0108
-  auction_type:objective                   coef=+0.0002  p=0.0108
+  auction_type                             coef=+0.0009  p=0.0000
+  auction_type:n_bidders                   coef=-0.0007  p=0.0000
+  n_bidders                                coef=-0.0007  p=0.0000
+  objective:n_bidders                      coef=-0.0004  p=0.0001
+  objective                                coef=+0.0002  p=0.0449
+  auction_type:objective                   coef=+0.0002  p=0.0449
 
   Plots saved to results/exp4/
 
@@ -509,56 +508,56 @@ RESPONSE: mean_winner_entropy
 --- OLS Regression Summary ---
                              OLS Regression Results                            
 ===============================================================================
-Dep. Variable:     mean_winner_entropy   R-squared:                       0.922
-Model:                             OLS   Adj. R-squared:                  0.920
-Method:                  Least Squares   F-statistic:                     381.6
-Date:                 Sat, 21 Feb 2026   Prob (F-statistic):          3.59e-104
-Time:                         22:41:49   Log-Likelihood:                 192.80
-No. Observations:                  200   AIC:                            -371.6
-Df Residuals:                      193   BIC:                            -348.5
+Dep. Variable:     mean_winner_entropy   R-squared:                       0.911
+Model:                             OLS   Adj. R-squared:                  0.906
+Method:                  Least Squares   F-statistic:                     191.6
+Date:                 Sun, 22 Feb 2026   Prob (F-statistic):           8.28e-57
+Time:                         03:26:21   Log-Likelihood:                 108.01
+No. Observations:                  120   AIC:                            -202.0
+Df Residuals:                      113   BIC:                            -182.5
 Df Model:                            6                                         
 Covariance Type:             nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.9219      0.007    138.789      0.000       0.909       0.935
-auction_type_coded                     0.0409      0.007      6.164      0.000       0.028       0.054
-objective_coded                       -0.0953      0.007    -14.342      0.000      -0.108      -0.082
-n_bidders_coded                        0.2932      0.007     44.141      0.000       0.280       0.306
-auction_type_coded:objective_coded     0.0392      0.007      5.905      0.000       0.026       0.052
-auction_type_coded:n_bidders_coded    -0.0038      0.007     -0.577      0.565      -0.017       0.009
-objective_coded:n_bidders_coded       -0.0525      0.007     -7.905      0.000      -0.066      -0.039
+Intercept                              0.9170      0.009     99.096      0.000       0.899       0.935
+auction_type_coded                     0.0366      0.009      3.960      0.000       0.018       0.055
+objective_coded                       -0.1008      0.009    -10.890      0.000      -0.119      -0.082
+n_bidders_coded                        0.2871      0.009     31.028      0.000       0.269       0.305
+auction_type_coded:objective_coded     0.0372      0.009      4.019      0.000       0.019       0.056
+auction_type_coded:n_bidders_coded    -0.0039      0.009     -0.422      0.674      -0.022       0.014
+objective_coded:n_bidders_coded       -0.0559      0.009     -6.043      0.000      -0.074      -0.038
 ==============================================================================
-Omnibus:                       32.215   Durbin-Watson:                   2.056
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              131.287
-Skew:                          -0.505   Prob(JB):                     3.10e-29
-Kurtosis:                       6.839   Cond. No.                         1.00
+Omnibus:                       10.620   Durbin-Watson:                   2.208
+Prob(Omnibus):                  0.005   Jarque-Bera (JB):               27.027
+Skew:                          -0.068   Prob(JB):                     1.35e-06
+Kurtosis:                       5.321   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.9223
-Adj R² = 0.9199
+R² = 0.9105
+Adj R² = 0.9058
 
 --- ANOVA Table (Type III) ---
-|                                    |   sum_sq |       df |          F |   PR(>F) |
-|------------------------------------|----------|----------|------------|----------|
-| Intercept                          | 169.9778 |   1.0000 | 19262.3997 |   0.0000 |
-| auction_type_coded                 |   0.3353 |   1.0000 |    37.9978 |   0.0000 |
-| objective_coded                    |   1.8152 |   1.0000 |   205.6995 |   0.0000 |
-| n_bidders_coded                    |  17.1939 |   1.0000 |  1948.4640 |   0.0000 |
-| auction_type_coded:objective_coded |   0.3077 |   1.0000 |    34.8688 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   0.0029 |   1.0000 |     0.3325 |   0.5648 |
-| objective_coded:n_bidders_coded    |   0.5515 |   1.0000 |    62.4963 |   0.0000 |
-| Residual                           |   1.7031 | 193.0000 |   nan      | nan      |
+|                                    |   sum_sq |       df |         F |   PR(>F) |
+|------------------------------------|----------|----------|-----------|----------|
+| Intercept                          | 100.9070 |   1.0000 | 9820.0065 |   0.0000 |
+| auction_type_coded                 |   0.1612 |   1.0000 |   15.6848 |   0.0001 |
+| objective_coded                    |   1.2187 |   1.0000 |  118.5975 |   0.0000 |
+| n_bidders_coded                    |   9.8928 |   1.0000 |  962.7438 |   0.0000 |
+| auction_type_coded:objective_coded |   0.1660 |   1.0000 |   16.1521 |   0.0001 |
+| auction_type_coded:n_bidders_coded |   0.0018 |   1.0000 |    0.1784 |   0.6735 |
+| objective_coded:n_bidders_coded    |   0.3753 |   1.0000 |   36.5211 |   0.0000 |
+| Residual                           |   1.1611 | 113.0000 |  nan      | nan      |
 
 --- Significant Effects (p < 0.05): 5 ---
-  n_bidders                                coef=+0.2932  p=0.0000
-  objective                                coef=-0.0953  p=0.0000
-  objective:n_bidders                      coef=-0.0525  p=0.0000
-  auction_type                             coef=+0.0409  p=0.0000
-  auction_type:objective                   coef=+0.0392  p=0.0000
+  n_bidders                                coef=+0.2871  p=0.0000
+  objective                                coef=-0.1008  p=0.0000
+  objective:n_bidders                      coef=-0.0559  p=0.0000
+  auction_type:objective                   coef=+0.0372  p=0.0001
+  auction_type                             coef=+0.0366  p=0.0001
 
   Plots saved to results/exp4/
 
@@ -569,56 +568,56 @@ RESPONSE: warm_start_benefit
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:     warm_start_benefit   R-squared:                       0.730
-Model:                            OLS   Adj. R-squared:                  0.722
-Method:                 Least Squares   F-statistic:                     87.01
-Date:                Sat, 21 Feb 2026   Prob (F-statistic):           3.33e-52
-Time:                        22:41:49   Log-Likelihood:                -944.44
-No. Observations:                 200   AIC:                             1903.
-Df Residuals:                     193   BIC:                             1926.
+Dep. Variable:     warm_start_benefit   R-squared:                       0.733
+Model:                            OLS   Adj. R-squared:                  0.719
+Method:                 Least Squares   F-statistic:                     51.74
+Date:                Sun, 22 Feb 2026   Prob (F-statistic):           3.53e-30
+Time:                        03:26:21   Log-Likelihood:                -567.94
+No. Observations:                 120   AIC:                             1150.
+Df Residuals:                     113   BIC:                             1169.
 Df Model:                           6                                         
 Covariance Type:            nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                             67.6075      1.958     34.529      0.000      63.746      71.469
-auction_type_coded                     6.3234      1.958      3.230      0.001       2.462      10.185
-objective_coded                       36.4965      1.958     18.640      0.000      32.635      40.358
-n_bidders_coded                       16.4419      1.958      8.397      0.000      12.580      20.304
-auction_type_coded:objective_coded    15.8932      1.958      8.117      0.000      12.031      19.755
-auction_type_coded:n_bidders_coded     0.6993      1.958      0.357      0.721      -3.162       4.561
-objective_coded:n_bidders_coded      -10.2971      1.958     -5.259      0.000     -14.159      -6.435
+Intercept                             67.1223      2.586     25.955      0.000      61.999      72.246
+auction_type_coded                     7.2065      2.586      2.787      0.006       2.083      12.330
+objective_coded                       36.9464      2.586     14.286      0.000      31.823      42.070
+n_bidders_coded                       16.8522      2.586      6.516      0.000      11.729      21.976
+auction_type_coded:objective_coded    16.8340      2.586      6.509      0.000      11.710      21.958
+auction_type_coded:n_bidders_coded    -0.4299      2.586     -0.166      0.868      -5.554       4.694
+objective_coded:n_bidders_coded       -9.5680      2.586     -3.700      0.000     -14.692      -4.444
 ==============================================================================
-Omnibus:                       30.486   Durbin-Watson:                   2.338
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              173.365
-Skew:                           0.293   Prob(JB):                     2.26e-38
-Kurtosis:                       7.523   Cond. No.                         1.00
+Omnibus:                       22.271   Durbin-Watson:                   2.137
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              118.948
+Skew:                          -0.290   Prob(JB):                     1.48e-26
+Kurtosis:                       7.843   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.7301
-Adj R² = 0.7217
+R² = 0.7331
+Adj R² = 0.7190
 
 --- ANOVA Table (Type III) ---
-|                                    |      sum_sq |       df |         F |   PR(>F) |
-|------------------------------------|-------------|----------|-----------|----------|
-| Intercept                          | 914154.9831 |   1.0000 | 1192.2848 |   0.0000 |
-| auction_type_coded                 |   7997.0201 |   1.0000 |   10.4301 |   0.0015 |
-| objective_coded                    | 266399.2451 |   1.0000 |  347.4507 |   0.0000 |
-| n_bidders_coded                    |  54067.2446 |   1.0000 |   70.5171 |   0.0000 |
-| auction_type_coded:objective_coded |  50518.8194 |   1.0000 |   65.8891 |   0.0000 |
-| auction_type_coded:n_bidders_coded |     97.8061 |   1.0000 |    0.1276 |   0.7214 |
-| objective_coded:n_bidders_coded    |  21205.8587 |   1.0000 |   27.6577 |   0.0000 |
-| Residual                           | 147977.9879 | 193.0000 |  nan      | nan      |
+|                                    |      sum_sq |       df |        F |   PR(>F) |
+|------------------------------------|-------------|----------|----------|----------|
+| Intercept                          | 540648.6428 |   1.0000 | 673.6500 |   0.0000 |
+| auction_type_coded                 |   6232.1191 |   1.0000 |   7.7652 |   0.0062 |
+| objective_coded                    | 163804.0463 |   1.0000 | 204.1004 |   0.0000 |
+| n_bidders_coded                    |  34079.7055 |   1.0000 |  42.4634 |   0.0000 |
+| auction_type_coded:objective_coded |  34005.8561 |   1.0000 |  42.3714 |   0.0000 |
+| auction_type_coded:n_bidders_coded |     22.1798 |   1.0000 |   0.0276 |   0.8683 |
+| objective_coded:n_bidders_coded    |  10985.4883 |   1.0000 |  13.6880 |   0.0003 |
+| Residual                           |  90689.9615 | 113.0000 | nan      | nan      |
 
 --- Significant Effects (p < 0.05): 5 ---
-  objective                                coef=+36.4965  p=0.0000
-  n_bidders                                coef=+16.4419  p=0.0000
-  auction_type:objective                   coef=+15.8932  p=0.0000
-  objective:n_bidders                      coef=-10.2971  p=0.0000
-  auction_type                             coef=+6.3234  p=0.0015
+  objective                                coef=+36.9464  p=0.0000
+  n_bidders                                coef=+16.8522  p=0.0000
+  auction_type:objective                   coef=+16.8340  p=0.0000
+  objective:n_bidders                      coef=-9.5680  p=0.0003
+  auction_type                             coef=+7.2065  p=0.0062
 
   Plots saved to results/exp4/
 
@@ -629,53 +628,53 @@ RESPONSE: inter_episode_volatility
 --- OLS Regression Summary ---
                                OLS Regression Results                               
 ====================================================================================
-Dep. Variable:     inter_episode_volatility   R-squared:                       0.800
-Model:                                  OLS   Adj. R-squared:                  0.794
-Method:                       Least Squares   F-statistic:                     128.8
-Date:                      Sat, 21 Feb 2026   Prob (F-statistic):           1.03e-64
-Time:                              22:41:49   Log-Likelihood:                 975.92
-No. Observations:                       200   AIC:                            -1938.
-Df Residuals:                           193   BIC:                            -1915.
+Dep. Variable:     inter_episode_volatility   R-squared:                       0.807
+Model:                                  OLS   Adj. R-squared:                  0.797
+Method:                       Least Squares   F-statistic:                     78.92
+Date:                      Sun, 22 Feb 2026   Prob (F-statistic):           4.31e-38
+Time:                              03:26:21   Log-Likelihood:                 592.66
+No. Observations:                       120   AIC:                            -1171.
+Df Residuals:                           113   BIC:                            -1152.
 Df Model:                                 6                                         
 Covariance Type:                  nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              0.0035      0.000     26.091      0.000       0.003       0.004
-auction_type_coded                    -0.0010      0.000     -7.827      0.000      -0.001      -0.001
-objective_coded                        0.0032      0.000     24.268      0.000       0.003       0.003
-n_bidders_coded                    -8.222e-06      0.000     -0.062      0.951      -0.000       0.000
-auction_type_coded:objective_coded    -0.0008      0.000     -6.294      0.000      -0.001      -0.001
-auction_type_coded:n_bidders_coded     0.0012      0.000      9.041      0.000       0.001       0.001
-objective_coded:n_bidders_coded        0.0001      0.000      1.027      0.306      -0.000       0.000
+Intercept                              0.0034      0.000     20.688      0.000       0.003       0.004
+auction_type_coded                    -0.0010      0.000     -5.980      0.000      -0.001      -0.001
+objective_coded                        0.0031      0.000     19.274      0.000       0.003       0.003
+n_bidders_coded                    -2.523e-05      0.000     -0.155      0.877      -0.000       0.000
+auction_type_coded:objective_coded    -0.0008      0.000     -4.795      0.000      -0.001      -0.000
+auction_type_coded:n_bidders_coded     0.0011      0.000      6.543      0.000       0.001       0.001
+objective_coded:n_bidders_coded        0.0001      0.000      0.659      0.511      -0.000       0.000
 ==============================================================================
-Omnibus:                       11.291   Durbin-Watson:                   1.568
-Prob(Omnibus):                  0.004   Jarque-Bera (JB):               11.555
-Skew:                           0.545   Prob(JB):                      0.00310
-Kurtosis:                       3.443   Cond. No.                         1.00
+Omnibus:                        8.718   Durbin-Watson:                   1.636
+Prob(Omnibus):                  0.013   Jarque-Bera (JB):                9.233
+Skew:                           0.503   Prob(JB):                      0.00989
+Kurtosis:                       3.913   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.8001
-Adj R² = 0.7939
+R² = 0.8073
+Adj R² = 0.7971
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |        F |   PR(>F) |
 |------------------------------------|----------|----------|----------|----------|
-| Intercept                          |   0.0024 |   1.0000 | 680.7653 |   0.0000 |
-| auction_type_coded                 |   0.0002 |   1.0000 |  61.2647 |   0.0000 |
-| objective_coded                    |   0.0021 |   1.0000 | 588.9332 |   0.0000 |
-| n_bidders_coded                    |   0.0000 |   1.0000 |   0.0039 |   0.9505 |
-| auction_type_coded:objective_coded |   0.0001 |   1.0000 |  39.6165 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   0.0003 |   1.0000 |  81.7428 |   0.0000 |
-| objective_coded:n_bidders_coded    |   0.0000 |   1.0000 |   1.0544 |   0.3058 |
-| Residual                           |   0.0007 | 193.0000 | nan      | nan      |
+| Intercept                          |   0.0014 |   1.0000 | 427.9984 |   0.0000 |
+| auction_type_coded                 |   0.0001 |   1.0000 |  35.7559 |   0.0000 |
+| objective_coded                    |   0.0012 |   1.0000 | 371.4944 |   0.0000 |
+| n_bidders_coded                    |   0.0000 |   1.0000 |   0.0240 |   0.8773 |
+| auction_type_coded:objective_coded |   0.0001 |   1.0000 |  22.9957 |   0.0000 |
+| auction_type_coded:n_bidders_coded |   0.0001 |   1.0000 |  42.8128 |   0.0000 |
+| objective_coded:n_bidders_coded    |   0.0000 |   1.0000 |   0.4338 |   0.5115 |
+| Residual                           |   0.0004 | 113.0000 | nan      | nan      |
 
 --- Significant Effects (p < 0.05): 4 ---
-  objective                                coef=+0.0032  p=0.0000
-  auction_type:n_bidders                   coef=+0.0012  p=0.0000
+  objective                                coef=+0.0031  p=0.0000
+  auction_type:n_bidders                   coef=+0.0011  p=0.0000
   auction_type                             coef=-0.0010  p=0.0000
   auction_type:objective                   coef=-0.0008  p=0.0000
 
@@ -688,57 +687,57 @@ RESPONSE: bid_suppression_ratio
 --- OLS Regression Summary ---
                               OLS Regression Results                             
 =================================================================================
-Dep. Variable:     bid_suppression_ratio   R-squared:                       0.989
+Dep. Variable:     bid_suppression_ratio   R-squared:                       0.990
 Model:                               OLS   Adj. R-squared:                  0.989
-Method:                    Least Squares   F-statistic:                     2973.
-Date:                   Sat, 21 Feb 2026   Prob (F-statistic):          3.32e-187
-Time:                           22:41:50   Log-Likelihood:                 361.23
-No. Observations:                    200   AIC:                            -708.5
-Df Residuals:                        193   BIC:                            -685.4
+Method:                    Least Squares   F-statistic:                     1815.
+Date:                   Sun, 22 Feb 2026   Prob (F-statistic):          7.53e-110
+Time:                           03:26:22   Log-Likelihood:                 218.13
+No. Observations:                    120   AIC:                            -422.3
+Df Residuals:                        113   BIC:                            -402.8
 Df Model:                              6                                         
 Covariance Type:               nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                              1.4972      0.003    523.227      0.000       1.492       1.503
-auction_type_coded                     0.1936      0.003     67.669      0.000       0.188       0.199
-objective_coded                       -0.2499      0.003    -87.341      0.000      -0.256      -0.244
-n_bidders_coded                        0.0648      0.003     22.655      0.000       0.059       0.070
-auction_type_coded:objective_coded     0.0580      0.003     20.270      0.000       0.052       0.064
-auction_type_coded:n_bidders_coded    -0.1000      0.003    -34.955      0.000      -0.106      -0.094
-objective_coded:n_bidders_coded       -0.1689      0.003    -59.035      0.000      -0.175      -0.163
+Intercept                              1.4957      0.004    404.649      0.000       1.488       1.503
+auction_type_coded                     0.1954      0.004     52.875      0.000       0.188       0.203
+objective_coded                       -0.2507      0.004    -67.817      0.000      -0.258      -0.243
+n_bidders_coded                        0.0678      0.004     18.351      0.000       0.061       0.075
+auction_type_coded:objective_coded     0.0538      0.004     14.548      0.000       0.046       0.061
+auction_type_coded:n_bidders_coded    -0.1016      0.004    -27.496      0.000      -0.109      -0.094
+objective_coded:n_bidders_coded       -0.1729      0.004    -46.775      0.000      -0.180      -0.166
 ==============================================================================
-Omnibus:                       30.891   Durbin-Watson:                   1.839
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):               51.504
-Skew:                           0.823   Prob(JB):                     6.55e-12
-Kurtosis:                       4.862   Cond. No.                         1.00
+Omnibus:                       23.215   Durbin-Watson:                   2.010
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               38.886
+Skew:                           0.879   Prob(JB):                     3.60e-09
+Kurtosis:                       5.166   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.9893
-Adj R² = 0.9890
+R² = 0.9897
+Adj R² = 0.9892
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |           F |   PR(>F) |
 |------------------------------------|----------|----------|-------------|----------|
-| Intercept                          | 448.2969 |   1.0000 | 273766.8735 |   0.0000 |
-| auction_type_coded                 |   7.4983 |   1.0000 |   4579.0580 |   0.0000 |
-| objective_coded                    |  12.4917 |   1.0000 |   7628.4765 |   0.0000 |
-| n_bidders_coded                    |   0.8404 |   1.0000 |    513.2364 |   0.0000 |
-| auction_type_coded:objective_coded |   0.6728 |   1.0000 |    410.8862 |   0.0000 |
-| auction_type_coded:n_bidders_coded |   2.0008 |   1.0000 |   1221.8776 |   0.0000 |
-| objective_coded:n_bidders_coded    |   5.7069 |   1.0000 |   3485.1028 |   0.0000 |
-| Residual                           |   0.3160 | 193.0000 |    nan      | nan      |
+| Intercept                          | 268.4678 |   1.0000 | 163740.8691 |   0.0000 |
+| auction_type_coded                 |   4.5839 |   1.0000 |   2795.7739 |   0.0000 |
+| objective_coded                    |   7.5407 |   1.0000 |   4599.1624 |   0.0000 |
+| n_bidders_coded                    |   0.5522 |   1.0000 |    336.7717 |   0.0000 |
+| auction_type_coded:objective_coded |   0.3470 |   1.0000 |    211.6521 |   0.0000 |
+| auction_type_coded:n_bidders_coded |   1.2396 |   1.0000 |    756.0563 |   0.0000 |
+| objective_coded:n_bidders_coded    |   3.5872 |   1.0000 |   2187.8670 |   0.0000 |
+| Residual                           |   0.1853 | 113.0000 |    nan      | nan      |
 
 --- Significant Effects (p < 0.05): 6 ---
-  objective                                coef=-0.2499  p=0.0000
-  auction_type                             coef=+0.1936  p=0.0000
-  objective:n_bidders                      coef=-0.1689  p=0.0000
-  auction_type:n_bidders                   coef=-0.1000  p=0.0000
-  n_bidders                                coef=+0.0648  p=0.0000
-  auction_type:objective                   coef=+0.0580  p=0.0000
+  objective                                coef=-0.2507  p=0.0000
+  auction_type                             coef=+0.1954  p=0.0000
+  objective:n_bidders                      coef=-0.1729  p=0.0000
+  auction_type:n_bidders                   coef=-0.1016  p=0.0000
+  n_bidders                                coef=+0.0678  p=0.0000
+  auction_type:objective                   coef=+0.0538  p=0.0000
 
   Plots saved to results/exp4/
 
@@ -749,56 +748,56 @@ RESPONSE: cross_episode_drift
 --- OLS Regression Summary ---
                              OLS Regression Results                            
 ===============================================================================
-Dep. Variable:     cross_episode_drift   R-squared:                       0.275
-Model:                             OLS   Adj. R-squared:                  0.252
-Method:                  Least Squares   F-statistic:                     12.18
-Date:                 Sat, 21 Feb 2026   Prob (F-statistic):           1.32e-11
-Time:                         22:41:50   Log-Likelihood:                 1730.8
-No. Observations:                  200   AIC:                            -3448.
-Df Residuals:                      193   BIC:                            -3424.
+Dep. Variable:     cross_episode_drift   R-squared:                       0.227
+Model:                             OLS   Adj. R-squared:                  0.186
+Method:                  Least Squares   F-statistic:                     5.540
+Date:                 Sun, 22 Feb 2026   Prob (F-statistic):           4.60e-05
+Time:                         03:26:22   Log-Likelihood:                 1052.8
+No. Observations:                  120   AIC:                            -2092.
+Df Residuals:                      113   BIC:                            -2072.
 Df Model:                            6                                         
 Covariance Type:             nonrobust                                         
 ======================================================================================================
                                          coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------
-Intercept                           4.987e-06   3.04e-06      1.641      0.102   -1.01e-06     1.1e-05
-auction_type_coded                 -1.241e-05   3.04e-06     -4.084      0.000   -1.84e-05   -6.42e-06
-objective_coded                    -9.739e-06   3.04e-06     -3.205      0.002   -1.57e-05   -3.75e-06
-n_bidders_coded                    -1.434e-05   3.04e-06     -4.719      0.000   -2.03e-05   -8.35e-06
-auction_type_coded:objective_coded  5.772e-06   3.04e-06      1.900      0.059   -2.21e-07    1.18e-05
-auction_type_coded:n_bidders_coded  9.733e-06   3.04e-06      3.203      0.002    3.74e-06    1.57e-05
-objective_coded:n_bidders_coded     9.616e-06   3.04e-06      3.164      0.002    3.62e-06    1.56e-05
+Intercept                           2.512e-06   3.52e-06      0.713      0.477   -4.47e-06    9.49e-06
+auction_type_coded                 -1.043e-05   3.52e-06     -2.959      0.004   -1.74e-05   -3.45e-06
+objective_coded                    -6.985e-06   3.52e-06     -1.982      0.050    -1.4e-05   -2.63e-09
+n_bidders_coded                    -1.198e-05   3.52e-06     -3.398      0.001    -1.9e-05   -4.99e-06
+auction_type_coded:objective_coded  7.265e-06   3.52e-06      2.061      0.042    2.83e-07    1.42e-05
+auction_type_coded:n_bidders_coded  3.031e-06   3.52e-06      0.860      0.392   -3.95e-06       1e-05
+objective_coded:n_bidders_coded      7.07e-06   3.52e-06      2.006      0.047    8.73e-08    1.41e-05
 ==============================================================================
-Omnibus:                       37.587   Durbin-Watson:                   1.539
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              136.671
-Skew:                           0.674   Prob(JB):                     2.10e-30
-Kurtosis:                       6.819   Cond. No.                         1.00
+Omnibus:                        9.247   Durbin-Watson:                   2.108
+Prob(Omnibus):                  0.010   Jarque-Bera (JB):               19.583
+Skew:                           0.142   Prob(JB):                     5.59e-05
+Kurtosis:                       4.959   Cond. No.                         1.00
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
-R² = 0.2747
-Adj R² = 0.2522
+R² = 0.2273
+Adj R² = 0.1863
 
 --- ANOVA Table (Type III) ---
 |                                    |   sum_sq |       df |        F |   PR(>F) |
 |------------------------------------|----------|----------|----------|----------|
-| Intercept                          |   0.0000 |   1.0000 |   2.6934 |   0.1024 |
-| auction_type_coded                 |   0.0000 |   1.0000 |  16.6762 |   0.0001 |
-| objective_coded                    |   0.0000 |   1.0000 |  10.2715 |   0.0016 |
-| n_bidders_coded                    |   0.0000 |   1.0000 |  22.2715 |   0.0000 |
-| auction_type_coded:objective_coded |   0.0000 |   1.0000 |   3.6086 |   0.0590 |
-| auction_type_coded:n_bidders_coded |   0.0000 |   1.0000 |  10.2581 |   0.0016 |
-| objective_coded:n_bidders_coded    |   0.0000 |   1.0000 |  10.0140 |   0.0018 |
-| Residual                           |   0.0000 | 193.0000 | nan      | nan      |
+| Intercept                          |   0.0000 |   1.0000 |   0.5081 |   0.4774 |
+| auction_type_coded                 |   0.0000 |   1.0000 |   8.7545 |   0.0038 |
+| objective_coded                    |   0.0000 |   1.0000 |   3.9280 |   0.0499 |
+| n_bidders_coded                    |   0.0000 |   1.0000 |  11.5470 |   0.0009 |
+| auction_type_coded:objective_coded |   0.0000 |   1.0000 |   4.2495 |   0.0416 |
+| auction_type_coded:n_bidders_coded |   0.0000 |   1.0000 |   0.7395 |   0.3916 |
+| objective_coded:n_bidders_coded    |   0.0000 |   1.0000 |   4.0238 |   0.0473 |
+| Residual                           |   0.0000 | 113.0000 | nan      | nan      |
 
 --- Significant Effects (p < 0.05): 5 ---
-  n_bidders                                coef=-0.0000  p=0.0000
-  auction_type                             coef=-0.0000  p=0.0001
-  objective                                coef=-0.0000  p=0.0016
-  auction_type:n_bidders                   coef=+0.0000  p=0.0016
-  objective:n_bidders                      coef=+0.0000  p=0.0018
+  n_bidders                                coef=-0.0000  p=0.0009
+  auction_type                             coef=-0.0000  p=0.0038
+  auction_type:objective                   coef=+0.0000  p=0.0416
+  objective:n_bidders                      coef=+0.0000  p=0.0473
+  objective                                coef=-0.0000  p=0.0499
 
   Plots saved to results/exp4/
 

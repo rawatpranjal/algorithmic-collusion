@@ -114,8 +114,17 @@ def plot_half_normal(model, response, output_dir):
     plt.close(fig)
 
 
-def plot_main_effects(df, coded_cols, response, output_dir):
-    """Main effects plot: mean response at -1 vs +1 for each factor."""
+def plot_main_effects(df, coded_cols, response, output_dir, model=None):
+    """Main effects plot: mean response at -1 vs +1 for significant factors."""
+    # Filter to significant main effects only
+    if model is not None:
+        sig_cols = [c for c in coded_cols if c in model.pvalues and model.pvalues[c] < 0.05]
+        if not sig_cols:
+            # Fallback: show top 3 by |t|
+            ranked = sorted(coded_cols, key=lambda c: abs(model.tvalues.get(c, 0)), reverse=True)
+            sig_cols = ranked[:3]
+        coded_cols = sig_cols
+
     n = len(coded_cols)
     ncols = min(4, n)
     nrows = int(np.ceil(n / ncols))
@@ -348,7 +357,8 @@ def run_factorial_analysis(df, coded_cols, response_cols, output_dir,
             # Generate plots
             plot_pareto_chart(model, response, output_dir)
             plot_half_normal(model, response, output_dir)
-            plot_main_effects(df_clean, coded_cols, response, output_dir)
+            plot_main_effects(df_clean, coded_cols, response, output_dir,
+                             model=model)
             plot_interactions(df_clean, model, coded_cols, response,
                             output_dir)
             plot_residuals(model, response, output_dir)

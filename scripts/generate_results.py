@@ -744,6 +744,18 @@ def generate_experiment_section(exp_num):
     lines = []
     lines.append(f"\\section{{Experiment {exp_num}: {title}}}")
 
+    # Add trace figure if it exists
+    trace_path = os.path.join(PAPER_DIR, "figures", f"e{exp_num}_trace.png")
+    if os.path.exists(trace_path):
+        rel_path = os.path.relpath(trace_path, PAPER_DIR)
+        lines.append(r"\begin{figure}[H]")
+        lines.append(r"\centering")
+        lines.append(f"\\includegraphics[width=0.95\\textwidth]{{{rel_path}}}")
+        lines.append(f"\\caption{{Representative learning trajectory for Experiment {exp_num}.}}")
+        lines.append(f"\\label{{fig:exp{exp_num}_trace}}")
+        lines.append(r"\end{figure}")
+        lines.append("")
+
     # Load all data sources
     design_info = load_design_info(exp_num)
     est_data = load_estimation_results(exp_num)

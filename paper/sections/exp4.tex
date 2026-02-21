@@ -3,21 +3,21 @@
 
 \subsection{Setup and Design}
 
-Experiment~4 studies autobidding with regenerating budgets. Each of $N \in \{2, 4\}$ advertisers participates in a sequence of $D = 100$ episodes, each comprising $T = 1{,}000$ single-item auctions. Between episodes, budgets regenerate to their initial level while dual variables persist (warm-starting), mimicking the daily budget cycle in real ad exchanges.
+Experiment~4 studies autobidding with regenerating budgets. Each of $n \in \{2, 4\}$ advertisers participates in a sequence of $D = 100$ episodes, each comprising $T = 1{,}000$ single-item auctions. Between episodes, budgets regenerate to their initial level while dual variables persist (warm-starting), mimicking the daily budget cycle in real ad exchanges.
 
 Valuations follow a log-normal model with bidder-specific asymmetry. Each bidder $i$ draws a mean $\mu_i \sim \mathrm{Uniform}(0.5, 1.5)$ once per seed. In each round $t$, the valuation $v_{it} \sim \mathrm{LogNormal}(\mu_i, \sigma)$ with $\sigma = 0.3$. The budget per bidder per episode is $B_i = 0.5 \cdot \mathbb{E}[v_{it}] \cdot T$, where $\mathbb{E}[v_{it}] = \exp(\mu_i + \sigma^2/2)$.
 
-All bidders use a multiplicative dual pacing algorithm. In each round the agent computes a bid as a function of its current dual variable $\lambda_t$:
+All bidders use a multiplicative dual pacing algorithm. In each round the agent computes a bid as a function of its current dual variable $\mu_t$:
 \begin{align}
-  b_{it} &= \min\!\Big(\frac{v_{it}}{\lambda_t},\; B_i - S_{it}\Big) & &\text{(value-maximizer),} \label{eq:bid_vmax} \\
-  b_{it} &= \min\!\Big(\frac{v_{it}}{1 + \lambda_t},\; B_i - S_{it}\Big) & &\text{(utility-maximizer),} \label{eq:bid_umax}
+  b_{it} &= \min\!\Big(\frac{v_{it}}{\mu_t},\; B_i - S_{it}\Big) & &\text{(value-maximizer),} \label{eq:bid_vmax} \\
+  b_{it} &= \min\!\Big(\frac{v_{it}}{1 + \mu_t},\; B_i - S_{it}\Big) & &\text{(utility-maximizer),} \label{eq:bid_umax}
 \end{align}
 where $S_{it}$ is the cumulative spend at round $t$. The dual update follows
 \begin{equation}
-  \lambda_{t+1} = \mathrm{clip}\!\Big(\lambda_t \cdot \exp\!\big(\eta\,(p_t - \rho)\big),\; 10^{-4},\; 100\Big),
+  \mu_{t+1} = \mathrm{clip}\!\Big(\mu_t \cdot \exp\!\big(\alpha_p\,(p_t - \rho)\big),\; 10^{-4},\; 100\Big),
   \label{eq:dual_update_exp4}
 \end{equation}
-with step size $\eta = 1/\sqrt{T}$ and target spend rate $\rho = B_i / T$.
+with step size $\alpha_p = 1/\sqrt{T}$ and target spend rate $\rho = B_i / T$.
 
 \subsection{Factorial Design}
 

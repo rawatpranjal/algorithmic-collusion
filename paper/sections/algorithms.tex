@@ -37,7 +37,7 @@ Q\bigl(s_t,a\bigr)
 \forall a \in A.
 \label{eq:qlearning_sync}
 \end{equation}
-Thus every $Q(s_t,a)$ is updated in a single step, including actions the agent did not actually choose.
+Thus every $Q(s_t,a)$ is updated in a single step, including actions the agent did not actually choose. By evaluating counterfactual rewards for unchosen actions, the synchronous update prevents the agent from neglecting strategies it has not recently tried, accelerating convergence at the cost of additional computation.
 
 \subsection{Exploration Strategies}
 When selecting actions, \emph{Boltzmann} (or \emph{softmax}) exploration draws an action $a$ from a distribution favoring higher estimated $Q$-values:
@@ -60,7 +60,7 @@ P\bigl(a \mid s\bigr)
 \end{cases}
 \label{eq:egreedy}
 \end{equation}
-As $\varepsilon$ diminishes, the policy exploits more aggressively based on current $Q$-estimates. In our experiments, $\varepsilon$ (or the Boltzmann temperature $\beta$) starts near 1.0 to encourage exploration and decays linearly over the first 90\% of the episodes to a near-zero value in the final phase, thus allowing the agents to exploit what they have learned.
+As $\varepsilon$ diminishes, the policy exploits more aggressively based on current $Q$-estimates. In our experiments, $\varepsilon$ starts at 1.0 and decays linearly over the first 90\% of episodes to near zero, allowing agents to exploit what they have learned. For Boltzmann exploration, the temperature parameter is fixed at $\beta = 1$.
 
 \subsection{Bandit Algorithms}
 A \emph{multi-armed bandit} scenario omits state transitions, focusing instead on learning which of several actions (arms) maximizes expected reward. Let $\hat{\mu}_a$ be the estimated mean reward of arm $a$, and $u_a$ be an uncertainty term. A typical approach is Upper Confidence Bound (UCB), which selects
@@ -97,20 +97,20 @@ A few other implementation choices may affect performance. Each experiment runs 
 
 \subsection{Budget-Constrained Pacing (Experiment~4)}
 
-Experiment~4 replaces the unconstrained bidding of prior experiments with \emph{budget-constrained pacing agents}. Each agent~$i$ has a total budget $B^i$ over a horizon of $T$ rounds. At each round~$t$, the agent observes its private valuation $v_t^i$ and applies a \emph{pacing multiplier} $\lambda_t^i \in [0.01,\, 1.5]$ to shade its bid. A hard budget cap is enforced so spending never exceeds the remaining budget:
-\begin{equation}
-b_t^i \;=\; \min\!\bigl(\lambda_t^i\, v_t^i,\; B^i - {\textstyle\sum_{\tau<t}} c_\tau^i\bigr),
-\label{eq:hard_cap}
-\end{equation}
-where $c_\tau^i$ is the payment made by agent~$i$ in round~$\tau$ (zero unless $i$ wins).
+Experiment~4 replaces the unconstrained bidding of prior experiments with \emph{budget-constrained pacing agents}. Each agent~$i$ has a total budget $B^i$ over a horizon of $T$ rounds. At each round~$t$, the agent observes its private valuation $v_t^i$ and computes a bid using a Lagrangian dual variable $\mu_t^i$ that controls bid shading. The bid depends on the agent's objective:
+\begin{align}
+b_t^i &\;=\; \min\!\bigl(v_t^i / \mu_t^i,\; B^i - S_t^i\bigr) & &\text{(value-maximizer),} \label{eq:bid_vmax_algo}\\
+b_t^i &\;=\; \min\!\bigl(v_t^i / (1 + \mu_t^i),\; B^i - S_t^i\bigr) & &\text{(utility-maximizer),} \label{eq:bid_umax_algo}
+\end{align}
+where $S_t^i$ is the cumulative spend at round~$t$. The hard budget cap ensures spending never exceeds the remaining budget.
 
 \subsubsection{Multiplicative Pacing}
-Following Balseiro and Gur (2019), the pacing multiplier is derived from a Lagrangian dual variable $\mu_t^i \geq 0$:
-\begin{align}
-\mu_{t+1}^i &\;=\; \max\!\bigl(0,\; \mu_t^i + \alpha_p\,(c_t^i - B^i/T)\bigr), \label{eq:dual_update}\\
-\lambda_t^i &\;=\; \bigl(1 + \mu_t^i\bigr)^{-1}, \label{eq:mult_lambda}
-\end{align}
-where $\alpha_p = \text{aggressiveness}/\!\sqrt{T}$ is the dual step size. When the per-round cost exceeds the average budget $B^i/T$, the dual variable rises, reducing $\lambda$ and hence future bids; underspending reverses this adjustment.
+Following Balseiro and Gur (2019), the dual variable is updated via an exponential multiplicative rule:
+\begin{equation}
+\mu_{t+1}^i \;=\; \operatorname{clip}\!\bigl(\mu_t^i \cdot \exp\!\bigl(\alpha_p\,(c_t^i - B^i/T)\bigr),\; 10^{-4},\; 100\bigr),
+\label{eq:dual_update}
+\end{equation}
+where $\alpha_p = 1/\!\sqrt{T}$ is the dual step size and $c_t^i$ is the payment made by agent~$i$ in round~$t$. When the per-round cost exceeds the target spend rate $B^i/T$, the dual variable rises, reducing bids; underspending reverses this adjustment.
 
 \subsubsection{PID Pacing}
 An alternative controller computes the signed spending error and applies proportional--integral (PI) corrections:
@@ -131,8 +131,8 @@ Both algorithms implement the same closed-loop pacing structure illustrated in F
   arrow/.style={-{Stealth[length=2mm]}, thick},
 ]
   % Nodes
-  \node[block] (mult)   {Multiplier $\lambda_t$};
-  \node[block, right=of mult] (bid)    {Bid $b_t = \min(\lambda_t v_t,\,\text{rem})$};
+  \node[block] (mult)   {Dual $\mu_t$};
+  \node[block, right=of mult] (bid)    {Bid $b_t = \min(v_t/\mu_t,\,\text{rem})$};
   \node[block, right=of bid]  (auction){Auction};
   \node[block, below=1.2cm of auction] (cost)  {Cost $c_t$};
   \node[block, below=1.2cm of mult]  (ctrl)  {Control law};
@@ -142,14 +142,14 @@ Both algorithms implement the same closed-loop pacing structure illustrated in F
   \draw[arrow] (bid)     -- (auction);
   \draw[arrow] (auction) -- (cost);
   \draw[arrow] (cost)    -- (ctrl);
-  \draw[arrow] (ctrl)    -- node[left,font=\scriptsize]{$\lambda_{t+1}$} (mult);
+  \draw[arrow] (ctrl)    -- node[left,font=\scriptsize]{$\mu_{t+1}$} (mult);
 
   % Labels on control arrow
   \node[font=\scriptsize, align=center, right=0.15cm of ctrl]
-    {PID: PI error\\Mult: dual ascent};
+    {PID: PI error\\Mult: exp.\ update};
 \end{tikzpicture}
-\caption{Pacing feedback loop shared by both algorithms. The multiplier scales bids; auction outcomes feed back through the control law to update $\lambda$.}
+\caption{Pacing feedback loop shared by both algorithms. The dual variable scales bids; auction outcomes feed back through the control law to update $\mu$.}
 \label{fig:pacing_loop}
 \end{figure}
 
-Budget tightness is parameterised as $\text{budget\_tightness} \times \mathbb{E}[v]\times T$, where $\mathbb{E}[v]=0.5$ for uniform marginals, matching the normalisation in Balseiro and Gur (2019). Note that $\eta$ throughout this paper denotes the affiliation parameter (Experiments~2--4); the dual step size above uses $\alpha_p$ to avoid notation collision.
+The budget per episode is $B^i = 0.5 \cdot \mathbb{E}[v_t^i] \cdot T$, where $\mathbb{E}[v_t^i] = \exp(\mu_i + \sigma^2/2)$ under the log-normal valuation model. Note that $\eta$ throughout this paper denotes the affiliation parameter (Experiments~2 and~3); the dual step size above uses $\alpha_p$ to avoid notation collision.

@@ -1,4 +1,5 @@
 \section{Experiment I: Q-Learning under Constant Valuations}
+\label{sec:exp1_results}
 
 \begin{figure}[H]
   \centering
@@ -55,9 +56,27 @@ Although auction type has a minimal direct effect on price volatility, Table~\re
   \label{fig:e1_main_vol}
 \end{figure}
 
-\subsection{Model Fit and Significant Effects}
+\subsection{Model Adequacy and Robustness}
+\label{sec:exp1_robustness}
 
 \input{tables/exp1_model_fit}
+
+\input{tables/exp1_adequacy}
+
+Table~\ref{tab:exp1_adequacy} reports model adequacy diagnostics for the three primary response variables. OLS $R^2$ ranges from 0.79 (average revenue) to 0.98 (price volatility), with predicted $R^2$ from leave-one-out cross-validation confirming strong out-of-sample performance for regret and volatility (gaps of 0.016 and 0.009, respectively). Revenue shows a larger PRESS gap of 0.097, indicating some overfitting in the full interaction model. The lack-of-fit test is significant ($p < 0.0001$) for all three responses, indicating detectable departures from the linear model with two-way interactions. However, LightGBM cross-validated $R^2$ is lower than OLS $R^2$ for every response, confirming that the detectable misfit is too small to exploit with a flexible nonparametric learner.
+
+\input{tables/exp1_inference_robust}
+
+Table~\ref{tab:exp1_inference} reports inference robustness. Under HC3 heteroskedasticity-consistent standard errors, 7 of 105 effects (6.7\%) change significance status, all involving marginal effects near the $p = 0.05$ boundary (discount factor, discount factor interactions). The dominant effects, auction type ($p \ll 0.001$) and exploration strategy ($p \ll 0.001$), remain highly significant under HC3. Holm--Bonferroni correction, which controls the family-wise error rate across 105 simultaneous tests, retains 19 of 50 OLS-significant effects; the less conservative Benjamini--Hochberg procedure retains 41. All findings reported in the preceding subsections survive both corrections.
+
+Quantile regression confirms that factor effects are broadly stable across the response distribution (Figure~\ref{fig:e1_quantile_rev}). The auction type effect on revenue is slightly larger at the 10th percentile ($-0.087$) than at the median ($-0.061$), indicating that the worst-performing configurations are disproportionately harmed by first-price auctions. The exploration strategy and number of bidders effects remain significant across all five quantiles, confirming that these findings are not driven by tail behaviour.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e1_quantile_rev}
+  \caption{Experiment~1: Quantile regression coefficients for average revenue at the 10th, 25th, 50th, 75th, and 90th percentiles. The auction type penalty is moderately larger in the left tail.}
+  \label{fig:e1_quantile_rev}
+\end{figure}
 
 \input{tables/exp1_significant}
 

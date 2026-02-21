@@ -1,34 +1,36 @@
 {
   "experiment": 2,
-  "n_factors": 7,
+  "design": "3 x 2^3 = 24 cells (mixed-level factorial)",
+  "n_factors": 4,
   "factors": {
     "auction_type": {
-      "low": "second",
-      "high": "first"
-    },
-    "alpha": {
-      "low": 0.01,
-      "high": 0.1
-    },
-    "gamma": {
-      "low": 0.0,
-      "high": 0.95
-    },
-    "exploration": {
-      "low": "egreedy",
-      "high": "boltzmann"
-    },
-    "asynchronous": {
-      "low": 0,
-      "high": 1
+      "levels": [
+        "second",
+        "first"
+      ],
+      "coding": "binary +-1"
     },
     "n_bidders": {
-      "low": 2,
-      "high": 4
+      "levels": [
+        2,
+        6
+      ],
+      "coding": "binary +-1"
+    },
+    "state_info": {
+      "levels": [
+        "signal_only",
+        "signal_winner"
+      ],
+      "coding": "binary +-1"
     },
     "eta": {
-      "low": 0.0,
-      "high": 1.0
+      "levels": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "coding": "orthogonal contrasts: eta_linear (-1,0,+1), eta_quadratic (+1,-2,+1)"
     }
   }
 }

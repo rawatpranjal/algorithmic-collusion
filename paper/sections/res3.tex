@@ -1,4 +1,5 @@
 \section{Experiment III: Contextual Bandits}
+\label{sec:exp3_results}
 
 \begin{figure}[H]
   \centering
@@ -7,11 +8,11 @@
   \label{fig:e3_trace}
 \end{figure}
 
-Experiment~3 replaces Q-learning with LinUCB contextual bandits, testing whether a more sophisticated exploration mechanism improves seller outcomes. The design is a $2^8$ full factorial with 8 factors and 512 observations. The outcome range widens substantially relative to Experiment~2: certain runs converge to near-zero revenue or universal no-sales, while others perform comparably to Q-learning. Mean revenue drops and mean seller regret rises, with more polarised extremes of volatility, winner entropy, and no-sale rates. This highlights how contextual exploration can magnify variability in auction outcomes rather than reliably benefiting the seller; a finding that challenges the common criticism of Q-learning studies, which argues that firms would adopt more efficient exploration algorithms to improve outcomes.
+Experiment~3 replaces Q-learning with contextual bandits (LinUCB and Contextual Thompson Sampling), testing whether a more sophisticated exploration mechanism improves seller outcomes. The design is a $3 \times 2^7 = 384$ mixed-level factorial with 8 factors (7 binary plus the three-level affiliation parameter $\eta$) and 768 observations. The outcome range widens substantially relative to Experiment~2: certain runs converge to near-zero revenue or universal no-sales, while others perform comparably to Q-learning. Mean revenue drops and mean seller regret rises, with more polarised extremes of volatility, winner entropy, and no-sale rates. This highlights how contextual exploration can magnify variability in auction outcomes rather than reliably benefiting the seller; a finding that challenges the common criticism of Q-learning studies, which argues that firms would adopt more efficient exploration algorithms to improve outcomes.
 
 \subsection{Revenue and Seller Regret}
 
-Auction type remains the dominant factor, with the largest absolute $t$-statistic ($|t| \approx 12$) for both revenue and regret. Table~\ref{tab:exp3_ranked_rev} shows that auction type is followed by number of bidders and the exploration parameter $c$. First-price auctions yield substantially lower final revenue and higher seller regret, as the main effects plots (Figures~\ref{fig:e3_main_rev} and~\ref{fig:e3_main_reg}) confirm.
+Auction type remains the dominant factor, with the largest absolute $t$-statistic ($|t| \approx 12$) for both revenue and regret. Table~\ref{tab:exp3_ranked_rev} shows that auction type is followed by number of bidders and exploration intensity. First-price auctions yield substantially lower final revenue and higher seller regret, as the main effects plots (Figures~\ref{fig:e3_main_rev} and~\ref{fig:e3_main_reg}) confirm.
 
 \input{tables/exp3_ranked_rev}
 
@@ -57,9 +58,25 @@ Under LinUCB bandits, price volatility is \emph{lower} in first-price auctions, 
   \label{fig:e3_main_vol}
 \end{figure}
 
-\subsection{Model Fit and Significant Effects}
+\subsection{Model Adequacy and Robustness}
+\label{sec:exp3_robustness}
 
 \input{tables/exp3_model_fit}
+
+\input{tables/exp3_adequacy}
+
+Experiment~3 exhibits the weakest model adequacy among all four experiments. Table~\ref{tab:exp3_adequacy} shows that PRESS gaps are substantially larger than in the Q-learning experiments: 0.18 for revenue, 0.18 for regret, and 0.14 for volatility. The lack-of-fit test is significant for all three primary responses ($p = 0.020$, $p = 0.019$, and $p = 0.003$, respectively), indicating that the linear model with two-way interactions misses meaningful structure. LightGBM cross-validated $R^2$ falls below OLS $R^2$ for revenue (0.57 vs.\ 0.77) and regret (0.56 vs.\ 0.77), confirming that even a flexible nonparametric learner cannot exploit the misfit, likely because bandit-based outcomes contain irreducible stochasticity that neither model class captures. For convergence time, LightGBM $R^2$ is near zero (0.009), indicating that this response is essentially unpredictable from the factorial design. The linear model remains a useful first-order approximation: the dominant factors (auction type, number of bidders) are robustly identified, but point predictions for specific configurations should be interpreted with caution.
+
+\input{tables/exp3_inference_robust}
+
+Despite the weaker model fit, inference robustness is strong. HC3 robust standard errors flip only 2 of 75 effects (2.7\%): the exploration bonus $c$ flips for revenue, and the affiliation by number of bidders interaction flips for convergence time. Table~\ref{tab:exp3_inference} shows that Holm--Bonferroni correction retains 14 of 27 OLS-significant effects, while Benjamini--Hochberg retains 18. The effects that survive represent the truly robust findings of the experiment. Quantile regression reveals notable heterogeneity across the revenue distribution (Figure~\ref{fig:e3_quantile_rev}): the auction type coefficient grows in magnitude from $-0.096$ at the 10th percentile to $-0.206$ at the 90th percentile, indicating that first-price auctions disproportionately suppress revenue among the best-performing configurations. This pattern is the opposite of Experiment~1, where the left tail was more affected.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3_quantile_rev}
+  \caption{Experiment~3: Quantile regression coefficients for average revenue. The auction type penalty grows substantially from the 10th to the 90th percentile, indicating that the first-price disadvantage intensifies at higher revenue levels.}
+  \label{fig:e3_quantile_rev}
+\end{figure}
 
 \input{tables/exp3_significant}
 

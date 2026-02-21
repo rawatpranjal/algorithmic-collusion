@@ -8,7 +8,7 @@
   \label{fig:e4_trace}
 \end{figure}
 
-Experiment~4 shifts from tabular learners to dual-based autobidding agents operating under regenerating budget constraints. Each of $N$ advertisers bids in $D = 100$ episodes of $T = 1{,}000$ auctions, with budgets resetting between episodes while dual variables warm-start, mimicking daily budget cycles in ad exchanges. Valuations are drawn from bidder-specific log-normal distributions, introducing persistent asymmetry. The $2^3$ factorial crosses auction format (first-price vs.\ second-price), bidder objective (value-maximizer vs.\ utility-maximizer), and market thickness ($N = 2$ vs.\ $N = 4$), replicated across 50 seeds per cell (400 runs total). This design is motivated by the Price of Anarchy literature: first-price auctions with value-maximizers are predicted to achieve PoA $= 1$, while second-price auctions may reach PoA $= 2$.
+Experiment~4 shifts from tabular learners to dual-based autobidding agents operating under regenerating budget constraints. Each of $N$ advertisers bids in $D = 100$ episodes of $T = 1{,}000$ auctions, with budgets resetting between episodes while dual variables warm-start, mimicking daily budget cycles in ad exchanges. Valuations are drawn from bidder-specific log-normal distributions, introducing persistent asymmetry. The $2^3$ factorial crosses auction format (first-price vs.\ second-price), bidder objective (value-maximizer vs.\ utility-maximizer), and market thickness ($N = 2$ vs.\ $N = 4$), replicated across 15 seeds per cell (120 runs total). This design is motivated by the Price of Anarchy literature: first-price auctions with value-maximizers are predicted to achieve PoA $= 1$, while second-price auctions may reach PoA $= 2$.
 
 \subsection{Efficiency and Welfare}
 
@@ -33,6 +33,10 @@ Allocative efficiency, the fraction of rounds in which the highest-value bidder 
   \caption{Experiment~4: Main effects plot for effective Price of Anarchy.}
   \label{fig:e4_main_reg}
 \end{figure}
+
+The observed effective PoA values permit direct comparison with theoretical predictions from the autobidding literature. The number of bidders is the dominant factor ($t = 25.0$, $p < 10^{-47}$), followed by the objective$\times$n\_bidders interaction ($t = -6.0$, $p < 10^{-7}$); auction format is statistically insignificant ($t = 1.05$, $p = 0.30$). In four-bidder value-maximizing markets, effective PoA reaches approximately 1.04 under both auction formats, indicating that realised welfare falls within 4\% of the offline optimum, consistent with the prediction of Aggarwal et al.\ (2019) that first-price pacing equilibria attain near-unit PoA. Four-bidder utility-maximizing cells achieve PoA of 0.95 (first-price) and 0.94 (second-price), also close to full efficiency. Two-bidder settings yield PoA between 0.82 and 0.85 across all configurations. All observed values satisfy the welfare $\geq \frac{1}{2}$ guarantee of Gaitonde et al.\ (2023) by a wide margin. The absence of a significant auction format effect on PoA contrasts sharply with the revenue results, where first-price auctions systematically underperform: bid suppression under first-price reduces payments to the auctioneer without proportionally distorting allocative outcomes.
+
+Allocative efficiency provides a complementary view. Under utility-maximizing objectives, agents achieve near-perfect efficiency (0.83 to 0.99 across cells), because the utility-maximizing bid formula preserves relative value rankings. Under value-maximizing objectives with four bidders, efficiency drops to 0.61--0.63: bid-to-value ratios exceeding 1.5 cause frequent misallocation, as the highest bidder is not necessarily the highest-value bidder when agents bid multiples of their values. The objective$\times$n\_bidders interaction ($t = 9.4$, $p < 10^{-15}$) captures this pattern, with more bidders amplifying the efficiency cost of value-maximizing objectives.
 
 \subsection{Revenue and Budget Dynamics}
 
@@ -60,19 +64,35 @@ The bid-to-value ratio (mean $b/v$) measures the aggressiveness of bidding relat
   \label{fig:e4_main_vol}
 \end{figure}
 
-Cross-episode drift, measured as the slope of the bid-to-value ratio across post-burn-in episodes, tests whether agents progressively learn to suppress bids over repeated interactions. A negative drift indicates increasing bid suppression over the course of the experiment, consistent with emergent collusive dynamics. The dual variable coefficient of variation captures within-episode stability: lower CV indicates more stable pacing, which is a prerequisite for consistent strategic behaviour.
+Cross-episode drift, measured as the slope of the bid-to-value ratio across post-burn-in episodes, tests whether agents progressively learn to suppress bids over repeated campaign cycles, as predicted by the complex non-equilibrium dynamics of Paes Leme et al.\ (2024). The factorial ANOVA reveals that drift is statistically significant but economically negligible: all cell-level drift estimates are on the order of $10^{-5}$, and the model explains only 23\% of variance ($R^2 = 0.23$). First-price auctions show slightly more negative drift ($t = -2.96$, $p = 0.004$), as do markets with more bidders ($t = -3.40$, $p < 0.001$), but the magnitudes are too small to constitute meaningful progressive collusion over 100 episodes. This near-zero drift contrasts with the temporal dynamics observed in Q-learning (Experiment~2), where convergence times span tens of thousands of episodes, and suggests that dual-based pacing settles rapidly into a stable equilibrium that does not deteriorate over repeated campaigns.
 
 \subsection{Learning Dynamics}
 
-The warm-start benefit, measured as the revenue improvement from episode~1 to episode~2, quantifies how much dual variable persistence accelerates convergence. Inter-episode volatility (the coefficient of variation of revenue across post-burn-in episodes) captures the stability of learned behaviour: low volatility indicates that the pacing algorithm has converged to a stable equilibrium across the episodic structure.
+The warm-start benefit, measured as the revenue improvement from episode~1 to episode~2, quantifies how much dual variable persistence accelerates convergence. The bidder objective is the dominant factor ($t = 14.3$, $p < 10^{-26}$): utility-maximizing agents gain 78--141 revenue units from warm-starting, while value-maximizing agents in two-bidder first-price settings gain essentially nothing (0.18), indicating near-instant convergence. The objective$\times$auction\_type interaction ($t = 6.5$, $p < 10^{-9}$) reflects that first-price auctions amplify the warm-start advantage under utility-maximizing objectives, as the more complex first-price bidding problem benefits from retained dual variable estimates. Inter-episode volatility (the coefficient of variation of revenue across post-burn-in episodes) is dominated by the objective factor ($t = 19.3$, $p < 10^{-37}$): utility-maximizing agents exhibit higher volatility as the additional denominator term in the bid formula amplifies small fluctuations in the dual variable.
 
 \subsection{Cross-Experiment Comparison}
 
 The autobidding framework in Experiment~4 produces qualitatively different collusion dynamics from the tabular Q-learning of Experiments~1 and~2 and the contextual bandits of Experiment~3. Budget constraints impose an exogenous form of bid discipline that interacts with the endogenous strategic learning studied in prior experiments. The episodic structure with warm-starting creates a multi-timescale learning process: within-episode dual convergence on the fast timescale, and cross-episode strategy refinement on the slow timescale.
 
-\subsection{Model Fit and Significant Effects}
+\subsection{Model Adequacy and Robustness}
+\label{sec:exp4_robustness}
 
 \input{tables/exp4_model_fit}
+
+\input{tables/exp4_adequacy}
+
+The $2^3$ factorial structure of Experiment~4 produces the cleanest inference among all four experiments. Table~\ref{tab:exp4_adequacy} reports model adequacy for the three primary responses. Platform revenue ($R^2 = 0.83$) and effective Price of Anarchy ($R^2 = 0.87$) show small PRESS gaps (0.022 and 0.017), indicating strong generalisability. The bid-to-value ratio achieves $R^2 = 0.99$ with a negligible gap of 0.001. The lack-of-fit test is marginally non-significant for platform revenue ($p = 0.060$) and non-significant for effective PoA ($p = 0.43$), but highly significant for bid-to-value ($p < 0.0001$), suggesting minor model misspecification at the extremes. LightGBM cross-validated $R^2$ is substantially lower than OLS $R^2$ for all responses, with catastrophically negative values for budget utilisation and dual variable CV. This confirms that the $2^3$ factorial with a linear model is the correct specification: nonlinear methods overfit severely with only 8 design cells, adding noise rather than signal.
+
+\input{tables/exp4_inference_robust}
+
+Table~\ref{tab:exp4_inference} reports only 2 HC3 flips across 78 effects tested (2.6\%), indicating near-homogeneous error variance across the design space. Holm--Bonferroni correction retains 50 of 62 OLS-significant effects (81\%), and Benjamini--Hochberg retains 57 (92\%). This strong robustness reflects the clean factorial structure and high signal strength of the autobidding experiment. Quantile regression reveals moderate heterogeneity for platform revenue (Figure~\ref{fig:e4_quantile_rev}): the objective coefficient grows from $-546$ at the 10th percentile to $-953$ at the 90th percentile, indicating that the revenue penalty from utility-maximizing objectives is concentrated among high-revenue configurations. The number of bidders effect remains stable across quantiles ($988$--$1{,}169$), confirming that market thickness benefits revenue uniformly across the distribution.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e4_quantile_rev}
+  \caption{Experiment~4: Quantile regression coefficients for platform revenue. The objective effect (utility-maximizer vs.\ value-maximizer) grows substantially toward the upper tail.}
+  \label{fig:e4_quantile_rev}
+\end{figure}
 
 \input{tables/exp4_significant}
 

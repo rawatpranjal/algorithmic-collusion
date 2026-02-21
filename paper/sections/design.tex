@@ -3,15 +3,13 @@
 \subsection{Overview}
 We investigate how agents learn to bid in sealed-bid auctions under different informational and valuation assumptions, focusing on the distinction between first-price and second-price rules. Each round, every bidder submits a bid in the unit interval, and the highest bidder wins. We incorporate a reserve price $r$ that excludes bids below a certain threshold. Tie-breaking among equally high bids is random. We measure outcomes with three key statistics: (i) average revenue in later rounds, (ii) the round at which bidding strategies stabilize (time to converge), and (iii) a “seller regret” defined as $1$ minus the realized revenue. 
 
-We conduct three experiments that vary in valuation complexity and the learning algorithms used. Experiment 1 isolates and tests how the payment rule (first-price vs. second-price) interacts with constant valuations. Experiment 2 introduces affiliated (signal-based) valuations, parameterized by $\eta$, to assess whether interdependent bidder valuations alter outcomes found in Experiment~1. Experiment 3 replaces the setup in Experiment 2 with bandit-based algorithms to study the effect of more realistic exploration methods. To summarize:
+All factors are coded as $-1$ (low level) and $+1$ (high level) for statistical analysis; this effects coding ensures orthogonal estimation of main effects and interactions (Section~\ref{sec:inference}).
 
-\begin{itemize}
-    \item Experiment 1: Constant (identical) valuations + Q-learning.
-    \item Experiment 2: Affiliated, signal-based valuations + Q-learning.
-    \item Experiment 3: Affiliated, signal-based valuations + bandit-based exploration.
-\end{itemize}
+We conduct four experiments that vary in valuation complexity and the learning algorithms used. Experiment 1 isolates and tests how the payment rule (first-price vs. second-price) interacts with constant valuations. Experiment 2 introduces affiliated (signal-based) valuations, parameterized by $\eta$, to assess whether interdependent bidder valuations alter outcomes found in Experiment~1. Experiment 3 replaces the setup in Experiment 2 with bandit-based algorithms to study the effect of more realistic exploration methods. To summarize:
 
-The first experiment is the simplest case: valuations are constant. A good auction design in this case should lead to honest bidding. The second experiment introduces real world elements of stochasticity in valuations: this permits natural bid shading. The last experiment add another real world dimension: optimal exploration. Q-learning takes a very long time to converge and this can be costly. Bandit based approaches on the other hand are designed to minimize regret and arrive quickly towards the optimal decison using statistical error bands. They are more representative of how algorithms would `learn to bid" in real world settings. 
+Experiment~1 uses constant valuations with Q-learning. Experiment~2 introduces affiliated, signal-based valuations with Q-learning. Experiment~3 replaces Q-learning with contextual bandit algorithms (LinUCB and Contextual Thompson Sampling) under the same affiliated valuations. Experiment~4 introduces budget-constrained autobidding agents with multiplicative dual pacing under log-normal valuations.
+
+The first experiment is the simplest case: valuations are constant, and a well-designed auction should lead to honest bidding. The second experiment introduces stochastic valuations that permit natural bid shading. The third experiment adds another dimension: optimal exploration. Q-learning takes a long time to converge, whereas bandit-based approaches are designed to minimise regret using statistical confidence bounds, more representative of how algorithms would learn to bid in practice. The fourth experiment bridges the collusion literature with the pacing efficiency literature by studying how budget constraints and bidder objectives interact with auction format.
 
 \subsection{Auction Settings}
 We model a sealed-bid auction with $n$ bidders. In each round, bidder $i$ submits a bid $b_i \in [0,1]$, discretized into a finite grid (e.g.\ $11$ equally spaced actions). Let $r \ge 0$ be a reserve price. Any bid below $r$ is ineligible to win. Among the remaining bids, the highest wins:
@@ -30,7 +28,7 @@ A bidder $i$ has valuation $v_i$ and obtains payoff $v_i - \text{price}$ if she 
 We employ two broad classes of learning algorithms: Q-learning (Experiments~1--2) and bandit-based methods (Experiment~3). Additionally, we incorporate various parameters controlling exploration, discounting, and information usage.
 
 \paragraph{Q-learning.}
-Each bidder maintains a table $Q(s,a)$ for a finite set of states $s$ and actions $a$. A “state” may encode (a) the bidder’s current signal (if valuations are signal-based), (b) the median of other bidders’ past bids, (c) the most recent winning bid, or (d) neither. Adding either the median or the winner-bid dimension discretizes these features into the same grid as the bids.
+Each bidder maintains a table $Q(s,a)$ for a finite set of states $s$ and actions $a$. A “state” may encode (a) the bidder’s current signal (if valuations are signal-based), (b) the previous winning bid, or (c) neither. Adding the winner-bid dimension discretizes this feature into the same grid as the bids.
 
 After the bidder observes a payoff $r$ and transitions to a new state $s'$, the Q-learning update takes the form
 \[
@@ -58,44 +56,105 @@ Across all experiments, we collect three primary statistics:
 We track these measures for both first-price and second-price rules, comparing how each mechanism’s final outcomes and convergence speeds differ.
 
 \subsection{Experiment 1: Identical Valuations}
-In the first experiment, we set $v_i = 1.0$ for all bidders. Each bidder’s payoff if winning is $1 - b$ in a first-price auction and $1 - b_{(2)}$ in a second-price auction, where $b_{(2)}$ is the second-highest bid. We optionally impose a reserve price $r$. Q-learning is used to pick actions from the $[0,1]$ grid, with $\alpha$ and $\gamma$ chosen from predefined sets. The number of bidders $n$ and total episodes are also varied. Agents may observe no additional state features, or they may observe the median of opponents’ previous bids and/or the previous winning bid. Both asynchronous and synchronous Q-learning modes are tested, using either an $\varepsilon$-greedy or Boltzmann exploration policy.
+In the first experiment, we set $v_i = 1.0$ for all bidders. Each bidder’s payoff if winning is $1 - b$ in a first-price auction and $1 - b_{(2)}$ in a second-price auction, where $b_{(2)}$ is the second-highest bid. We optionally impose a reserve price $r$. Q-learning is used to pick actions from the $[0,1]$ grid, with $\alpha$ and $\gamma$ chosen from predefined sets. The number of bidders $n$ and total episodes are also varied. Agents may observe no additional state features, or they may observe the previous winning bid. Both asynchronous and synchronous Q-learning modes are tested, using either an $\varepsilon$-greedy or Boltzmann exploration policy.
 
 \subsection{Experiment 2: Affiliated Valuations}
-Each bidder now draws a private signal $s_i \in [0,1]$ each round. We introduce an affiliation parameter $\eta \in [0,1]$ and define
+Each bidder now draws a private signal $s_i \in [0,1]$ each round. We introduce an affiliation parameter $\eta \in \{0, 0.5, 1\}$ and define
 \[
-v_i 
+v_i
 \;=\;
-\bigl(1 - 0.5\,\eta\bigr)\,s_i 
+\bigl(1 - 0.5\,\eta\bigr)\,s_i
 \;+\;
 0.5\,\eta \,m_{-i},
 \]
-where $m_{-i}$ is the average signal among all other bidders. When $\eta=0$, the valuation depends solely on one’s own signal; when $\eta=1$, it weights the bidder’s and opponents’ signals equally. This leads to non-stationary valuations. We still apply Q-learning with $\alpha$ and $\gamma$, as in Experiment~1, but now each bidder’s state may include her current $s_i$, as well as the median or previous winning bid if desired. We again allow multiple reserve prices $r$, different numbers of bidders, and various numbers of total episodes.
+where $m_{-i}$ is the average signal among all other bidders. When $\eta=0$, the valuation depends solely on one’s own signal; when $\eta=1$, it weights the bidder’s and opponents’ signals equally. This leads to non-stationary valuations. We apply Q-learning as in Experiment~1. The factorial design varies four factors: auction type (first- vs.\ second-price), the affiliation parameter $\eta$, the number of bidders ($n \in \{2, 6\}$), and whether bidders observe state information (the previous winning bid and their own signal) or bid statelessly.
 
 \subsection{Experiment 3: Bandit Approaches}
-We retain the affiliated valuation model from Experiment~2, but replace Q-learning with either a standard UCB bandit or a linear contextual bandit. Each bidder treats each possible bid as an arm and updates an estimate of the reward. A parameter $c$ controls exploration; for UCB, this appears in the square-root bonus term, and for contextual bandits, it appears in the uncertainty bonus involving the context features. Other aspects remain the same (reserve price $r$, number of bidders, total rounds). By comparing these bandit strategies with Q-learning, we examine whether more structured exploration can converge faster or yield distinct equilibrium-like bidding behaviors.
+We retain the affiliated valuation model from Experiment~2, but replace Q-learning with either LinUCB or Contextual Thompson Sampling (CTS). Each bidder treats each possible bid as an arm and uses contextual features to estimate payoffs. The factorial design varies eight factors: the algorithm (LinUCB vs.\ CTS), auction type, the number of bidders ($n \in \{2, 6\}$), reserve price, the affiliation parameter $\eta$, exploration intensity, context richness (whether context includes the previous winning bid in addition to the bidder's own signal), and the regularisation parameter $\lambda$. By comparing these contextual bandit strategies with Q-learning, we examine whether more structured exploration can converge faster or yield distinct equilibrium-like bidding behaviours.
 
-\subsection{Parameter Ranges}
-Table~\ref{tab:params} summarizes the parameters used across all experiments, their descriptions, and the ranges explored. A checkmark indicates that the parameter is applicable in a given experiment. 
+\subsection{Factor Definitions}
+Tables~\ref{tab:exp1_factors}--\ref{tab:exp4_factors} summarise the factorial levels for each experiment.
 
 \begin{table}[H]
 \centering
-\caption{Parameter Ranges and Their Usage Across Experiments}
-\label{tab:params}
-\begin{tabular}{l l l c c c}
+\caption{Experiment~1 factors ($2^{11-1}$ Resolution~V half-fraction, 1{,}024 cells).}
+\label{tab:exp1_factors}
+\small
+\begin{tabular}{lll}
 \toprule
-\textbf{Name} & \textbf{Description} & \textbf{Range} & \textbf{E1} & \textbf{E2} & \textbf{E3}\\
+\textbf{Factor} & \textbf{Low ($-1$)} & \textbf{High ($+1$)} \\
 \midrule
-$\alpha$ & Q-learning rate & $\{0.001,0.005,0.01,0.05,0.1\}$ & \checkmark & \checkmark & \\
-$\gamma$ & Discount factor & $\{0.0,0.25,0.5,0.75,0.9,0.95,0.99\}$ & \checkmark & \checkmark & \\
-$\varepsilon$ & E-greedy exploration prob & Typically decays from 1 to 0 & \checkmark & \checkmark & \\
-Boltzmann & Softmax exploration & Weight factor over $Q$-values & \checkmark & \checkmark & \\
-$c$ & Bandit exploration param & E.g.\ $[0.01,2.0]$ &  &  & \checkmark \\
-$r$ & Reserve price & $\{0.0,0.1,0.2,0.3,0.4,0.5\}$ & \checkmark & \checkmark & \checkmark \\
-$n$ & Number of bidders & $\{2,4,6\}$ or similar & \checkmark & \checkmark & \checkmark \\
-$\eta$ & Affiliation parameter & $[0,1]$ &  & \checkmark & \checkmark \\
-\textit{Episodes} & Total training rounds & E.g.\ $\{10{,}000, 50{,}000, 100{,}000\}$ & \checkmark & \checkmark & \checkmark \\
-\textit{Sync/Async} & Q-learning modes & N/A (binary choice) & \checkmark & \checkmark & \\
-\textit{Median/Winner} & State features & N/A (binary choice) & \checkmark & \checkmark & \checkmark\\
+Auction type      & Second-price & First-price \\
+Learning rate $\alpha$ & 0.01 & 0.30 \\
+Discount factor $\gamma$ & 0.0 & 0.95 \\
+Reserve price $r$ & 0.0 & 0.5 \\
+Initialisation    & Zeros & Random \\
+Exploration       & $\varepsilon$-greedy & Boltzmann \\
+Synchronous       & Asynchronous & Synchronous \\
+Number of bidders $n$ & 2 & 4 \\
+Number of actions & 11 & 21 \\
+Information feedback & Winner only & Winner + own payoff \\
+Decay type        & Linear & Exponential \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~2 factors ($3 \times 2^3$ mixed-level, 24 cells).}
+\label{tab:exp2_factors}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Factor} & \textbf{Low ($-1$)} & \textbf{High ($+1$)} \\
+\midrule
+Auction type      & Second-price & First-price \\
+Number of bidders $n$ & 2 & 6 \\
+State information & None & Signal + winner \\
+\midrule
+\textbf{Factor} & \multicolumn{2}{l}{\textbf{Levels}} \\
+\midrule
+Affiliation $\eta$ & \multicolumn{2}{l}{0, 0.5, 1 (linear + quadratic contrasts)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3 factors ($3 \times 2^7$ mixed-level, 384 cells).}
+\label{tab:exp3_factors}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Factor} & \textbf{Low ($-1$)} & \textbf{High ($+1$)} \\
+\midrule
+Algorithm         & LinUCB & CTS \\
+Auction type      & Second-price & First-price \\
+Number of bidders $n$ & 2 & 6 \\
+Reserve price $r$ & 0.0 & 0.3 \\
+Exploration intensity & Low & High \\
+Context richness  & Signal only & Signal + winner \\
+Regularisation $\lambda$ & 0.1 & 10.0 \\
+\midrule
+\textbf{Factor} & \multicolumn{2}{l}{\textbf{Levels}} \\
+\midrule
+Affiliation $\eta$ & \multicolumn{2}{l}{0, 0.5, 1 (linear + quadratic contrasts)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~4 factors ($2^3$ full factorial, 8 cells $\times$ 50 seeds).}
+\label{tab:exp4_factors}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Factor} & \textbf{Low ($-1$)} & \textbf{High ($+1$)} \\
+\midrule
+Auction type      & Second-price & First-price \\
+Bidder objective  & Value-maximizer & Utility-maximizer \\
+Number of bidders $n$ & 2 & 4 \\
 \bottomrule
 \end{tabular}
 \end{table}

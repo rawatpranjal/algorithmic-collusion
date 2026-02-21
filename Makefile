@@ -2,7 +2,8 @@
         experiments exp1 exp2 exp3 exp4 \
         analyze analyze1 analyze2 analyze3 analyze4 \
         robust robust1 robust2 robust3 robust4 \
-        traces tables pdf paper all clean help
+        traces tables pdf paper all clean help \
+        dive1 dive2 dive3 dive4
 
 PYTHON  := python3
 PY      := PYTHONPATH=src $(PYTHON)
@@ -116,6 +117,19 @@ paper:
 
 # ── Full Pipeline ────────────────────────────────────────────
 all: experiments analyze robust traces tables pdf paper
+
+# ── Deep Dive ────────────────────────────────────────────────
+dive1:
+	$(PY) scripts/deep_dive.py --exp 1
+
+dive2:
+	$(PY) scripts/deep_dive.py --exp 2
+
+dive3:
+	$(PY) scripts/deep_dive.py --exp 3
+
+dive4:
+	$(PY) scripts/deep_dive.py --exp 4
 
 # ── Cleanup ──────────────────────────────────────────────────
 clean:

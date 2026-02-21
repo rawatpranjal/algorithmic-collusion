@@ -1,35 +1,55 @@
 ======================================================================
-ROBUST ANALYSIS SUMMARY — Experiment 2
+ROBUST ANALYSIS SUMMARY -- Experiment 2
 ======================================================================
 
-KEY FINDING: auction_type × exploration interaction
+KEY FINDING: eta_linear:eta_quadratic interaction
 --------------------------------------------------
-  avg_rev_last_1000|auction_type:exploration: raw p=1.0590e-24, holm p=1.3555e-22 → SURVIVES Holm-Bonferroni
-  time_to_converge|auction_type:exploration: raw p=2.7994e-02, holm p=1.0000e+00 → does NOT survive Holm-Bonferroni
-  avg_regret_of_seller|auction_type:exploration: raw p=2.7869e-34, holm p=3.6230e-32 → SURVIVES Holm-Bonferroni
-  price_volatility|auction_type:exploration: raw p=4.8848e-52, holm p=6.5457e-50 → SURVIVES Holm-Bonferroni
-  winner_entropy|auction_type:exploration: raw p=2.5165e-04, holm p=2.9443e-02 → SURVIVES Holm-Bonferroni
+  avg_rev_last_1000|eta_linear:eta_quadratic: raw p=1.1812e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  time_to_converge|eta_linear:eta_quadratic: raw p=4.6835e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  price_volatility|eta_linear:eta_quadratic: raw p=1.8438e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  winner_entropy|eta_linear:eta_quadratic: raw p=2.0613e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  excess_regret|eta_linear:eta_quadratic: raw p=5.3388e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  efficient_regret|eta_linear:eta_quadratic: raw p=2.5633e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  btv_median|eta_linear:eta_quadratic: raw p=4.7581e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  winners_curse_freq|eta_linear:eta_quadratic: raw p=3.8333e-04, holm p=5.7499e-02 -> does NOT survive Holm-Bonferroni
+  bid_dispersion|eta_linear:eta_quadratic: raw p=5.1839e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  signal_slope_ratio|eta_linear:eta_quadratic: raw p=3.5053e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
 
 MODEL ADEQUACY
 --------------------------------------------------
-  avg_rev_last_1000               R²=0.9323  Pred-R²=0.8868  Gap=0.0455
-  time_to_converge                R²=0.8413  Pred-R²=0.7347  Gap=0.1066
-  avg_regret_of_seller            R²=0.9859  Pred-R²=0.9764  Gap=0.0095
-  price_volatility                R²=0.9821  Pred-R²=0.9701  Gap=0.0120
-  winner_entropy                  R²=0.9997  Pred-R²=0.9995  Gap=0.0002
+  avg_rev_last_1000               R2=0.4609  Pred-R2=-0.1407  Gap=0.6015
+  time_to_converge                R2=0.3782  Pred-R2=-0.3156  Gap=0.6938
+  price_volatility                R2=0.5171  Pred-R2=-0.0217  Gap=0.5388
+  winner_entropy                  R2=0.5350  Pred-R2=0.0163  Gap=0.5188
+  excess_regret                   R2=0.3895  Pred-R2=-0.2916  Gap=0.6811
+  efficient_regret                R2=0.4495  Pred-R2=-0.1648  Gap=0.6142
+  btv_median                      R2=0.4626  Pred-R2=-0.1371  Gap=0.5996
+  winners_curse_freq              R2=0.5955  Pred-R2=0.1443  Gap=0.4513
+  bid_dispersion                  R2=0.5148  Pred-R2=-0.0266  Gap=0.5414
+  signal_slope_ratio              R2=0.4923  Pred-R2=-0.0742  Gap=0.5665
 
 LINEAR vs NONPARAMETRIC
 --------------------------------------------------
-  avg_rev_last_1000               OLS=0.9323  LGBM=0.8363  Gap=-0.0960
-  time_to_converge                OLS=0.8413  LGBM=0.7494  Gap=-0.0919
-  avg_regret_of_seller            OLS=0.9859  LGBM=0.9739  Gap=-0.0120
-  price_volatility                OLS=0.9821  LGBM=0.9658  Gap=-0.0163
-  winner_entropy                  OLS=0.9997  LGBM=0.9996  Gap=-0.0001
+  avg_rev_last_1000               OLS=0.4609  LGBM=-0.2779  Gap=-0.7388
+  time_to_converge                OLS=0.3782  LGBM=-2.1322  Gap=-2.5103
+  price_volatility                OLS=0.5171  LGBM=-0.1162  Gap=-0.6333
+  winner_entropy                  OLS=0.5350  LGBM=-0.0816  Gap=-0.6166
+  excess_regret                   OLS=0.3895  LGBM=-0.1188  Gap=-0.5084
+  efficient_regret                OLS=0.4495  LGBM=-0.0153  Gap=-0.4647
+  btv_median                      OLS=0.4626  LGBM=-0.0137  Gap=-0.4763
+  winners_curse_freq              OLS=0.5955  LGBM=-0.3724  Gap=-0.9679
+  bid_dispersion                  OLS=0.5148  LGBM=-0.2348  Gap=-0.7495
+  signal_slope_ratio              OLS=0.4923  LGBM=-0.3027  Gap=-0.7950
 
-POWER ANALYSIS (80% power, α=0.05)
+POWER ANALYSIS (80% power, alpha=0.05)
 --------------------------------------------------
-  avg_rev_last_1000               MDE=0.014596 (2.4% of mean)
-  time_to_converge                MDE=4676.686935 (8.2% of mean)
-  avg_regret_of_seller            MDE=0.003655 (1.2% of mean)
-  price_volatility                MDE=0.001692 (0.7% of mean)
-  winner_entropy                  MDE=0.001649 (0.2% of mean)
+  avg_rev_last_1000               MDE=0.053792 (11.6% of mean)
+  time_to_converge                MDE=7796.404522 (9.2% of mean)
+  price_volatility                MDE=0.016368 (8.3% of mean)
+  winner_entropy                  MDE=0.187460 (15.1% of mean)
+  excess_regret                   MDE=0.026059 (56.8% of mean)
+  efficient_regret                MDE=0.050784 (16.1% of mean)
+  btv_median                      MDE=0.055720 (7.7% of mean)
+  winners_curse_freq              MDE=0.023033 (19.5% of mean)
+  bid_dispersion                  MDE=0.022042 (12.6% of mean)
+  signal_slope_ratio              MDE=0.064731 (7.9% of mean)

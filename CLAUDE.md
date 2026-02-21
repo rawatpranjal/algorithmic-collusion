@@ -23,6 +23,13 @@ make analyze1         # Factorial ANOVA for experiment 1
 make robust1          # Robustness checks for experiment 1
 ```
 
+### Deep Dive (Single Run)
+```bash
+make dive1            # Single-run deep dive for experiment 1
+# Or with custom params:
+PYTHONPATH=src python3 scripts/deep_dive.py --exp 2 --param eta=1.0 --verbose
+```
+
 ### Options
 ```bash
 make exp1 REPS=5      # Custom replicates per cell (default: 2)
@@ -43,6 +50,19 @@ make exp1 WORKERS=8   # Custom parallel workers (default: cpu_count/2)
 | `--seed N` | Random seed (default: 42) |
 | `--cloud` | Run on Google Cloud VM |
 | `--detached` | Fire-and-forget mode (VM self-deletes after completion) |
+
+### Deep Dive CLI (`scripts/deep_dive.py`)
+
+| Flag | Description |
+|------|-------------|
+| `--exp N` | Experiment number (required) |
+| `--param key=value` | Parameter override (repeatable) |
+| `--list-params` | List available parameters and defaults, then exit |
+| `--output-dir PATH` | Output directory (default: `results/deep_dive/expN_TIMESTAMP`) |
+| `--seed N` | Random seed (default: 42) |
+| `--verbose` | Print detailed post-hoc diagnostics |
+| `--no-plots` | Skip trace plot generation |
+| `--no-save` | Console-only mode, skip file output |
 
 ## Factorial Design
 
@@ -215,6 +235,7 @@ src/
 
 scripts/
 ├── run_experiment.py      # Unified CLI (factorial design)
+├── deep_dive.py           # Unified single-run analysis (trace + verbose + save)
 ├── generate_trace_plots.py # Single-run trace visualizations
 ├── generate_tables.py     # JSON → LaTeX tables + figure copy
 ├── generate_results.py    # Standalone results.pdf generator
@@ -243,6 +264,7 @@ docs/
 
 ### Pipeline Data Flow
 ```
+deep_dive.py      → results/deep_dive/expN_TIMESTAMP/{config,summary,revenues,round_history,final_state,figures}
 run_experiment.py → results/expN/data.csv
                   → results/expN/design_info.json, param_mappings.json
 est*.py           → results/expN/estimation_results.json + plots + robust/

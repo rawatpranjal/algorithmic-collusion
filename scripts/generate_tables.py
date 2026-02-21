@@ -213,6 +213,14 @@ RANKED_RESPONSE_LABELS = {
     "vol": "price volatility",
 }
 
+# Revenue variable name for quantile figure copying
+REVENUE_VAR = {
+    1: "avg_rev_last_1000",
+    2: "avg_rev_last_1000",
+    3: "avg_rev_last_1000",
+    4: "mean_platform_revenue",
+}
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -405,22 +413,34 @@ def generate_significant_effects_table(exp_num, responses_data):
             "%% No significant effects at p<0.05 for Experiment %d" % exp_num
         )
 
+    label = "tab:exp%d_sig" % exp_num
     lines = []
-    lines.append(r"\begin{table}[H]")
-    lines.append(r"\centering")
-    lines.append(r"\small")
+    lines.append(r"\begin{longtable}{llrrr}")
     lines.append(
         r"\caption{Experiment %s: All significant effects ($p < 0.05$) "
         r"across response variables, ranked by $|t|$.}" % roman
     )
-    lines.append(r"\label{tab:exp%d_sig}" % exp_num)
-    lines.append(r"\begin{tabular}{llrrr}")
+    lines.append(r"\label{%s}\\" % label)
     lines.append(r"\toprule")
     lines.append(
         r"\textbf{Response} & \textbf{Effect} "
         r"& \textbf{Coeff.} & \textbf{$|t|$} & \textbf{$p$-value} \\"
     )
     lines.append(r"\midrule")
+    lines.append(r"\endfirsthead")
+    lines.append(r"\multicolumn{5}{l}{\small\emph{Table~\ref{%s} continued}} \\" % label)
+    lines.append(r"\toprule")
+    lines.append(
+        r"\textbf{Response} & \textbf{Effect} "
+        r"& \textbf{Coeff.} & \textbf{$|t|$} & \textbf{$p$-value} \\"
+    )
+    lines.append(r"\midrule")
+    lines.append(r"\endhead")
+    lines.append(r"\midrule")
+    lines.append(r"\multicolumn{5}{r}{\small\emph{Continued on next page}} \\")
+    lines.append(r"\endfoot")
+    lines.append(r"\bottomrule")
+    lines.append(r"\endlastfoot")
 
     for row in sig_rows:
         resp_name = readable_response(row["response"])
@@ -430,9 +450,7 @@ def generate_significant_effects_table(exp_num, responses_data):
             f"& {row['estimate']:.4f} & {row['t_abs']:.2f} & {format_pval(row['p_value'])} \\\\"
         )
 
-    lines.append(r"\bottomrule")
-    lines.append(r"\end{tabular}")
-    lines.append(r"\end{table}")
+    lines.append(r"\end{longtable}")
 
     return "\n".join(lines)
 
@@ -499,6 +517,165 @@ def generate_ranked_effects_table(exp_num, response_key, short_key, rdata):
 
 
 # ---------------------------------------------------------------------------
+# Robustness table generators
+# ---------------------------------------------------------------------------
+
+def load_robust_data(exp_num):
+    """Load robust_results.json for an experiment. Returns None if missing."""
+    path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "robust", "robust_results.json")
+    if not os.path.exists(path):
+        print(f"  WARNING: {path} not found")
+        return None
+    with open(path) as f:
+        return json.load(f)
+
+
+def generate_adequacy_table(exp_num, robust_data):
+    """Generate model adequacy table from robustness diagnostics.
+
+    Columns: Response | R² | Pred-R² | Gap | LGBM R² | LOF p
+    Uses KEY_RESPONSES for the 3 primary outcomes per experiment.
+    """
+    roman = EXP_ROMAN[exp_num]
+    key_resp = KEY_RESPONSES.get(exp_num, {})
+
+    # Build lookup from summary table list
+    summary_lookup = {}
+    for item in robust_data.get("summary", {}).get("table", []):
+        summary_lookup[item["response"]] = item
+
+    lines = []
+    lines.append(r"\begin{table}[H]")
+    lines.append(r"\centering")
+    lines.append(
+        r"\caption{Experiment %s: Model adequacy diagnostics.}" % roman
+    )
+    lines.append(r"\label{tab:exp%d_adequacy}" % exp_num)
+    lines.append(r"\begin{tabular}{lrrrrr}")
+    lines.append(r"\toprule")
+    lines.append(
+        r"\textbf{Response} & \textbf{$R^2$} & \textbf{Pred-$R^2$} "
+        r"& \textbf{Gap} & \textbf{LGBM $R^2$} & \textbf{LOF $p$} \\"
+    )
+    lines.append(r"\midrule")
+
+    for _short_key, response_key in key_resp.items():
+        resp_name = readable_response(response_key)
+        press = robust_data.get("press", {}).get(response_key, {})
+        lgbm = robust_data.get("lightgbm", {}).get(response_key, {})
+        lof = robust_data.get("lack_of_fit", {}).get(response_key, {})
+
+        r2 = press.get("r_squared", float("nan"))
+        pred_r2 = press.get("predicted_r_squared", float("nan"))
+        gap = press.get("gap_r2_pred_r2", float("nan"))
+        lgbm_r2 = lgbm.get("lgbm_cv_r2", float("nan"))
+        lof_p = lof.get("p_lack_of_fit", float("nan"))
+
+        lines.append(
+            f"{resp_name} & {r2:.4f} & {pred_r2:.4f} "
+            f"& {gap:.4f} & {lgbm_r2:.4f} & {format_pval(lof_p)} \\\\"
+        )
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(
+        r"\par\smallskip\footnotesize "
+        r"Gap $= R^2 - \text{Pred-}R^2$. "
+        r"LGBM $R^2$: five-fold cross-validated LightGBM. "
+        r"LOF $p$: lack-of-fit $F$-test."
+    )
+    lines.append(r"\end{table}")
+
+    return "\n".join(lines)
+
+
+def generate_inference_robust_table(exp_num, robust_data):
+    """Generate inference robustness table from multiplicity and HC3 data.
+
+    Columns: Response | OLS Sig | HC3 Flipped | Holm Sig | BH Sig
+    Parses multiplicity.tests to compute per-response counts.
+    """
+    roman = EXP_ROMAN[exp_num]
+    key_resp = KEY_RESPONSES.get(exp_num, {})
+    key_response_names = set(key_resp.values())
+
+    # Count per-response multiplicity from tests array
+    from collections import defaultdict
+    resp_counts = defaultdict(lambda: {"ols": 0, "holm": 0, "bh": 0, "total": 0})
+    for t in robust_data.get("multiplicity", {}).get("tests", []):
+        resp = t["label"].split("|")[0]
+        resp_counts[resp]["total"] += 1
+        if t.get("raw_sig"):
+            resp_counts[resp]["ols"] += 1
+        if t.get("holm_sig"):
+            resp_counts[resp]["holm"] += 1
+        if t.get("bh_sig"):
+            resp_counts[resp]["bh"] += 1
+
+    lines = []
+    lines.append(r"\begin{table}[H]")
+    lines.append(r"\centering")
+    lines.append(
+        r"\caption{Experiment %s: Inference robustness under heteroskedasticity and multiple testing corrections.}"
+        % roman
+    )
+    lines.append(r"\label{tab:exp%d_inference}" % exp_num)
+    lines.append(r"\begin{tabular}{lrrrr}")
+    lines.append(r"\toprule")
+    lines.append(
+        r"\textbf{Response} & \textbf{OLS Sig} & \textbf{HC3 Flipped} "
+        r"& \textbf{Holm Sig} & \textbf{BH Sig} \\"
+    )
+    lines.append(r"\midrule")
+
+    for _short_key, response_key in key_resp.items():
+        resp_name = readable_response(response_key)
+        hc3_resp = robust_data.get("hc3", {}).get(response_key, {})
+        n_flipped = hc3_resp.get("n_flipped", 0)
+        n_terms = len(hc3_resp.get("terms", {}))
+        rc = resp_counts.get(response_key, {"ols": 0, "holm": 0, "bh": 0, "total": 0})
+
+        lines.append(
+            f"{resp_name} & {rc['ols']}/{rc['total']} "
+            f"& {n_flipped}/{n_terms} "
+            f"& {rc['holm']}/{rc['total']} & {rc['bh']}/{rc['total']} \\\\"
+        )
+
+    # Add totals row
+    m = robust_data.get("multiplicity", {})
+    total_flipped = sum(
+        robust_data.get("hc3", {}).get(r, {}).get("n_flipped", 0)
+        for r in robust_data.get("hc3", {})
+    )
+    total_terms = sum(
+        len(robust_data.get("hc3", {}).get(r, {}).get("terms", {}))
+        for r in robust_data.get("hc3", {})
+    )
+    lines.append(r"\midrule")
+    lines.append(
+        r"\textit{All responses} & %d/%d & %d/%d & %d/%d & %d/%d \\"
+        % (
+            m.get("n_raw_sig", 0), m.get("n_tests", 0),
+            total_flipped, total_terms,
+            m.get("n_holm_sig", 0), m.get("n_tests", 0),
+            m.get("n_bh_sig", 0), m.get("n_tests", 0),
+        )
+    )
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(
+        r"\par\smallskip\footnotesize "
+        r"OLS Sig: $p < 0.05$ under OLS standard errors. "
+        r"HC3 Flipped: effects changing significance under HC3 robust standard errors. "
+        r"Holm/BH Sig: effects surviving Holm--Bonferroni/Benjamini--Hochberg correction."
+    )
+    lines.append(r"\end{table}")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
 # Figure copying
 # ---------------------------------------------------------------------------
 
@@ -513,13 +690,15 @@ def copy_figures(exp_num):
       - pareto charts (kept for reference)
     """
     regret_var = REGRET_VAR[exp_num]
+    rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
+    vol_var = KEY_RESPONSES.get(exp_num, {}).get("vol", "price_volatility")
     exp_dir = os.path.join(RESULTS_DIR, f"exp{exp_num}")
     n = exp_num
 
     copy_pairs = [
         # Main effects plots
         (
-            os.path.join(exp_dir, "main_effects", "main_effects_avg_rev_last_1000.png"),
+            os.path.join(exp_dir, "main_effects", f"main_effects_{rev_var}.png"),
             os.path.join(FIGURES_DIR, f"e{n}_main_rev.png"),
         ),
         (
@@ -527,12 +706,12 @@ def copy_figures(exp_num):
             os.path.join(FIGURES_DIR, f"e{n}_main_reg.png"),
         ),
         (
-            os.path.join(exp_dir, "main_effects", "main_effects_price_volatility.png"),
+            os.path.join(exp_dir, "main_effects", f"main_effects_{vol_var}.png"),
             os.path.join(FIGURES_DIR, f"e{n}_main_vol.png"),
         ),
         # Interaction plots
         (
-            os.path.join(exp_dir, "interaction_plots", "interactions_avg_rev_last_1000.png"),
+            os.path.join(exp_dir, "interaction_plots", f"interactions_{rev_var}.png"),
             os.path.join(FIGURES_DIR, f"e{n}_int_rev.png"),
         ),
         (
@@ -540,12 +719,12 @@ def copy_figures(exp_num):
             os.path.join(FIGURES_DIR, f"e{n}_int_reg.png"),
         ),
         (
-            os.path.join(exp_dir, "interaction_plots", "interactions_price_volatility.png"),
+            os.path.join(exp_dir, "interaction_plots", f"interactions_{vol_var}.png"),
             os.path.join(FIGURES_DIR, f"e{n}_int_vol.png"),
         ),
         # Pareto charts (still copied for reference, not shown in paper)
         (
-            os.path.join(exp_dir, "pareto_charts", "pareto_avg_rev_last_1000.png"),
+            os.path.join(exp_dir, "pareto_charts", f"pareto_{rev_var}.png"),
             os.path.join(FIGURES_DIR, f"e{n}_pareto_rev.png"),
         ),
         (
@@ -553,10 +732,17 @@ def copy_figures(exp_num):
             os.path.join(FIGURES_DIR, f"e{n}_pareto_reg.png"),
         ),
         (
-            os.path.join(exp_dir, "pareto_charts", "pareto_price_volatility.png"),
+            os.path.join(exp_dir, "pareto_charts", f"pareto_{vol_var}.png"),
             os.path.join(FIGURES_DIR, f"e{n}_pareto_vol.png"),
         ),
     ]
+
+    # Quantile regression coefficient plots
+    rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
+    copy_pairs.append((
+        os.path.join(exp_dir, "robust", f"quantile_coefs_{rev_var}.png"),
+        os.path.join(FIGURES_DIR, f"e{n}_quantile_rev.png"),
+    ))
 
     for src, dst in copy_pairs:
         if os.path.exists(src):
@@ -619,7 +805,22 @@ def process_experiment(exp_num):
                 f.write(ranked_tex + "\n")
             print(f"  Wrote {ranked_path}")
 
-    # 5. Copy publication figures
+    # 5. Robustness tables (adequacy + inference)
+    robust_data = load_robust_data(exp_num)
+    if robust_data:
+        adequacy_tex = generate_adequacy_table(exp_num, robust_data)
+        adequacy_path = os.path.join(TABLES_DIR, f"exp{exp_num}_adequacy.tex")
+        with open(adequacy_path, "w") as f:
+            f.write(adequacy_tex + "\n")
+        print(f"  Wrote {adequacy_path}")
+
+        inference_tex = generate_inference_robust_table(exp_num, robust_data)
+        inference_path = os.path.join(TABLES_DIR, f"exp{exp_num}_inference_robust.tex")
+        with open(inference_path, "w") as f:
+            f.write(inference_tex + "\n")
+        print(f"  Wrote {inference_path}")
+
+    # 6. Copy publication figures
     copy_figures(exp_num)
 
 
