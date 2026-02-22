@@ -1,11 +1,7 @@
 # Algorithmic Collusion
 
-This repository accompanies **"Designing Auctions when Algorithms Learn to Bid: The Critical Role of Payment Rules"**
+This repository accompanies **"Designing Auctions when Algorithms Learn to Bid: An Experimental Approach"**
 [arXiv link](https://arxiv.org/abs/2306.09437)
-
-## Abstract
-
-Algorithms are increasingly used to automate bidding in online markets. This paper investigates whether autonomous learning agents spontaneously converge to collusive, sub-competitive equilibria, and how auction design mediates this risk. We conduct four factorial experiments spanning three algorithm classes (Q-learning, contextual bandits, dual-based pacing), three valuation structures (constant, affiliated, budget-constrained), and a range of learning parameters. Across all settings, first-price auctions systematically yield lower seller revenue than second-price auctions. The revenue gap ranges from 0.5% (Q-learning with affiliated values) to 42% (LinUCB bandits), contradicting revenue equivalence predictions. Exploration mechanisms matter more than exploration rates: Boltzmann exploration and budget-imposed commitment discipline mitigate collusion, while optimism-based exploration (UCB) exacerbates it. Budget-constrained pacing agents converge rapidly to stable equilibria consistent with theoretical Price of Anarchy bounds but exhibit budget-mediated bid suppression distinct from strategic collusion. Winner entropy analysis reveals that first-price collusion operates through symmetric bid suppression rather than asymmetric market dominance.
 
 ## Quick Start
 
@@ -92,4 +88,4 @@ results/
 
 ## Citation
 
-Rawat, P. (2023). Designing Auctions when Algorithms Learn to Bid: The Critical Role of Payment Rules. arXiv preprint arXiv:2306.09437.
+Rawat, P. (2023). Designing Auctions when Algorithms Learn to Bid: An Experimental Approach. arXiv preprint arXiv:2306.09437.
