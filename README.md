@@ -5,111 +5,91 @@ This repository accompanies **"Designing Auctions when Algorithms Learn to Bid: 
 
 ## Abstract
 
-Algorithms are increasingly being used to automate participation in online markets. Banchio and Skrzypacz (2022) demonstrate how exploration under identical valuation in first-price auctions may lead to spontaneous coupling into sub-competitive bidding. However, it is an open question if these findings extend to affiliated values, optimal exploration, and specifically which algorithmic details play a role in facilitating algorithmic collusion. This paper contributes to the literature by generating robust stylized facts to cover these gaps. I conduct a set of fully randomized experiments in a controlled laboratory setup and apply double machine learning to estimate granular conditional treatment effects of auction design on seller revenues. I find that first-price auctions lead to lower seller revenues, slower convergence, and higher seller regret under identical values, affiliated values, and also under optimal exploration. There is more possibility of such tacit collusion under fewer bidders, lower learning rates, and higher discount factors. This evidence suggests that programmatic auctions, e.g. the Google Ad Exchange, which depend on first-price auctions, might be susceptible to coordinated bid suppression and significant revenue losses.
+Algorithms are increasingly used to automate bidding in online markets. This paper investigates whether autonomous learning agents spontaneously converge to collusive, sub-competitive equilibria, and how auction design mediates this risk. We conduct four factorial experiments spanning three algorithm classes (Q-learning, contextual bandits, dual-based pacing), three valuation structures (constant, affiliated, budget-constrained), and a range of learning parameters. Across all settings, first-price auctions systematically yield lower seller revenue than second-price auctions. The revenue gap ranges from 0.5% (Q-learning with affiliated values) to 42% (LinUCB bandits), contradicting revenue equivalence predictions. Exploration mechanisms matter more than exploration rates: Boltzmann exploration and budget-imposed commitment discipline mitigate collusion, while optimism-based exploration (UCB) exacerbates it. Budget-constrained pacing agents converge rapidly to stable equilibria consistent with theoretical Price of Anarchy bounds but exhibit budget-mediated bid suppression distinct from strategic collusion. Winner entropy analysis reveals that first-price collusion operates through symmetric bid suppression rather than asymmetric market dominance.
+
+## Quick Start
+
+```bash
+pip install -r requirements.txt
+make smoke       # Quick-test all experiments (~5 min)
+make all         # Full pipeline: experiments -> analysis -> paper
+```
+
+## Experiments
+
+| Exp | Algorithm | Valuations | Design | Key Question |
+|-----|-----------|------------|--------|--------------|
+| 1 | Q-learning | Constant (v=1) | 2^(11-1) Res V | Which learning parameters drive collusion? |
+| 2 | Q-learning | Affiliated (eta) | 3 x 2^3 mixed | Does valuation structure alter collusion? |
+| 3 | LinUCB + CTS | Affiliated (eta) | 3 x 2^7 mixed | Does sophisticated exploration help sellers? |
+| 4 | Dual Pacing | LogNormal | 2^3 full | Do budget constraints mitigate or amplify collusion? |
+
+## Pipeline
+
+```bash
+make experiments  # Run all experiments (2 reps/cell)
+make analyze      # Factorial ANOVA (JSON + plots)
+make robust       # Robustness checks (HC3, multiplicity, PRESS, LightGBM)
+make traces       # Single-run trace plots for paper figures
+make tables       # Generate LaTeX tables + copy figures
+make paper        # Compile paper
+```
+
+Individual experiments: `make exp1`, `make analyze1`, `make robust1`, etc.
+
+Options: `make exp1 REPS=5 SEED=123 WORKERS=8`
+
+### Deep Dive (Single Run)
+
+```bash
+make dive1                                          # Default params
+PYTHONPATH=src python3 scripts/deep_dive.py --exp 2 --param eta=1.0 --verbose  # Custom
+```
 
 ## Repository Structure
 
 ```
-algorithmic-collusion/
-├── paper/                  # LaTeX paper and presentation
-│   ├── main.tex
-│   ├── presentation.tex
-│   ├── sections/
-│   └── planning/
-├── src/
-│   ├── experiments/        # Experiment simulation code
-│   │   ├── exp1.py         # Q-learning, constant valuations
-│   │   ├── exp2.py         # Q-learning, stochastic valuations with affiliation
-│   │   └── exp3.py         # LinUCB bandits, stochastic valuations
-│   └── estimation/         # DoubleML analysis scripts
-│       ├── est1.py
-│       ├── est2.py
-│       └── est3.py
-├── scripts/
-│   └── run_experiment.py   # Unified CLI entry point
-├── results/                # Experiment output data
-│   ├── exp1/
-│   ├── exp2/
-│   └── exp3/
-├── figures/                # Generated figures for paper
-├── archive/                # Old iteration code
-├── requirements.txt
-└── README.md
+src/
+  experiments/
+    exp1.py          # Q-learning, constant valuations
+    exp2.py          # Q-learning, affiliated valuations
+    exp3.py          # LinUCB/CTS contextual bandits
+    exp4.py          # Dual pacing autobidding
+  estimation/
+    factorial_analysis.py   # Shared OLS + ANOVA engine
+    robust_analysis.py      # 13 robustness checks
+    est1.py .. est4.py      # Per-experiment wrappers
+
+scripts/
+  run_experiment.py         # Unified CLI (factorial design)
+  deep_dive.py              # Single-run trace analysis
+  generate_trace_plots.py   # Learning trajectory figures
+  generate_tables.py        # JSON -> LaTeX tables + figure copy
+  generate_results.py       # Standalone results PDF
+
+paper/                      # LaTeX source
+  sections/                 # Paper section .tex files
+  tables/                   # Auto-generated .tex tables
+  figures/                  # Publication figures
+
+results/
+  exp{1,2,3,4}/
+    data.csv                # Factorial design data
+    estimation_results.json # OLS/ANOVA results
+    robust/                 # Robustness diagnostics
+    pareto_charts/          # Ranked effect bar charts
+    main_effects/           # Factor main effect plots
+    interaction_plots/      # Two-way interaction plots
 ```
 
-## Installation
+## Key Findings
 
-```bash
-pip install -r requirements.txt
-```
-
-## Running Experiments
-
-All experiments are run through the unified CLI at `scripts/run_experiment.py`.
-
-### Quick Tests
-
-```bash
-python scripts/run_experiment.py --exp 1 --quick
-python scripts/run_experiment.py --exp 2 --quick
-python scripts/run_experiment.py --exp 3 --quick
-```
-
-### Full Experiments (Parallel)
-
-```bash
-python scripts/run_experiment.py --exp 1 --parallel
-python scripts/run_experiment.py --exp 2 --parallel
-python scripts/run_experiment.py --exp 3 --parallel
-```
-
-### Full Experiments (Sequential)
-
-```bash
-python scripts/run_experiment.py --exp 1
-python scripts/run_experiment.py --exp 2
-python scripts/run_experiment.py --exp 3
-```
-
-Output is saved to `results/exp{N}/`.
-
-### CLI Reference
-
-| Flag | Description |
-|------|-------------|
-| `--exp N` | Experiment number (1, 2, or 3) |
-| `--quick` | Reduced parameters for fast testing |
-| `--parallel` | Use multiprocessing |
-| `--workers N` | Number of parallel workers |
-
-### Running Estimation/Analysis
-
-After running experiments, analyze results with:
-
-```bash
-python src/estimation/est1.py
-python src/estimation/est2.py
-python src/estimation/est3.py
-```
-
-## Experiments Overview
-
-- **Experiment 1**: Q-learning with constant valuations (vi=1.0), varying information regimes
-- **Experiment 2**: Q-learning with affiliated values, varying eta (affiliation parameter)
-- **Experiment 3**: LinUCB contextual bandits with affiliated values
-
-## Paper Compilation
-
-```bash
-cd paper/
-pdflatex main.tex
-bibtex main
-pdflatex main.tex
-pdflatex main.tex
-```
+1. **First-price auctions systematically underperform** across all algorithm classes, valuation structures, and budget regimes.
+2. **Exploration mechanisms matter more than rates**: Boltzmann exploration mitigates collusion; UCB-based exploration exacerbates it.
+3. **Budget constraints impose discipline** but introduce a distinct form of bid suppression through pacing dynamics.
+4. **Valuation structure (affiliation) has negligible impact**, contradicting classical auction theory predictions about winner's curse effects.
+5. **Collusion is symmetric**: first-price auctions produce higher winner entropy (equitable rotation at lower prices) rather than asymmetric predation.
 
 ## Citation
 
-If you find this work useful, please cite the arXiv preprint above.
-
-Rawat, P. (2023). Designing Auctions when Algorithms Learn to Bid: The critical role of Payment Rules. arXiv preprint arXiv:2306.09437.
+Rawat, P. (2023). Designing Auctions when Algorithms Learn to Bid: The Critical Role of Payment Rules. arXiv preprint arXiv:2306.09437.
