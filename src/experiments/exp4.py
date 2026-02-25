@@ -17,6 +17,7 @@ Each run: D=100 episodes x T=1,000 rounds with budget regeneration.
 
 import argparse
 import json
+import math
 import os
 
 import numpy as np
@@ -109,16 +110,17 @@ class DualPacingAgent:
         self.T = int(T)
         self.objective = objective
         self.mu = float(mu_init)
-        self.eta = 1.0 / np.sqrt(T)
+        self.eta = 1.0 / math.sqrt(T)
         self.rho = budget / T  # target per-round spend
 
         self.cumulative_spend = 0.0
         self.t = 0
 
-        # Per-episode tracking
-        self.mu_history = []
-        self.bid_history = []
-        self.payment_history = []
+        # Per-episode tracking: circular buffer for mu (only last 200 needed)
+        self._mu_tail_size = 200
+        self._mu_tail = np.empty(self._mu_tail_size)
+        self._mu_tail_idx = 0
+        self._mu_tail_count = 0
 
     def get_bid(self, valuation):
         """Compute bid with hard budget constraint."""
@@ -136,13 +138,26 @@ class DualPacingAgent:
         """Record payment and update dual variable."""
         self.cumulative_spend += payment
         self.t += 1
-        self.payment_history.append(payment)
 
-        # Multiplicative dual update
+        # Multiplicative dual update (math.exp for scalar, max/min for scalar clip)
         gradient = payment - self.rho
-        self.mu = self.mu * np.exp(self.eta * gradient)
-        self.mu = np.clip(self.mu, MU_CLIP[0], MU_CLIP[1])
-        self.mu_history.append(self.mu)
+        self.mu = self.mu * math.exp(self.eta * gradient)
+        self.mu = max(MU_CLIP[0], min(self.mu, MU_CLIP[1]))
+        # Circular buffer for mu history
+        self._mu_tail[self._mu_tail_idx % self._mu_tail_size] = self.mu
+        self._mu_tail_idx += 1
+        self._mu_tail_count = min(self._mu_tail_count + 1, self._mu_tail_size)
+
+    @property
+    def mu_history(self):
+        """Return the tail of mu values as a list (for backward compatibility)."""
+        if self._mu_tail_count == 0:
+            return []
+        if self._mu_tail_count < self._mu_tail_size:
+            return self._mu_tail[:self._mu_tail_count].tolist()
+        # Buffer is full; return in chronological order
+        start = self._mu_tail_idx % self._mu_tail_size
+        return np.roll(self._mu_tail, -start).tolist()
 
     def reset_episode(self, new_budget):
         """Reset budget/spend for new episode, keep mu (warm-start)."""
@@ -150,9 +165,8 @@ class DualPacingAgent:
         self.rho = new_budget / self.T
         self.cumulative_spend = 0.0
         self.t = 0
-        self.mu_history = []
-        self.bid_history = []
-        self.payment_history = []
+        self._mu_tail_idx = 0
+        self._mu_tail_count = 0
 
 
 # ---------------------------------------------------------------------
@@ -202,19 +216,18 @@ def run_episode(agents, N, T, auction_type, valuations_matrix):
 
     Returns dict with per-episode metrics.
     """
-    winners = []
-    payments = []
-    bidder_bids = [[] for _ in range(N)]
-    bidder_vals = [[] for _ in range(N)]
+    winners = np.empty(T, dtype=int)
+    payments_arr = np.empty(T)
+    bidder_bids = np.empty((N, T))
+    bidder_vals = np.empty((N, T))
 
     for t in range(T):
         valuations = valuations_matrix[t]
         bids = np.array([agents[i].get_bid(valuations[i]) for i in range(N)])
 
         for i in range(N):
-            bidder_bids[i].append(bids[i])
-            bidder_vals[i].append(valuations[i])
-            agents[i].bid_history.append(bids[i])
+            bidder_bids[i, t] = bids[i]
+            bidder_vals[i, t] = valuations[i]
 
         winner, payment, rewards = run_auction(bids, valuations, auction_type)
 
@@ -223,24 +236,23 @@ def run_episode(agents, N, T, auction_type, valuations_matrix):
             cost = payment if i == winner else 0.0
             agents[i].update(cost)
 
-        winners.append(winner)
-        payments.append(payment)
+        winners[t] = winner
+        payments_arr[t] = payment
 
     # --- Compute episode metrics ---
-    total_revenue = sum(payments)
+    total_revenue = float(payments_arr.sum())
 
     # Liquid welfare: sum of winner valuations capped at budget
+    valid_mask = winners >= 0
     liquid_welfare = 0.0
     for t in range(T):
-        w = winners[t]
-        if w >= 0:
-            liquid_welfare += valuations_matrix[t, w]
+        if valid_mask[t]:
+            liquid_welfare += valuations_matrix[t, winners[t]]
 
     # Allocative efficiency: fraction of rounds highest-value bidder wins
     efficient_count = 0
     for t in range(T):
-        w = winners[t]
-        if w >= 0 and w == np.argmax(valuations_matrix[t]):
+        if valid_mask[t] and winners[t] == np.argmax(valuations_matrix[t]):
             efficient_count += 1
     allocative_efficiency = efficient_count / T
 
@@ -250,40 +262,40 @@ def run_episode(agents, N, T, auction_type, valuations_matrix):
         for i in range(N)
     ])
 
-    # Bid-to-value ratio
-    btv_vals = []
-    for i in range(N):
-        for b, v in zip(bidder_bids[i], bidder_vals[i]):
-            if v > 1e-9:
-                btv_vals.append(b / v)
-    bid_to_value = float(np.mean(btv_vals)) if btv_vals else 0.0
+    # Bid-to-value ratio (vectorized)
+    all_bids_flat = bidder_bids.ravel()
+    all_vals_flat = bidder_vals.ravel()
+    valid_btv = all_vals_flat > 1e-9
+    if valid_btv.any():
+        bid_to_value = float(np.mean(all_bids_flat[valid_btv] / all_vals_flat[valid_btv]))
+    else:
+        bid_to_value = 0.0
 
-    # Dual variable stats (last 200 rounds)
+    # Dual variable stats (last 200 rounds from circular buffer)
     dual_finals = []
     dual_cvs = []
-    tail = min(200, T)
     for i in range(N):
-        hist = agents[i].mu_history
-        if len(hist) >= tail:
-            tail_mu = hist[-tail:]
-        else:
-            tail_mu = hist
-        if tail_mu:
-            dual_finals.append(tail_mu[-1])
+        count = agents[i]._mu_tail_count
+        if count > 0:
+            if count < agents[i]._mu_tail_size:
+                tail_mu = agents[i]._mu_tail[:count]
+            else:
+                tail_mu = agents[i]._mu_tail
+            dual_finals.append(float(tail_mu[(agents[i]._mu_tail_idx - 1) % agents[i]._mu_tail_size]))
             mean_mu = np.mean(tail_mu)
             std_mu = np.std(tail_mu)
-            dual_cvs.append(std_mu / (abs(mean_mu) + 1e-10))
+            dual_cvs.append(float(std_mu / (abs(mean_mu) + 1e-10)))
 
     dual_final_mean = float(np.mean(dual_finals)) if dual_finals else 1.0
     dual_cv = float(np.mean(dual_cvs)) if dual_cvs else 0.0
 
     # No sale rate
-    no_sale_count = sum(1 for w in winners if w < 0)
+    no_sale_count = int(np.sum(winners < 0))
     no_sale_rate = no_sale_count / T
 
     # Winner entropy
-    valid_winners = [w for w in winners if w >= 0]
-    if valid_winners:
+    valid_winners = winners[valid_mask]
+    if len(valid_winners) > 0:
         unique_w, counts = np.unique(valid_winners, return_counts=True)
         p = counts / counts.sum()
         winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))

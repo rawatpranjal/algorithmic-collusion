@@ -49,6 +49,7 @@ def generate_exp1_trace():
         reserve_price=0.0,
         decay_type="linear",
         seed=42,
+        collect_history=True,
     )
 
     bne_rev = theoretical_revenue_constant_valuation(2, "first")
@@ -176,6 +177,7 @@ def generate_exp3_trace():
         exploration_intensity="low",
         context_richness="minimal",
         seed=42,
+        collect_history=True,
     )
 
     bne_rev = simulate_linear_affiliation_revenue(n_bidders, eta, auction_type, M=50_000)

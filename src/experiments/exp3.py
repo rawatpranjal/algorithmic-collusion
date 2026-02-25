@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import pandas as pd
 
 # ---------------------------------------------------------------------
 # 1) Numeric Parameter Mappings
@@ -106,6 +105,9 @@ class LinUCB:
       A[a] = XᵀX + lambda*I
       b[a] = Xᵀy
     p(a) = theta_hat[a]ᵀ context + c * sqrt(contextᵀ A[a]^(-1) context)
+
+    Uses Sherman-Morrison incremental inverse updates: O(d²) per update
+    instead of O(d³) per action selection.
     """
     def __init__(self, n_actions, context_dim, c, lam):
         self.n_actions = n_actions
@@ -113,21 +115,26 @@ class LinUCB:
         self.c = c
         self.lam = lam
 
+        # Store A for correctness verification and A_inv for fast computation
         self.A = [lam * np.eye(context_dim) for _ in range(n_actions)]
+        self.A_inv = [(1.0 / lam) * np.eye(context_dim) for _ in range(n_actions)]
         self.b = [np.zeros(context_dim) for _ in range(n_actions)]
 
     def select_action(self, context_vec):
-        p_vals = []
+        p_vals = np.empty(self.n_actions)
         for a in range(self.n_actions):
-            A_inv = np.linalg.inv(self.A[a])
-            theta_hat = A_inv @ self.b[a]
+            theta_hat = self.A_inv[a] @ self.b[a]
             mean_est = theta_hat @ context_vec
-            var_est = context_vec.T @ A_inv @ context_vec
-            bonus = self.c * np.sqrt(var_est)
-            p_vals.append(mean_est + bonus)
+            Ainv_x = self.A_inv[a] @ context_vec
+            var_est = context_vec @ Ainv_x
+            p_vals[a] = mean_est + self.c * np.sqrt(max(var_est, 0.0))
         return np.argmax(p_vals)
 
     def update(self, action, reward, context_vec):
+        # Sherman-Morrison rank-1 update: A_inv_new = A_inv - (A_inv x x^T A_inv) / (1 + x^T A_inv x)
+        Ainv_x = self.A_inv[action] @ context_vec
+        denom = 1.0 + context_vec @ Ainv_x
+        self.A_inv[action] -= np.outer(Ainv_x, Ainv_x) / denom
         self.A[action] += np.outer(context_vec, context_vec)
         self.b[action] += reward * context_vec
 
@@ -140,6 +147,9 @@ class ContextualThompsonSampling:
     Bayesian linear regression per action.
     A[a] = lambda*I + sum(x x^T), b[a] = sum(r x)
     Sample theta ~ N(A^{-1} b, sigma2 * A^{-1}), pick argmax theta^T x.
+
+    Uses Sherman-Morrison incremental inverse updates: O(d²) per update
+    instead of O(d³) per action selection.
     """
     def __init__(self, n_actions, context_dim, sigma2, lam, rng=None):
         self.n_actions = n_actions
@@ -147,20 +157,24 @@ class ContextualThompsonSampling:
         self.sigma2 = sigma2
         self.lam = lam
         self.A = [lam * np.eye(context_dim) for _ in range(n_actions)]
+        self.A_inv = [(1.0 / lam) * np.eye(context_dim) for _ in range(n_actions)]
         self.b = [np.zeros(context_dim) for _ in range(n_actions)]
         self.rng = rng or np.random.default_rng()
 
     def select_action(self, context_vec):
-        sampled_vals = []
+        sampled_vals = np.empty(self.n_actions)
         for a in range(self.n_actions):
-            A_inv = np.linalg.inv(self.A[a])
-            theta_hat = A_inv @ self.b[a]
-            cov = self.sigma2 * A_inv
+            theta_hat = self.A_inv[a] @ self.b[a]
+            cov = self.sigma2 * self.A_inv[a]
             theta_sample = self.rng.multivariate_normal(theta_hat, cov)
-            sampled_vals.append(theta_sample @ context_vec)
+            sampled_vals[a] = theta_sample @ context_vec
         return np.argmax(sampled_vals)
 
     def update(self, action, reward, context_vec):
+        # Sherman-Morrison rank-1 update
+        Ainv_x = self.A_inv[action] @ context_vec
+        denom = 1.0 + context_vec @ Ainv_x
+        self.A_inv[action] -= np.outer(Ainv_x, Ainv_x) / denom
         self.A[action] += np.outer(context_vec, context_vec)
         self.b[action] += reward * context_vec
 
@@ -219,7 +233,8 @@ def run_bandit_experiment(
     exploration_intensity="low",
     context_richness="minimal",
     seed=0,
-    progress_callback=None
+    progress_callback=None,
+    collect_history=False,
 ):
     """
     Run a single contextual bandit auction experiment.
@@ -255,9 +270,11 @@ def run_bandit_experiment(
                                               rng=np.random.default_rng(seed + i))
                    for i in range(n_bidders)]
 
-    revenues = []
-    winners_list = []
-    winning_bids_list = []
+    revenues = np.empty(max_rounds)
+    winning_bids_arr = np.empty(max_rounds)
+    wb_count = 0
+    winners_arr = np.empty(max_rounds, dtype=int)
+    win_count = 0
     round_history = []
     no_sale_count = 0
 
@@ -265,10 +282,19 @@ def run_bandit_experiment(
     past_winner_bid = 0.0
     win_counts = np.zeros(n_bidders)
 
+    # Pre-compute mask for build_context (avoid np.delete per call)
+    _bid_masks = [np.ones(n_bidders, dtype=bool) for _ in range(n_bidders)]
+    for _i in range(n_bidders):
+        _bid_masks[_i][_i] = False
+
+    # Pre-compute valuation coefficients
+    _val_alpha = 1.0 - 0.5 * eta
+    _val_beta_nm1 = (0.5 * eta) / max(n_bidders - 1, 1)
+
     def build_context(bidder_i, signals, ep):
         ctx_list = [signals[bidder_i]]  # always include own signal
         if context_richness == "rich":
-            med_bid = np.median(np.delete(past_bids, bidder_i)) if n_bidders > 1 else 0.0
+            med_bid = np.median(past_bids[_bid_masks[bidder_i]]) if n_bidders > 1 else 0.0
             ctx_list.append(med_bid)
             ctx_list.append(past_winner_bid)
             win_rate = win_counts[bidder_i] / max(1, ep)
@@ -281,10 +307,9 @@ def run_bandit_experiment(
             progress_callback(current=ep, total=max_rounds)
 
         signals = np.random.randint(n_val_bins, size=n_bidders) / (n_val_bins - 1)
-        valuations = np.zeros(n_bidders)
-        for i in range(n_bidders):
-            others_signals = np.delete(signals, i)
-            valuations[i] = get_valuation(eta, signals[i], others_signals)
+        # Vectorized valuations: v_i = alpha * s_i + beta/(N-1) * sum(s_j for j!=i)
+        signal_sum = signals.sum()
+        valuations = _val_alpha * signals + _val_beta_nm1 * (signal_sum - signals)
 
         # Choose bids
         chosen_actions = []
@@ -312,26 +337,29 @@ def run_bandit_experiment(
             if len(valid_bids) >= 2:
                 revenue_t = float(np.sort(valid_bids)[-2])
             else:
-                revenue_t = float(valid_bids[0])
-        revenues.append(revenue_t)
-        winning_bids_list.append(highest_bid)
+                revenue_t = float(reserve_price)
+        revenues[ep] = revenue_t
 
         if winner == -1:
             no_sale_count += 1
         else:
-            winners_list.append(winner)
+            winning_bids_arr[wb_count] = highest_bid
+            wb_count += 1
+            winners_arr[win_count] = winner
+            win_count += 1
             win_counts[winner] += 1
 
         # log round
-        for i in range(n_bidders):
-            round_history.append({
-                "episode": ep,
-                "bidder_id": i,
-                "signal": signals[i],
-                "chosen_bid": chosen_bids[i],
-                "reward": rew[i],
-                "is_winner": (i == winner)
-            })
+        if collect_history:
+            for i in range(n_bidders):
+                round_history.append({
+                    "episode": ep,
+                    "bidder_id": i,
+                    "signal": signals[i],
+                    "chosen_bid": chosen_bids[i],
+                    "reward": rew[i],
+                    "is_winner": (i == winner)
+                })
 
         # Update memory
         past_bids = chosen_bids
@@ -342,51 +370,43 @@ def run_bandit_experiment(
         progress_callback(current=max_rounds, total=max_rounds)
 
     # After max_rounds
-    # time_to_converge: unify with Exp.1/2 => rolling window of 1000, stay in ±5% band
+    # time_to_converge: O(n) numpy implementation
     window_size = 1000
-    import pandas as pd
-    rev_series = pd.Series(revenues)
 
-    if len(revenues) >= window_size:
-        avg_rev_last_1000 = np.mean(revenues[-window_size:])
+    if max_rounds >= window_size:
+        avg_rev_last_1000 = float(np.mean(revenues[-window_size:]))
     else:
-        avg_rev_last_1000 = np.mean(revenues)
+        avg_rev_last_1000 = float(np.mean(revenues))
 
-    roll_avg = rev_series.rolling(window=window_size).mean()
     final_rev = avg_rev_last_1000
     lower_band = 0.95 * final_rev
     upper_band = 1.05 * final_rev
-    time_to_converge = max_rounds
-    for t in range(len(revenues) - window_size):
-        window_val = roll_avg.iloc[t + window_size - 1]
-        if lower_band <= window_val <= upper_band:
-            stay_in_band = True
-            for j in range(t + window_size, len(revenues) - window_size):
-                v_j = roll_avg.iloc[j + window_size - 1]
-                if not (lower_band <= v_j <= upper_band):
-                    stay_in_band = False
-                    break
-            if stay_in_band:
-                time_to_converge = t + window_size
-                break
+    if max_rounds >= window_size:
+        roll_avg = np.convolve(revenues, np.ones(window_size) / window_size, mode='valid')
+        in_band = (roll_avg >= lower_band) & (roll_avg <= upper_band)
+        out_of_band = np.where(~in_band)[0]
+        if len(out_of_band) == 0:
+            time_to_converge = window_size
+        elif out_of_band[-1] < len(in_band) - 1:
+            time_to_converge = int(out_of_band[-1]) + 1 + window_size
+        else:
+            time_to_converge = max_rounds
+    else:
+        time_to_converge = max_rounds
 
-    # average regret
-    regrets = [1.0 - r for r in revenues]
-    avg_regret_seller = np.mean(regrets)
-
-    # no_sale_rate
+    avg_regret_seller = float(np.mean(1.0 - revenues))
     no_sale_rate = no_sale_count / max_rounds
 
-    # price_volatility
-    price_volatility = np.std(winning_bids_list) if len(winning_bids_list) else 0.0
+    winning_bids_list = winning_bids_arr[:wb_count]
+    price_volatility = float(np.std(winning_bids_list)) if wb_count > 0 else 0.0
 
-    # winner_entropy
-    if len(winners_list) == 0:
+    winners_list = winners_arr[:win_count]
+    if win_count == 0:
         winner_entropy = 0.0
     else:
         unique_winners, counts = np.unique(winners_list, return_counts=True)
         p = counts / counts.sum()
-        winner_entropy = -np.sum(p * np.log(p + 1e-12))
+        winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
 
     summary = {
         "avg_rev_last_1000": avg_rev_last_1000,

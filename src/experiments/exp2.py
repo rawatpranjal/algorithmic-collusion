@@ -137,11 +137,13 @@ def run_experiment(
     # Initialize Q-tables (zeros)
     Q = np.zeros((n_bidders, n_states, n_bid_actions))
 
-    # Tracking
-    revenues = []
-    winning_bids_list = []
+    # Tracking (pre-allocated arrays for performance)
+    revenues = np.empty(episodes)
+    winning_bids_arr = np.empty(episodes)
+    wb_count = 0
+    winners_arr = np.empty(episodes, dtype=int)
+    win_count = 0
     no_sale_count = 0
-    winners_list = []
 
     # Epsilon schedule: linear decay from 1.0 to 0.0 over 90% of episodes
     eps_start, eps_end = 1.0, 0.0
@@ -176,11 +178,11 @@ def run_experiment(
         signals = np.random.uniform(0, 1, size=n_bidders)
         signal_bins = np.round(signals * (n_signal_bins - 1)).astype(int)
 
-        # Valuations from continuous signals
-        valuations = np.zeros(n_bidders)
-        for i in range(n_bidders):
-            others = np.delete(signals, i)
-            valuations[i] = get_valuation(eta, signals[i], others)
+        # Valuations from continuous signals (vectorized)
+        signal_sum = signals.sum()
+        _alpha = 1.0 - 0.5 * eta
+        _beta_nm1 = (0.5 * eta) / max(n_bidders - 1, 1)
+        valuations = _alpha * signals + _beta_nm1 * (signal_sum - signals)
 
         # Construct states
         if state_info == "signal_winner":
@@ -210,16 +212,18 @@ def run_experiment(
                 sorted_valid = np.sort(valid_bids)
                 revenue_t = float(sorted_valid[-2])
             elif len(valid_bids) == 1:
-                revenue_t = float(valid_bids[0])
+                revenue_t = float(reserve_price)
             else:
                 revenue_t = 0.0
-        revenues.append(revenue_t)
-        winning_bids_list.append(winner_bid_val)
+        revenues[ep] = revenue_t
 
         if winner == -1:
             no_sale_count += 1
         else:
-            winners_list.append(winner)
+            winning_bids_arr[wb_count] = winner_bid_val
+            wb_count += 1
+            winners_arr[win_count] = winner
+            win_count += 1
 
         # Track final-window detailed data
         in_final_window = ep >= (episodes - window_size)
@@ -238,7 +242,7 @@ def run_experiment(
                         sorted_valid = np.sort(valid_bids)
                         final_window_payments.append(sorted_valid[-2])
                     else:
-                        final_window_payments.append(bids[winner])
+                        final_window_payments.append(reserve_price)
             else:
                 final_window_payments.append(0.0)
 
@@ -282,31 +286,30 @@ def run_experiment(
     # --- Carried-forward metrics ---
     avg_rev_last_1000 = float(np.mean(revenues[-window_size:]))
 
-    # Time to converge
-    rev_series = pd.Series(revenues)
-    roll_avg = rev_series.rolling(window=window_size).mean()
+    # Time to converge: O(n) numpy implementation
     final_rev = avg_rev_last_1000
     lower_band = 0.95 * final_rev
     upper_band = 1.05 * final_rev
-    time_to_converge = episodes
-    for t in range(len(revenues) - window_size):
-        window_val = roll_avg.iloc[t + window_size - 1]
-        if lower_band <= window_val <= upper_band:
-            stay_in_band = True
-            for j in range(t + window_size, len(revenues) - window_size):
-                v_j = roll_avg.iloc[j + window_size - 1]
-                if not (lower_band <= v_j <= upper_band):
-                    stay_in_band = False
-                    break
-            if stay_in_band:
-                time_to_converge = t + window_size
-                break
+    if episodes >= window_size:
+        roll_avg = np.convolve(revenues, np.ones(window_size) / window_size, mode='valid')
+        in_band = (roll_avg >= lower_band) & (roll_avg <= upper_band)
+        out_of_band = np.where(~in_band)[0]
+        if len(out_of_band) == 0:
+            time_to_converge = window_size
+        elif out_of_band[-1] < len(in_band) - 1:
+            time_to_converge = int(out_of_band[-1]) + 1 + window_size
+        else:
+            time_to_converge = episodes
+    else:
+        time_to_converge = episodes
 
     no_sale_rate = no_sale_count / episodes
 
-    price_volatility = float(np.std(winning_bids_list))
+    winning_bids_list = winning_bids_arr[:wb_count]
+    price_volatility = float(np.std(winning_bids_list)) if wb_count > 0 else 0.0
 
-    if len(winners_list) == 0:
+    winners_list = winners_arr[:win_count]
+    if win_count == 0:
         winner_entropy = 0.0
     else:
         unique_winners, counts = np.unique(winners_list, return_counts=True)

@@ -127,6 +127,7 @@ def run_experiment(
     seed=0,
     store_qtables=False, qtable_folder=None,
     progress_callback=None,
+    collect_history=False,
 ):
     """
     Q-learning experiment with constant valuations (v_i = 1.0):
@@ -152,12 +153,14 @@ def run_experiment(
     else:  # "zeros"
         Q = np.zeros((n_bidders, n_states, n_actions))
 
-    # Stats
-    revenues = []
-    winning_bids_list = []
+    # Stats (pre-allocated arrays for performance)
+    revenues = np.empty(episodes)
+    winning_bids_arr = np.empty(episodes)
+    wb_count = 0
+    winners_arr = np.empty(episodes, dtype=int)
+    win_count = 0
     round_history = []
     no_sale_count = 0
-    winners_list = []
 
     eps_start = 1.0
     eps_end = 0.01  # floor for exponential decay (avoids log(0))
@@ -232,14 +235,16 @@ def run_experiment(
             if len(valid_bids) >= 2:
                 revenue_t = float(np.sort(valid_bids)[-2])
             else:
-                revenue_t = float(valid_bids[0])
-        revenues.append(revenue_t)
-        winning_bids_list.append(winner_bid_val)
+                revenue_t = float(reserve_price)
+        revenues[ep] = revenue_t
 
         if winner == -1:
             no_sale_count += 1
         else:
-            winners_list.append(winner)
+            winning_bids_arr[wb_count] = winner_bid_val
+            wb_count += 1
+            winners_arr[win_count] = winner
+            win_count += 1
 
         # Next state
         next_winner_val = winner_bid_val if winner != -1 else 0.0
@@ -266,15 +271,16 @@ def run_experiment(
                 Q[i, s, chosen_actions[i]] = old_q + alpha * (td_target - old_q)
 
         # Log each episode
-        for i in range(n_bidders):
-            round_history.append({
-                "episode": ep,
-                "bidder_id": i,
-                "bid": bids[i],
-                "reward": rew[i],
-                "is_winner": (i == winner),
-                "valuation": valuations[i]
-            })
+        if collect_history:
+            for i in range(n_bidders):
+                round_history.append({
+                    "episode": ep,
+                    "bidder_id": i,
+                    "bid": bids[i],
+                    "reward": rew[i],
+                    "is_winner": (i == winner),
+                    "valuation": valuations[i]
+                })
 
         # Advance
         past_winner_bid = winner_bid_val if winner != -1 else 0.0
@@ -295,40 +301,39 @@ def run_experiment(
 
     # Summaries
     window_size = 1000
-    if len(revenues) >= window_size:
-        avg_rev_last_1000 = np.mean(revenues[-window_size:])
+    if episodes >= window_size:
+        avg_rev_last_1000 = float(np.mean(revenues[-window_size:]))
     else:
-        avg_rev_last_1000 = np.mean(revenues)
+        avg_rev_last_1000 = float(np.mean(revenues))
 
-    rev_series = pd.Series(revenues)
-    roll_avg = rev_series.rolling(window=window_size).mean()
+    # Time to converge: O(n) numpy implementation
     final_rev = avg_rev_last_1000
     lower_band = 0.95 * final_rev
     upper_band = 1.05 * final_rev
-    time_to_converge = episodes
-    for t in range(len(revenues) - window_size):
-        window_val = roll_avg.iloc[t + window_size - 1]
-        if lower_band <= window_val <= upper_band:
-            stay_in_band = True
-            for j in range(t + window_size, len(revenues) - window_size):
-                v_j = roll_avg.iloc[j + window_size - 1]
-                if not (lower_band <= v_j <= upper_band):
-                    stay_in_band = False
-                    break
-            if stay_in_band:
-                time_to_converge = t + window_size
-                break
+    if episodes >= window_size:
+        roll_avg = np.convolve(revenues, np.ones(window_size) / window_size, mode='valid')
+        in_band = (roll_avg >= lower_band) & (roll_avg <= upper_band)
+        out_of_band = np.where(~in_band)[0]
+        if len(out_of_band) == 0:
+            time_to_converge = window_size
+        elif out_of_band[-1] < len(in_band) - 1:
+            time_to_converge = int(out_of_band[-1]) + 1 + window_size
+        else:
+            time_to_converge = episodes
+    else:
+        time_to_converge = episodes
 
-    regrets = [1.0 - r for r in revenues]
-    avg_regret_of_seller = np.mean(regrets)
+    avg_regret_of_seller = float(np.mean(1.0 - revenues))
     no_sale_rate = no_sale_count / episodes
-    price_volatility = np.std(winning_bids_list)
-    if len(winners_list) == 0:
+    winning_bids_list = winning_bids_arr[:wb_count]
+    price_volatility = float(np.std(winning_bids_list)) if wb_count > 0 else 0.0
+    winners_list = winners_arr[:win_count]
+    if win_count == 0:
         winner_entropy = 0.0
     else:
         unique_winners, counts = np.unique(winners_list, return_counts=True)
         p = counts / counts.sum()
-        winner_entropy = -np.sum(p * np.log(p + 1e-12))
+        winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
 
     summary = {
         "avg_rev_last_1000": avg_rev_last_1000,

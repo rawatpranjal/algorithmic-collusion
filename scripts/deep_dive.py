@@ -107,7 +107,7 @@ class DeepDiveResult:
 def run_exp1(params, seed):
     from experiments.exp1 import run_experiment, theoretical_revenue_constant_valuation
 
-    summary, revenues, round_history, Q = run_experiment(**params, seed=seed)
+    summary, revenues, round_history, Q = run_experiment(**params, seed=seed, collect_history=True)
     bne_rev = theoretical_revenue_constant_valuation(
         params["n_bidders"], params["auction_type"]
     )
@@ -144,7 +144,7 @@ def run_exp2(params, seed):
 def run_exp3(params, seed):
     from experiments.exp3 import run_bandit_experiment, simulate_linear_affiliation_revenue
 
-    summary, revenues, round_history, bandits = run_bandit_experiment(**params, seed=seed)
+    summary, revenues, round_history, bandits = run_bandit_experiment(**params, seed=seed, collect_history=True)
     bne_rev = simulate_linear_affiliation_revenue(
         params["n_bidders"], params["eta"], params["auction_type"], M=50_000,
     )
@@ -232,8 +232,6 @@ def _save_final_state(result: DeepDiveResult, state_dir: str):
                     "mu": agent.mu,
                     "budget": agent.budget,
                     "mu_history": agent.mu_history,
-                    "bid_history": agent.bid_history,
-                    "payment_history": getattr(agent, "payment_history", []),
                 }
                 with open(os.path.join(state_dir, f"agent_{i}.json"), "w") as f:
                     json.dump(agent_data, f, indent=2, default=float)
@@ -590,15 +588,7 @@ def _verbose_exp4(result):
             mu_arr = np.array(agent.mu_history)
             print(f"    Mu history (last episode): mean={mu_arr.mean():.4f}, "
                   f"std={mu_arr.std():.4f}, final={mu_arr[-1]:.4f}")
-        if agent.bid_history:
-            bid_arr = np.array(agent.bid_history)
-            print(f"    Bid history (last episode): mean={bid_arr.mean():.4f}, "
-                  f"std={bid_arr.std():.4f}")
-        if hasattr(agent, "payment_history") and agent.payment_history:
-            pay_arr = np.array(agent.payment_history)
-            total_pay = pay_arr.sum()
-            print(f"    Total payments (last episode): {total_pay:.4f}")
-            print(f"    Budget utilization: {total_pay / agent.budget:.2%}" if agent.budget > 0 else "")
+        print(f"    Budget utilization: {agent.cumulative_spend / agent.budget:.2%}" if agent.budget > 0 else "")
 
     # Episode-level stats
     if episode_data:
