@@ -1,27 +1,27 @@
 === Factorial Analysis: Experiment 2 ===
-Observations: 48
+Observations: 192
 Factors (5): ['auction_type_coded', 'eta_linear_coded', 'eta_quadratic_coded', 'n_bidders_coded', 'state_info_coded']
 Responses: ['avg_rev_last_1000', 'time_to_converge', 'no_sale_rate', 'price_volatility', 'winner_entropy', 'excess_regret', 'efficient_regret', 'btv_median', 'winners_curse_freq', 'bid_dispersion', 'signal_slope_ratio']
 
 === Summary Statistics ===
-|                     |   count |       mean |        std |       min |        25% |        50% |        75% |        max |
-|---------------------|---------|------------|------------|-----------|------------|------------|------------|------------|
-| auction_type_coded  | 48.0000 |     0.0000 |     1.0106 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
-| eta_linear_coded    | 48.0000 |     0.0000 |     0.8251 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
-| eta_quadratic_coded | 48.0000 |     0.0000 |     1.4292 |   -2.0000 |    -2.0000 |     1.0000 |     1.0000 |     1.0000 |
-| n_bidders_coded     | 48.0000 |     0.0000 |     1.0106 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
-| state_info_coded    | 48.0000 |     0.0000 |     1.0106 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
-| avg_rev_last_1000   | 48.0000 |     0.4622 |     0.1479 |    0.2821 |     0.3312 |     0.4121 |     0.5834 |     0.7222 |
-| time_to_converge    | 48.0000 | 84603.8750 | 19955.9548 | 1000.0000 | 84921.0000 | 87903.0000 | 96311.5000 | 99341.0000 |
-| no_sale_rate        | 48.0000 |     0.0000 |     0.0000 |    0.0000 |     0.0000 |     0.0000 |     0.0000 |     0.0000 |
-| price_volatility    | 48.0000 |     0.1981 |     0.0475 |    0.1242 |     0.1504 |     0.2102 |     0.2416 |     0.2672 |
-| winner_entropy      | 48.0000 |     1.2418 |     0.5549 |    0.6884 |     0.6931 |     1.2408 |     1.7914 |     1.7917 |
-| excess_regret       | 48.0000 |     0.0459 |     0.0673 |   -0.0635 |    -0.0001 |     0.0212 |     0.1046 |     0.1780 |
-| efficient_regret    | 48.0000 |     0.3162 |     0.1382 |    0.1117 |     0.2220 |     0.2886 |     0.4372 |     0.5769 |
-| btv_median          | 48.0000 |     0.7207 |     0.1534 |    0.4134 |     0.5784 |     0.7611 |     0.8547 |     0.9207 |
-| winners_curse_freq  | 48.0000 |     0.1182 |     0.0731 |    0.0020 |     0.0550 |     0.1315 |     0.1663 |     0.2560 |
-| bid_dispersion      | 48.0000 |     0.1750 |     0.0639 |    0.0766 |     0.1323 |     0.1695 |     0.2247 |     0.2931 |
-| signal_slope_ratio  | 48.0000 |     0.8219 |     0.1834 |    0.4087 |     0.6742 |     0.8478 |     0.9552 |     1.1283 |
+|                     |    count |       mean |        std |       min |        25% |        50% |        75% |        max |
+|---------------------|----------|------------|------------|-----------|------------|------------|------------|------------|
+| auction_type_coded  | 192.0000 |     0.0000 |     1.0026 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
+| eta_linear_coded    | 192.0000 |     0.0000 |     0.8186 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
+| eta_quadratic_coded | 192.0000 |     0.0000 |     1.4179 |   -2.0000 |    -2.0000 |     1.0000 |     1.0000 |     1.0000 |
+| n_bidders_coded     | 192.0000 |     0.0000 |     1.0026 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
+| state_info_coded    | 192.0000 |     0.0000 |     1.0026 |   -1.0000 |    -1.0000 |     0.0000 |     1.0000 |     1.0000 |
+| avg_rev_last_1000   | 192.0000 |     0.4626 |     0.1471 |    0.2783 |     0.3258 |     0.4177 |     0.5866 |     0.7236 |
+| time_to_converge    | 192.0000 | 84431.5417 | 17671.5678 | 1000.0000 | 83071.5000 | 87482.0000 | 93993.2500 | 99451.0000 |
+| no_sale_rate        | 192.0000 |     0.0000 |     0.0000 |    0.0000 |     0.0000 |     0.0000 |     0.0000 |     0.0000 |
+| price_volatility    | 192.0000 |     0.1980 |     0.0472 |    0.1217 |     0.1504 |     0.2086 |     0.2415 |     0.2684 |
+| winner_entropy      | 192.0000 |     1.2419 |     0.5504 |    0.6884 |     0.6931 |     1.2405 |     1.7912 |     1.7917 |
+| excess_regret       | 192.0000 |     0.0455 |     0.0687 |   -0.0969 |    -0.0032 |     0.0262 |     0.1094 |     0.1780 |
+| efficient_regret    | 192.0000 |     0.3153 |     0.1393 |    0.1045 |     0.2152 |     0.2820 |     0.4415 |     0.5826 |
+| btv_median          | 192.0000 |     0.7194 |     0.1516 |    0.4044 |     0.5868 |     0.7611 |     0.8478 |     0.9207 |
+| winners_curse_freq  | 192.0000 |     0.1167 |     0.0697 |    0.0000 |     0.0560 |     0.1290 |     0.1673 |     0.2560 |
+| bid_dispersion      | 192.0000 |     0.1753 |     0.0636 |    0.0743 |     0.1279 |     0.1679 |     0.2268 |     0.2954 |
+| signal_slope_ratio  | 192.0000 |     0.8164 |     0.1833 |    0.3746 |     0.6738 |     0.8422 |     0.9535 |     1.1290 |
 
 
 ============================================================
@@ -31,73 +31,81 @@ RESPONSE: avg_rev_last_1000
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      avg_rev_last_1000   R-squared:                       0.461
-Model:                            OLS   Adj. R-squared:                  0.232
-Method:                 Least Squares   F-statistic:                     2.015
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):             0.0488
-Time:                        03:25:56   Log-Likelihood:                 38.970
-No. Observations:                  48   AIC:                            -47.94
-Df Residuals:                      33   BIC:                            -19.87
+Dep. Variable:      avg_rev_last_1000   R-squared:                       0.996
+Model:                            OLS   Adj. R-squared:                  0.996
+Method:                 Least Squares   F-statistic:                     3155.
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):          4.05e-204
+Time:                        10:11:43   Log-Likelihood:                 626.38
+No. Observations:                 192   AIC:                            -1223.
+Df Residuals:                     177   BIC:                            -1174.
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.4622      0.019     24.713      0.000       0.424       0.500
-auction_type_coded                         0.0306      0.019      1.637      0.111      -0.007       0.069
-eta_linear_coded                          -0.0184      0.011     -1.605      0.118      -0.042       0.005
-eta_quadratic_coded                       -0.0019      0.013     -0.146      0.885      -0.029       0.025
-n_bidders_coded                            0.0319      0.019      1.704      0.098      -0.006       0.070
-state_info_coded                           0.0069      0.019      0.367      0.716      -0.031       0.045
-auction_type_coded:eta_linear_coded        0.0072      0.023      0.316      0.754      -0.039       0.054
-auction_type_coded:eta_quadratic_coded     0.0221      0.013      1.668      0.105      -0.005       0.049
-auction_type_coded:n_bidders_coded        -0.0131      0.019     -0.701      0.488      -0.051       0.025
-auction_type_coded:state_info_coded       -0.0428      0.019     -2.289      0.029      -0.081      -0.005
-eta_linear_coded:eta_quadratic_coded      -0.0184      0.011     -1.605      0.118      -0.042       0.005
-eta_linear_coded:n_bidders_coded           0.0156      0.023      0.683      0.499      -0.031       0.062
-eta_linear_coded:state_info_coded         -0.0295      0.023     -1.286      0.207      -0.076       0.017
-eta_quadratic_coded:n_bidders_coded       -0.0195      0.013     -1.476      0.149      -0.046       0.007
-eta_quadratic_coded:state_info_coded       0.0178      0.013      1.348      0.187      -0.009       0.045
-n_bidders_coded:state_info_coded           0.0425      0.019      2.273      0.030       0.004       0.081
+Intercept                                  0.4626      0.001    664.128      0.000       0.461       0.464
+auction_type_coded                         0.0036      0.001      5.162      0.000       0.002       0.005
+eta_linear_coded                          -0.0147      0.000    -34.478      0.000      -0.016      -0.014
+eta_quadratic_coded                       -0.0010      0.000     -2.035      0.043      -0.002   -3.03e-05
+n_bidders_coded                            0.1368      0.001    196.454      0.000       0.135       0.138
+state_info_coded                          -0.0260      0.001    -37.334      0.000      -0.027      -0.025
+auction_type_coded:eta_linear_coded       -0.0064      0.001     -7.467      0.000      -0.008      -0.005
+auction_type_coded:eta_quadratic_coded     0.0002      0.000      0.434      0.665      -0.001       0.001
+auction_type_coded:n_bidders_coded        -0.0019      0.001     -2.773      0.006      -0.003      -0.001
+auction_type_coded:state_info_coded       -0.0008      0.001     -1.173      0.242      -0.002       0.001
+eta_linear_coded:eta_quadratic_coded      -0.0147      0.000    -34.478      0.000      -0.016      -0.014
+eta_linear_coded:n_bidders_coded          -0.0431      0.001    -50.491      0.000      -0.045      -0.041
+eta_linear_coded:state_info_coded          0.0002      0.001      0.240      0.810      -0.001       0.002
+eta_quadratic_coded:n_bidders_coded       -0.0003      0.000     -0.710      0.478      -0.001       0.001
+eta_quadratic_coded:state_info_coded      -0.0004      0.000     -0.861      0.390      -0.001       0.001
+n_bidders_coded:state_info_coded          -0.0131      0.001    -18.791      0.000      -0.014      -0.012
 ==============================================================================
-Omnibus:                        0.053   Durbin-Watson:                   1.935
-Prob(Omnibus):                  0.974   Jarque-Bera (JB):                0.224
-Skew:                          -0.054   Prob(JB):                        0.894
-Kurtosis:                       2.683   Cond. No.                     7.74e+15
+Omnibus:                        2.400   Durbin-Watson:                   2.083
+Prob(Omnibus):                  0.301   Jarque-Bera (JB):                2.014
+Skew:                          -0.179   Prob(JB):                        0.365
+Kurtosis:                       3.351   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.4609
-Adj R² = 0.2321
+R² = 0.9960
+Adj R² = 0.9957
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|----------|---------|----------|----------|
-| Intercept                              |  10.2546 |  1.0000 | 610.7340 |   0.0000 |
-| auction_type_coded                     |   0.0450 |  1.0000 |   2.6801 |   0.1111 |
-| eta_linear_coded                       |   0.0432 |  1.0000 |   2.5746 |   0.1181 |
-| eta_quadratic_coded                    |   0.0004 |  1.0000 |   0.0212 |   0.8850 |
-| n_bidders_coded                        |   0.0488 |  1.0000 |   2.9035 |   0.0978 |
-| state_info_coded                       |   0.0023 |  1.0000 |   0.1348 |   0.7158 |
-| auction_type_coded:eta_linear_coded    |   0.0017 |  1.0000 |   0.0996 |   0.7543 |
-| auction_type_coded:eta_quadratic_coded |   0.0467 |  1.0000 |   2.7811 |   0.1048 |
-| auction_type_coded:n_bidders_coded     |   0.0083 |  1.0000 |   0.4915 |   0.4882 |
-| auction_type_coded:state_info_coded    |   0.0880 |  1.0000 |   5.2406 |   0.0286 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0432 |  1.0000 |   2.5746 |   0.1181 |
-| eta_linear_coded:n_bidders_coded       |   0.0078 |  1.0000 |   0.4663 |   0.4995 |
-| eta_linear_coded:state_info_coded      |   0.0278 |  1.0000 |   1.6538 |   0.2074 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0366 |  1.0000 |   2.1779 |   0.1495 |
-| eta_quadratic_coded:state_info_coded   |   0.0305 |  1.0000 |   1.8165 |   0.1869 |
-| n_bidders_coded:state_info_coded       |   0.0868 |  1.0000 |   5.1671 |   0.0297 |
-| Residual                               |   0.5541 | 33.0000 | nan      | nan      |
+|                                        |   sum_sq |       df |           F |   PR(>F) |
+|----------------------------------------|----------|----------|-------------|----------|
+| Intercept                              |  41.0824 |   1.0000 | 441065.4440 |   0.0000 |
+| auction_type_coded                     |   0.0025 |   1.0000 |     26.6508 |   0.0000 |
+| eta_linear_coded                       |   0.1107 |   1.0000 |   1188.7129 |   0.0000 |
+| eta_quadratic_coded                    |   0.0004 |   1.0000 |      4.1409 |   0.0433 |
+| n_bidders_coded                        |   3.5948 |   1.0000 |  38594.1169 |   0.0000 |
+| state_info_coded                       |   0.1298 |   1.0000 |   1393.8130 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0052 |   1.0000 |     55.7630 |   0.0000 |
+| auction_type_coded:eta_quadratic_coded |   0.0000 |   1.0000 |      0.1887 |   0.6645 |
+| auction_type_coded:n_bidders_coded     |   0.0007 |   1.0000 |      7.6895 |   0.0061 |
+| auction_type_coded:state_info_coded    |   0.0001 |   1.0000 |      1.3757 |   0.2424 |
+| eta_linear_coded:eta_quadratic_coded   |   0.1107 |   1.0000 |   1188.7129 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.2375 |   1.0000 |   2549.2996 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0000 |   1.0000 |      0.0577 |   0.8104 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0000 |   1.0000 |      0.5045 |   0.4785 |
+| eta_quadratic_coded:state_info_coded   |   0.0001 |   1.0000 |      0.7411 |   0.3905 |
+| n_bidders_coded:state_info_coded       |   0.0329 |   1.0000 |    353.1128 |   0.0000 |
+| Residual                               |   0.0165 | 177.0000 |    nan      | nan      |
 
---- Significant Effects (p < 0.05): 2 ---
-  auction_type:state_info                  coef=-0.0428  p=0.0286
-  n_bidders:state_info                     coef=+0.0425  p=0.0297
+--- Significant Effects (p < 0.05): 10 ---
+  n_bidders                                coef=+0.1368  p=0.0000
+  eta_linear:n_bidders                     coef=-0.0431  p=0.0000
+  state_info                               coef=-0.0260  p=0.0000
+  eta_linear                               coef=-0.0147  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0147  p=0.0000
+  n_bidders:state_info                     coef=-0.0131  p=0.0000
+  auction_type:eta_linear                  coef=-0.0064  p=0.0000
+  auction_type                             coef=+0.0036  p=0.0000
+  auction_type:n_bidders                   coef=-0.0019  p=0.0061
+  eta_quadratic                            coef=-0.0010  p=0.0433
 
   Plots saved to results/exp2/
 
@@ -108,72 +116,82 @@ RESPONSE: time_to_converge
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:       time_to_converge   R-squared:                       0.378
-Model:                            OLS   Adj. R-squared:                  0.114
-Method:                 Least Squares   F-statistic:                     1.433
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):              0.193
-Time:                        03:25:57   Log-Likelihood:                -531.46
-No. Observations:                  48   AIC:                             1093.
-Df Residuals:                      33   BIC:                             1121.
+Dep. Variable:       time_to_converge   R-squared:                       0.649
+Model:                            OLS   Adj. R-squared:                  0.621
+Method:                 Least Squares   F-statistic:                     23.36
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):           3.93e-33
+Time:                        10:11:44   Log-Likelihood:                -2049.2
+No. Observations:                 192   AIC:                             4128.
+Df Residuals:                     177   BIC:                             4177.
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                8.46e+04   2710.721     31.211      0.000    7.91e+04    9.01e+04
-auction_type_coded                       519.8750   2710.721      0.192      0.849   -4995.129    6034.879
-eta_linear_coded                        1217.8281   1659.971      0.734      0.468   -2159.408    4595.065
-eta_quadratic_coded                    -1042.2813   1916.769     -0.544      0.590   -4941.978    2857.415
-n_bidders_coded                         -723.7083   2710.721     -0.267      0.791   -6238.712    4791.296
-state_info_coded                         532.0833   2710.721      0.196      0.846   -4982.921    6047.087
-auction_type_coded:eta_linear_coded    -6769.8437   3319.942     -2.039      0.050   -1.35e+04     -15.371
-auction_type_coded:eta_quadratic_coded -1571.0313   1916.769     -0.820      0.418   -5470.728    2328.665
-auction_type_coded:n_bidders_coded     -4538.6250   2710.721     -1.674      0.104   -1.01e+04     976.379
-auction_type_coded:state_info_coded     5439.8333   2710.721      2.007      0.053     -75.171     1.1e+04
-eta_linear_coded:eta_quadratic_coded    1217.8281   1659.971      0.734      0.468   -2159.408    4595.065
-eta_linear_coded:n_bidders_coded       -6519.4062   3319.942     -1.964      0.058   -1.33e+04     235.067
-eta_linear_coded:state_info_coded       5003.2812   3319.942      1.507      0.141   -1751.192    1.18e+04
-eta_quadratic_coded:n_bidders_coded     -186.0104   1916.769     -0.097      0.923   -4085.707    3713.686
-eta_quadratic_coded:state_info_coded   -1789.3646   1916.769     -0.934      0.357   -5689.061    2110.332
-n_bidders_coded:state_info_coded        1754.0833   2710.721      0.647      0.522   -3760.921    7269.087
+Intercept                               8.443e+04    785.101    107.542      0.000    8.29e+04     8.6e+04
+auction_type_coded                      2651.9479    785.101      3.378      0.001    1102.585    4201.311
+eta_linear_coded                        2662.6680    480.774      5.538      0.000    1713.881    3611.455
+eta_quadratic_coded                     -965.8307    555.150     -1.740      0.084   -2061.396     129.735
+n_bidders_coded                        -7490.5521    785.101     -9.541      0.000   -9039.915   -5941.189
+state_info_coded                        4343.8542    785.101      5.533      0.000    2794.491    5893.217
+auction_type_coded:eta_linear_coded    -2341.8516    961.548     -2.436      0.016   -4239.426    -444.277
+auction_type_coded:eta_quadratic_coded   764.8568    555.150      1.378      0.170    -330.708    1860.422
+auction_type_coded:n_bidders_coded      4829.7500    785.101      6.152      0.000    3280.387    6379.113
+auction_type_coded:state_info_coded    -2909.7396    785.101     -3.706      0.000   -4459.103   -1360.376
+eta_linear_coded:eta_quadratic_coded    2662.6680    480.774      5.538      0.000    1713.881    3611.455
+eta_linear_coded:n_bidders_coded        5512.1328    961.548      5.733      0.000    3614.558    7409.707
+eta_linear_coded:state_info_coded      -3246.1484    961.548     -3.376      0.001   -5143.723   -1348.574
+eta_quadratic_coded:n_bidders_coded     -414.2526    555.150     -0.746      0.457   -1509.818     681.313
+eta_quadratic_coded:state_info_coded     881.0286    555.150      1.587      0.114    -214.537    1976.594
+n_bidders_coded:state_info_coded        5742.8438    785.101      7.315      0.000    4193.481    7292.207
 ==============================================================================
-Omnibus:                       20.928   Durbin-Watson:                   1.814
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):               49.385
-Skew:                          -1.094   Prob(JB):                     1.89e-11
-Kurtosis:                       7.461   Cond. No.                     7.74e+15
+Omnibus:                       41.839   Durbin-Watson:                   2.151
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              384.520
+Skew:                          -0.410   Prob(JB):                     3.18e-84
+Kurtosis:                       9.884   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.3782
-Adj R² = 0.1143
+R² = 0.6488
+Adj R² = 0.6210
 
 --- ANOVA Table (Type III) ---
-|                                        |            sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|-------------------|---------|----------|----------|
-| Intercept                              | 343575151920.7500 |  1.0000 | 974.1162 |   0.0000 |
-| auction_type_coded                     |     12972960.7500 |  1.0000 |   0.0368 |   0.8491 |
-| eta_linear_coded                       |    189837483.7812 |  1.0000 |   0.5382 |   0.4683 |
-| eta_quadratic_coded                    |    104289619.5938 |  1.0000 |   0.2957 |   0.5903 |
-| n_bidders_coded                        |     25140180.0833 |  1.0000 |   0.0713 |   0.7911 |
-| state_info_coded                       |     13589408.3333 |  1.0000 |   0.0385 |   0.8456 |
-| auction_type_coded:eta_linear_coded    |   1466585100.7812 |  1.0000 |   4.1581 |   0.0495 |
-| auction_type_coded:eta_quadratic_coded |    236941362.0938 |  1.0000 |   0.6718 |   0.4183 |
-| auction_type_coded:n_bidders_coded     |    988757610.7500 |  1.0000 |   2.8034 |   0.1035 |
-| auction_type_coded:state_info_coded    |   1420405761.3333 |  1.0000 |   4.0272 |   0.0530 |
-| eta_linear_coded:eta_quadratic_coded   |    189837483.7812 |  1.0000 |   0.5382 |   0.4683 |
-| eta_linear_coded:n_bidders_coded       |   1360085051.2812 |  1.0000 |   3.8562 |   0.0580 |
-| eta_linear_coded:state_info_coded      |    801050344.5312 |  1.0000 |   2.2712 |   0.1413 |
-| eta_quadratic_coded:n_bidders_coded    |      3321588.0104 |  1.0000 |   0.0094 |   0.9233 |
-| eta_quadratic_coded:state_info_coded   |    307375258.7604 |  1.0000 |   0.8715 |   0.3573 |
-| n_bidders_coded:state_info_coded       |    147686800.3333 |  1.0000 |   0.4187 |   0.5220 |
-| Residual                               |  11639247684.8333 | 33.0000 | nan      | nan      |
+|                                        |             sum_sq |       df |          F |   PR(>F) |
+|----------------------------------------|--------------------|----------|------------|----------|
+| Intercept                              | 1368707563816.3325 |   1.0000 | 11565.3391 |   0.0000 |
+| auction_type_coded                     |    1350302928.5208 |   1.0000 |    11.4098 |   0.0009 |
+| eta_linear_coded                       |    3629977964.4453 |   1.0000 |    30.6727 |   0.0000 |
+| eta_quadratic_coded                    |     358206335.0026 |   1.0000 |     3.0268 |   0.0836 |
+| n_bidders_coded                        |   10772807138.5208 |   1.0000 |    91.0283 |   0.0000 |
+| state_info_coded                       |    3622861252.0832 |   1.0000 |    30.6125 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |     701986398.8203 |   1.0000 |     5.9317 |   0.0159 |
+| auction_type_coded:eta_quadratic_coded |     224642257.8776 |   1.0000 |     1.8982 |   0.1700 |
+| auction_type_coded:n_bidders_coded     |    4478685132.0000 |   1.0000 |    37.8441 |   0.0000 |
+| auction_type_coded:state_info_coded    |    1625584213.0208 |   1.0000 |    13.7359 |   0.0003 |
+| eta_linear_coded:eta_quadratic_coded   |    3629977964.4453 |   1.0000 |    30.6727 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |    3889101842.2578 |   1.0000 |    32.8622 |   0.0000 |
+| eta_linear_coded:state_info_coded      |    1348797398.8203 |   1.0000 |    11.3971 |   0.0009 |
+| eta_quadratic_coded:n_bidders_coded    |      65896404.5026 |   1.0000 |     0.5568 |   0.4565 |
+| eta_quadratic_coded:state_info_coded   |     298065206.3151 |   1.0000 |     2.5186 |   0.1143 |
+| n_bidders_coded:state_info_coded       |    6332208832.6875 |   1.0000 |    53.5061 |   0.0000 |
+| Residual                               |   20947179956.7917 | 177.0000 |   nan      | nan      |
 
---- Significant Effects (p < 0.05): 1 ---
-  auction_type:eta_linear                  coef=-6769.8437  p=0.0495
+--- Significant Effects (p < 0.05): 11 ---
+  n_bidders                                coef=-7490.5521  p=0.0000
+  n_bidders:state_info                     coef=+5742.8438  p=0.0000
+  auction_type:n_bidders                   coef=+4829.7500  p=0.0000
+  eta_linear:n_bidders                     coef=+5512.1328  p=0.0000
+  eta_linear:eta_quadratic                 coef=+2662.6680  p=0.0000
+  eta_linear                               coef=+2662.6680  p=0.0000
+  state_info                               coef=+4343.8542  p=0.0000
+  auction_type:state_info                  coef=-2909.7396  p=0.0003
+  auction_type                             coef=+2651.9479  p=0.0009
+  eta_linear:state_info                    coef=-3246.1484  p=0.0009
+  auction_type:eta_linear                  coef=-2341.8516  p=0.0159
 
   Plots saved to results/exp2/
 
@@ -187,10 +205,10 @@ RESPONSE: no_sale_rate
 Dep. Variable:           no_sale_rate   R-squared:                         nan
 Model:                            OLS   Adj. R-squared:                    nan
 Method:                 Least Squares   F-statistic:                       nan
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):                nan
-Time:                        03:25:58   Log-Likelihood:                    inf
-No. Observations:                  48   AIC:                              -inf
-Df Residuals:                      33   BIC:                              -inf
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):                nan
+Time:                        10:11:44   Log-Likelihood:                    inf
+No. Observations:                 192   AIC:                              -inf
+Df Residuals:                     177   BIC:                              -inf
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
@@ -216,37 +234,37 @@ n_bidders_coded:state_info_coded                0          0        nan        n
 Omnibus:                          nan   Durbin-Watson:                     nan
 Prob(Omnibus):                    nan   Jarque-Bera (JB):                  nan
 Skew:                             nan   Prob(JB):                          nan
-Kurtosis:                         nan   Cond. No.                     7.74e+15
+Kurtosis:                         nan   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
 R² = nan
 Adj R² = nan
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |   F |   PR(>F) |
-|----------------------------------------|----------|---------|-----|----------|
-| Intercept                              | nan      |  1.0000 | nan |      nan |
-| auction_type_coded                     | nan      |  1.0000 | nan |      nan |
-| eta_linear_coded                       | nan      |  1.0000 | nan |      nan |
-| eta_quadratic_coded                    | nan      |  1.0000 | nan |      nan |
-| n_bidders_coded                        | nan      |  1.0000 | nan |      nan |
-| state_info_coded                       | nan      |  1.0000 | nan |      nan |
-| auction_type_coded:eta_linear_coded    | nan      |  1.0000 | nan |      nan |
-| auction_type_coded:eta_quadratic_coded | nan      |  1.0000 | nan |      nan |
-| auction_type_coded:n_bidders_coded     | nan      |  1.0000 | nan |      nan |
-| auction_type_coded:state_info_coded    | nan      |  1.0000 | nan |      nan |
-| eta_linear_coded:eta_quadratic_coded   | nan      |  1.0000 | nan |      nan |
-| eta_linear_coded:n_bidders_coded       | nan      |  1.0000 | nan |      nan |
-| eta_linear_coded:state_info_coded      | nan      |  1.0000 | nan |      nan |
-| eta_quadratic_coded:n_bidders_coded    | nan      |  1.0000 | nan |      nan |
-| eta_quadratic_coded:state_info_coded   | nan      |  1.0000 | nan |      nan |
-| n_bidders_coded:state_info_coded       | nan      |  1.0000 | nan |      nan |
-| Residual                               |   0.0000 | 33.0000 | nan |      nan |
+|                                        |   sum_sq |       df |   F |   PR(>F) |
+|----------------------------------------|----------|----------|-----|----------|
+| Intercept                              | nan      |   1.0000 | nan |      nan |
+| auction_type_coded                     | nan      |   1.0000 | nan |      nan |
+| eta_linear_coded                       | nan      |   1.0000 | nan |      nan |
+| eta_quadratic_coded                    | nan      |   1.0000 | nan |      nan |
+| n_bidders_coded                        | nan      |   1.0000 | nan |      nan |
+| state_info_coded                       | nan      |   1.0000 | nan |      nan |
+| auction_type_coded:eta_linear_coded    | nan      |   1.0000 | nan |      nan |
+| auction_type_coded:eta_quadratic_coded | nan      |   1.0000 | nan |      nan |
+| auction_type_coded:n_bidders_coded     | nan      |   1.0000 | nan |      nan |
+| auction_type_coded:state_info_coded    | nan      |   1.0000 | nan |      nan |
+| eta_linear_coded:eta_quadratic_coded   | nan      |   1.0000 | nan |      nan |
+| eta_linear_coded:n_bidders_coded       | nan      |   1.0000 | nan |      nan |
+| eta_linear_coded:state_info_coded      | nan      |   1.0000 | nan |      nan |
+| eta_quadratic_coded:n_bidders_coded    | nan      |   1.0000 | nan |      nan |
+| eta_quadratic_coded:state_info_coded   | nan      |   1.0000 | nan |      nan |
+| n_bidders_coded:state_info_coded       | nan      |   1.0000 | nan |      nan |
+| Residual                               |   0.0000 | 177.0000 | nan |      nan |
 
 --- Significant Effects (p < 0.05): 0 ---
 
@@ -259,74 +277,83 @@ RESPONSE: price_volatility
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:       price_volatility   R-squared:                       0.517
-Model:                            OLS   Adj. R-squared:                  0.312
-Method:                 Least Squares   F-statistic:                     2.524
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):             0.0143
-Time:                        03:25:58   Log-Likelihood:                 96.079
-No. Observations:                  48   AIC:                            -162.2
-Df Residuals:                      33   BIC:                            -134.1
+Dep. Variable:       price_volatility   R-squared:                       0.998
+Model:                            OLS   Adj. R-squared:                  0.997
+Method:                 Least Squares   F-statistic:                     5085.
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):          2.15e-222
+Time:                        10:11:45   Log-Likelihood:                 890.32
+No. Observations:                 192   AIC:                            -1751.
+Df Residuals:                     177   BIC:                            -1702.
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.1981      0.006     34.814      0.000       0.187       0.210
-auction_type_coded                        -0.0172      0.006     -3.022      0.005      -0.029      -0.006
-eta_linear_coded                           0.0047      0.003      1.356      0.184      -0.002       0.012
-eta_quadratic_coded                        0.0020      0.004      0.506      0.616      -0.006       0.010
-n_bidders_coded                           -0.0162      0.006     -2.839      0.008      -0.028      -0.005
-state_info_coded                          -0.0047      0.006     -0.834      0.410      -0.016       0.007
-auction_type_coded:eta_linear_coded       -0.0013      0.007     -0.183      0.856      -0.015       0.013
-auction_type_coded:eta_quadratic_coded    -0.0036      0.004     -0.904      0.373      -0.012       0.005
-auction_type_coded:n_bidders_coded        -0.0012      0.006     -0.203      0.840      -0.013       0.010
-auction_type_coded:state_info_coded        0.0109      0.006      1.910      0.065      -0.001       0.022
-eta_linear_coded:eta_quadratic_coded       0.0047      0.003      1.356      0.184      -0.002       0.012
-eta_linear_coded:n_bidders_coded          -0.0006      0.007     -0.080      0.936      -0.015       0.014
-eta_linear_coded:state_info_coded          0.0083      0.007      1.187      0.244      -0.006       0.022
-eta_quadratic_coded:n_bidders_coded        0.0055      0.004      1.368      0.180      -0.003       0.014
-eta_quadratic_coded:state_info_coded      -0.0065      0.004     -1.617      0.115      -0.015       0.002
-n_bidders_coded:state_info_coded          -0.0126      0.006     -2.215      0.034      -0.024      -0.001
+Intercept                                  0.1980      0.000   1124.183      0.000       0.198       0.198
+auction_type_coded                         0.0135      0.000     76.836      0.000       0.013       0.014
+eta_linear_coded                           0.0012      0.000     11.264      0.000       0.001       0.001
+eta_quadratic_coded                        0.0005      0.000      4.296      0.000       0.000       0.001
+n_bidders_coded                           -0.0431      0.000   -244.912      0.000      -0.043      -0.043
+state_info_coded                           0.0079      0.000     44.961      0.000       0.008       0.008
+auction_type_coded:eta_linear_coded        0.0029      0.000     13.628      0.000       0.003       0.003
+auction_type_coded:eta_quadratic_coded    -0.0002      0.000     -1.444      0.151      -0.000     6.6e-05
+auction_type_coded:n_bidders_coded         0.0015      0.000      8.247      0.000       0.001       0.002
+auction_type_coded:state_info_coded        0.0023      0.000     13.060      0.000       0.002       0.003
+eta_linear_coded:eta_quadratic_coded       0.0012      0.000     11.264      0.000       0.001       0.001
+eta_linear_coded:n_bidders_coded           0.0102      0.000     47.272      0.000       0.010       0.011
+eta_linear_coded:state_info_coded         -0.0001      0.000     -0.505      0.614      -0.001       0.000
+eta_quadratic_coded:n_bidders_coded        0.0004      0.000      3.596      0.000       0.000       0.001
+eta_quadratic_coded:state_info_coded      -0.0001      0.000     -1.202      0.231      -0.000    9.61e-05
+n_bidders_coded:state_info_coded           0.0038      0.000     21.336      0.000       0.003       0.004
 ==============================================================================
-Omnibus:                        1.658   Durbin-Watson:                   2.101
-Prob(Omnibus):                  0.436   Jarque-Bera (JB):                0.891
-Skew:                          -0.285   Prob(JB):                        0.641
-Kurtosis:                       3.348   Cond. No.                     7.74e+15
+Omnibus:                        9.290   Durbin-Watson:                   2.050
+Prob(Omnibus):                  0.010   Jarque-Bera (JB):               11.843
+Skew:                           0.343   Prob(JB):                      0.00268
+Kurtosis:                       4.005   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.5171
-Adj R² = 0.3122
+R² = 0.9975
+Adj R² = 0.9973
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |         F |   PR(>F) |
-|----------------------------------------|----------|---------|-----------|----------|
-| Intercept                              |   1.8843 |  1.0000 | 1212.0453 |   0.0000 |
-| auction_type_coded                     |   0.0142 |  1.0000 |    9.1346 |   0.0048 |
-| eta_linear_coded                       |   0.0029 |  1.0000 |    1.8381 |   0.1844 |
-| eta_quadratic_coded                    |   0.0004 |  1.0000 |    0.2562 |   0.6161 |
-| n_bidders_coded                        |   0.0125 |  1.0000 |    8.0590 |   0.0077 |
-| state_info_coded                       |   0.0011 |  1.0000 |    0.6958 |   0.4102 |
-| auction_type_coded:eta_linear_coded    |   0.0001 |  1.0000 |    0.0335 |   0.8560 |
-| auction_type_coded:eta_quadratic_coded |   0.0013 |  1.0000 |    0.8171 |   0.3726 |
-| auction_type_coded:n_bidders_coded     |   0.0001 |  1.0000 |    0.0412 |   0.8403 |
-| auction_type_coded:state_info_coded    |   0.0057 |  1.0000 |    3.6480 |   0.0649 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0029 |  1.0000 |    1.8381 |   0.1844 |
-| eta_linear_coded:n_bidders_coded       |   0.0000 |  1.0000 |    0.0065 |   0.9364 |
-| eta_linear_coded:state_info_coded      |   0.0022 |  1.0000 |    1.4095 |   0.2436 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0029 |  1.0000 |    1.8724 |   0.1804 |
-| eta_quadratic_coded:state_info_coded   |   0.0041 |  1.0000 |    2.6133 |   0.1155 |
-| n_bidders_coded:state_info_coded       |   0.0076 |  1.0000 |    4.9084 |   0.0337 |
-| Residual                               |   0.0513 | 33.0000 |  nan      | nan      |
+|                                        |   sum_sq |       df |            F |   PR(>F) |
+|----------------------------------------|----------|----------|--------------|----------|
+| Intercept                              |   7.5301 |   1.0000 | 1263787.4892 |   0.0000 |
+| auction_type_coded                     |   0.0352 |   1.0000 |    5903.7034 |   0.0000 |
+| eta_linear_coded                       |   0.0008 |   1.0000 |     126.8675 |   0.0000 |
+| eta_quadratic_coded                    |   0.0001 |   1.0000 |      18.4534 |   0.0000 |
+| n_bidders_coded                        |   0.3574 |   1.0000 |   59981.7295 |   0.0000 |
+| state_info_coded                       |   0.0120 |   1.0000 |    2021.4721 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0011 |   1.0000 |     185.7344 |   0.0000 |
+| auction_type_coded:eta_quadratic_coded |   0.0000 |   1.0000 |       2.0839 |   0.1506 |
+| auction_type_coded:n_bidders_coded     |   0.0004 |   1.0000 |      68.0188 |   0.0000 |
+| auction_type_coded:state_info_coded    |   0.0010 |   1.0000 |     170.5540 |   0.0000 |
+| eta_linear_coded:eta_quadratic_coded   |   0.0008 |   1.0000 |     126.8675 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.0133 |   1.0000 |    2234.6263 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0000 |   1.0000 |       0.2552 |   0.6141 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0001 |   1.0000 |      12.9324 |   0.0004 |
+| eta_quadratic_coded:state_info_coded   |   0.0000 |   1.0000 |       1.4445 |   0.2310 |
+| n_bidders_coded:state_info_coded       |   0.0027 |   1.0000 |     455.2132 |   0.0000 |
+| Residual                               |   0.0011 | 177.0000 |     nan      | nan      |
 
---- Significant Effects (p < 0.05): 3 ---
-  auction_type                             coef=-0.0172  p=0.0048
-  n_bidders                                coef=-0.0162  p=0.0077
-  n_bidders:state_info                     coef=-0.0126  p=0.0337
+--- Significant Effects (p < 0.05): 12 ---
+  n_bidders                                coef=-0.0431  p=0.0000
+  auction_type                             coef=+0.0135  p=0.0000
+  eta_linear:n_bidders                     coef=+0.0102  p=0.0000
+  state_info                               coef=+0.0079  p=0.0000
+  n_bidders:state_info                     coef=+0.0038  p=0.0000
+  auction_type:eta_linear                  coef=+0.0029  p=0.0000
+  auction_type:state_info                  coef=+0.0023  p=0.0000
+  eta_linear                               coef=+0.0012  p=0.0000
+  eta_linear:eta_quadratic                 coef=+0.0012  p=0.0000
+  auction_type:n_bidders                   coef=+0.0015  p=0.0000
+  eta_quadratic                            coef=+0.0005  p=0.0000
+  eta_quadratic:n_bidders                  coef=+0.0004  p=0.0004
 
   Plots saved to results/exp2/
 
@@ -337,76 +364,74 @@ RESPONSE: winner_entropy
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:         winner_entropy   R-squared:                       0.535
-Model:                            OLS   Adj. R-squared:                  0.338
-Method:                 Least Squares   F-statistic:                     2.712
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):            0.00918
-Time:                        03:25:58   Log-Likelihood:                -20.955
-No. Observations:                  48   AIC:                             71.91
-Df Residuals:                      33   BIC:                             99.98
+Dep. Variable:         winner_entropy   R-squared:                       1.000
+Model:                            OLS   Adj. R-squared:                  1.000
+Method:                 Least Squares   F-statistic:                 1.155e+07
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):               0.00
+Time:                        10:11:45   Log-Likelihood:                 1160.3
+No. Observations:                 192   AIC:                            -2291.
+Df Residuals:                     177   BIC:                            -2242.
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  1.2418      0.065     19.053      0.000       1.109       1.374
-auction_type_coded                         0.1832      0.065      2.811      0.008       0.051       0.316
-eta_linear_coded                          -0.0515      0.040     -1.290      0.206      -0.133       0.030
-eta_quadratic_coded                       -0.0344      0.046     -0.745      0.461      -0.128       0.059
-n_bidders_coded                            0.1372      0.065      2.105      0.043       0.005       0.270
-state_info_coded                           0.0460      0.065      0.705      0.486      -0.087       0.179
-auction_type_coded:eta_linear_coded        0.0343      0.080      0.429      0.670      -0.128       0.197
-auction_type_coded:eta_quadratic_coded     0.0572      0.046      1.242      0.223      -0.037       0.151
-auction_type_coded:n_bidders_coded        -0.0459      0.065     -0.704      0.486      -0.178       0.087
-auction_type_coded:state_info_coded       -0.1373      0.065     -2.106      0.043      -0.270      -0.005
-eta_linear_coded:eta_quadratic_coded      -0.0515      0.040     -1.290      0.206      -0.133       0.030
-eta_linear_coded:n_bidders_coded          -0.0346      0.080     -0.434      0.667      -0.197       0.128
-eta_linear_coded:state_info_coded         -0.1032      0.080     -1.292      0.205      -0.266       0.059
-eta_quadratic_coded:n_bidders_coded       -0.1029      0.046     -2.233      0.032      -0.197      -0.009
-eta_quadratic_coded:state_info_coded       0.0572      0.046      1.240      0.224      -0.037       0.151
-n_bidders_coded:state_info_coded           0.1830      0.065      2.807      0.008       0.050       0.316
+Intercept                                  1.2419   4.32e-05   2.88e+04      0.000       1.242       1.242
+auction_type_coded                     -2.488e-05   4.32e-05     -0.576      0.565      -0.000    6.03e-05
+eta_linear_coded                       -3.491e-05   2.64e-05     -1.321      0.188   -8.71e-05    1.73e-05
+eta_quadratic_coded                     -5.58e-05   3.05e-05     -1.828      0.069      -0.000    4.45e-06
+n_bidders_coded                            0.5490   4.32e-05   1.27e+04      0.000       0.549       0.549
+state_info_coded                           0.0004   4.32e-05      9.856      0.000       0.000       0.001
+auction_type_coded:eta_linear_coded     3.982e-05   5.29e-05      0.753      0.452   -6.45e-05       0.000
+auction_type_coded:eta_quadratic_coded   6.95e-06   3.05e-05      0.228      0.820   -5.33e-05    6.72e-05
+auction_type_coded:n_bidders_coded     -3.873e-05   4.32e-05     -0.897      0.371      -0.000    4.65e-05
+auction_type_coded:state_info_coded     6.523e-05   4.32e-05      1.511      0.133      -2e-05       0.000
+eta_linear_coded:eta_quadratic_coded   -3.491e-05   2.64e-05     -1.321      0.188   -8.71e-05    1.73e-05
+eta_linear_coded:n_bidders_coded       -2.916e-05   5.29e-05     -0.551      0.582      -0.000    7.52e-05
+eta_linear_coded:state_info_coded       6.296e-05   5.29e-05      1.191      0.235   -4.14e-05       0.000
+eta_quadratic_coded:n_bidders_coded     3.213e-05   3.05e-05      1.053      0.294   -2.81e-05    9.24e-05
+eta_quadratic_coded:state_info_coded    3.691e-05   3.05e-05      1.209      0.228   -2.33e-05    9.72e-05
+n_bidders_coded:state_info_coded           0.0002   4.32e-05      5.479      0.000       0.000       0.000
 ==============================================================================
-Omnibus:                        0.156   Durbin-Watson:                   1.757
-Prob(Omnibus):                  0.925   Jarque-Bera (JB):                0.215
-Skew:                          -0.124   Prob(JB):                        0.898
-Kurtosis:                       2.786   Cond. No.                     7.74e+15
+Omnibus:                      149.632   Durbin-Watson:                   2.000
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             2208.289
+Skew:                          -2.795   Prob(JB):                         0.00
+Kurtosis:                      18.646   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.5350
-Adj R² = 0.3378
+R² = 1.0000
+Adj R² = 1.0000
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|----------|---------|----------|----------|
-| Intercept                              |  74.0214 |  1.0000 | 363.0080 |   0.0000 |
-| auction_type_coded                     |   1.6111 |  1.0000 |   7.9008 |   0.0082 |
-| eta_linear_coded                       |   0.3392 |  1.0000 |   1.6632 |   0.2061 |
-| eta_quadratic_coded                    |   0.1133 |  1.0000 |   0.5557 |   0.4613 |
-| n_bidders_coded                        |   0.9036 |  1.0000 |   4.4311 |   0.0430 |
-| state_info_coded                       |   0.1014 |  1.0000 |   0.4973 |   0.4857 |
-| auction_type_coded:eta_linear_coded    |   0.0376 |  1.0000 |   0.1844 |   0.6704 |
-| auction_type_coded:eta_quadratic_coded |   0.3145 |  1.0000 |   1.5422 |   0.2230 |
-| auction_type_coded:n_bidders_coded     |   0.1011 |  1.0000 |   0.4956 |   0.4864 |
-| auction_type_coded:state_info_coded    |   0.9048 |  1.0000 |   4.4372 |   0.0429 |
-| eta_linear_coded:eta_quadratic_coded   |   0.3392 |  1.0000 |   1.6632 |   0.2061 |
-| eta_linear_coded:n_bidders_coded       |   0.0384 |  1.0000 |   0.1883 |   0.6671 |
-| eta_linear_coded:state_info_coded      |   0.3406 |  1.0000 |   1.6705 |   0.2052 |
-| eta_quadratic_coded:n_bidders_coded    |   1.0169 |  1.0000 |   4.9870 |   0.0324 |
-| eta_quadratic_coded:state_info_coded   |   0.3136 |  1.0000 |   1.5380 |   0.2237 |
-| n_bidders_coded:state_info_coded       |   1.6069 |  1.0000 |   7.8802 |   0.0083 |
-| Residual                               |   6.7291 | 33.0000 | nan      | nan      |
+|                                        |   sum_sq |       df |              F |   PR(>F) |
+|----------------------------------------|----------|----------|----------------|----------|
+| Intercept                              | 296.1040 |   1.0000 | 827374766.1098 |   0.0000 |
+| auction_type_coded                     |   0.0000 |   1.0000 |         0.3321 |   0.5652 |
+| eta_linear_coded                       |   0.0000 |   1.0000 |         1.7439 |   0.1884 |
+| eta_quadratic_coded                    |   0.0000 |   1.0000 |         3.3403 |   0.0693 |
+| n_bidders_coded                        |  57.8688 |   1.0000 | 161697084.1839 |   0.0000 |
+| state_info_coded                       |   0.0000 |   1.0000 |        97.1346 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0000 |   1.0000 |         0.5671 |   0.4524 |
+| auction_type_coded:eta_quadratic_coded |   0.0000 |   1.0000 |         0.0518 |   0.8202 |
+| auction_type_coded:n_bidders_coded     |   0.0000 |   1.0000 |         0.8046 |   0.3709 |
+| auction_type_coded:state_info_coded    |   0.0000 |   1.0000 |         2.2826 |   0.1326 |
+| eta_linear_coded:eta_quadratic_coded   |   0.0000 |   1.0000 |         1.7439 |   0.1884 |
+| eta_linear_coded:n_bidders_coded       |   0.0000 |   1.0000 |         0.3041 |   0.5820 |
+| eta_linear_coded:state_info_coded      |   0.0000 |   1.0000 |         1.4176 |   0.2354 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0000 |   1.0000 |         1.1080 |   0.2940 |
+| eta_quadratic_coded:state_info_coded   |   0.0000 |   1.0000 |         1.4620 |   0.2282 |
+| n_bidders_coded:state_info_coded       |   0.0000 |   1.0000 |        30.0230 |   0.0000 |
+| Residual                               |   0.0001 | 177.0000 |       nan      | nan      |
 
---- Significant Effects (p < 0.05): 5 ---
-  auction_type                             coef=+0.1832  p=0.0082
-  n_bidders:state_info                     coef=+0.1830  p=0.0083
-  eta_quadratic:n_bidders                  coef=-0.1029  p=0.0324
-  auction_type:state_info                  coef=-0.1373  p=0.0429
-  n_bidders                                coef=+0.1372  p=0.0430
+--- Significant Effects (p < 0.05): 3 ---
+  n_bidders                                coef=+0.5490  p=0.0000
+  state_info                               coef=+0.0004  p=0.0000
+  n_bidders:state_info                     coef=+0.0002  p=0.0000
 
   Plots saved to results/exp2/
 
@@ -417,73 +442,80 @@ RESPONSE: excess_regret
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:          excess_regret   R-squared:                       0.390
-Model:                            OLS   Adj. R-squared:                  0.131
-Method:                 Least Squares   F-statistic:                     1.504
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):              0.164
-Time:                        03:25:59   Log-Likelihood:                 73.760
-No. Observations:                  48   AIC:                            -117.5
-Df Residuals:                      33   BIC:                            -89.45
+Dep. Variable:          excess_regret   R-squared:                       0.864
+Model:                            OLS   Adj. R-squared:                  0.854
+Method:                 Least Squares   F-statistic:                     80.63
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):           5.51e-69
+Time:                        10:11:46   Log-Likelihood:                 433.97
+No. Observations:                 192   AIC:                            -837.9
+Df Residuals:                     177   BIC:                            -789.1
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.0459      0.009      5.062      0.000       0.027       0.064
-auction_type_coded                         0.0243      0.009      2.677      0.011       0.006       0.043
-eta_linear_coded                          -0.0111      0.006     -2.004      0.053      -0.022       0.000
-eta_quadratic_coded                        0.0024      0.006      0.373      0.711      -0.011       0.015
-n_bidders_coded                            0.0045      0.009      0.501      0.619      -0.014       0.023
-state_info_coded                           0.0132      0.009      1.460      0.154      -0.005       0.032
-auction_type_coded:eta_linear_coded        0.0045      0.011      0.405      0.688      -0.018       0.027
-auction_type_coded:eta_quadratic_coded    -0.0011      0.006     -0.168      0.867      -0.014       0.012
-auction_type_coded:n_bidders_coded        -0.0036      0.009     -0.402      0.690      -0.022       0.015
-auction_type_coded:state_info_coded        0.0010      0.009      0.107      0.916      -0.017       0.019
-eta_linear_coded:eta_quadratic_coded      -0.0111      0.006     -2.004      0.053      -0.022       0.000
-eta_linear_coded:n_bidders_coded          -0.0265      0.011     -2.385      0.023      -0.049      -0.004
-eta_linear_coded:state_info_coded         -0.0024      0.011     -0.220      0.827      -0.025       0.020
-eta_quadratic_coded:n_bidders_coded       -0.0025      0.006     -0.394      0.696      -0.016       0.011
-eta_quadratic_coded:state_info_coded      -0.0024      0.006     -0.368      0.715      -0.015       0.011
-n_bidders_coded:state_info_coded           0.0089      0.009      0.982      0.333      -0.010       0.027
+Intercept                                  0.0455      0.002     24.003      0.000       0.042       0.049
+auction_type_coded                        -0.0093      0.002     -4.898      0.000      -0.013      -0.006
+eta_linear_coded                          -0.0079      0.001     -6.773      0.000      -0.010      -0.006
+eta_quadratic_coded                        0.0022      0.001      1.644      0.102      -0.000       0.005
+n_bidders_coded                            0.0228      0.002     11.994      0.000       0.019       0.027
+state_info_coded                           0.0501      0.002     26.428      0.000       0.046       0.054
+auction_type_coded:eta_linear_coded        0.0152      0.002      6.546      0.000       0.011       0.020
+auction_type_coded:eta_quadratic_coded    -0.0002      0.001     -0.178      0.859      -0.003       0.002
+auction_type_coded:n_bidders_coded         0.0073      0.002      3.841      0.000       0.004       0.011
+auction_type_coded:state_info_coded        0.0024      0.002      1.266      0.207      -0.001       0.006
+eta_linear_coded:eta_quadratic_coded      -0.0079      0.001     -6.773      0.000      -0.010      -0.006
+eta_linear_coded:n_bidders_coded           0.0252      0.002     10.861      0.000       0.021       0.030
+eta_linear_coded:state_info_coded          0.0017      0.002      0.715      0.476      -0.003       0.006
+eta_quadratic_coded:n_bidders_coded        0.0002      0.001      0.186      0.853      -0.002       0.003
+eta_quadratic_coded:state_info_coded       0.0004      0.001      0.308      0.758      -0.002       0.003
+n_bidders_coded:state_info_coded           0.0114      0.002      6.008      0.000       0.008       0.015
 ==============================================================================
-Omnibus:                        1.900   Durbin-Watson:                   2.457
-Prob(Omnibus):                  0.387   Jarque-Bera (JB):                1.246
-Skew:                          -0.075   Prob(JB):                        0.536
-Kurtosis:                       2.225   Cond. No.                     7.74e+15
+Omnibus:                        8.058   Durbin-Watson:                   2.129
+Prob(Omnibus):                  0.018   Jarque-Bera (JB):               15.162
+Skew:                           0.002   Prob(JB):                     0.000510
+Kurtosis:                       4.377   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.3895
-Adj R² = 0.1305
+R² = 0.8644
+Adj R² = 0.8537
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|----------|---------|----------|----------|
-| Intercept                              |   0.1009 |  1.0000 |  25.6197 |   0.0000 |
-| auction_type_coded                     |   0.0282 |  1.0000 |   7.1644 |   0.0115 |
-| eta_linear_coded                       |   0.0158 |  1.0000 |   4.0141 |   0.0534 |
-| eta_quadratic_coded                    |   0.0005 |  1.0000 |   0.1393 |   0.7114 |
-| n_bidders_coded                        |   0.0010 |  1.0000 |   0.2514 |   0.6194 |
-| state_info_coded                       |   0.0084 |  1.0000 |   2.1320 |   0.1537 |
-| auction_type_coded:eta_linear_coded    |   0.0006 |  1.0000 |   0.1637 |   0.6884 |
-| auction_type_coded:eta_quadratic_coded |   0.0001 |  1.0000 |   0.0283 |   0.8673 |
-| auction_type_coded:n_bidders_coded     |   0.0006 |  1.0000 |   0.1619 |   0.6900 |
-| auction_type_coded:state_info_coded    |   0.0000 |  1.0000 |   0.0114 |   0.9158 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0158 |  1.0000 |   4.0141 |   0.0534 |
-| eta_linear_coded:n_bidders_coded       |   0.0224 |  1.0000 |   5.6870 |   0.0230 |
-| eta_linear_coded:state_info_coded      |   0.0002 |  1.0000 |   0.0483 |   0.8274 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0006 |  1.0000 |   0.1554 |   0.6960 |
-| eta_quadratic_coded:state_info_coded   |   0.0005 |  1.0000 |   0.1354 |   0.7153 |
-| n_bidders_coded:state_info_coded       |   0.0038 |  1.0000 |   0.9641 |   0.3333 |
-| Residual                               |   0.1300 | 33.0000 | nan      | nan      |
+|                                        |   sum_sq |       df |        F |   PR(>F) |
+|----------------------------------------|----------|----------|----------|----------|
+| Intercept                              |   0.3982 |   1.0000 | 576.1385 |   0.0000 |
+| auction_type_coded                     |   0.0166 |   1.0000 |  23.9901 |   0.0000 |
+| eta_linear_coded                       |   0.0317 |   1.0000 |  45.8746 |   0.0000 |
+| eta_quadratic_coded                    |   0.0019 |   1.0000 |   2.7037 |   0.1019 |
+| n_bidders_coded                        |   0.0994 |   1.0000 | 143.8648 |   0.0000 |
+| state_info_coded                       |   0.4828 |   1.0000 | 698.4185 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0296 |   1.0000 |  42.8481 |   0.0000 |
+| auction_type_coded:eta_quadratic_coded |   0.0000 |   1.0000 |   0.0318 |   0.8587 |
+| auction_type_coded:n_bidders_coded     |   0.0102 |   1.0000 |  14.7529 |   0.0002 |
+| auction_type_coded:state_info_coded    |   0.0011 |   1.0000 |   1.6029 |   0.2072 |
+| eta_linear_coded:eta_quadratic_coded   |   0.0317 |   1.0000 |  45.8746 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.0815 |   1.0000 | 117.9649 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0004 |   1.0000 |   0.5110 |   0.4757 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0000 |   1.0000 |   0.0344 |   0.8530 |
+| eta_quadratic_coded:state_info_coded   |   0.0001 |   1.0000 |   0.0949 |   0.7583 |
+| n_bidders_coded:state_info_coded       |   0.0249 |   1.0000 |  36.0911 |   0.0000 |
+| Residual                               |   0.1223 | 177.0000 | nan      | nan      |
 
---- Significant Effects (p < 0.05): 2 ---
-  auction_type                             coef=+0.0243  p=0.0115
-  eta_linear:n_bidders                     coef=-0.0265  p=0.0230
+--- Significant Effects (p < 0.05): 9 ---
+  state_info                               coef=+0.0501  p=0.0000
+  n_bidders                                coef=+0.0228  p=0.0000
+  eta_linear:n_bidders                     coef=+0.0252  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0079  p=0.0000
+  eta_linear                               coef=-0.0079  p=0.0000
+  auction_type:eta_linear                  coef=+0.0152  p=0.0000
+  n_bidders:state_info                     coef=+0.0114  p=0.0000
+  auction_type                             coef=-0.0093  p=0.0000
+  auction_type:n_bidders                   coef=+0.0073  p=0.0002
 
   Plots saved to results/exp2/
 
@@ -494,72 +526,82 @@ RESPONSE: efficient_regret
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:       efficient_regret   R-squared:                       0.449
-Model:                            OLS   Adj. R-squared:                  0.216
-Method:                 Least Squares   F-statistic:                     1.924
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):             0.0606
-Time:                        03:25:59   Log-Likelihood:                 41.733
-No. Observations:                  48   AIC:                            -53.47
-Df Residuals:                      33   BIC:                            -25.40
+Dep. Variable:       efficient_regret   R-squared:                       0.988
+Model:                            OLS   Adj. R-squared:                  0.987
+Method:                 Least Squares   F-statistic:                     1032.
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):          1.71e-161
+Time:                        10:11:46   Log-Likelihood:                 530.23
+No. Observations:                 192   AIC:                            -1030.
+Df Residuals:                     177   BIC:                            -981.6
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.3162      0.018     17.905      0.000       0.280       0.352
-auction_type_coded                        -0.0312      0.018     -1.767      0.087      -0.067       0.005
-eta_linear_coded                          -0.0125      0.011     -1.155      0.256      -0.034       0.010
-eta_quadratic_coded                        0.0117      0.012      0.934      0.357      -0.014       0.037
-n_bidders_coded                           -0.0402      0.018     -2.274      0.030      -0.076      -0.004
-state_info_coded                          -0.0074      0.018     -0.416      0.680      -0.043       0.029
-auction_type_coded:eta_linear_coded        0.0101      0.022      0.465      0.645      -0.034       0.054
-auction_type_coded:eta_quadratic_coded    -0.0133      0.012     -1.064      0.295      -0.039       0.012
-auction_type_coded:n_bidders_coded         0.0111      0.018      0.630      0.533      -0.025       0.047
-auction_type_coded:state_info_coded        0.0357      0.018      2.023      0.051      -0.000       0.072
-eta_linear_coded:eta_quadratic_coded      -0.0125      0.011     -1.155      0.256      -0.034       0.010
-eta_linear_coded:n_bidders_coded          -0.0166      0.022     -0.770      0.447      -0.061       0.027
-eta_linear_coded:state_info_coded          0.0303      0.022      1.403      0.170      -0.014       0.074
-eta_quadratic_coded:n_bidders_coded        0.0217      0.012      1.736      0.092      -0.004       0.047
-eta_quadratic_coded:state_info_coded      -0.0151      0.012     -1.207      0.236      -0.040       0.010
-n_bidders_coded:state_info_coded          -0.0326      0.018     -1.844      0.074      -0.068       0.003
+Intercept                                  0.3153      0.001    274.382      0.000       0.313       0.318
+auction_type_coded                        -0.0050      0.001     -4.322      0.000      -0.007      -0.003
+eta_linear_coded                          -0.0307      0.001    -43.623      0.000      -0.032      -0.029
+eta_quadratic_coded                       -0.0015      0.001     -1.801      0.073      -0.003       0.000
+n_bidders_coded                           -0.1162      0.001   -101.129      0.000      -0.118      -0.114
+state_info_coded                           0.0376      0.001     32.703      0.000       0.035       0.040
+auction_type_coded:eta_linear_coded        0.0092      0.001      6.561      0.000       0.006       0.012
+auction_type_coded:eta_quadratic_coded     0.0001      0.001      0.173      0.863      -0.001       0.002
+auction_type_coded:n_bidders_coded         0.0034      0.001      2.948      0.004       0.001       0.006
+auction_type_coded:state_info_coded        0.0018      0.001      1.581      0.116      -0.000       0.004
+eta_linear_coded:eta_quadratic_coded      -0.0307      0.001    -43.623      0.000      -0.032      -0.029
+eta_linear_coded:n_bidders_coded           0.0438      0.001     31.097      0.000       0.041       0.047
+eta_linear_coded:state_info_coded          0.0048      0.001      3.393      0.001       0.002       0.008
+eta_quadratic_coded:n_bidders_coded        0.0024      0.001      2.986      0.003       0.001       0.004
+eta_quadratic_coded:state_info_coded       0.0007      0.001      0.836      0.404      -0.001       0.002
+n_bidders_coded:state_info_coded           0.0155      0.001     13.502      0.000       0.013       0.018
 ==============================================================================
-Omnibus:                        0.607   Durbin-Watson:                   2.174
-Prob(Omnibus):                  0.738   Jarque-Bera (JB):                0.147
-Skew:                           0.097   Prob(JB):                        0.929
-Kurtosis:                       3.190   Cond. No.                     7.74e+15
+Omnibus:                        1.274   Durbin-Watson:                   2.165
+Prob(Omnibus):                  0.529   Jarque-Bera (JB):                0.917
+Skew:                           0.090   Prob(JB):                        0.632
+Kurtosis:                       3.286   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.4495
-Adj R² = 0.2159
+R² = 0.9879
+Adj R² = 0.9869
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|----------|---------|----------|----------|
-| Intercept                              |   4.7976 |  1.0000 | 320.5943 |   0.0000 |
-| auction_type_coded                     |   0.0467 |  1.0000 |   3.1212 |   0.0865 |
-| eta_linear_coded                       |   0.0200 |  1.0000 |   1.3343 |   0.2563 |
-| eta_quadratic_coded                    |   0.0130 |  1.0000 |   0.8719 |   0.3572 |
-| n_bidders_coded                        |   0.0774 |  1.0000 |   5.1729 |   0.0296 |
-| state_info_coded                       |   0.0026 |  1.0000 |   0.1734 |   0.6798 |
-| auction_type_coded:eta_linear_coded    |   0.0032 |  1.0000 |   0.2161 |   0.6451 |
-| auction_type_coded:eta_quadratic_coded |   0.0169 |  1.0000 |   1.1314 |   0.2952 |
-| auction_type_coded:n_bidders_coded     |   0.0059 |  1.0000 |   0.3963 |   0.5333 |
-| auction_type_coded:state_info_coded    |   0.0612 |  1.0000 |   4.0909 |   0.0513 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0200 |  1.0000 |   1.3343 |   0.2563 |
-| eta_linear_coded:n_bidders_coded       |   0.0089 |  1.0000 |   0.5924 |   0.4470 |
-| eta_linear_coded:state_info_coded      |   0.0295 |  1.0000 |   1.9696 |   0.1698 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0451 |  1.0000 |   3.0133 |   0.0919 |
-| eta_quadratic_coded:state_info_coded   |   0.0218 |  1.0000 |   1.4568 |   0.2360 |
-| n_bidders_coded:state_info_coded       |   0.0509 |  1.0000 |   3.4011 |   0.0741 |
-| Residual                               |   0.4938 | 33.0000 | nan      | nan      |
+|                                        |   sum_sq |       df |          F |   PR(>F) |
+|----------------------------------------|----------|----------|------------|----------|
+| Intercept                              |  19.0932 |   1.0000 | 75285.2505 |   0.0000 |
+| auction_type_coded                     |   0.0047 |   1.0000 |    18.6809 |   0.0000 |
+| eta_linear_coded                       |   0.4826 |   1.0000 |  1902.9751 |   0.0000 |
+| eta_quadratic_coded                    |   0.0008 |   1.0000 |     3.2428 |   0.0734 |
+| n_bidders_coded                        |   2.5937 |   1.0000 | 10227.1533 |   0.0000 |
+| state_info_coded                       |   0.2712 |   1.0000 |  1069.5030 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0109 |   1.0000 |    43.0497 |   0.0000 |
+| auction_type_coded:eta_quadratic_coded |   0.0000 |   1.0000 |     0.0300 |   0.8627 |
+| auction_type_coded:n_bidders_coded     |   0.0022 |   1.0000 |     8.6909 |   0.0036 |
+| auction_type_coded:state_info_coded    |   0.0006 |   1.0000 |     2.4994 |   0.1157 |
+| eta_linear_coded:eta_quadratic_coded   |   0.4826 |   1.0000 |  1902.9751 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.2452 |   1.0000 |   967.0232 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0029 |   1.0000 |    11.5098 |   0.0009 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0023 |   1.0000 |     8.9154 |   0.0032 |
+| eta_quadratic_coded:state_info_coded   |   0.0002 |   1.0000 |     0.6990 |   0.4043 |
+| n_bidders_coded:state_info_coded       |   0.0462 |   1.0000 |   182.3095 |   0.0000 |
+| Residual                               |   0.0449 | 177.0000 |   nan      | nan      |
 
---- Significant Effects (p < 0.05): 1 ---
-  n_bidders                                coef=-0.0402  p=0.0296
+--- Significant Effects (p < 0.05): 11 ---
+  n_bidders                                coef=-0.1162  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0307  p=0.0000
+  eta_linear                               coef=-0.0307  p=0.0000
+  state_info                               coef=+0.0376  p=0.0000
+  eta_linear:n_bidders                     coef=+0.0438  p=0.0000
+  n_bidders:state_info                     coef=+0.0155  p=0.0000
+  auction_type:eta_linear                  coef=+0.0092  p=0.0000
+  auction_type                             coef=-0.0050  p=0.0000
+  eta_linear:state_info                    coef=+0.0048  p=0.0009
+  eta_quadratic:n_bidders                  coef=+0.0024  p=0.0032
+  auction_type:n_bidders                   coef=+0.0034  p=0.0036
 
   Plots saved to results/exp2/
 
@@ -570,74 +612,84 @@ RESPONSE: btv_median
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:             btv_median   R-squared:                       0.463
-Model:                            OLS   Adj. R-squared:                  0.235
-Method:                 Least Squares   F-statistic:                     2.029
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):             0.0472
-Time:                        03:26:00   Log-Likelihood:                 37.280
-No. Observations:                  48   AIC:                            -44.56
-Df Residuals:                      33   BIC:                            -16.49
+Dep. Variable:             btv_median   R-squared:                       0.988
+Model:                            OLS   Adj. R-squared:                  0.987
+Method:                 Least Squares   F-statistic:                     1020.
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):          4.72e-161
+Time:                        10:11:47   Log-Likelihood:                 512.93
+No. Observations:                 192   AIC:                            -995.9
+Df Residuals:                     177   BIC:                            -947.0
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.7207      0.019     37.199      0.000       0.681       0.760
-auction_type_coded                         0.0391      0.019      2.018      0.052      -0.000       0.079
-eta_linear_coded                           0.0086      0.012      0.721      0.476      -0.016       0.033
-eta_quadratic_coded                       -0.0145      0.014     -1.060      0.297      -0.042       0.013
-n_bidders_coded                            0.0419      0.019      2.161      0.038       0.002       0.081
-state_info_coded                           0.0147      0.019      0.758      0.454      -0.025       0.054
-auction_type_coded:eta_linear_coded       -0.0058      0.024     -0.244      0.809      -0.054       0.042
-auction_type_coded:eta_quadratic_coded     0.0157      0.014      1.145      0.261      -0.012       0.044
-auction_type_coded:n_bidders_coded        -0.0092      0.019     -0.473      0.639      -0.049       0.030
-auction_type_coded:state_info_coded       -0.0397      0.019     -2.048      0.049      -0.079      -0.000
-eta_linear_coded:eta_quadratic_coded       0.0086      0.012      0.721      0.476      -0.016       0.033
-eta_linear_coded:n_bidders_coded           0.0172      0.024      0.726      0.473      -0.031       0.065
-eta_linear_coded:state_info_coded         -0.0371      0.024     -1.565      0.127      -0.085       0.011
-eta_quadratic_coded:n_bidders_coded       -0.0231      0.014     -1.688      0.101      -0.051       0.005
-eta_quadratic_coded:state_info_coded       0.0159      0.014      1.160      0.254      -0.012       0.044
-n_bidders_coded:state_info_coded           0.0410      0.019      2.118      0.042       0.002       0.080
+Intercept                                  0.7194      0.001    571.982      0.000       0.717       0.722
+auction_type_coded                         0.0092      0.001      7.354      0.000       0.007       0.012
+eta_linear_coded                           0.0270      0.001     35.118      0.000       0.026       0.029
+eta_quadratic_coded                       -0.0004      0.001     -0.485      0.628      -0.002       0.001
+n_bidders_coded                            0.1360      0.001    108.168      0.000       0.134       0.139
+state_info_coded                          -0.0225      0.001    -17.888      0.000      -0.025      -0.020
+auction_type_coded:eta_linear_coded       -0.0137      0.002     -8.918      0.000      -0.017      -0.011
+auction_type_coded:eta_quadratic_coded    -0.0007      0.001     -0.819      0.414      -0.002       0.001
+auction_type_coded:n_bidders_coded        -0.0092      0.001     -7.326      0.000      -0.012      -0.007
+auction_type_coded:state_info_coded        0.0078      0.001      6.238      0.000       0.005       0.010
+eta_linear_coded:eta_quadratic_coded       0.0270      0.001     35.118      0.000       0.026       0.029
+eta_linear_coded:n_bidders_coded          -0.0428      0.002    -27.804      0.000      -0.046      -0.040
+eta_linear_coded:state_info_coded         -0.0031      0.002     -2.028      0.044      -0.006   -8.37e-05
+eta_quadratic_coded:n_bidders_coded       -0.0019      0.001     -2.169      0.031      -0.004      -0.000
+eta_quadratic_coded:state_info_coded      -0.0020      0.001     -2.273      0.024      -0.004      -0.000
+n_bidders_coded:state_info_coded          -0.0043      0.001     -3.393      0.001      -0.007      -0.002
 ==============================================================================
-Omnibus:                        2.317   Durbin-Watson:                   2.084
-Prob(Omnibus):                  0.314   Jarque-Bera (JB):                1.414
-Skew:                          -0.365   Prob(JB):                        0.493
-Kurtosis:                       3.417   Cond. No.                     7.74e+15
+Omnibus:                        9.123   Durbin-Watson:                   2.053
+Prob(Omnibus):                  0.010   Jarque-Bera (JB):               11.030
+Skew:                           0.360   Prob(JB):                      0.00403
+Kurtosis:                       3.928   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.4626
-Adj R² = 0.2346
+R² = 0.9878
+Adj R² = 0.9868
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |         F |   PR(>F) |
-|----------------------------------------|----------|---------|-----------|----------|
-| Intercept                              |  24.9298 |  1.0000 | 1383.8024 |   0.0000 |
-| auction_type_coded                     |   0.0734 |  1.0000 |    4.0716 |   0.0518 |
-| eta_linear_coded                       |   0.0094 |  1.0000 |    0.5203 |   0.4758 |
-| eta_quadratic_coded                    |   0.0202 |  1.0000 |    1.1227 |   0.2970 |
-| n_bidders_coded                        |   0.0842 |  1.0000 |    4.6713 |   0.0380 |
-| state_info_coded                       |   0.0103 |  1.0000 |    0.5745 |   0.4539 |
-| auction_type_coded:eta_linear_coded    |   0.0011 |  1.0000 |    0.0596 |   0.8087 |
-| auction_type_coded:eta_quadratic_coded |   0.0236 |  1.0000 |    1.3099 |   0.2606 |
-| auction_type_coded:n_bidders_coded     |   0.0040 |  1.0000 |    0.2237 |   0.6393 |
-| auction_type_coded:state_info_coded    |   0.0755 |  1.0000 |    4.1926 |   0.0486 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0094 |  1.0000 |    0.5203 |   0.4758 |
-| eta_linear_coded:n_bidders_coded       |   0.0095 |  1.0000 |    0.5264 |   0.4732 |
-| eta_linear_coded:state_info_coded      |   0.0441 |  1.0000 |    2.4504 |   0.1270 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0513 |  1.0000 |    2.8477 |   0.1009 |
-| eta_quadratic_coded:state_info_coded   |   0.0243 |  1.0000 |    1.3466 |   0.2542 |
-| n_bidders_coded:state_info_coded       |   0.0808 |  1.0000 |    4.4855 |   0.0418 |
-| Residual                               |   0.5945 | 33.0000 |  nan      | nan      |
+|                                        |   sum_sq |       df |           F |   PR(>F) |
+|----------------------------------------|----------|----------|-------------|----------|
+| Intercept                              |  99.3535 |   1.0000 | 327163.7600 |   0.0000 |
+| auction_type_coded                     |   0.0164 |   1.0000 |     54.0830 |   0.0000 |
+| eta_linear_coded                       |   0.3745 |   1.0000 |   1233.2950 |   0.0000 |
+| eta_quadratic_coded                    |   0.0001 |   1.0000 |      0.2351 |   0.6284 |
+| n_bidders_coded                        |   3.5532 |   1.0000 |  11700.2833 |   0.0000 |
+| state_info_coded                       |   0.0972 |   1.0000 |    319.9920 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0242 |   1.0000 |     79.5332 |   0.0000 |
+| auction_type_coded:eta_quadratic_coded |   0.0002 |   1.0000 |      0.6712 |   0.4137 |
+| auction_type_coded:n_bidders_coded     |   0.0163 |   1.0000 |     53.6715 |   0.0000 |
+| auction_type_coded:state_info_coded    |   0.0118 |   1.0000 |     38.9098 |   0.0000 |
+| eta_linear_coded:eta_quadratic_coded   |   0.3745 |   1.0000 |   1233.2950 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.2348 |   1.0000 |    773.0588 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0012 |   1.0000 |      4.1119 |   0.0441 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0014 |   1.0000 |      4.7057 |   0.0314 |
+| eta_quadratic_coded:state_info_coded   |   0.0016 |   1.0000 |      5.1666 |   0.0242 |
+| n_bidders_coded:state_info_coded       |   0.0035 |   1.0000 |     11.5141 |   0.0009 |
+| Residual                               |   0.0538 | 177.0000 |    nan      | nan      |
 
---- Significant Effects (p < 0.05): 3 ---
-  n_bidders                                coef=+0.0419  p=0.0380
-  n_bidders:state_info                     coef=+0.0410  p=0.0418
-  auction_type:state_info                  coef=-0.0397  p=0.0486
+--- Significant Effects (p < 0.05): 13 ---
+  n_bidders                                coef=+0.1360  p=0.0000
+  eta_linear:eta_quadratic                 coef=+0.0270  p=0.0000
+  eta_linear                               coef=+0.0270  p=0.0000
+  eta_linear:n_bidders                     coef=-0.0428  p=0.0000
+  state_info                               coef=-0.0225  p=0.0000
+  auction_type:eta_linear                  coef=-0.0137  p=0.0000
+  auction_type                             coef=+0.0092  p=0.0000
+  auction_type:n_bidders                   coef=-0.0092  p=0.0000
+  auction_type:state_info                  coef=+0.0078  p=0.0000
+  n_bidders:state_info                     coef=-0.0043  p=0.0009
+  eta_quadratic:state_info                 coef=-0.0020  p=0.0242
+  eta_quadratic:n_bidders                  coef=-0.0019  p=0.0314
+  eta_linear:state_info                    coef=-0.0031  p=0.0441
 
   Plots saved to results/exp2/
 
@@ -648,77 +700,86 @@ RESPONSE: winners_curse_freq
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:     winners_curse_freq   R-squared:                       0.596
-Model:                            OLS   Adj. R-squared:                  0.424
-Method:                 Least Squares   F-statistic:                     3.471
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):            0.00162
-Time:                        03:26:00   Log-Likelihood:                 79.684
-No. Observations:                  48   AIC:                            -129.4
-Df Residuals:                      33   BIC:                            -101.3
+Dep. Variable:     winners_curse_freq   R-squared:                       0.931
+Model:                            OLS   Adj. R-squared:                  0.926
+Method:                 Least Squares   F-statistic:                     171.3
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):           6.81e-95
+Time:                        10:11:48   Log-Likelihood:                 496.54
+No. Observations:                 192   AIC:                            -963.1
+Df Residuals:                     177   BIC:                            -914.2
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.1182      0.008     14.761      0.000       0.102       0.135
-auction_type_coded                         0.0274      0.008      3.418      0.002       0.011       0.044
-eta_linear_coded                           0.0194      0.005      3.954      0.000       0.009       0.029
-eta_quadratic_coded                       -0.0016      0.006     -0.274      0.786      -0.013       0.010
-n_bidders_coded                            0.0180      0.008      2.248      0.031       0.002       0.034
-state_info_coded                           0.0109      0.008      1.358      0.184      -0.005       0.027
-auction_type_coded:eta_linear_coded       -0.0095      0.010     -0.965      0.341      -0.029       0.010
-auction_type_coded:eta_quadratic_coded    -0.0116      0.006     -2.047      0.049      -0.023   -7.28e-05
-auction_type_coded:n_bidders_coded         0.0163      0.008      2.040      0.049    4.03e-05       0.033
-auction_type_coded:state_info_coded        0.0005      0.008      0.068      0.946      -0.016       0.017
-eta_linear_coded:eta_quadratic_coded       0.0194      0.005      3.954      0.000       0.009       0.029
-eta_linear_coded:n_bidders_coded          -0.0002      0.010     -0.022      0.982      -0.020       0.020
-eta_linear_coded:state_info_coded         -0.0108      0.010     -1.099      0.280      -0.031       0.009
-eta_quadratic_coded:n_bidders_coded        0.0077      0.006      1.352      0.186      -0.004       0.019
-eta_quadratic_coded:state_info_coded       0.0023      0.006      0.414      0.682      -0.009       0.014
-n_bidders_coded:state_info_coded          -0.0107      0.008     -1.342      0.189      -0.027       0.006
+Intercept                                  0.1167      0.001     85.168      0.000       0.114       0.119
+auction_type_coded                        -0.0377      0.001    -27.492      0.000      -0.040      -0.035
+eta_linear_coded                           0.0297      0.001     35.422      0.000       0.028       0.031
+eta_quadratic_coded                        0.0082      0.001      8.421      0.000       0.006       0.010
+n_bidders_coded                            0.0064      0.001      4.677      0.000       0.004       0.009
+state_info_coded                           0.0126      0.001      9.225      0.000       0.010       0.015
+auction_type_coded:eta_linear_coded        0.0080      0.002      4.769      0.000       0.005       0.011
+auction_type_coded:eta_quadratic_coded     0.0025      0.001      2.565      0.011       0.001       0.004
+auction_type_coded:n_bidders_coded        -0.0049      0.001     -3.597      0.000      -0.008      -0.002
+auction_type_coded:state_info_coded        0.0068      0.001      4.981      0.000       0.004       0.010
+eta_linear_coded:eta_quadratic_coded       0.0297      0.001     35.422      0.000       0.028       0.031
+eta_linear_coded:n_bidders_coded          -0.0158      0.002     -9.417      0.000      -0.019      -0.012
+eta_linear_coded:state_info_coded         -0.0079      0.002     -4.704      0.000      -0.011      -0.005
+eta_quadratic_coded:n_bidders_coded       -0.0027      0.001     -2.775      0.006      -0.005      -0.001
+eta_quadratic_coded:state_info_coded      -0.0042      0.001     -4.302      0.000      -0.006      -0.002
+n_bidders_coded:state_info_coded          -0.0032      0.001     -2.350      0.020      -0.006      -0.001
 ==============================================================================
-Omnibus:                        9.070   Durbin-Watson:                   2.373
-Prob(Omnibus):                  0.011   Jarque-Bera (JB):                8.724
-Skew:                           0.794   Prob(JB):                       0.0128
-Kurtosis:                       4.356   Cond. No.                     7.74e+15
+Omnibus:                       15.697   Durbin-Watson:                   2.008
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               49.525
+Skew:                           0.077   Prob(JB):                     1.76e-11
+Kurtosis:                       5.483   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.5955
-Adj R² = 0.4239
+R² = 0.9313
+Adj R² = 0.9258
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|----------|---------|----------|----------|
-| Intercept                              |   0.6707 |  1.0000 | 217.8788 |   0.0000 |
-| auction_type_coded                     |   0.0360 |  1.0000 |  11.6850 |   0.0017 |
-| eta_linear_coded                       |   0.0481 |  1.0000 |  15.6340 |   0.0004 |
-| eta_quadratic_coded                    |   0.0002 |  1.0000 |   0.0751 |   0.7857 |
-| n_bidders_coded                        |   0.0156 |  1.0000 |   5.0520 |   0.0314 |
-| state_info_coded                       |   0.0057 |  1.0000 |   1.8441 |   0.1837 |
-| auction_type_coded:eta_linear_coded    |   0.0029 |  1.0000 |   0.9320 |   0.3414 |
-| auction_type_coded:eta_quadratic_coded |   0.0129 |  1.0000 |   4.1918 |   0.0486 |
-| auction_type_coded:n_bidders_coded     |   0.0128 |  1.0000 |   4.1598 |   0.0495 |
-| auction_type_coded:state_info_coded    |   0.0000 |  1.0000 |   0.0046 |   0.9465 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0481 |  1.0000 |  15.6340 |   0.0004 |
-| eta_linear_coded:n_bidders_coded       |   0.0000 |  1.0000 |   0.0005 |   0.9823 |
-| eta_linear_coded:state_info_coded      |   0.0037 |  1.0000 |   1.2083 |   0.2796 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0056 |  1.0000 |   1.8280 |   0.1856 |
-| eta_quadratic_coded:state_info_coded   |   0.0005 |  1.0000 |   0.1713 |   0.6816 |
-| n_bidders_coded:state_info_coded       |   0.0055 |  1.0000 |   1.8019 |   0.1886 |
-| Residual                               |   0.1016 | 33.0000 | nan      | nan      |
+|                                        |   sum_sq |       df |         F |   PR(>F) |
+|----------------------------------------|----------|----------|-----------|----------|
+| Intercept                              |   2.6129 |   1.0000 | 7253.6420 |   0.0000 |
+| auction_type_coded                     |   0.2723 |   1.0000 |  755.8128 |   0.0000 |
+| eta_linear_coded                       |   0.4520 |   1.0000 | 1254.7047 |   0.0000 |
+| eta_quadratic_coded                    |   0.0255 |   1.0000 |   70.9171 |   0.0000 |
+| n_bidders_coded                        |   0.0079 |   1.0000 |   21.8750 |   0.0000 |
+| state_info_coded                       |   0.0307 |   1.0000 |   85.0980 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0082 |   1.0000 |   22.7420 |   0.0000 |
+| auction_type_coded:eta_quadratic_coded |   0.0024 |   1.0000 |    6.5797 |   0.0111 |
+| auction_type_coded:n_bidders_coded     |   0.0047 |   1.0000 |   12.9396 |   0.0004 |
+| auction_type_coded:state_info_coded    |   0.0089 |   1.0000 |   24.8131 |   0.0000 |
+| eta_linear_coded:eta_quadratic_coded   |   0.4520 |   1.0000 | 1254.7047 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.0319 |   1.0000 |   88.6730 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0080 |   1.0000 |   22.1244 |   0.0000 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0028 |   1.0000 |    7.6996 |   0.0061 |
+| eta_quadratic_coded:state_info_coded   |   0.0067 |   1.0000 |   18.5075 |   0.0000 |
+| n_bidders_coded:state_info_coded       |   0.0020 |   1.0000 |    5.5222 |   0.0199 |
+| Residual                               |   0.0638 | 177.0000 |  nan      | nan      |
 
---- Significant Effects (p < 0.05): 6 ---
-  eta_linear:eta_quadratic                 coef=+0.0194  p=0.0004
-  eta_linear                               coef=+0.0194  p=0.0004
-  auction_type                             coef=+0.0274  p=0.0017
-  n_bidders                                coef=+0.0180  p=0.0314
-  auction_type:eta_quadratic               coef=-0.0116  p=0.0486
-  auction_type:n_bidders                   coef=+0.0163  p=0.0495
+--- Significant Effects (p < 0.05): 15 ---
+  eta_linear:eta_quadratic                 coef=+0.0297  p=0.0000
+  eta_linear                               coef=+0.0297  p=0.0000
+  auction_type                             coef=-0.0377  p=0.0000
+  eta_linear:n_bidders                     coef=-0.0158  p=0.0000
+  state_info                               coef=+0.0126  p=0.0000
+  eta_quadratic                            coef=+0.0082  p=0.0000
+  auction_type:state_info                  coef=+0.0068  p=0.0000
+  auction_type:eta_linear                  coef=+0.0080  p=0.0000
+  eta_linear:state_info                    coef=-0.0079  p=0.0000
+  n_bidders                                coef=+0.0064  p=0.0000
+  eta_quadratic:state_info                 coef=-0.0042  p=0.0000
+  auction_type:n_bidders                   coef=-0.0049  p=0.0004
+  eta_quadratic:n_bidders                  coef=-0.0027  p=0.0061
+  auction_type:eta_quadratic               coef=+0.0025  p=0.0111
+  n_bidders:state_info                     coef=-0.0032  p=0.0199
 
   Plots saved to results/exp2/
 
@@ -729,74 +790,81 @@ RESPONSE: bid_dispersion
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:         bid_dispersion   R-squared:                       0.515
-Model:                            OLS   Adj. R-squared:                  0.309
-Method:                 Least Squares   F-statistic:                     2.500
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):             0.0152
-Time:                        03:26:01   Log-Likelihood:                 81.795
-No. Observations:                  48   AIC:                            -133.6
-Df Residuals:                      33   BIC:                            -105.5
+Dep. Variable:         bid_dispersion   R-squared:                       0.993
+Model:                            OLS   Adj. R-squared:                  0.992
+Method:                 Least Squares   F-statistic:                     1757.
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):          9.54e-182
+Time:                        10:11:48   Log-Likelihood:                 731.53
+No. Observations:                 192   AIC:                            -1433.
+Df Residuals:                     177   BIC:                            -1384.
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.1750      0.008     22.834      0.000       0.159       0.191
-auction_type_coded                         0.0248      0.008      3.239      0.003       0.009       0.040
-eta_linear_coded                          -0.0095      0.005     -2.017      0.052      -0.019       8e-05
-eta_quadratic_coded                        0.0020      0.005      0.375      0.710      -0.009       0.013
-n_bidders_coded                            0.0179      0.008      2.340      0.025       0.002       0.034
-state_info_coded                           0.0099      0.008      1.291      0.206      -0.006       0.025
-auction_type_coded:eta_linear_coded        0.0045      0.009      0.475      0.638      -0.015       0.024
-auction_type_coded:eta_quadratic_coded     0.0057      0.005      1.045      0.304      -0.005       0.017
-auction_type_coded:n_bidders_coded        -0.0005      0.008     -0.059      0.953      -0.016       0.015
-auction_type_coded:state_info_coded       -0.0143      0.008     -1.867      0.071      -0.030       0.001
-eta_linear_coded:eta_quadratic_coded      -0.0095      0.005     -2.017      0.052      -0.019       8e-05
-eta_linear_coded:n_bidders_coded          -0.0014      0.009     -0.146      0.885      -0.020       0.018
-eta_linear_coded:state_info_coded         -0.0097      0.009     -1.031      0.310      -0.029       0.009
-eta_quadratic_coded:n_bidders_coded       -0.0029      0.005     -0.542      0.591      -0.014       0.008
-eta_quadratic_coded:state_info_coded       0.0086      0.005      1.589      0.121      -0.002       0.020
-n_bidders_coded:state_info_coded           0.0162      0.008      2.110      0.043       0.001       0.032
+Intercept                                  0.1753      0.000    435.236      0.000       0.175       0.176
+auction_type_coded                        -0.0275      0.000    -68.214      0.000      -0.028      -0.027
+eta_linear_coded                          -0.0101      0.000    -41.072      0.000      -0.011      -0.010
+eta_quadratic_coded                       -0.0005      0.000     -1.739      0.084      -0.001    6.68e-05
+n_bidders_coded                            0.0522      0.000    129.519      0.000       0.051       0.053
+state_info_coded                          -0.0043      0.000    -10.719      0.000      -0.005      -0.004
+auction_type_coded:eta_linear_coded        0.0010      0.000      2.054      0.041       4e-05       0.002
+auction_type_coded:eta_quadratic_coded    -0.0003      0.000     -0.961      0.338      -0.001       0.000
+auction_type_coded:n_bidders_coded         0.0086      0.000     21.258      0.000       0.008       0.009
+auction_type_coded:state_info_coded       -0.0006      0.000     -1.406      0.162      -0.001       0.000
+eta_linear_coded:eta_quadratic_coded      -0.0101      0.000    -41.072      0.000      -0.011      -0.010
+eta_linear_coded:n_bidders_coded          -0.0144      0.000    -29.257      0.000      -0.015      -0.013
+eta_linear_coded:state_info_coded         -0.0013      0.000     -2.577      0.011      -0.002      -0.000
+eta_quadratic_coded:n_bidders_coded       -0.0004      0.000     -1.532      0.127      -0.001       0.000
+eta_quadratic_coded:state_info_coded      -0.0002      0.000     -0.606      0.545      -0.001       0.000
+n_bidders_coded:state_info_coded          -0.0026      0.000     -6.474      0.000      -0.003      -0.002
 ==============================================================================
-Omnibus:                        5.097   Durbin-Watson:                   2.253
-Prob(Omnibus):                  0.078   Jarque-Bera (JB):                4.160
-Skew:                           0.704   Prob(JB):                        0.125
-Kurtosis:                       3.314   Cond. No.                     7.74e+15
+Omnibus:                        1.138   Durbin-Watson:                   2.328
+Prob(Omnibus):                  0.566   Jarque-Bera (JB):                0.885
+Skew:                          -0.158   Prob(JB):                        0.642
+Kurtosis:                       3.105   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.5148
-Adj R² = 0.3089
+R² = 0.9929
+Adj R² = 0.9923
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |        F |   PR(>F) |
-|----------------------------------------|----------|---------|----------|----------|
-| Intercept                              |   1.4699 |  1.0000 | 521.4010 |   0.0000 |
-| auction_type_coded                     |   0.0296 |  1.0000 |  10.4916 |   0.0027 |
-| eta_linear_coded                       |   0.0115 |  1.0000 |   4.0702 |   0.0518 |
-| eta_quadratic_coded                    |   0.0004 |  1.0000 |   0.1409 |   0.7098 |
-| n_bidders_coded                        |   0.0154 |  1.0000 |   5.4775 |   0.0255 |
-| state_info_coded                       |   0.0047 |  1.0000 |   1.6671 |   0.2056 |
-| auction_type_coded:eta_linear_coded    |   0.0006 |  1.0000 |   0.2253 |   0.6382 |
-| auction_type_coded:eta_quadratic_coded |   0.0031 |  1.0000 |   1.0917 |   0.3037 |
-| auction_type_coded:n_bidders_coded     |   0.0000 |  1.0000 |   0.0035 |   0.9532 |
-| auction_type_coded:state_info_coded    |   0.0098 |  1.0000 |   3.4848 |   0.0708 |
-| eta_linear_coded:eta_quadratic_coded   |   0.0115 |  1.0000 |   4.0702 |   0.0518 |
-| eta_linear_coded:n_bidders_coded       |   0.0001 |  1.0000 |   0.0213 |   0.8850 |
-| eta_linear_coded:state_info_coded      |   0.0030 |  1.0000 |   1.0620 |   0.3103 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0008 |  1.0000 |   0.2940 |   0.5913 |
-| eta_quadratic_coded:state_info_coded   |   0.0071 |  1.0000 |   2.5265 |   0.1215 |
-| n_bidders_coded:state_info_coded       |   0.0125 |  1.0000 |   4.4500 |   0.0426 |
-| Residual                               |   0.0930 | 33.0000 | nan      | nan      |
+|                                        |   sum_sq |       df |           F |   PR(>F) |
+|----------------------------------------|----------|----------|-------------|----------|
+| Intercept                              |   5.9011 |   1.0000 | 189430.7036 |   0.0000 |
+| auction_type_coded                     |   0.1450 |   1.0000 |   4653.1011 |   0.0000 |
+| eta_linear_coded                       |   0.0526 |   1.0000 |   1686.9115 |   0.0000 |
+| eta_quadratic_coded                    |   0.0001 |   1.0000 |      3.0241 |   0.0838 |
+| n_bidders_coded                        |   0.5226 |   1.0000 |  16775.2138 |   0.0000 |
+| state_info_coded                       |   0.0036 |   1.0000 |    114.8874 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0001 |   1.0000 |      4.2209 |   0.0414 |
+| auction_type_coded:eta_quadratic_coded |   0.0000 |   1.0000 |      0.9237 |   0.3378 |
+| auction_type_coded:n_bidders_coded     |   0.0141 |   1.0000 |    451.9020 |   0.0000 |
+| auction_type_coded:state_info_coded    |   0.0001 |   1.0000 |      1.9759 |   0.1616 |
+| eta_linear_coded:eta_quadratic_coded   |   0.0526 |   1.0000 |   1686.9115 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.0267 |   1.0000 |    855.9744 |   0.0000 |
+| eta_linear_coded:state_info_coded      |   0.0002 |   1.0000 |      6.6426 |   0.0108 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0001 |   1.0000 |      2.3473 |   0.1273 |
+| eta_quadratic_coded:state_info_coded   |   0.0000 |   1.0000 |      0.3677 |   0.5450 |
+| n_bidders_coded:state_info_coded       |   0.0013 |   1.0000 |     41.9101 |   0.0000 |
+| Residual                               |   0.0055 | 177.0000 |    nan      | nan      |
 
---- Significant Effects (p < 0.05): 3 ---
-  auction_type                             coef=+0.0248  p=0.0027
-  n_bidders                                coef=+0.0179  p=0.0255
-  n_bidders:state_info                     coef=+0.0162  p=0.0426
+--- Significant Effects (p < 0.05): 10 ---
+  n_bidders                                coef=+0.0522  p=0.0000
+  auction_type                             coef=-0.0275  p=0.0000
+  eta_linear                               coef=-0.0101  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0101  p=0.0000
+  eta_linear:n_bidders                     coef=-0.0144  p=0.0000
+  auction_type:n_bidders                   coef=+0.0086  p=0.0000
+  state_info                               coef=-0.0043  p=0.0000
+  n_bidders:state_info                     coef=-0.0026  p=0.0000
+  eta_linear:state_info                    coef=-0.0013  p=0.0108
+  auction_type:eta_linear                  coef=+0.0010  p=0.0414
 
   Plots saved to results/exp2/
 
@@ -807,76 +875,81 @@ RESPONSE: signal_slope_ratio
 --- OLS Regression Summary ---
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:     signal_slope_ratio   R-squared:                       0.492
-Model:                            OLS   Adj. R-squared:                  0.277
-Method:                 Least Squares   F-statistic:                     2.286
-Date:                Sun, 22 Feb 2026   Prob (F-statistic):             0.0254
-Time:                        03:26:01   Log-Likelihood:                 30.085
-No. Observations:                  48   AIC:                            -30.17
-Df Residuals:                      33   BIC:                            -2.102
+Dep. Variable:     signal_slope_ratio   R-squared:                       0.960
+Model:                            OLS   Adj. R-squared:                  0.956
+Method:                 Least Squares   F-statistic:                     299.7
+Date:                Wed, 25 Feb 2026   Prob (F-statistic):          3.63e-115
+Time:                        10:11:49   Log-Likelihood:                 361.65
+No. Observations:                 192   AIC:                            -693.3
+Df Residuals:                     177   BIC:                            -644.4
 Df Model:                          14                                         
 Covariance Type:            nonrobust                                         
 ==========================================================================================================
                                              coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------------------
-Intercept                                  0.8219      0.023     36.520      0.000       0.776       0.868
-auction_type_coded                        -0.0403      0.023     -1.793      0.082      -0.086       0.005
-eta_linear_coded                          -0.0303      0.014     -2.198      0.035      -0.058      -0.002
-eta_quadratic_coded                        0.0044      0.016      0.274      0.786      -0.028       0.037
-n_bidders_coded                            0.0178      0.023      0.791      0.435      -0.028       0.064
-state_info_coded                          -0.0465      0.023     -2.066      0.047      -0.092      -0.001
-auction_type_coded:eta_linear_coded        0.0160      0.028      0.582      0.564      -0.040       0.072
-auction_type_coded:eta_quadratic_coded     0.0273      0.016      1.713      0.096      -0.005       0.060
-auction_type_coded:n_bidders_coded        -0.0017      0.023     -0.075      0.941      -0.047       0.044
-auction_type_coded:state_info_coded       -0.0227      0.023     -1.008      0.321      -0.068       0.023
-eta_linear_coded:eta_quadratic_coded      -0.0303      0.014     -2.198      0.035      -0.058      -0.002
-eta_linear_coded:n_bidders_coded           0.0101      0.028      0.367      0.716      -0.046       0.066
-eta_linear_coded:state_info_coded         -0.0079      0.028     -0.288      0.775      -0.064       0.048
-eta_quadratic_coded:n_bidders_coded       -0.0283      0.016     -1.779      0.084      -0.061       0.004
-eta_quadratic_coded:state_info_coded       0.0358      0.016      2.250      0.031       0.003       0.068
-n_bidders_coded:state_info_coded           0.0562      0.023      2.498      0.018       0.010       0.102
+Intercept                                  0.8164      0.003    295.219      0.000       0.811       0.822
+auction_type_coded                         0.0294      0.003     10.637      0.000       0.024       0.035
+eta_linear_coded                          -0.0527      0.002    -31.132      0.000      -0.056      -0.049
+eta_quadratic_coded                       -0.0123      0.002     -6.304      0.000      -0.016      -0.008
+n_bidders_coded                            0.0890      0.003     32.200      0.000       0.084       0.095
+state_info_coded                          -0.1192      0.003    -43.102      0.000      -0.125      -0.114
+auction_type_coded:eta_linear_coded        0.0047      0.003      1.387      0.167      -0.002       0.011
+auction_type_coded:eta_quadratic_coded    -0.0008      0.002     -0.399      0.691      -0.005       0.003
+auction_type_coded:n_bidders_coded        -0.0207      0.003     -7.495      0.000      -0.026      -0.015
+auction_type_coded:state_info_coded       -0.0184      0.003     -6.649      0.000      -0.024      -0.013
+eta_linear_coded:eta_quadratic_coded      -0.0527      0.002    -31.132      0.000      -0.056      -0.049
+eta_linear_coded:n_bidders_coded           0.0091      0.003      2.688      0.008       0.002       0.016
+eta_linear_coded:state_info_coded         -0.0280      0.003     -8.255      0.000      -0.035      -0.021
+eta_quadratic_coded:n_bidders_coded        0.0002      0.002      0.084      0.933      -0.004       0.004
+eta_quadratic_coded:state_info_coded       0.0018      0.002      0.934      0.352      -0.002       0.006
+n_bidders_coded:state_info_coded           0.0008      0.003      0.288      0.774      -0.005       0.006
 ==============================================================================
-Omnibus:                        0.952   Durbin-Watson:                   2.798
-Prob(Omnibus):                  0.621   Jarque-Bera (JB):                0.709
-Skew:                          -0.296   Prob(JB):                        0.702
-Kurtosis:                       2.933   Cond. No.                     7.74e+15
+Omnibus:                       14.486   Durbin-Watson:                   2.213
+Prob(Omnibus):                  0.001   Jarque-Bera (JB):               29.207
+Skew:                          -0.328   Prob(JB):                     4.55e-07
+Kurtosis:                       4.795   Cond. No.                     3.28e+15
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The smallest eigenvalue is 1.6e-30. This might indicate that there are
+[2] The smallest eigenvalue is 3.58e-29. This might indicate that there are
 strong multicollinearity problems or that the design matrix is singular.
 
-R² = 0.4923
-Adj R² = 0.2769
+R² = 0.9595
+Adj R² = 0.9563
 
 --- ANOVA Table (Type III) ---
-|                                        |   sum_sq |      df |         F |   PR(>F) |
-|----------------------------------------|----------|---------|-----------|----------|
-| Intercept                              |  32.4271 |  1.0000 | 1333.7130 |   0.0000 |
-| auction_type_coded                     |   0.0781 |  1.0000 |    3.2138 |   0.0822 |
-| eta_linear_coded                       |   0.1175 |  1.0000 |    4.8323 |   0.0351 |
-| eta_quadratic_coded                    |   0.0018 |  1.0000 |    0.0752 |   0.7856 |
-| n_bidders_coded                        |   0.0152 |  1.0000 |    0.6249 |   0.4349 |
-| state_info_coded                       |   0.1038 |  1.0000 |    4.2676 |   0.0468 |
-| auction_type_coded:eta_linear_coded    |   0.0082 |  1.0000 |    0.3390 |   0.5644 |
-| auction_type_coded:eta_quadratic_coded |   0.0714 |  1.0000 |    2.9357 |   0.0960 |
-| auction_type_coded:n_bidders_coded     |   0.0001 |  1.0000 |    0.0056 |   0.9406 |
-| auction_type_coded:state_info_coded    |   0.0247 |  1.0000 |    1.0152 |   0.3210 |
-| eta_linear_coded:eta_quadratic_coded   |   0.1175 |  1.0000 |    4.8323 |   0.0351 |
-| eta_linear_coded:n_bidders_coded       |   0.0033 |  1.0000 |    0.1345 |   0.7161 |
-| eta_linear_coded:state_info_coded      |   0.0020 |  1.0000 |    0.0831 |   0.7750 |
-| eta_quadratic_coded:n_bidders_coded    |   0.0770 |  1.0000 |    3.1662 |   0.0844 |
-| eta_quadratic_coded:state_info_coded   |   0.1231 |  1.0000 |    5.0639 |   0.0312 |
-| n_bidders_coded:state_info_coded       |   0.1517 |  1.0000 |    6.2410 |   0.0176 |
-| Residual                               |   0.8023 | 33.0000 |  nan      | nan      |
+|                                        |   sum_sq |       df |          F |   PR(>F) |
+|----------------------------------------|----------|----------|------------|----------|
+| Intercept                              | 127.9643 |   1.0000 | 87154.1776 |   0.0000 |
+| auction_type_coded                     |   0.1661 |   1.0000 |   113.1560 |   0.0000 |
+| eta_linear_coded                       |   1.4230 |   1.0000 |   969.1898 |   0.0000 |
+| eta_quadratic_coded                    |   0.0583 |   1.0000 |    39.7381 |   0.0000 |
+| n_bidders_coded                        |   1.5223 |   1.0000 |  1036.8219 |   0.0000 |
+| state_info_coded                       |   2.7277 |   1.0000 |  1857.7635 |   0.0000 |
+| auction_type_coded:eta_linear_coded    |   0.0028 |   1.0000 |     1.9249 |   0.1671 |
+| auction_type_coded:eta_quadratic_coded |   0.0002 |   1.0000 |     0.1590 |   0.6905 |
+| auction_type_coded:n_bidders_coded     |   0.0825 |   1.0000 |    56.1770 |   0.0000 |
+| auction_type_coded:state_info_coded    |   0.0649 |   1.0000 |    44.2138 |   0.0000 |
+| eta_linear_coded:eta_quadratic_coded   |   1.4230 |   1.0000 |   969.1898 |   0.0000 |
+| eta_linear_coded:n_bidders_coded       |   0.0106 |   1.0000 |     7.2235 |   0.0079 |
+| eta_linear_coded:state_info_coded      |   0.1001 |   1.0000 |    68.1426 |   0.0000 |
+| eta_quadratic_coded:n_bidders_coded    |   0.0000 |   1.0000 |     0.0071 |   0.9331 |
+| eta_quadratic_coded:state_info_coded   |   0.0013 |   1.0000 |     0.8726 |   0.3515 |
+| n_bidders_coded:state_info_coded       |   0.0001 |   1.0000 |     0.0827 |   0.7740 |
+| Residual                               |   0.2599 | 177.0000 |   nan      | nan      |
 
---- Significant Effects (p < 0.05): 5 ---
-  n_bidders:state_info                     coef=+0.0562  p=0.0176
-  eta_quadratic:state_info                 coef=+0.0358  p=0.0312
-  eta_linear:eta_quadratic                 coef=-0.0303  p=0.0351
-  eta_linear                               coef=-0.0303  p=0.0351
-  state_info                               coef=-0.0465  p=0.0468
+--- Significant Effects (p < 0.05): 10 ---
+  state_info                               coef=-0.1192  p=0.0000
+  n_bidders                                coef=+0.0890  p=0.0000
+  eta_linear                               coef=-0.0527  p=0.0000
+  eta_linear:eta_quadratic                 coef=-0.0527  p=0.0000
+  auction_type                             coef=+0.0294  p=0.0000
+  eta_linear:state_info                    coef=-0.0280  p=0.0000
+  auction_type:n_bidders                   coef=-0.0207  p=0.0000
+  auction_type:state_info                  coef=-0.0184  p=0.0000
+  eta_quadratic                            coef=-0.0123  p=0.0000
+  eta_linear:n_bidders                     coef=+0.0091  p=0.0079
 
   Plots saved to results/exp2/
 

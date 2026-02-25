@@ -1,0 +1,50 @@
+{
+  "experiment": 1,
+  "n_factors": 11,
+  "factors": {
+    "auction_type": {
+      "low": "second",
+      "high": "first"
+    },
+    "alpha": {
+      "low": 0.01,
+      "high": 0.1
+    },
+    "gamma": {
+      "low": 0.0,
+      "high": 0.95
+    },
+    "reserve_price": {
+      "low": 0.0,
+      "high": 0.5
+    },
+    "init": {
+      "low": "zeros",
+      "high": "optimistic"
+    },
+    "exploration": {
+      "low": "egreedy",
+      "high": "boltzmann"
+    },
+    "asynchronous": {
+      "low": 0,
+      "high": 1
+    },
+    "n_bidders": {
+      "low": 2,
+      "high": 4
+    },
+    "n_actions": {
+      "low": 11,
+      "high": 21
+    },
+    "info_feedback": {
+      "low": "minimal",
+      "high": "full"
+    },
+    "decay_type": {
+      "low": "linear",
+      "high": "exponential"
+    }
+  }
+}

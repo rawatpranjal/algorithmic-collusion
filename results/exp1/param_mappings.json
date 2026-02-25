@@ -4,8 +4,8 @@
     "second": 0
   },
   "init": {
-    "random": 0,
-    "zeros": 1
+    "zeros": 0,
+    "optimistic": 1
   },
   "exploration": {
     "egreedy": 0,
@@ -15,12 +15,12 @@
     "0": 0,
     "1": 1
   },
-  "median_opp_past_bid_index": {
-    "false": 0,
-    "true": 1
+  "info_feedback": {
+    "minimal": 0,
+    "full": 1
   },
-  "winner_bid_index_state": {
-    "false": 0,
-    "true": 1
+  "decay_type": {
+    "linear": 0,
+    "exponential": 1
   }
 }
