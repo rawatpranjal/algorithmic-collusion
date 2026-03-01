@@ -3,7 +3,7 @@
 
 \subsection{Competitive Pressure and Budget Constraints as Primary Determinants}
 
-The most robust empirical finding across all experiments is that structural market parameters dominate algorithmic design choices. Table~\ref{tab:cross_exp_factors} ranks the top factors by absolute $t$-statistic for revenue in each experiment. In unconstrained settings (Experiments~1--3), the number of bidders yields the largest effect, with magnitudes consistently larger than auction format. Under budget constraints (Experiments~4a--4b), the budget multiplier dominates, with the number of bidders ranking second or third, reflecting the binding role of budget tightness in pacing environments.
+The most robust empirical finding across all experiments is that structural market parameters dominate algorithmic design choices. Table~\ref{tab:cross_exp_factors} ranks the top factors by absolute $t$-statistic for revenue in each experiment. In unconstrained settings (Experiments~1--3), the number of bidders yields the largest effect, with magnitudes consistently larger than auction format. Under budget constraints (Experiments~4a--4b), the budget multiplier dominates, with the number of bidders ranking second to fourth, reflecting the binding role of budget tightness in pacing environments.
 
 \begin{table}[H]
 \centering
@@ -51,7 +51,7 @@ The direction and magnitude of the effect vary by context: the revenue consequen
 
 \subsection{Exploration and Aggressiveness as Moderators}
 
-Across experiments, factors that promote bid commitment improve first-price auction revenue: the discount factor and update mode in Q-learning (Experiment~1), the bidder objective in dual pacing (Experiment~4a), and controller aggressiveness in PI pacing (Experiment~4b). LinUCB (Experiment~3a) diverges: higher exploration intensity \emph{reduces} revenue, as optimism-based exploration reinforces conservative bidding rather than destabilising low-bid equilibria. The welfare consequences of algorithmic design choices are algorithm-specific.
+Across experiments, factors that promote bid commitment improve first-price auction revenue: the discount factor and update mode in Q-learning (Experiment~1) and the bidder objective in dual pacing (Experiment~4a). In PI pacing (Experiment~4b), auction format itself is a strong revenue driver, with first-price rules increasing revenue, and this effect is moderated by budget tightness through a significant auction format $\times$ budget multiplier interaction. LinUCB (Experiment~3a) diverges: higher exploration intensity \emph{reduces} revenue, as optimism-based exploration reinforces conservative bidding rather than destabilising low-bid equilibria. The welfare consequences of algorithmic design choices are algorithm-specific.
 
 \subsection{Convergence and Constraints}
 
@@ -73,15 +73,35 @@ E4b & Pacing (PI) & \ExpFourBConvMedian & \ExpFourBConvMean \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:cross_exp_convergence} compares convergence times across all experiments. Budget constraints accelerate convergence: pacing agents converge as fast as the fastest unconstrained agents and dramatically faster than Q-learning with affiliated valuations. Faster convergence does not guarantee higher revenue. Experiment~3a converges substantially faster than Experiment~1 (\ExpThreeAConvMedian{} vs.\ \ExpOneConvMedian{} rounds) yet produces far lower revenues. The key determinant is \emph{which equilibrium} agents converge to, not convergence speed per se.
+Table~\ref{tab:cross_exp_convergence} compares convergence times across all experiments. In unconstrained settings, contextual bandits converge substantially faster than Q-learning. Pacing experiments use a different convergence concept (within-episode budget depletion rather than cross-episode strategy settling), so direct comparison of convergence times between pacing and unconstrained experiments is not meaningful. Faster convergence does not guarantee higher revenue. Experiment~3a converges substantially faster than Experiment~1 (\ExpThreeAConvMedian{} vs.\ \ExpOneConvMedian{} rounds) yet produces far lower revenues. The key determinant is \emph{which equilibrium} agents converge to, not convergence speed per se.
 
 \subsection{Winner Concentration}
 
-In the contextual bandit experiments (Experiments~3a and~3b), first-price auctions produce higher winner entropy than second-price auctions, consistent with symmetric bid suppression preserving roughly equitable winner rotation. Under Q-learning with affiliated valuations (Experiment~2), the pattern reverses: second-price auctions exhibit marginally higher entropy, though the difference is not statistically significant. The direction of the winner concentration effect thus depends on the learning algorithm, with bandit-based learners producing more symmetric outcomes under first-price rules.
+In the LinUCB experiment (Experiment~3a), first-price auctions produce higher winner entropy than second-price auctions, consistent with symmetric bid suppression preserving roughly equitable winner rotation. This pattern does not replicate under Thompson sampling (Experiment~3b), where the auction format effect on winner entropy is not statistically significant, suggesting that the symmetric bid suppression mechanism is specific to optimism-based exploration rather than a general property of contextual bandits. Under Q-learning with affiliated valuations (Experiment~2), the pattern reverses: second-price auctions exhibit marginally higher entropy, though the difference is not statistically significant. The direction of the winner concentration effect thus depends on the learning algorithm, with only LinUCB producing more symmetric outcomes under first-price rules.
 
 \subsection{Factors with Context-Dependent Effects}
 
 Two factors expected to matter based on theory show uneven effects. The affiliation parameter $\eta$, varied across Experiments~2, 3a, and~3b from independent private values to near-common values, shows no significant effect on revenue in Experiment~2 ($p = 0.056$) but becomes significant in both contextual bandit experiments (Experiment~3a, $t = -5.7$, $p < 0.001$; Experiment~3b, $t = -3.2$, $p = 0.002$), indicating that algorithm sophistication moderates sensitivity to value correlation. Reserve prices show algorithm-dependent effects on revenue: significant under Q-learning with constant valuations (Experiment~1, $t = 5.1$, positive) and Thompson sampling (Experiment~3b, $t = -7.9$, negative), but not under LinUCB or pacing. The opposite signs suggest that reserve prices interact with the learning algorithm: they support revenue when bidders shade bids (Q-learning) but reduce it when bidders are already bidding aggressively (Thompson sampling with affiliated values).
+
+\subsection{Key Takeaways}
+
+Competition is the single most important determinant of auction revenue when bidders are learning algorithms. In every unconstrained experiment, increasing the number of bidders produces a larger revenue effect than any other factor, including auction format, learning rate, or exploration strategy. This finding echoes classical auction theory and confirms that it extends to the algorithmic setting.
+
+Auction format effects are context-dependent rather than universal. There is no blanket advantage for either first-price or second-price auctions. The direction and magnitude of the format effect depend on the learning algorithm and environment, shifting from negligible under Q-learning with constant valuations, to favouring second-price under affiliated values, to favouring first-price under budget-constrained pacing.
+
+The degree of value affiliation has no effect on revenue under Q-learning, but becomes a significant driver under contextual bandits. This divergence suggests that Q-learning agents do not exploit the informational structure of affiliated values, whereas bandit algorithms with richer state representations are sensitive to the correlation between bidder signals.
+
+Higher exploration intensity reduces revenue under contextual bandits. In both LinUCB and Thompson sampling experiments, more aggressive exploration leads to lower seller revenue, as optimism-based or sampling-based exploration reinforces conservative bidding strategies rather than disrupting collusive equilibria.
+
+Budget tightness replaces competition as the primary revenue driver under pacing. In autobidding experiments with budget constraints, the budget multiplier dominates all other factors, reflecting the structural role that spending limits play in constraining bidder aggressiveness.
+
+Faster convergence does not imply higher revenue. LinUCB agents converge substantially faster than Q-learning agents but produce lower revenues, because the equilibrium to which they converge matters more than how quickly they reach it.
+
+First-price auctions produce more symmetric winner distributions only under LinUCB, not under Thompson sampling or Q-learning. The bid suppression mechanism that equalises winning probabilities across bidders appears to be specific to optimism-based exploration, not a general property of first-price payment rules.
+
+Reserve prices have opposite effects depending on the learning algorithm. They improve revenue under Q-learning with constant valuations, where bidders shade bids and the reserve provides a floor, but reduce revenue under Thompson sampling with affiliated values, where bidders already bid aggressively and the reserve causes no-sale outcomes.
+
+Higher discount factors suppress revenue under Q-learning. Patient agents that weight future rewards more heavily sustain lower-bid collusive equilibria for longer, resulting in the discount factor ranking as the second most important revenue driver in the baseline Q-learning experiment.
 
 \subsection{External Validity}
 

@@ -12,7 +12,7 @@ achieves PoA=2.
 
 Design: 2^6 = 64 full factorial (auction_type x objective x n_bidders
 x budget_multiplier x reserve_price x sigma).
-Each cell is replicated across 50 independent seeds.
+Each cell is replicated across 8 independent seeds.
 Each run: D=100 episodes x T=1,000 rounds with budget regeneration.
 """
 

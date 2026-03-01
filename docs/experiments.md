@@ -9,8 +9,8 @@ This project studies whether algorithmic bidding agents learn to collude in repe
 | 1 | Q-learning | Constant (v=1) | 2^(11-1) Res V | 11 | 1024 | How do Q-learners bid under first- vs second-price with constant values? |
 | 2 | Q-learning | Affiliated (eta) | 3 x 2^3 mixed | 4 | 24 | Does valuation interdependence alter collusion patterns? |
 | 3 | LinUCB / CTS | Affiliated (eta) | 3 x 2^7 mixed | 8 | 384 | Do bandit algorithms converge faster or to different equilibria than Q-learning? |
-| 4a | Dual Pacing | LogNormal (asymmetric) | 2^6 full | 6 | 64 x 50 seeds | How do budget constraints and bidder objectives interact with auction format? |
-| 4b | PI Pacing | LogNormal (asymmetric) | 2^6 full | 6 | 64 x 50 seeds | Does the control law itself shape collusive outcomes? |
+| 4a | Dual Pacing | LogNormal (asymmetric) | 2^6 full | 6 | 64 x 8 seeds | How do budget constraints and bidder objectives interact with auction format? |
+| 4b | PI Pacing | LogNormal (asymmetric) | 2^6 full | 6 | 64 x 8 seeds | Does the control law itself shape collusive outcomes? |
 
 ## Experiment 1: Identical Valuations
 
@@ -100,7 +100,7 @@ where m_{-i} is the mean signal of opponents and eta in {0, 0.5, 1} controls aff
 
 **Algorithm.** Multiplicative dual pacing. Each bidder maintains a dual variable (pacing multiplier) updated episode-by-episode to satisfy budget constraints. Bids are shaded by the pacing multiplier: b_i = v_i / (1 + mu_i) for value-maximizers.
 
-**Design.** 2^6 full factorial (64 cells x 50 seeds = 3,200 runs).
+**Design.** 2^6 full factorial (64 cells x 8 seeds = 512 runs).
 
 | Factor | Low (-1) | High (+1) |
 |--------|----------|-----------|
@@ -121,7 +121,7 @@ where m_{-i} is the mean signal of opponents and eta in {0, 0.5, 1} controls aff
 
 **Algorithm.** PI pacing controller. Each bidder maintains a pacing multiplier lambda updated additively based on cumulative spending error: lambda_{t+1} = clip(lambda_t + K_P * e_t + K_I * sum(e), 0.01, 1.5), where e_t = (t/T)*B - cumulative_spend. Gains scale with aggressiveness: K_P = 0.30*a, K_I = 0.05*a. This replaces the multiplicative dual pacing of Experiment 4a with an additive PI controller.
 
-**Design.** 2^6 full factorial (64 cells x 50 seeds = 3,200 runs).
+**Design.** 2^6 full factorial (64 cells x 8 seeds = 512 runs).
 
 | Factor | Low (-1) | High (+1) |
 |--------|----------|-----------|

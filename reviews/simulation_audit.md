@@ -19,8 +19,8 @@
 
 **Action items:**
 - Regenerate `results/exp3b/data.csv` with `make exp3b REPS=2`.
-- Regenerate `results/exp4a/data.csv` with `make exp4a REPS=50`.
-- Regenerate `results/exp4b/data.csv` with `make exp4b REPS=50`.
+- Regenerate `results/exp4a/data.csv` with `make exp4a REPS=8`.
+- Regenerate `results/exp4b/data.csv` with `make exp4b REPS=8`.
 - Then re-run: `make analyze robust traces tables pdf paper`.
 
 ---

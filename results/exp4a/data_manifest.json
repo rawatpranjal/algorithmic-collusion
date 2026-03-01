@@ -1,0 +1,12 @@
+{
+  "experiment": "4a",
+  "generated_at": "2026-03-01T12:52:09",
+  "git_commit": "25e7df3",
+  "git_dirty": true,
+  "source_checksums": {
+    "src/experiments/exp4a.py": "sha256:6346e35ac1444369a9ec71dcb455fe04f354544efab7476b7db103835254e6e8",
+    "scripts/run_experiment.py": "sha256:55a1e802478867c1d67242533d73dac8a8081fdf6bdd2ceb3cf34bfac9b188fc"
+  },
+  "n_rows": 3200,
+  "n_factors": 6
+}

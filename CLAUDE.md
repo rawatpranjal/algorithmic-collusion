@@ -42,7 +42,9 @@ make exp1 SEED=123    # Custom random seed (default: 42)
 make exp1 WORKERS=8   # Custom parallel workers (default: cpu_count/2)
 ```
 
-**Production REPS per experiment:** `make exp1 REPS=2`, `make exp2 REPS=8`, `make exp3a REPS=2`, `make exp3b REPS=2`, `make exp4a REPS=50`, `make exp4b REPS=50`
+**Production REPS per experiment:** `make exp1 REPS=2`, `make exp2 REPS=8`, `make exp3a REPS=2`, `make exp3b REPS=2`, `make exp4a REPS=8`, `make exp4b REPS=8`
+
+**Why REPS vary:** Experiments with many cells (exp1: 512, exp3a: 384) need few reps because the large number of cells provides sufficient degrees of freedom. Exp4a/4b have only 64 cells (2^6 full factorial) but 8 reps per cell (512 rows) provides 448 pure error DF — more than sufficient for all robustness checks given the large effect sizes observed.
 
 ## CLI Reference
 
@@ -81,8 +83,8 @@ Experiments use 2^k factorial designs (coded -1/+1) instead of random sampling.
 | 2 | 3 × 2^3 mixed-level | 4 (3 binary + 1 three-level) | 24 | 8 | 192 | ~2 hrs |
 | 3a | 3 × 2^7 mixed-level (LinUCB) | 8 (7 binary + 1 three-level) | 384 | 2 | 768 | ~2-4 hrs |
 | 3b | 3 × 2^5 mixed-level (Thompson) | 6 (5 binary + 1 three-level) | 96 | 2 | 192 | ~1 hr |
-| 4a | 2^6 full factorial | 6 | 64 | 50 | 3200 | ~2-3 hrs |
-| 4b | 2^6 full factorial | 6 | 64 | 50 | 3200 | ~2-3 hrs |
+| 4a | 2^6 full factorial | 6 | 64 | 8 | 512 | ~30 min |
+| 4b | 2^6 full factorial | 6 | 64 | 8 | 512 | ~30 min |
 
 Quick mode: 2^4 = 16 cells × 1 replicate for smoke testing (Exp 1-3b); 64 cells × 2 seeds for Exp 4a-4b.
 

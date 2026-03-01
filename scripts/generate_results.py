@@ -37,8 +37,8 @@ EXP_DESIGNS = {
     "1": {"design": "$2^{11-1}$ half-fraction (Res~V)", "k": 11},
     "2": {"design": "$3 \\times 2^3 = 24$ mixed-level factorial", "k": 4},
     "3": {"design": "$2^{8}$ full factorial", "k": 8},
-    "4a": {"design": "$2^6$ full factorial $\\times$ 50 seeds", "k": 6},
-    "4b": {"design": "$2^6$ full factorial $\\times$ 50 seeds", "k": 6},
+    "4a": {"design": "$2^6$ full factorial $\\times$ 8 seeds", "k": 6},
+    "4b": {"design": "$2^6$ full factorial $\\times$ 8 seeds", "k": 6},
 }
 
 # Response variables expected per experiment
