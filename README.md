@@ -15,10 +15,12 @@ make all         # Full pipeline: experiments -> analysis -> paper
 
 | Exp | Algorithm | Valuations | Design | Key Question |
 |-----|-----------|------------|--------|--------------|
-| 1 | Q-learning | Constant (v=1) | 2^(11-1) Res V | Which learning parameters drive collusion? |
+| 1 | Q-learning | Constant (v=1) | 2^(10-1) Res V | Which learning parameters drive collusion? |
 | 2 | Q-learning | Affiliated (eta) | 3 x 2^3 mixed | Does valuation structure alter collusion? |
-| 3 | LinUCB + CTS | Affiliated (eta) | 3 x 2^7 mixed | Does sophisticated exploration help sellers? |
-| 4 | Dual Pacing | LogNormal | 2^3 full | Do budget constraints mitigate or amplify collusion? |
+| 3a | LinUCB | Affiliated (eta) | 3 x 2^7 mixed | Does sophisticated exploration help sellers? |
+| 3b | Thompson | Affiliated (eta) | 3 x 2^5 mixed | Does Thompson sampling alter collusive dynamics? |
+| 4a | Dual Pacing | LogNormal | 2^6 full | Do budget constraints mitigate or amplify collusion? |
+| 4b | PI Pacing | LogNormal | 2^6 full | Does the control law shape collusive outcomes? |
 
 ## Pipeline
 
@@ -49,12 +51,13 @@ src/
   experiments/
     exp1.py          # Q-learning, constant valuations
     exp2.py          # Q-learning, affiliated valuations
-    exp3.py          # LinUCB/CTS contextual bandits
-    exp4.py          # Dual pacing autobidding
+    exp3.py          # Shared simulation engine for 3a/3b
+    exp4a.py         # Dual pacing autobidding
+    exp4b.py         # PI controller pacing
   estimation/
     factorial_analysis.py   # Shared OLS + ANOVA engine
     robust_analysis.py      # 13 robustness checks
-    est1.py .. est4.py      # Per-experiment wrappers
+    est1.py .. est4b.py     # Per-experiment wrappers
 
 scripts/
   run_experiment.py         # Unified CLI (factorial design)
@@ -69,7 +72,7 @@ paper/                      # LaTeX source
   figures/                  # Publication figures
 
 results/
-  exp{1,2,3,4}/
+  exp{1,2,3a,3b,4a,4b}/
     data.csv                # Factorial design data
     estimation_results.json # OLS/ANOVA results
     robust/                 # Robustness diagnostics

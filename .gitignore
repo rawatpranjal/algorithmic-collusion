@@ -69,5 +69,14 @@ docs/transcriptions/
 docs/literature/
 docs/summaries/
 
+# Auto-generated paper statistics
+paper/numbers.tex
+
+# Generated result directories (not production data)
+results/calibration/
+results/deep_dive/
+results/robustness/
+results/*/robust/discretization/
+
 # Results (optional - uncomment to track results)
 # results/
