@@ -64,12 +64,17 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
         else:
             second_highest_bid = highest_bid
     else:
-        second_idx_local = None
-        for idx_l in sorted_indices:
-            if idx_l not in highest_idx_local:
-                second_idx_local = idx_l
-                break
-        second_highest_bid = highest_bid if second_idx_local is None else valid_bids[second_idx_local]
+        if len(highest_idx_local) >= 2:
+            # 2+ tied at top: second-price = tied price
+            second_highest_bid = highest_bid
+        else:
+            # Single winner: find next-highest bid
+            second_idx_local = None
+            for idx_l in sorted_indices:
+                if idx_l not in highest_idx_local:
+                    second_idx_local = idx_l
+                    break
+            second_highest_bid = highest_bid if second_idx_local is None else valid_bids[second_idx_local]
 
     if auction_type == "first":
         rewards[winner_global] = valuations[winner_global] - winner_bid
@@ -113,7 +118,7 @@ def efficient_benchmark_ev1(N, eta):
 def run_experiment(
     eta, auction_type, n_bidders, state_info,
     alpha=0.1, gamma=0.95, episodes=100_000,
-    n_bid_actions=101, n_signal_bins=11,
+    n_bid_actions=11, n_signal_bins=11,
     reserve_price=0.0, seed=0,
     store_qtables=False, qtable_folder=None,
     progress_callback=None,
@@ -145,8 +150,8 @@ def run_experiment(
     win_count = 0
     no_sale_count = 0
 
-    # Epsilon schedule: linear decay from 1.0 to 0.0 over 90% of episodes
-    eps_start, eps_end = 1.0, 0.0
+    # Epsilon schedule: linear decay from 1.0 to 0.01 over 90% of episodes
+    eps_start, eps_end = 1.0, 0.01
     decay_end = int(0.9 * episodes)
 
     # For signal_winner state: track last winning bid bin
@@ -172,7 +177,7 @@ def run_experiment(
         if ep < decay_end:
             eps = eps_start - (ep / decay_end) * (eps_start - eps_end)
         else:
-            eps = eps_end
+            eps = 0.0  # Pure exploitation after decay
 
         # Continuous signals, discretized for Q-table
         signals = np.random.uniform(0, 1, size=n_bidders)
@@ -286,22 +291,9 @@ def run_experiment(
     # --- Carried-forward metrics ---
     avg_rev_last_1000 = float(np.mean(revenues[-window_size:]))
 
-    # Time to converge: O(n) numpy implementation
-    final_rev = avg_rev_last_1000
-    lower_band = 0.95 * final_rev
-    upper_band = 1.05 * final_rev
-    if episodes >= window_size:
-        roll_avg = np.convolve(revenues, np.ones(window_size) / window_size, mode='valid')
-        in_band = (roll_avg >= lower_band) & (roll_avg <= upper_band)
-        out_of_band = np.where(~in_band)[0]
-        if len(out_of_band) == 0:
-            time_to_converge = window_size
-        elif out_of_band[-1] < len(in_band) - 1:
-            time_to_converge = int(out_of_band[-1]) + 1 + window_size
-        else:
-            time_to_converge = episodes
-    else:
-        time_to_converge = episodes
+    # Time to converge: prospective method
+    from .convergence import compute_convergence_time
+    time_to_converge = compute_convergence_time(revenues, window_size)
 
     no_sale_rate = no_sale_count / episodes
 
@@ -317,26 +309,15 @@ def run_experiment(
         winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
 
     # --- BNE benchmarks (import from verification) ---
-    try:
-        from verification.bne_verify import (
-            analytical_revenue,
-            compute_bne_bid_coefficient,
-            grid_adjusted_bne_revenue,
-            bne_btv_benchmark,
-            bne_winners_curse_benchmark,
-            bne_bid_dispersion_benchmark,
-        )
-    except ImportError:
-        import sys
-        sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-        from verification.bne_verify import (
-            analytical_revenue,
-            compute_bne_bid_coefficient,
-            grid_adjusted_bne_revenue,
-            bne_btv_benchmark,
-            bne_winners_curse_benchmark,
-            bne_bid_dispersion_benchmark,
-        )
+    from verification.bne_verify import (
+        analytical_revenue,
+        compute_bne_bid_coefficient,
+        grid_adjusted_bne_revenue,
+        discrete_signal_bne_revenue,
+        bne_btv_benchmark,
+        bne_winners_curse_benchmark,
+        bne_bid_dispersion_benchmark,
+    )
 
     R_bne = analytical_revenue(eta, n_bidders)
     ev1 = efficient_benchmark_ev1(n_bidders, eta)
@@ -345,16 +326,11 @@ def run_experiment(
     R_grid, R_grid_se, tie_top_rate = grid_adjusted_bne_revenue(
         eta, n_bidders, auction_type, n_bid_actions=n_bid_actions, M=100_000, seed=seed + 1337
     )
-
-    # --- Regret metrics ---
-    raw_regret = 1.0 - avg_rev_last_1000
-    efficient_regret = 1.0 - (avg_rev_last_1000 / ev1) if ev1 > 1e-12 else 0.0
-    excess_regret = 1.0 - (avg_rev_last_1000 / R_bne) if R_bne > 1e-12 else 0.0
-
-    # Revenue decomposition: structural + shading + excess = 1 - R_obs
-    structural_gap = 1.0 - ev1  # unavoidable gap
-    shading_gap = (ev1 - R_bne) if ev1 > 1e-12 else 0.0  # BNE shading
-    excess_gap = (R_bne - avg_rev_last_1000) if R_bne > 1e-12 else 0.0  # learning loss
+    # Discrete-signal benchmark (both signals and bids discretized)
+    R_disc, R_disc_se, R_cont, disc_gap = discrete_signal_bne_revenue(
+        eta, n_bidders, auction_type, n_signal_bins=n_signal_bins,
+        n_bid_actions=n_bid_actions, M=100_000, seed=seed + 1338
+    )
 
     # --- Distributional metrics from final window ---
     fw_bids = np.array(final_window_bids)      # (W, N)
@@ -419,18 +395,11 @@ def run_experiment(
     summary = {
         # Carried forward
         "avg_rev_last_1000": avg_rev_last_1000,
+        "avg_rev_all": float(np.mean(revenues)),
         "time_to_converge": time_to_converge,
         "no_sale_rate": no_sale_rate,
         "price_volatility": price_volatility,
         "winner_entropy": winner_entropy,
-        # Regret
-        "raw_regret": raw_regret,
-        "efficient_regret": efficient_regret,
-        "excess_regret": excess_regret,
-        # Revenue decomposition
-        "structural_gap": structural_gap,
-        "shading_gap": shading_gap,
-        "excess_gap": excess_gap,
         # Distributional
         "btv_median": btv_median,
         "btv_iqr": btv_iqr,
@@ -445,6 +414,9 @@ def run_experiment(
         "theoretical_revenue_grid": R_grid,
         "theoretical_revenue_grid_se": R_grid_se,
         "tie_top_rate": tie_top_rate_fw,
+        # Discrete-signal benchmark
+        "theoretical_revenue_discrete": R_disc,
+        "discretization_gap": disc_gap,
     }
     return summary, revenues, [], Q
 

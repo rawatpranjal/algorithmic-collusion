@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Experiment 4: Autobidding with Regenerating Budgets.
+Experiment 4a: Autobidding with Regenerating Budgets (Multiplicative Dual Pacing).
 
 Studies how auction format, bidder objective, and market thickness jointly
 determine welfare, revenue, and collusion when dual-based pacing agents
@@ -10,7 +10,8 @@ Motivated by the PoA literature (Balseiro & Gur 2019, Aggarwal et al. 2019,
 Deng et al. 2021): FPA achieves PoA=1 for value-maximizers while SPA
 achieves PoA=2.
 
-Design: 2^3 = 8 full factorial (auction_type x objective x n_bidders)
+Design: 2^6 = 64 full factorial (auction_type x objective x n_bidders
+x budget_multiplier x reserve_price x sigma).
 Each cell is replicated across 50 independent seeds.
 Each run: D=100 episodes x T=1,000 rounds with budget regeneration.
 """
@@ -32,7 +33,6 @@ param_mappings = {
     "objective": {"value_max": 0, "utility_max": 1},
 }
 
-DEFAULT_SIGMA = 0.3        # LogNormal sigma
 MU_RANGE = (0.5, 1.5)     # Bidder-specific mean range
 MU_CLIP = (1e-4, 100.0)   # Dual variable bounds
 
@@ -40,9 +40,9 @@ MU_CLIP = (1e-4, 100.0)   # Dual variable bounds
 # ---------------------------------------------------------------------
 # 2) Auction Mechanism
 # ---------------------------------------------------------------------
-def run_auction(bids, valuations, auction_type):
+def run_auction(bids, valuations, auction_type, reserve_price=0.0):
     """
-    Run a single-item auction with no reserve price.
+    Run a single-item auction with optional reserve price.
 
     Returns:
         winner: int index of winner, or -1 if no valid bids
@@ -52,7 +52,7 @@ def run_auction(bids, valuations, auction_type):
     n_bidders = len(bids)
     rewards = np.zeros(n_bidders)
 
-    valid = np.where(bids > 0)[0]
+    valid = np.where(bids >= reserve_price)[0] if reserve_price > 0 else np.where(bids > 0)[0]
     if len(valid) == 0:
         return -1, 0.0, rewards
 
@@ -74,17 +74,25 @@ def run_auction(bids, valuations, auction_type):
     if auction_type == "first":
         payment = bids[winner]
     else:
-        # Second-price: payment = second-highest bid
-        if len(valid) <= len(tied):
+        # Second-price: payment = max(second-highest bid, reserve)
+        if len(valid) == 1:
+            # Single bidder above reserve: pays the reserve price
+            payment = reserve_price
+        elif len(valid) <= len(tied):
+            # All valid bidders tied: pay own bid (no lower competing bid)
             payment = highest_bid
         else:
-            # Find highest bid not in the tied set
-            for idx in sorted_idx:
-                if idx not in tied:
-                    payment = valid_bids[idx]
-                    break
-            else:
+            if len(tied) >= 2:
+                # 2+ tied at top: second-price = tied price
                 payment = highest_bid
+            else:
+                # Single winner: find next-highest bid
+                second_highest = reserve_price
+                for idx in sorted_idx:
+                    if idx not in tied:
+                        second_highest = valid_bids[idx]
+                        break
+                payment = max(second_highest, reserve_price)
 
     rewards[winner] = valuations[winner] - payment
     return winner, payment, rewards
@@ -207,10 +215,69 @@ def compute_offline_optimum(valuations_matrix, budgets, T):
     return total_welfare
 
 
+def compute_lp_offline_optimum(valuations_matrix, budgets, T):
+    """
+    LP-based offline optimum: solve the fractional allocation LP.
+
+    Maximize sum_t sum_i v_{ti} * x_{ti}
+    Subject to:
+        sum_i x_{ti} <= 1       for all t  (one item per round)
+        sum_t v_{ti} * x_{ti} <= B_i  for all i  (budget constraint)
+        0 <= x_{ti} <= 1        for all t, i
+
+    This provides an upper bound on achievable liquid welfare.
+
+    Args:
+        valuations_matrix: shape (T, N) matrix of valuations
+        budgets: shape (N,) array of budgets
+        T: number of rounds
+
+    Returns:
+        lp_welfare: optimal fractional liquid welfare
+    """
+    from scipy.optimize import linprog
+
+    N = len(budgets)
+    n_vars = T * N  # x_{ti} for each (t, i)
+
+    # Objective: maximize sum v_{ti} * x_{ti} => minimize -v_{ti} * x_{ti}
+    c = -valuations_matrix.ravel()  # shape (T*N,)
+
+    # Constraint 1: sum_i x_{ti} <= 1 for each round t
+    # Each row has N ones in the block for round t
+    A_rounds = np.zeros((T, n_vars))
+    for t in range(T):
+        A_rounds[t, t * N:(t + 1) * N] = 1.0
+    b_rounds = np.ones(T)
+
+    # Constraint 2: sum_t v_{ti} * x_{ti} <= B_i for each bidder i
+    A_budget = np.zeros((N, n_vars))
+    for i in range(N):
+        for t in range(T):
+            A_budget[i, t * N + i] = valuations_matrix[t, i]
+    b_budget = budgets.astype(float)
+
+    # Combine constraints
+    A_ub = np.vstack([A_rounds, A_budget])
+    b_ub = np.concatenate([b_rounds, b_budget])
+
+    # Bounds: 0 <= x_{ti} <= 1
+    bounds = [(0.0, 1.0)] * n_vars
+
+    result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+
+    if not result.success:
+        raise RuntimeError(
+            f"LP solver failed (status={result.status}): {result.message}. "
+            f"T={T}, N={N}, budget range=[{budgets.min():.1f}, {budgets.max():.1f}]"
+        )
+    return -result.fun  # negate because we minimized -objective
+
+
 # ---------------------------------------------------------------------
 # 5) Episode Runner
 # ---------------------------------------------------------------------
-def run_episode(agents, N, T, auction_type, valuations_matrix):
+def run_episode(agents, N, T, auction_type, valuations_matrix, reserve_price=0.0):
     """
     Run T rounds of auction with given agents and valuations.
 
@@ -229,7 +296,7 @@ def run_episode(agents, N, T, auction_type, valuations_matrix):
             bidder_bids[i, t] = bids[i]
             bidder_vals[i, t] = valuations[i]
 
-        winner, payment, rewards = run_auction(bids, valuations, auction_type)
+        winner, payment, rewards = run_auction(bids, valuations, auction_type, reserve_price)
 
         # Update agents: only winner pays
         for i in range(N):
@@ -242,12 +309,16 @@ def run_episode(agents, N, T, auction_type, valuations_matrix):
     # --- Compute episode metrics ---
     total_revenue = float(payments_arr.sum())
 
-    # Liquid welfare: sum of winner valuations capped at budget
+    # Liquid welfare: sum_i min(B_i, total_value_i) per Gaitonde et al. (2023)
+    # Each bidder's contribution is capped at their budget
     valid_mask = winners >= 0
-    liquid_welfare = 0.0
+    bidder_value = np.zeros(N)
     for t in range(T):
         if valid_mask[t]:
-            liquid_welfare += valuations_matrix[t, winners[t]]
+            bidder_value[winners[t]] += valuations_matrix[t, winners[t]]
+    liquid_welfare = sum(
+        min(agents[i].budget, bidder_value[i]) for i in range(N)
+    )
 
     # Allocative efficiency: fraction of rounds highest-value bidder wins
     efficient_count = 0
@@ -327,6 +398,8 @@ def run_experiment(
     sigma=0.3,
     seed=0,
     progress_callback=None,
+    budget_multiplier=0.5,
+    reserve_price=0.0,
 ):
     """
     Run one cell of the autobidding pacing experiment.
@@ -350,9 +423,9 @@ def run_experiment(
     # Draw bidder-specific means once per seed (creates asymmetry)
     bidder_means = rng.uniform(MU_RANGE[0], MU_RANGE[1], size=N)
 
-    # Compute budgets: 0.5 * E[v_i] * T where E[v] = exp(mu_i + sigma^2/2)
+    # Compute budgets: budget_multiplier * E[v_i] * T where E[v] = exp(mu_i + sigma^2/2)
     expected_values = np.exp(bidder_means + sigma**2 / 2.0)
-    budgets = 0.5 * expected_values * T
+    budgets = budget_multiplier * expected_values * T
 
     # Create agents
     agents = [
@@ -376,22 +449,30 @@ def run_experiment(
                 mean=bidder_means[i], sigma=sigma, size=T
             )
 
-        # Compute offline optimum for this episode
+        # Compute offline optima for this episode
         offline_opt = compute_offline_optimum(valuations_matrix, budgets, T)
+        lp_opt = compute_lp_offline_optimum(valuations_matrix, budgets, T)
 
         # Reset agent budgets (warm-start mu)
         for i in range(N):
             agents[i].reset_episode(budgets[i])
 
         # Run episode
-        ep_metrics = run_episode(agents, N, T, auction_type, valuations_matrix)
+        ep_metrics = run_episode(agents, N, T, auction_type, valuations_matrix, reserve_price)
 
-        # Add PoA and offline optimum
+        # Add PoA and offline optimum (greedy)
         if offline_opt > 1e-10:
             ep_metrics["effective_poa"] = offline_opt / max(ep_metrics["liquid_welfare"], 1e-10)
         else:
             ep_metrics["effective_poa"] = 1.0
         ep_metrics["offline_optimum"] = offline_opt
+
+        # Add LP-based offline optimum
+        ep_metrics["lp_offline_welfare"] = lp_opt
+        if lp_opt > 1e-10:
+            ep_metrics["effective_poa_lp"] = lp_opt / max(ep_metrics["liquid_welfare"], 1e-10)
+        else:
+            ep_metrics["effective_poa_lp"] = 1.0
         ep_metrics["episode"] = d
 
         episode_data.append(ep_metrics)
@@ -423,6 +504,9 @@ def run_experiment(
         "mean_dual_cv": mean_field("dual_cv"),
         "mean_no_sale_rate": mean_field("no_sale_rate"),
         "mean_winner_entropy": mean_field("winner_entropy"),
+        "mean_lp_offline_welfare": mean_field("lp_offline_welfare"),
+        "mean_effective_poa_lp": mean_field("effective_poa_lp"),
+        "mean_rev_all": float(np.mean(all_revenues)),
     }
 
     # Learning metrics

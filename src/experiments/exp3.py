@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import numpy as np
 
 # ---------------------------------------------------------------------
@@ -11,12 +12,18 @@ param_mappings = {
     "context_richness": {"minimal": 0, "rich": 1},
 }
 
-# Algorithm-specific exploration parameter mapping
-# exploration_intensity "low"/"high" maps to different values per algorithm
+# Algorithm-specific exploration parameter mapping.
+# exploration_intensity "low"/"high" maps to different values per algorithm.
+# Note: LinUCB's high/low ratio is 4x (2.0/0.5) while Thompson's is 10x
+# (1.0/0.1). This asymmetry is inherent to the different exploration
+# mechanisms (confidence bound width vs posterior variance) and is captured
+# by the algorithm x exploration_intensity interaction term in the factorial
+# model. See scripts/calibration_exploration.py --mode exp3 for entropy
+# measurements quantifying this difference.
 EXPLORATION_MAP = {
-    ("linucb", "low"):     0.5,   # c parameter
+    ("linucb", "low"):     0.5,   # c parameter (UCB confidence bound)
     ("linucb", "high"):    2.0,
-    ("thompson", "low"):   0.1,   # sigma2 parameter
+    ("thompson", "low"):   0.1,   # sigma2 parameter (posterior variance)
     ("thompson", "high"):  1.0,
 }
 
@@ -78,15 +85,20 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
         else:
             second_highest_bid = highest_bid
     else:
-        second_idx_local = None
-        for idx_l in sorted_idx:
-            if idx_l not in highest_idx_local:
-                second_idx_local = idx_l
-                break
-        if second_idx_local is None:
+        if len(highest_idx_local) >= 2:
+            # 2+ tied at top: second-price = tied price
             second_highest_bid = highest_bid
         else:
-            second_highest_bid = valid_bids[second_idx_local]
+            # Single winner: find next-highest bid
+            second_idx_local = None
+            for idx_l in sorted_idx:
+                if idx_l not in highest_idx_local:
+                    second_idx_local = idx_l
+                    break
+            if second_idx_local is None:
+                second_highest_bid = highest_bid
+            else:
+                second_highest_bid = valid_bids[second_idx_local]
 
     # payoff
     if auction_type == "first":
@@ -109,11 +121,12 @@ class LinUCB:
     Uses Sherman-Morrison incremental inverse updates: O(d²) per update
     instead of O(d³) per action selection.
     """
-    def __init__(self, n_actions, context_dim, c, lam):
+    def __init__(self, n_actions, context_dim, c, lam, memory_decay=1.0):
         self.n_actions = n_actions
         self.context_dim = context_dim
         self.c = c
         self.lam = lam
+        self.memory_decay = memory_decay
 
         # Store A for correctness verification and A_inv for fast computation
         self.A = [lam * np.eye(context_dim) for _ in range(n_actions)]
@@ -131,6 +144,11 @@ class LinUCB:
         return np.argmax(p_vals)
 
     def update(self, action, reward, context_vec):
+        # Apply memory decay: discount old data before incorporating new observation
+        if self.memory_decay < 1.0:
+            self.A[action] *= self.memory_decay
+            self.A_inv[action] /= self.memory_decay
+            self.b[action] *= self.memory_decay
         # Sherman-Morrison rank-1 update: A_inv_new = A_inv - (A_inv x x^T A_inv) / (1 + x^T A_inv x)
         Ainv_x = self.A_inv[action] @ context_vec
         denom = 1.0 + context_vec @ Ainv_x
@@ -151,11 +169,12 @@ class ContextualThompsonSampling:
     Uses Sherman-Morrison incremental inverse updates: O(d²) per update
     instead of O(d³) per action selection.
     """
-    def __init__(self, n_actions, context_dim, sigma2, lam, rng=None):
+    def __init__(self, n_actions, context_dim, sigma2, lam, memory_decay=1.0, rng=None):
         self.n_actions = n_actions
         self.context_dim = context_dim
         self.sigma2 = sigma2
         self.lam = lam
+        self.memory_decay = memory_decay
         self.A = [lam * np.eye(context_dim) for _ in range(n_actions)]
         self.A_inv = [(1.0 / lam) * np.eye(context_dim) for _ in range(n_actions)]
         self.b = [np.zeros(context_dim) for _ in range(n_actions)]
@@ -171,6 +190,11 @@ class ContextualThompsonSampling:
         return np.argmax(sampled_vals)
 
     def update(self, action, reward, context_vec):
+        # Apply memory decay: discount old data before incorporating new observation
+        if self.memory_decay < 1.0:
+            self.A[action] *= self.memory_decay
+            self.A_inv[action] /= self.memory_decay
+            self.b[action] *= self.memory_decay
         # Sherman-Morrison rank-1 update
         Ainv_x = self.A_inv[action] @ context_vec
         denom = 1.0 + context_vec @ Ainv_x
@@ -232,6 +256,8 @@ def run_bandit_experiment(
     algorithm="linucb",
     exploration_intensity="low",
     context_richness="minimal",
+    memory_decay=1.0,
+    n_bid_actions=11,
     seed=0,
     progress_callback=None,
     collect_history=False,
@@ -247,8 +273,8 @@ def run_bandit_experiment(
     np.random.seed(seed)
     rng = np.random.default_rng(seed)
 
-    n_val_bins = 6
-    n_bid_bins = 6
+    n_val_bins = 11
+    n_bid_bins = int(n_bid_actions)
     actions = np.linspace(0, 1, n_bid_bins)
 
     # Build context dimension based on context_richness
@@ -262,11 +288,12 @@ def run_bandit_experiment(
 
     if algorithm == "linucb":
         bandits = [LinUCB(n_actions=n_bid_bins, context_dim=context_dim,
-                          c=explore_val, lam=lam)
+                          c=explore_val, lam=lam, memory_decay=memory_decay)
                    for _ in range(n_bidders)]
     elif algorithm == "thompson":
         bandits = [ContextualThompsonSampling(n_actions=n_bid_bins, context_dim=context_dim,
                                               sigma2=explore_val, lam=lam,
+                                              memory_decay=memory_decay,
                                               rng=np.random.default_rng(seed + i))
                    for i in range(n_bidders)]
 
@@ -370,7 +397,7 @@ def run_bandit_experiment(
         progress_callback(current=max_rounds, total=max_rounds)
 
     # After max_rounds
-    # time_to_converge: O(n) numpy implementation
+    # Convergence and revenue summary
     window_size = 1000
 
     if max_rounds >= window_size:
@@ -378,23 +405,10 @@ def run_bandit_experiment(
     else:
         avg_rev_last_1000 = float(np.mean(revenues))
 
-    final_rev = avg_rev_last_1000
-    lower_band = 0.95 * final_rev
-    upper_band = 1.05 * final_rev
-    if max_rounds >= window_size:
-        roll_avg = np.convolve(revenues, np.ones(window_size) / window_size, mode='valid')
-        in_band = (roll_avg >= lower_band) & (roll_avg <= upper_band)
-        out_of_band = np.where(~in_band)[0]
-        if len(out_of_band) == 0:
-            time_to_converge = window_size
-        elif out_of_band[-1] < len(in_band) - 1:
-            time_to_converge = int(out_of_band[-1]) + 1 + window_size
-        else:
-            time_to_converge = max_rounds
-    else:
-        time_to_converge = max_rounds
+    # Time to converge: prospective method
+    from experiments.convergence import compute_convergence_time
+    time_to_converge = compute_convergence_time(revenues, window_size)
 
-    avg_regret_seller = float(np.mean(1.0 - revenues))
     no_sale_rate = no_sale_count / max_rounds
 
     winning_bids_list = winning_bids_arr[:wb_count]
@@ -408,12 +422,27 @@ def run_bandit_experiment(
         p = counts / counts.sum()
         winner_entropy = float(-np.sum(p * np.log(p + 1e-12)))
 
+    # Discrete-signal BNE benchmark
+    try:
+        from verification.bne_verify import discrete_signal_bne_revenue
+    except ImportError:
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+        from verification.bne_verify import discrete_signal_bne_revenue
+
+    R_disc, R_disc_se, R_cont, disc_gap = discrete_signal_bne_revenue(
+        eta, n_bidders, auction_type, n_signal_bins=n_val_bins,
+        n_bid_actions=n_bid_bins, M=100_000, seed=seed + 1338
+    )
+
     summary = {
         "avg_rev_last_1000": avg_rev_last_1000,
+        "avg_rev_all": float(np.mean(revenues)),
         "time_to_converge": time_to_converge,
-        "avg_regret_seller": avg_regret_seller,
         "no_sale_rate": no_sale_rate,
         "price_volatility": price_volatility,
-        "winner_entropy": winner_entropy
+        "winner_entropy": winner_entropy,
+        "theoretical_revenue_discrete": R_disc,
+        "discretization_gap": disc_gap,
     }
     return summary, revenues, round_history, bandits  # bandits hold final models

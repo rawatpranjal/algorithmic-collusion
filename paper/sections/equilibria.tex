@@ -1,11 +1,13 @@
 
-\section{Appendix: Equilibria under Discretized Bidding}
+\section{Equilibria under Discretized Bidding}
+
+This section derives the theoretical equilibrium benchmarks against which the learning experiments are evaluated.
 
 \subsection{Constant Valuations}
 
 In a first-price auction where each bidder's valuation is 1 and allowable bids are in \(\{0,0.1,\dots,1\}\), a symmetric profile \((b,b,\dots,b)\) yields an expected payoff of \(\frac{1}{n}(1-b)\). A unilateral upward deviation to \(b+0.1\) (if \(\le 1\)) has a payoff of \(1-(b+0.1)\). No deviation is profitable if 
 \[
-1 - (b + 0.1) \;\le\; \frac{1}{N}(1 - b)
+1 - (b + 0.1) \;\le\; \frac{1}{n}(1 - b)
 \;\;\Longrightarrow\;\;
 b \;\ge\; \frac{0.9\,n - 1}{n - 1}.
 \]
@@ -13,7 +15,7 @@ Thus, for each \(n\), any \(b\) at or above this threshold (rounded to 0.1) is a
 
 \subsection{Affiliated Valuations}
 
-In Experiments~2--4, each bidder~$i$ draws a signal $s_i \sim \text{Uniform}[0,1]$ independently and forms a valuation
+In Experiments~2--3, each bidder~$i$ draws a signal $s_i \sim \text{Uniform}[0,1]$ independently and forms a valuation
 \[
 v_i \;=\; \alpha\, s_i \;+\; \beta \sum_{j \neq i} s_j,
 \qquad
@@ -25,58 +27,46 @@ where $\eta \in [0,1]$ controls affiliation. The symmetric Bayesian Nash Equilib
 
 \subsubsection{Model and Efficiency}
 
-The valuation can be written as $(\alpha-\beta) s_i + \beta S$ where $S$ is the sum of all signals. For $\eta$ in $[0,1]$ and $n\ge2$ the coefficient $(\alpha-\beta)$ is nonnegative. Equality holds only at the edge case $n=2$ and $\eta=1$. The difference in valuations between two bidders equals $(\alpha-\beta)$ times the difference in their signals. The highest signal bidder therefore has the highest valuation. The efficient allocation assigns the object to the highest signal.
+The valuation can be written as $(\alpha-\beta) s_i + \beta S$ where $S$ is the sum of all signals. For $\eta$ in $[0,1]$ and $n\ge2$ the coefficient $(\alpha-\beta)$ is nonnegative, so the highest signal bidder has the highest valuation. The efficient allocation assigns the object to the highest signal.
 
 \subsubsection{BNE Bid Functions}
 
-The symmetric bid in the second price auction equals the expected value conditional on the marginal winning event. Conditioning on the highest rival signal equal to the bidder’s type and using the mean of the truncated uniforms for the remaining rivals yields. The own signal contributes $\alpha s$. The tied rival contributes $\beta s$. Each of the other $n-2$ rivals contributes $\beta\,\mathbb{E}[s_j\mid s_j\le s]=\beta s/2$. Summing gives
+The symmetric bid in the second price auction equals the expected value conditional on the marginal winning event.\footnote{Conditioning on the highest rival signal equal to the bidder’s type: the own signal contributes $\alpha s$, the tied rival contributes $\beta s$, and each of the other $n-2$ rivals contributes $\beta\,\mathbb{E}[s_j\mid s_j\le s]=\beta s/2$.} Summing gives
 \[
 b^{\text{SPA}}(s) = \Bigl(\alpha + \frac{n\beta}{2}\Bigr) s.
 \]
-With independent uniform signals and a strictly increasing bidding strategy, the integral characterization for the first price auction delivers the usual shading factor. Since $v(t,t)$ is linear in $t$, the integral reduces to a constant factor. The bid equals
+With independent uniform signals and a linear valuation, the first-price bid equals
 \[
 b^{\text{FPA}}(s) = \frac{n-1}{n} \Bigl(\alpha + \frac{n\beta}{2}\Bigr) s.
 \]
 
 \subsubsection{Expected Revenue}
 
-The winning type is the maximum of $n$ independent uniforms with mean $N/(n+1)$. The second highest type has mean $(n-1)/(n+1)$. Expected revenue equals bid slope times the appropriate order statistic in each format. The closed form is
+The winning type is the maximum of $n$ independent uniforms with mean $n/(n+1)$. The second highest type has mean $(n-1)/(n+1)$. Expected revenue equals bid slope times the appropriate order statistic in each format. The closed form is
 \[
 R^{\text{SPA}} = \Bigl(\alpha + \frac{n\beta}{2}\Bigr) \frac{n-1}{n+1},\qquad
 R^{\text{FPA}} = \frac{n-1}{n} \Bigl(\alpha + \frac{n\beta}{2}\Bigr) \frac{n}{n+1}.
 \]
-These expressions coincide. Revenue equivalence holds for all $\eta$ because signals are independent. The affiliation parameter shifts the level of revenue but not the gap between formats. The result follows because signals are independent, bidders are symmetric, both formats allocate to the highest signal, and a zero signal yields zero expected surplus. The benchmarks are used in the simulations to form ratios of observed to theoretical revenue.
+These expressions coincide. Revenue equivalence holds for all $\eta$ because signals are independent. The benchmarks are used in the simulations to form ratios of observed to theoretical revenue.
 
-\subsubsection{Efficient Benchmark and Value-Weighted Regret}
+\subsubsection{Efficient Benchmark}
 
 The expected highest valuation equals $(\alpha-\beta)\,\mathbb{E}[s_{(n:n)}] + \beta\,\mathbb{E}[S]$. With independent uniforms this simplifies to
 \[
 \mathbb{E}[v_{(1)}] = (\alpha-\beta)\,\frac{n}{n+1} + \beta\,\frac{n}{2}.
 \]
-The value weighted regret of revenue $R$ divides the gap by this benchmark. The closed form under equilibrium bids is
-\[
-\mathrm{Regret}^* = 1 - \frac{R}{\mathbb{E}[v_{(1)}]},\qquad
-\mathrm{Regret}^*_{\mathrm{BNE}} = 1 - \frac{\tfrac{n-1}{n+1}\bigl(\alpha + \tfrac{n\beta}{2}\bigr)}{(\alpha - \beta)\tfrac{N}{n+1} + \tfrac{n\beta}{2}}.
-\]
-The raw shortfall admits a decomposition into the structural value gap, the equilibrium shading gap, and any excess suppression from learning dynamics:
-\[
-1 - R = \bigl(1 - \mathbb{E}[v_{(1)}]\bigr) + \bigl(\mathbb{E}[v_{(1)}]-R^{\mathrm{BNE}}\bigr) + \bigl(R^{\mathrm{BNE}}-R\bigr).
-\]
-
-\medskip
-
-The table reports the efficient benchmark, BNE revenue, and value-weighted regret for representative $(\eta,N)$ pairs:
+The table reports the efficient benchmark and BNE revenue for representative $(\eta,n)$ pairs:
 \begin{table}[H]
   \centering
   \small
-  \begin{tabular}{cccccc}
+  \begin{tabular}{cccc}
     \toprule
-    $\eta$ & $n$ & $\mathbb{E}[v_{(1)}]$ & $R^{\text{BNE}}$ & $\mathrm{Regret}^*$ (BNE) & Raw $1{-}R^{\text{BNE}}$ \\
+    $\eta$ & $n$ & $\mathbb{E}[v_{(1)}]$ & $R^{\text{BNE}}$ \\
     \midrule
-    0 & 2 & 0.667 & 0.333 & 50.0\% & 66.7\% \\
-    0 & 6 & 0.857 & 0.714 & 16.7\% & 28.6\% \\
-    1 & 2 & 0.500 & 0.333 & 33.3\% & 66.7\% \\
-    1 & 6 & 0.643 & 0.571 & 11.1\% & 42.9\% \\
+    0 & 2 & 0.667 & 0.333 \\
+    0 & 6 & 0.857 & 0.714 \\
+    1 & 2 & 0.500 & 0.333 \\
+    1 & 6 & 0.643 & 0.571 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -85,18 +75,14 @@ The table reports the efficient benchmark, BNE revenue, and value-weighted regre
 
 We verify the analytical equilibrium with simulation. Signals are independent uniform on $[0,1]$ and values satisfy $v_i = \alpha s_i + \beta\sum_{j\ne i} s_j$ with $\alpha=1-\tfrac{\eta}{2}$ and $\beta=\tfrac{\eta}{2(n-1)}$.
 
-Under independent signals the symmetric equilibrium bids are linear. In the second price auction $b^{\mathrm{SPA}}(s) = \phi s$ and in the first price auction $b^{\mathrm{FPA}}(s) = \tfrac{n-1}{n}\,\phi s$ with $\phi = \alpha + (n\beta)/2$. The second price expression uses conditioning on the marginal winning event. The first price expression follows from the integral characterization under independent signals.
+Under independent signals the symmetric equilibrium bids are linear: $b^{\mathrm{SPA}}(s) = \phi s$ and $b^{\mathrm{FPA}}(s) = \tfrac{n-1}{n}\,\phi s$ with $\phi = \alpha + (n\beta)/2$.
 
 With independent signals expected revenue equals $R^{\mathrm{BNE}} = \tfrac{n-1}{n+1}\,\phi = \tfrac{n-1}{n}\,\phi\,\mathbb{E}[s_{(n:n)}] = \phi\,\mathbb{E}[s_{(n-1:n)}]$. Revenues are equal across formats. The argument uses the means of the top two order statistics and the fact that both formats allocate to the highest signal.
 
-The deviation check fixes a grid of types and compares expected payoff at multiplicative deviations around the equilibrium bid. Deviations are factors below and above one. In the second price auction the payment upon winning equals the equilibrium bid at the highest rival signal. In the first price auction the payment equals the deviating bid. The table reports the maximal gain from deviating. Values at numerical zero indicate best responses at the proposed bids.
+The deviation check fixes a grid of types and compares expected payoff at multiplicative deviations around the equilibrium bid. The table reports the maximal gain from deviating; values at numerical zero indicate best responses at the proposed bids. The results show no profitable deviations at the reported precision.
 
 \input{tables/bne_deviation}
 
-The results show no profitable deviations at the reported precision. The candidate bids are pointwise optimal on the grid for all tested values of the affiliation parameter and the number of bidders. This supports the linear bidding rules.
-
-The revenue check compares Monte Carlo revenue under the equilibrium bids to the closed form $R^{\mathrm{BNE}} = ((n-1)/(n+1))\,\phi$ for both formats. The simulation matches the closed form within tight confidence intervals. Revenues are equal across the two formats. This is the revenue equivalence result under independent signals.
+The revenue check compares Monte Carlo revenue under the equilibrium bids to the closed form $R^{\mathrm{BNE}} = ((n-1)/(n+1))\,\phi$ for both formats. The simulation matches the closed form within tight confidence intervals. Revenues are equal across the two formats. This is the revenue equivalence result under independent signals. These analytical equilibria serve as the benchmarks for the learning experiments that follow.\footnote{Two design choices affect only finite-sample noise. The learning experiments use a discretised bid grid that can induce small mixed-strategy effects on coarse grids, and ties are broken uniformly at random. These choices do not alter the equilibrium characterisation and have negligible impact at the reported sample sizes.}
 
 \input{tables/bne_revenue_match}
-
-Two design choices affect only finite sample noise. The learning experiments use a discretized bid grid that can induce small mixed strategy effects on coarse grids. Ties are broken uniformly at random. These choices do not alter the equilibrium characterization and have negligible impact at the reported sample sizes.

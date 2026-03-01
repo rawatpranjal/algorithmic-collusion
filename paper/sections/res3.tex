@@ -1,85 +1,102 @@
-\section{Experiment III: Contextual Bandits}
+\section{Contextual Bandits}
 \label{sec:exp3_results}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/e3_trace}
-  \caption{Representative learning trajectory for a single trial of Experiment~3 (LinUCB, first-price auction, $\eta = 0.5$, 2~bidders, 5{,}000 rounds). Top: rolling-mean revenue with BNE benchmark. Middle: bid versus signal in the final 1{,}000 rounds, overlaid with the BNE bid function. Bottom: cumulative average reward per bidder.}
-  \label{fig:e3_trace}
-\end{figure}
+Experiment~3 replaces Q-learning with contextual bandits. Unlike the previous Q-learning experiments, we analyse two distinct algorithm classes separately: LinUCB (Experiment~IIIa) and Contextual Thompson Sampling (Experiment~IIIb). Each receives a tailored factorial design because the algorithms respond to fundamentally different hyperparameters; regularisation and memory decay drive LinUCB behaviour but are structurally irrelevant for Thompson Sampling, whose Bayesian posterior update washes out the prior after a few dozen rounds. Separating the two avoids wasting design cells on factors with no effect.
 
-Experiment~3 replaces Q-learning with contextual bandits (LinUCB and Contextual Thompson Sampling), testing whether a more sophisticated exploration mechanism improves seller outcomes. The design is a $3 \times 2^7 = 384$ mixed-level factorial with 8 factors (7 binary plus the three-level affiliation parameter $\eta$) and 768 observations. The outcome range widens substantially relative to Experiment~2: certain runs converge to near-zero revenue or universal no-sales, while others perform comparably to Q-learning. Mean revenue drops and mean seller regret rises, with more polarised extremes of volatility, winner entropy, and no-sale rates. This highlights how contextual exploration can magnify variability in auction outcomes rather than reliably benefiting the seller; a finding that challenges the common criticism of Q-learning studies, which argues that firms would adopt more efficient exploration algorithms to improve outcomes.
+\subsection{LinUCB}
 
-\subsection{Revenue and Seller Regret}
-
-Auction type remains the dominant factor, with the largest absolute $t$-statistic ($|t| \approx 12$) for both revenue and regret. Table~\ref{tab:exp3_ranked_rev} shows that auction type is followed by number of bidders and exploration intensity. First-price auctions yield substantially lower final revenue and higher seller regret, as the main effects plots (Figures~\ref{fig:e3_main_rev} and~\ref{fig:e3_main_reg}) confirm.
-
-\input{tables/exp3_ranked_rev}
+Experiment~IIIa deploys LinUCB agents under the affiliated valuation model. The design is a $3 \times 2^7 = 384$ mixed-level factorial with 9 factors (7 binary plus the three-level affiliation parameter $\eta$), including the regularisation parameter $\lambda$ and memory decay, both of which strongly affect LinUCB performance. The design is replicated twice for \ExpThreeANobs{} observations.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3_main_rev}
-  \caption{Experiment~3: Main effects plot for average revenue. First-price auctions produce markedly lower revenue than second-price.}
-  \label{fig:e3_main_rev}
+  \includegraphics[width=\textwidth]{figures/e3a_trace}
+  \caption{Representative bid function for a single trial of Experiment~IIIa (LinUCB, first-price auction, $\eta = 0.5$, 2~bidders, 5{,}000 rounds). Bids versus signals in the final 1{,}000 rounds, overlaid with the BNE bid function.}
+  \label{fig:e3a_trace}
 \end{figure}
 
-\input{tables/exp3_ranked_reg}
+\subsubsection{Revenue}
+
+Number of bidders again dominates ($|t| = \ExpThreeARevFactorTOne$), with the shift from two to four bidders increasing revenue by \ExpThreeARevTopPctEffect\% of the grand mean. The next largest effects are \ExpThreeARevFactorTwo{} ($|t| = \ExpThreeARevFactorTTwo$) and \ExpThreeARevFactorThree{} ($|t| = \ExpThreeARevFactorTThree$). Table~\ref{tab:exp3a_ranked_rev} ranks all significant effects by absolute $t$-statistic. First-price auctions yield lower final revenue ($|t| = \ExpThreeARevAuctionT$), as the main effects plot (Figure~\ref{fig:e3a_main_rev}) confirms.
+
+\input{tables/exp3a_ranked_rev}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3_main_reg}
-  \caption{Experiment~3: Main effects plot for seller regret. The mirror image of the revenue pattern.}
-  \label{fig:e3_main_reg}
+  \includegraphics[width=0.7\textwidth]{figures/e3a_main_rev}
+  \caption{Experiment~IIIa: Main effects plot for average revenue under LinUCB.}
+  \label{fig:e3a_main_rev}
 \end{figure}
 
-The affiliation parameter $\eta$ again shows no statistically significant effect on any primary outcome, consistent with Experiment~2. Even in this bandit-based setting, increasing affiliation does not meaningfully change the outcome gaps between auction formats.
-
-Contrary to Q-learning experiments, more bidders \emph{worsen} first-price performance under LinUCB. Increased competition does not mitigate strategic underbidding; instead, it amplifies it, leading to worse revenue and regret as the number of bidders rises. This reversal from Experiments~1 and~2 suggests that optimism-based exploration interacts with competitive pressure differently than $\varepsilon$-greedy or Boltzmann exploration.
-
-The exploration parameter $c$ has a significant negative effect on revenue, indicating that higher exploration incentives reduce final revenues. This challenges the assumption that efficient exploration benefits sellers: LinUCB's optimism-based mechanism may reinforce risk-averse bidding by inflating uncertainty estimates around aggressive actions that rarely win. The interaction plot (Figure~\ref{fig:e3_int_rev}) shows these moderating effects and the departures from additivity among the top factorial interactions.
+Figure~\ref{fig:e3a_int_rev} displays the top interaction effects.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3_int_rev}
-  \caption{Experiment~3: Interaction plot for average revenue under LinUCB. Non-parallel lines indicate factor interdependencies, including the bidder-count reversal.}
-  \label{fig:e3_int_rev}
+  \includegraphics[width=0.7\textwidth]{figures/e3a_int_rev}
+  \caption{Experiment~IIIa: Interaction plot for average revenue under LinUCB. Non-parallel lines indicate factor interdependencies.}
+  \label{fig:e3a_int_rev}
 \end{figure}
 
-\subsection{Price Volatility}
+\subsubsection{Price Volatility}
 
-Under LinUCB bandits, price volatility is \emph{lower} in first-price auctions, the opposite direction from Experiment~2. Table~\ref{tab:exp3_ranked_vol} and the main effects plot (Figure~\ref{fig:e3_main_vol}) confirm this reversal. The result suggests that first-price auctions under LinUCB produce more uniform (though lower) winning bids, as agents converge to stable but suboptimal bid-shading equilibria. Reserve prices also show a significant negative effect on volatility, stabilising winning bids by disqualifying extreme low bids.
+Table~\ref{tab:exp3a_ranked_vol} and the main effects plot (Figure~\ref{fig:e3a_main_vol}) show the factor rankings for price volatility under LinUCB.
 
-\input{tables/exp3_ranked_vol}
+\input{tables/exp3a_ranked_vol}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3_main_vol}
-  \caption{Experiment~3: Main effects plot for price volatility.}
-  \label{fig:e3_main_vol}
+  \includegraphics[width=0.7\textwidth]{figures/e3a_main_vol}
+  \caption{Experiment~IIIa: Main effects plot for price volatility under LinUCB.}
+  \label{fig:e3a_main_vol}
 \end{figure}
 
-\subsection{Model Adequacy and Robustness}
-\label{sec:exp3_robustness}
+Model adequacy diagnostics (Online Appendix~D) confirm that the linear model captures the dominant effects.\footnote{$R^2$ values reach \ExpThreeARsqMax{} across \ExpThreeANobs{} observations. Of the \ExpThreeANRawSig{} effects significant at $p < 0.05$, \ExpThreeANBHSig{} (\ExpThreeABHPct\%) survive Benjamini--Hochberg correction.}
 
-\input{tables/exp3_model_fit}
+\subsection{Contextual Thompson Sampling}
 
-\input{tables/exp3_adequacy}
-
-Experiment~3 exhibits the weakest model adequacy among all four experiments. Table~\ref{tab:exp3_adequacy} shows that PRESS gaps are substantially larger than in the Q-learning experiments: 0.18 for revenue, 0.18 for regret, and 0.14 for volatility. The lack-of-fit test is significant for all three primary responses ($p = 0.020$, $p = 0.019$, and $p = 0.003$, respectively), indicating that the linear model with two-way interactions misses meaningful structure. LightGBM cross-validated $R^2$ falls below OLS $R^2$ for revenue (0.57 vs.\ 0.77) and regret (0.56 vs.\ 0.77), confirming that even a flexible nonparametric learner cannot exploit the misfit, likely because bandit-based outcomes contain irreducible stochasticity that neither model class captures. For convergence time, LightGBM $R^2$ is near zero (0.009), indicating that this response is essentially unpredictable from the factorial design. The linear model remains a useful first-order approximation: the dominant factors (auction type, number of bidders) are robustly identified, but point predictions for specific configurations should be interpreted with caution.
-
-\input{tables/exp3_inference_robust}
-
-Despite the weaker model fit, inference robustness is strong. HC3 robust standard errors flip only 2 of 75 effects (2.7\%): the exploration bonus $c$ flips for revenue, and the affiliation by number of bidders interaction flips for convergence time. Table~\ref{tab:exp3_inference} shows that Holm--Bonferroni correction retains 14 of 27 OLS-significant effects, while Benjamini--Hochberg retains 18. The effects that survive represent the truly robust findings of the experiment. Quantile regression reveals notable heterogeneity across the revenue distribution (Figure~\ref{fig:e3_quantile_rev}): the auction type coefficient grows in magnitude from $-0.096$ at the 10th percentile to $-0.206$ at the 90th percentile, indicating that first-price auctions disproportionately suppress revenue among the best-performing configurations. This pattern is the opposite of Experiment~1, where the left tail was more affected.
+Experiment~IIIb deploys Contextual Thompson Sampling agents under the same affiliated valuation model. The design is a $3 \times 2^5 = 96$ mixed-level factorial with 7 factors (5 binary plus $\eta$). Regularisation ($\lambda$) and memory decay are excluded: the Bayesian posterior update renders the prior negligible after approximately 20 rounds regardless of $\lambda$, and Thompson Sampling explores via posterior sampling, which is inherently stochastic even as the posterior tightens. The design is replicated twice for \ExpThreeBNobs{} observations.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3_quantile_rev}
-  \caption{Experiment~3: Quantile regression coefficients for average revenue. The auction type penalty grows substantially from the 10th to the 90th percentile, indicating that the first-price disadvantage intensifies at higher revenue levels.}
-  \label{fig:e3_quantile_rev}
+  \includegraphics[width=\textwidth]{figures/e3b_trace}
+  \caption{Representative bid function for a single trial of Experiment~IIIb (Thompson Sampling, first-price auction, $\eta = 0.5$, 2~bidders, 5{,}000 rounds).}
+  \label{fig:e3b_trace}
 \end{figure}
 
-\input{tables/exp3_significant}
+\subsubsection{Revenue}
+
+Under Thompson Sampling, \ExpThreeBRevFactorOne{} dominates ($|t| = \ExpThreeBRevFactorTOne$), with the effect amounting to \ExpThreeBRevTopPctEffect\% of the grand mean, followed by \ExpThreeBRevFactorTwo{} ($|t| = \ExpThreeBRevFactorTTwo$). Table~\ref{tab:exp3b_ranked_rev} ranks all significant effects.
+
+\input{tables/exp3b_ranked_rev}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3b_main_rev}
+  \caption{Experiment~IIIb: Main effects plot for average revenue under Thompson Sampling.}
+  \label{fig:e3b_main_rev}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3b_int_rev}
+  \caption{Experiment~IIIb: Interaction plot for average revenue under Thompson Sampling.}
+  \label{fig:e3b_int_rev}
+\end{figure}
+
+\subsubsection{Price Volatility}
+
+Table~\ref{tab:exp3b_ranked_vol} and the main effects plot (Figure~\ref{fig:e3b_main_vol}) show the factor rankings for price volatility under Thompson Sampling.
+
+\input{tables/exp3b_ranked_vol}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e3b_main_vol}
+  \caption{Experiment~IIIb: Main effects plot for price volatility under Thompson Sampling.}
+  \label{fig:e3b_main_vol}
+\end{figure}
+
+Model adequacy diagnostics confirm that the linear model captures the dominant effects.\footnote{$R^2$ values reach \ExpThreeBRsqMax{} across \ExpThreeBNobs{} observations. Of the \ExpThreeBNRawSig{} effects significant at $p < 0.05$, \ExpThreeBNBHSig{} (\ExpThreeBBHPct\%) survive Benjamini--Hochberg correction.}
 
 \subsection{Summary}
 
-Replacing Q-learning with LinUCB contextual bandits amplifies variability in auction outcomes and does not improve seller welfare. First-price auctions produce substantially lower revenue and higher regret under bandits than under Q-learning, with the revenue gap widening dramatically. The exploration parameter $c$ reduces rather than improves revenue, and more bidders worsen first-price performance; both reversals from Q-learning experiments. These findings demonstrate that algorithmic sophistication does not inherently mitigate the disadvantages of first-price auctions and can exacerbate negative outcomes when the exploration mechanism reinforces conservative bidding.
+Replacing Q-learning with contextual bandits does not improve seller welfare. LinUCB and Thompson Sampling respond to different design levers, validating the decision to analyse them separately. The welfare consequences of exploration are algorithm-specific.

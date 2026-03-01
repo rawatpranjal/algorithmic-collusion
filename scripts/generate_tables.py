@@ -9,7 +9,7 @@ factorial ANOVA) and writes:
   - paper/tables/expN_model_fit.tex     (model fit summary across responses)
   - paper/tables/expN_significant.tex   (cross-response significant effects, p<0.05)
   - paper/tables/expN_ranked_rev.tex    (ranked significant effects for revenue)
-  - paper/tables/expN_ranked_reg.tex    (ranked significant effects for regret)
+  - paper/tables/expN_ranked_poa.tex    (ranked significant effects for PoA, exp4a/4b only)
   - paper/tables/expN_ranked_vol.tex    (ranked significant effects for volatility)
 
 Also copies key publication figures (main-effects and interaction plots)
@@ -22,88 +22,24 @@ Usage:
 import json
 import os
 import shutil
+import sys
 
 RESULTS_DIR = "results"
 TABLES_DIR = "paper/tables"
 FIGURES_DIR = "paper/figures"
 
-# Response variables per experiment
-RESPONSES = {
-    1: [
-        "avg_rev_last_1000",
-        "time_to_converge",
-        "avg_regret_of_seller",
-        "no_sale_rate",
-        "price_volatility",
-        "winner_entropy",
-    ],
-    2: [
-        "avg_rev_last_1000",
-        "time_to_converge",
-        "avg_regret_of_seller",
-        "no_sale_rate",
-        "price_volatility",
-        "winner_entropy",
-    ],
-    3: [
-        "avg_rev_last_1000",
-        "time_to_converge",
-        "avg_regret_seller",
-        "no_sale_rate",
-        "price_volatility",
-        "winner_entropy",
-    ],
-    4: [
-        "mean_platform_revenue",
-        "mean_liquid_welfare",
-        "mean_effective_poa",
-        "mean_budget_utilization",
-        "mean_bid_to_value",
-        "mean_allocative_efficiency",
-        "mean_dual_cv",
-        "mean_no_sale_rate",
-        "mean_winner_entropy",
-        "warm_start_benefit",
-        "inter_episode_volatility",
-        "bid_suppression_ratio",
-        "cross_episode_drift",
-    ],
-}
-
-# The regret variable name differs in Exp3
-REGRET_VAR = {
-    1: "avg_regret_of_seller",
-    2: "avg_regret_of_seller",
-    3: "avg_regret_seller",
-    4: "mean_effective_poa",
-}
-
-# Key response variables for ranked-effects tables (rev, reg, vol)
+# Key response variables for ranked-effects tables (rev, vol; poa for exp4a/4b)
 KEY_RESPONSES = {
-    1: {
-        "rev": "avg_rev_last_1000",
-        "reg": "avg_regret_of_seller",
-        "vol": "price_volatility",
-    },
-    2: {
-        "rev": "avg_rev_last_1000",
-        "reg": "avg_regret_of_seller",
-        "vol": "price_volatility",
-    },
-    3: {
-        "rev": "avg_rev_last_1000",
-        "reg": "avg_regret_seller",
-        "vol": "price_volatility",
-    },
-    4: {
-        "rev": "mean_platform_revenue",
-        "reg": "mean_effective_poa",
-        "vol": "mean_bid_to_value",
-    },
+    "1":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "2":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "3a": {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "3b": {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "4a": {"rev": "mean_platform_revenue", "poa": "mean_effective_poa_lp", "vol": "mean_bid_to_value"},
+    "4b": {"rev": "mean_platform_revenue", "poa": "mean_effective_poa_lp", "vol": "mean_bid_to_value"},
 }
 
 # Roman numeral experiment labels
-EXP_ROMAN = {1: "I", 2: "II", 3: "III", 4: "IV"}
+EXP_ROMAN = {"1": "I", "2": "II", "3a": "IIIa", "3b": "IIIb", "4a": "IVa", "4b": "IVb"}
 
 # Human-readable factor names
 READABLE_NAMES = {
@@ -170,18 +106,28 @@ READABLE_NAMES = {
     "context_richness_coded": "Context richness",
     "context_richness": "Context richness",
     "eta_linear_coded": "Affiliation (linear)",
+    "eta_linear": "Affiliation (linear)",
     "eta_quadratic_coded": "Affiliation (quadratic)",
+    "eta_quadratic": "Affiliation (quadratic)",
+    "state_info_coded": "State information",
+    "state_info": "State information",
     "decay_type_coded": "Decay type",
     "decay_type": "Decay type",
     "objective_coded": "Bidder objective",
     "objective": "Bidder objective",
+    "budget_multiplier_coded": "Budget multiplier",
+    "budget_multiplier": "Budget multiplier",
+    "sigma_coded": "Value dispersion ($\\sigma$)",
+    "sigma": "Value dispersion ($\\sigma$)",
+    "memory_decay_coded": "Memory decay ($\\gamma_m$)",
+    "memory_decay": "Memory decay ($\\gamma_m$)",
 }
 
 READABLE_RESPONSES = {
     "avg_rev_last_1000": "Average Revenue",
+    "avg_rev_all": "Lifetime Revenue",
+    "mean_rev_all": "Lifetime Revenue",
     "time_to_converge": "Convergence Time",
-    "avg_regret_of_seller": "Seller Regret",
-    "avg_regret_seller": "Seller Regret",
     "no_sale_rate": "No-Sale Rate",
     "price_volatility": "Price Volatility",
     "winner_entropy": "Winner Entropy",
@@ -194,7 +140,7 @@ READABLE_RESPONSES = {
     "multiplier_final_std": "Final Multiplier Std Dev",
     "mean_platform_revenue": "Platform Revenue",
     "mean_liquid_welfare": "Liquid Welfare",
-    "mean_effective_poa": "Effective PoA",
+    "mean_effective_poa": "Effective PoA (Greedy)",
     "mean_budget_utilization": "Budget Utilisation",
     "mean_bid_to_value": "Bid-to-Value Ratio",
     "mean_allocative_efficiency": "Allocative Efficiency",
@@ -205,20 +151,24 @@ READABLE_RESPONSES = {
     "inter_episode_volatility": "Inter-Episode Volatility",
     "bid_suppression_ratio": "Bid Suppression Ratio",
     "cross_episode_drift": "Cross-Episode Drift",
+    "mean_lp_offline_welfare": "LP Offline Welfare",
+    "mean_effective_poa_lp": "Effective PoA",
 }
 
 RANKED_RESPONSE_LABELS = {
     "rev": "average revenue",
-    "reg": "seller regret",
+    "poa": "effective Price of Anarchy",
     "vol": "price volatility",
 }
 
 # Revenue variable name for quantile figure copying
 REVENUE_VAR = {
-    1: "avg_rev_last_1000",
-    2: "avg_rev_last_1000",
-    3: "avg_rev_last_1000",
-    4: "mean_platform_revenue",
+    "1": "avg_rev_last_1000",
+    "2": "avg_rev_last_1000",
+    "3a": "avg_rev_last_1000",
+    "3b": "avg_rev_last_1000",
+    "4a": "mean_platform_revenue",
+    "4b": "mean_platform_revenue",
 }
 
 
@@ -245,6 +195,8 @@ def readable_response(response_key):
 
 def format_pval(p):
     """Format a p-value for display: '< 0.0001' when very small, else 4 dp."""
+    if p is None:
+        return "N/A"
     p = float(p)
     if p < 0.0001:
         return "< 0.0001"
@@ -308,7 +260,7 @@ def generate_coefficients_tables(exp_num, responses_data):
             r"\caption{Experiment %s: Main-effect coefficients for %s.}"
             % (roman, resp_name.lower())
         )
-        lines.append(r"\label{tab:exp%d_coef_%s}" % (exp_num, response))
+        lines.append(r"\label{tab:exp%s_coef_%s}" % (exp_num, response))
         lines.append(r"\begin{tabular}{lrrrrl}")
         lines.append(r"\toprule")
         lines.append(
@@ -355,7 +307,7 @@ def generate_model_fit_table(exp_num, responses_data):
         r"\caption{Experiment %s: OLS model fit summary across response variables.}"
         % roman
     )
-    lines.append(r"\label{tab:exp%d_fit}" % exp_num)
+    lines.append(r"\label{tab:exp%s_fit}" % exp_num)
     lines.append(r"\begin{tabular}{lrrrr}")
     lines.append(r"\toprule")
     lines.append(
@@ -410,10 +362,10 @@ def generate_significant_effects_table(exp_num, responses_data):
 
     if not sig_rows:
         return (
-            "%% No significant effects at p<0.05 for Experiment %d" % exp_num
+            "%% No significant effects at p<0.05 for Experiment %s" % exp_num
         )
 
-    label = "tab:exp%d_sig" % exp_num
+    label = "tab:exp%s_sig" % exp_num
     lines = []
     lines.append(r"\begin{longtable}{llrrr}")
     lines.append(
@@ -478,12 +430,12 @@ def generate_ranked_effects_table(exp_num, response_key, short_key, rdata):
 
     sig_rows.sort(key=lambda r: r["t_abs"], reverse=True)
 
-    # Cap at top 15 effects to keep table compact
-    sig_rows = sig_rows[:15]
+    # Cap at top 10 effects to keep table compact
+    sig_rows = sig_rows[:10]
 
     if not sig_rows:
         return (
-            "%% No significant effects at p<0.05 for Experiment %d %s"
+            "%% No significant effects at p<0.05 for Experiment %s %s"
             % (exp_num, response_key)
         )
 
@@ -494,7 +446,7 @@ def generate_ranked_effects_table(exp_num, response_key, short_key, rdata):
         r"\caption{Experiment %s: Significant effects for %s ($p < 0.05$), ranked by $|t|$.}"
         % (roman, resp_label)
     )
-    lines.append(r"\label{tab:exp%d_ranked_%s}" % (exp_num, short_key))
+    lines.append(r"\label{tab:exp%s_ranked_%s}" % (exp_num, short_key))
     lines.append(r"\begin{tabular}{lrrl}")
     lines.append(r"\toprule")
     lines.append(
@@ -521,11 +473,10 @@ def generate_ranked_effects_table(exp_num, response_key, short_key, rdata):
 # ---------------------------------------------------------------------------
 
 def load_robust_data(exp_num):
-    """Load robust_results.json for an experiment. Returns None if missing."""
+    """Load robust_results.json for an experiment."""
     path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "robust", "robust_results.json")
     if not os.path.exists(path):
-        print(f"  WARNING: {path} not found")
-        return None
+        raise FileNotFoundError(f"exp{exp_num}: {path} not found")
     with open(path) as f:
         return json.load(f)
 
@@ -550,7 +501,7 @@ def generate_adequacy_table(exp_num, robust_data):
     lines.append(
         r"\caption{Experiment %s: Model adequacy diagnostics.}" % roman
     )
-    lines.append(r"\label{tab:exp%d_adequacy}" % exp_num)
+    lines.append(r"\label{tab:exp%s_adequacy}" % exp_num)
     lines.append(r"\begin{tabular}{lrrrrr}")
     lines.append(r"\toprule")
     lines.append(
@@ -619,7 +570,7 @@ def generate_inference_robust_table(exp_num, robust_data):
         r"\caption{Experiment %s: Inference robustness under heteroskedasticity and multiple testing corrections.}"
         % roman
     )
-    lines.append(r"\label{tab:exp%d_inference}" % exp_num)
+    lines.append(r"\label{tab:exp%s_inference}" % exp_num)
     lines.append(r"\begin{tabular}{lrrrr}")
     lines.append(r"\toprule")
     lines.append(
@@ -682,60 +633,29 @@ def generate_inference_robust_table(exp_num, robust_data):
 def copy_figures(exp_num):
     """Copy the most important publication figures for an experiment.
 
-    For each experiment, copy:
-      - main effects for avg_rev_last_1000       -> eN_main_rev.png
-      - main effects for regret variable          -> eN_main_reg.png
-      - main effects for price_volatility         -> eN_main_vol.png
-      - interaction plots for revenue, regret, volatility
-      - pareto charts (kept for reference)
+    For each experiment, copy main effects, interaction, and pareto figures
+    for each key response variable (rev, vol; poa for exp4a/4b).
     """
-    regret_var = REGRET_VAR[exp_num]
-    rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
-    vol_var = KEY_RESPONSES.get(exp_num, {}).get("vol", "price_volatility")
+    key_resp = KEY_RESPONSES.get(exp_num, {})
     exp_dir = os.path.join(RESULTS_DIR, f"exp{exp_num}")
     n = exp_num
 
-    copy_pairs = [
-        # Main effects plots
-        (
-            os.path.join(exp_dir, "main_effects", f"main_effects_{rev_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_main_rev.png"),
-        ),
-        (
-            os.path.join(exp_dir, "main_effects", f"main_effects_{regret_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_main_reg.png"),
-        ),
-        (
-            os.path.join(exp_dir, "main_effects", f"main_effects_{vol_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_main_vol.png"),
-        ),
-        # Interaction plots
-        (
-            os.path.join(exp_dir, "interaction_plots", f"interactions_{rev_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_int_rev.png"),
-        ),
-        (
-            os.path.join(exp_dir, "interaction_plots", f"interactions_{regret_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_int_reg.png"),
-        ),
-        (
-            os.path.join(exp_dir, "interaction_plots", f"interactions_{vol_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_int_vol.png"),
-        ),
-        # Pareto charts (still copied for reference, not shown in paper)
-        (
-            os.path.join(exp_dir, "pareto_charts", f"pareto_{rev_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_pareto_rev.png"),
-        ),
-        (
-            os.path.join(exp_dir, "pareto_charts", f"pareto_{regret_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_pareto_reg.png"),
-        ),
-        (
-            os.path.join(exp_dir, "pareto_charts", f"pareto_{vol_var}.png"),
-            os.path.join(FIGURES_DIR, f"e{n}_pareto_vol.png"),
-        ),
-    ]
+    copy_pairs = []
+    for short_key, var_name in key_resp.items():
+        copy_pairs.extend([
+            (
+                os.path.join(exp_dir, "main_effects", f"main_effects_{var_name}.png"),
+                os.path.join(FIGURES_DIR, f"e{n}_main_{short_key}.png"),
+            ),
+            (
+                os.path.join(exp_dir, "interaction_plots", f"interactions_{var_name}.png"),
+                os.path.join(FIGURES_DIR, f"e{n}_int_{short_key}.png"),
+            ),
+            (
+                os.path.join(exp_dir, "pareto_charts", f"pareto_{var_name}.png"),
+                os.path.join(FIGURES_DIR, f"e{n}_pareto_{short_key}.png"),
+            ),
+        ])
 
     # Quantile regression coefficient plots
     rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
@@ -749,7 +669,7 @@ def copy_figures(exp_num):
             shutil.copy2(src, dst)
             print(f"  Copied {src} -> {dst}")
         else:
-            print(f"  WARNING: Source not found: {src}")
+            raise FileNotFoundError(f"Missing figure source: {src}")
 
 
 # ---------------------------------------------------------------------------
@@ -761,16 +681,14 @@ def process_experiment(exp_num):
     json_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "estimation_results.json")
 
     if not os.path.exists(json_path):
-        print(f"Skipping exp{exp_num}: {json_path} not found")
-        return
+        raise FileNotFoundError(f"exp{exp_num}: {json_path} not found")
 
     with open(json_path) as f:
         data = json.load(f)
 
     responses_data = data.get("responses", {})
     if not responses_data:
-        print(f"Skipping exp{exp_num}: no response data in JSON")
-        return
+        raise ValueError(f"exp{exp_num}: no response data in {json_path}")
 
     # 1. Coefficient tables (one per response, combined into one file)
     coef_tex = generate_coefficients_tables(exp_num, responses_data)
@@ -807,21 +725,688 @@ def process_experiment(exp_num):
 
     # 5. Robustness tables (adequacy + inference)
     robust_data = load_robust_data(exp_num)
-    if robust_data:
-        adequacy_tex = generate_adequacy_table(exp_num, robust_data)
-        adequacy_path = os.path.join(TABLES_DIR, f"exp{exp_num}_adequacy.tex")
-        with open(adequacy_path, "w") as f:
-            f.write(adequacy_tex + "\n")
-        print(f"  Wrote {adequacy_path}")
+    adequacy_tex = generate_adequacy_table(exp_num, robust_data)
+    adequacy_path = os.path.join(TABLES_DIR, f"exp{exp_num}_adequacy.tex")
+    with open(adequacy_path, "w") as f:
+        f.write(adequacy_tex + "\n")
+    print(f"  Wrote {adequacy_path}")
 
-        inference_tex = generate_inference_robust_table(exp_num, robust_data)
-        inference_path = os.path.join(TABLES_DIR, f"exp{exp_num}_inference_robust.tex")
-        with open(inference_path, "w") as f:
-            f.write(inference_tex + "\n")
-        print(f"  Wrote {inference_path}")
+    inference_tex = generate_inference_robust_table(exp_num, robust_data)
+    inference_path = os.path.join(TABLES_DIR, f"exp{exp_num}_inference_robust.tex")
+    with open(inference_path, "w") as f:
+        f.write(inference_tex + "\n")
+    print(f"  Wrote {inference_path}")
 
     # 6. Copy publication figures
     copy_figures(exp_num)
+
+
+# ---------------------------------------------------------------------------
+# Paper numbers auto-generation
+# ---------------------------------------------------------------------------
+
+# Roman numeral for LaTeX command names
+_CMD_ROMAN = {"1": "One", "2": "Two", "3a": "ThreeA", "3b": "ThreeB", "4a": "FourA", "4b": "FourB"}
+
+# Short keys for response variable command names
+_CMD_RESPONSE_SHORT = {
+    "avg_rev_last_1000": "Rev",
+    "time_to_converge": "Conv",
+    "no_sale_rate": "NoSale",
+    "price_volatility": "Vol",
+    "winner_entropy": "Ent",
+    "mean_platform_revenue": "Rev",
+    "mean_liquid_welfare": "Welfare",
+    "mean_effective_poa": "PoAGreedy",
+    "mean_effective_poa_lp": "PoA",
+    "mean_budget_utilization": "BudUtil",
+    "mean_bid_to_value": "BTV",
+    "mean_allocative_efficiency": "AllocEff",
+    "mean_dual_cv": "DualCV",
+    "mean_no_sale_rate": "NoSale",
+    "mean_winner_entropy": "Ent",
+}
+
+
+def _format_p_latex(p):
+    """Format p-value for LaTeX inline use.
+
+    Returns a string suitable for $p \\ExpFourAXxxPFmt$ usage:
+    - '= 0.004' for moderate p
+    - '< 0.001' for small p
+    - '< 10^{-15}' for very small p
+    """
+    import math
+    p = float(p)
+    if p != p or p >= 1:  # NaN guard
+        return "= \\text{NA}"
+    if p >= 0.001:
+        return f"= {p:.3f}"
+    if p < 1e-4:
+        exp = int(math.ceil(math.log10(max(p, 1e-300))))
+        return f"< 10^{{{exp}}}"
+    return "< 0.001"
+
+
+# Exp1 coefficient macros: (response_key, coded_factor) → macro suffix
+_EXP1_COEF_MACROS = {
+    # Revenue: interaction t-stats referenced in res1.tex
+    ("avg_rev_last_1000", "auction_type:n_bidders"): "RevAuctionxNbid",
+    ("avg_rev_last_1000", "auction_type:gamma"): "RevAuctionxGamma",
+    # Note: auction_type main effect T/AbsT/PFmt generated in auction format section below
+}
+
+# Exp2 coefficient macros: (response_key, coded_factor) → macro suffix
+_EXP2_COEF_MACROS = {
+    # End-state revenue: n_bidders and auction_type individual t-stats
+    ("avg_rev_last_1000", "n_bidders"): "RevNbid",
+    # Lifetime revenue: individual factor t-stats and interaction
+    ("avg_rev_all", "auction_type"): "AllRevAuction",
+    ("avg_rev_all", "n_bidders"): "AllRevNbid",
+    ("avg_rev_all", "state_info"): "AllRevState",
+    ("avg_rev_all", "auction_type:n_bidders"): "AllRevAuctionxNbid",
+}
+
+# Exp4a coefficient macros: (response_key, coded_factor) → macro suffix
+_EXP4A_COEF_MACROS = {
+    # Allocative efficiency: objective × n_bidders interaction
+    ("mean_allocative_efficiency", "objective:n_bidders"): "AllocEffObjxNbid",
+    # Platform revenue: individual factor t-stats
+    ("mean_platform_revenue", "n_bidders"): "RevNbid",
+    ("mean_platform_revenue", "objective"): "RevObj",
+    ("mean_platform_revenue", "objective:n_bidders"): "RevObjxNbid",
+    # Cross-episode drift
+    ("cross_episode_drift", "auction_type"): "DriftAuction",
+    ("cross_episode_drift", "n_bidders"): "DriftNbid",
+    # Warm-start benefit
+    ("warm_start_benefit", "objective"): "WarmObj",
+    ("warm_start_benefit", "auction_type:objective"): "WarmObjxAuction",
+    # Inter-episode volatility
+    ("inter_episode_volatility", "objective"): "IEVolObj",
+}
+
+# Exp4b coefficient macros: (response_key, coded_factor) → macro suffix
+_EXP4B_COEF_MACROS = {
+    # Platform revenue: individual factor t-stats
+    ("mean_platform_revenue", "n_bidders"): "RevNbid",
+    ("mean_platform_revenue", "aggressiveness"): "RevAggr",
+    # Cross-episode drift
+    ("cross_episode_drift", "auction_type"): "DriftAuction",
+    ("cross_episode_drift", "n_bidders"): "DriftNbid",
+    # Warm-start benefit
+    ("warm_start_benefit", "aggressiveness"): "WarmAggr",
+    # Inter-episode volatility
+    ("inter_episode_volatility", "aggressiveness"): "IEVolAggr",
+}
+
+
+def _generate_generic_coefficient_macros(responses_data, lines, macros_dict, prefix, label):
+    """Generate \\newcommand macros for specific coefficients in any experiment.
+
+    For each entry in macros_dict, writes:
+      \\{prefix}{suffix}T       - signed t-value
+      \\{prefix}{suffix}AbsT    - |t| value
+      \\{prefix}{suffix}PFmt    - formatted p-value
+    """
+    lines.append(f"% {label} per-coefficient macros")
+    for (resp_key, factor_key), suffix in macros_dict.items():
+        rdata = responses_data.get(resp_key, {})
+        coeffs = rdata.get("coefficients", {})
+        coef = coeffs.get(factor_key, {})
+        t_val = coef.get("t_value", 0)
+        p_val = coef.get("p_value", 1)
+        if t_val != t_val:  # NaN
+            t_val = 0
+        if p_val != p_val:  # NaN
+            p_val = 1
+        lines.append(f"\\newcommand{{\\{prefix}{suffix}T}}{{{t_val:.1f}}}")
+        lines.append(f"\\newcommand{{\\{prefix}{suffix}AbsT}}{{{abs(t_val):.1f}}}")
+        lines.append(f"\\newcommand{{\\{prefix}{suffix}PFmt}}{{{_format_p_latex(p_val)}}}")
+
+
+def _generate_exp4a_coefficient_macros(responses_data, lines):
+    """Generate \\newcommand macros for specific Exp4a coefficients.
+
+    For each entry in _EXP4A_COEF_MACROS, writes:
+      \\ExpFourA{suffix}T       - signed t-value
+      \\ExpFourA{suffix}AbsT    - |t| value
+      \\ExpFourA{suffix}PFmt    - formatted p-value (e.g. '= 0.004' or '< 10^{-15}')
+    """
+    lines.append("% Exp4a per-coefficient macros (for inline t-stats in res4a.tex)")
+    for (resp_key, factor_key), suffix in _EXP4A_COEF_MACROS.items():
+        rdata = responses_data.get(resp_key, {})
+        coeffs = rdata.get("coefficients", {})
+        coef = coeffs.get(factor_key, {})
+        t_val = coef.get("t_value", 0)
+        p_val = coef.get("p_value", 1)
+        if t_val != t_val:  # NaN
+            t_val = 0
+        if p_val != p_val:  # NaN
+            p_val = 1
+        lines.append(f"\\newcommand{{\\ExpFourA{suffix}T}}{{{t_val:.1f}}}")
+        lines.append(f"\\newcommand{{\\ExpFourA{suffix}AbsT}}{{{abs(t_val):.1f}}}")
+        lines.append(f"\\newcommand{{\\ExpFourA{suffix}PFmt}}{{{_format_p_latex(p_val)}}}")
+
+
+def _generate_exp4b_coefficient_macros(responses_data, lines):
+    """Generate \\newcommand macros for specific Exp4b coefficients.
+
+    For each entry in _EXP4B_COEF_MACROS, writes:
+      \\ExpFourB{suffix}T       - signed t-value
+      \\ExpFourB{suffix}AbsT    - |t| value
+      \\ExpFourB{suffix}PFmt    - formatted p-value (e.g. '= 0.004' or '< 10^{-15}')
+    """
+    lines.append("% Exp4b per-coefficient macros (for inline t-stats in res4b.tex)")
+    for (resp_key, factor_key), suffix in _EXP4B_COEF_MACROS.items():
+        rdata = responses_data.get(resp_key, {})
+        coeffs = rdata.get("coefficients", {})
+        coef = coeffs.get(factor_key, {})
+        t_val = coef.get("t_value", 0)
+        p_val = coef.get("p_value", 1)
+        if t_val != t_val:  # NaN
+            t_val = 0
+        if p_val != p_val:  # NaN
+            p_val = 1
+        lines.append(f"\\newcommand{{\\ExpFourB{suffix}T}}{{{t_val:.1f}}}")
+        lines.append(f"\\newcommand{{\\ExpFourB{suffix}AbsT}}{{{abs(t_val):.1f}}}")
+        lines.append(f"\\newcommand{{\\ExpFourB{suffix}PFmt}}{{{_format_p_latex(p_val)}}}")
+
+
+def _generate_exp2_lifetime_macros(responses_data, lines, exp_num):
+    """Generate Exp2 lifetime revenue macros: per-format means, premiums, per-cell means."""
+    import pandas as pd
+    lines.append("% Exp2 lifetime revenue macros")
+
+    # R² for avg_rev_all model
+    all_rev = responses_data.get("avg_rev_all", {})
+    r2 = all_rev.get("r_squared", 0)
+    lines.append(f"\\newcommand{{\\ExpTwoAllRevRsq}}{{{r2:.3f}}}")
+
+    csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+    if not os.path.exists(csv_path):
+        return
+    df = pd.read_csv(csv_path)
+
+    # Per-format means for both lifetime and end-state
+    for rev_col, tag in [("avg_rev_all", "All"), ("avg_rev_last_1000", "End")]:
+        if rev_col not in df.columns:
+            continue
+        if "auction_type" in df.columns:
+            fpa_mean = df[df["auction_type"] == "first"][rev_col].mean()
+            spa_mean = df[df["auction_type"] == "second"][rev_col].mean()
+            lines.append(f"\\newcommand{{\\ExpTwo{tag}MeanFPA}}{{{fpa_mean:.3f}}}")
+            lines.append(f"\\newcommand{{\\ExpTwo{tag}MeanSPA}}{{{spa_mean:.3f}}}")
+
+    # Learning premiums (lifetime - end-state)
+    if all(c in df.columns for c in ["avg_rev_all", "avg_rev_last_1000", "auction_type"]):
+        for fmt, label in [("first", "FPA"), ("second", "SPA")]:
+            sub = df[df["auction_type"] == fmt]
+            premium = sub["avg_rev_all"].mean() - sub["avg_rev_last_1000"].mean()
+            lines.append(f"\\newcommand{{\\ExpTwo{label}Premium}}{{{premium:.3f}}}")
+
+    # Per-cell means (auction_type × n_bidders) for lifetime revenue
+    if all(c in df.columns for c in ["avg_rev_all", "auction_type", "n_bidders"]):
+        for fmt, fmt_label in [("first", "FPA"), ("second", "SPA")]:
+            for nb, nb_label in [(2, "TwoBid"), (4, "FourBid")]:
+                sub = df[(df["auction_type"] == fmt) & (df["n_bidders"] == nb)]
+                if len(sub) > 0:
+                    mean_val = sub["avg_rev_all"].mean()
+                    lines.append(
+                        f"\\newcommand{{\\ExpTwoAll{fmt_label}{nb_label}}}"
+                        f"{{{mean_val:.3f}}}"
+                    )
+
+
+def _generate_exp4a_detail_macros(responses_data, lines, exp_num):
+    """Generate Exp4a detail macros: efficiency ranges, drift diagnostics, R² for welfare/drift."""
+    import pandas as pd
+    lines.append("% Exp4a detail macros (efficiency, drift, welfare)")
+
+    # R² for liquid welfare and cross-episode drift
+    welfare_data = responses_data.get("mean_liquid_welfare", {})
+    drift_data = responses_data.get("cross_episode_drift", {})
+    welfare_r2 = welfare_data.get("r_squared", 0)
+    drift_r2 = drift_data.get("r_squared", 0)
+    drift_f_p = drift_data.get("f_pvalue", 1)
+    lines.append(f"\\newcommand{{\\ExpFourAWelfareRsq}}{{{welfare_r2:.2f}}}")
+    lines.append(f"\\newcommand{{\\ExpFourAWelfareRsqPct}}{{{welfare_r2*100:.0f}}}")
+    lines.append(f"\\newcommand{{\\ExpFourADriftRsq}}{{{drift_r2:.2f}}}")
+    lines.append(f"\\newcommand{{\\ExpFourADriftRsqPct}}{{{drift_r2*100:.0f}}}")
+    lines.append(f"\\newcommand{{\\ExpFourADriftFP}}{{{drift_f_p:.2f}}}")
+    lines.append(f"\\newcommand{{\\ExpFourADriftFPFmt}}{{{_format_p_latex(drift_f_p)}}}")
+
+    csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+    if not os.path.exists(csv_path):
+        return
+    df = pd.read_csv(csv_path)
+
+    # Efficiency ranges by objective × n_bidders (cell means, not individual runs)
+    if all(c in df.columns for c in ["mean_allocative_efficiency", "objective", "n_bidders"]):
+        factors = [c for c in df.columns if c.endswith("_coded")]
+        raw_factors = [c.replace("_coded", "") for c in factors]
+        # Use raw factor columns that exist
+        grp_cols = [c for c in raw_factors if c in df.columns]
+        if not grp_cols:
+            grp_cols = ["auction_type", "objective", "n_bidders", "budget_multiplier", "reserve_price", "sigma"]
+            grp_cols = [c for c in grp_cols if c in df.columns]
+        util_cells = df[df["objective"] == "utility_max"].groupby(grp_cols)["mean_allocative_efficiency"].mean()
+        val4_cells = df[(df["objective"] == "value_max") & (df["n_bidders"] == 4)].groupby(
+            [c for c in grp_cols if c not in ["objective", "n_bidders"]]
+        )["mean_allocative_efficiency"].mean()
+        if len(util_cells) > 0:
+            lines.append(f"\\newcommand{{\\ExpFourAUtilEffLow}}{{{util_cells.min():.2f}}}")
+            lines.append(f"\\newcommand{{\\ExpFourAUtilEffHigh}}{{{util_cells.max():.2f}}}")
+        if len(val4_cells) > 0:
+            lines.append(f"\\newcommand{{\\ExpFourAValFourEffLow}}{{{val4_cells.min():.2f}}}")
+            lines.append(f"\\newcommand{{\\ExpFourAValFourEffHigh}}{{{val4_cells.max():.2f}}}")
+
+
+def generate_paper_numbers():
+    """Generate paper/numbers.tex with \\newcommand definitions for all statistics.
+
+    Extracts from estimation_results.json and robust/robust_results.json:
+    - R², Adj-R², F-stat, n_obs per response
+    - PRESS gaps, LGBM R², LOF p-values
+    - Multiplicity counts (Holm, BH survivors)
+    - Top-ranked |t|-statistics for key responses
+    """
+    lines = ["% Auto-generated by generate_tables.py — do not edit manually"]
+    lines.append("% Regenerate with: make tables")
+    lines.append("")
+
+    for exp_num in ["1", "2", "3a", "3b", "4a", "4b"]:
+        roman = _CMD_ROMAN[exp_num]
+
+        # Load estimation results
+        est_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "estimation_results.json")
+        if not os.path.exists(est_path):
+            print(f"  Skipping exp{exp_num} numbers: {est_path} not found")
+            continue
+
+        with open(est_path) as f:
+            est_data = json.load(f)
+
+        responses_data = est_data.get("responses", {})
+        lines.append(f"% === Experiment {exp_num} ===")
+
+        # n_obs (same across all responses)
+        first_resp = next(iter(responses_data.values()), {})
+        n_obs = first_resp.get("n_obs", 0)
+        lines.append(f"\\newcommand{{\\Exp{roman}Nobs}}{{{n_obs}}}")
+
+        # Per-response R², top |t|
+        key_resp = KEY_RESPONSES.get(exp_num, {})
+        for short_key, response_key in key_resp.items():
+            rdata = responses_data.get(response_key, {})
+            cmd_suffix = short_key.capitalize()  # Rev, Reg, Vol
+
+            r2 = rdata.get("r_squared", 0)
+            adj_r2 = rdata.get("adj_r_squared", 0)
+            lines.append(f"\\newcommand{{\\Exp{roman}{cmd_suffix}Rsq}}{{{r2:.3f}}}")
+            lines.append(f"\\newcommand{{\\Exp{roman}{cmd_suffix}AdjRsq}}{{{adj_r2:.3f}}}")
+
+            # Top effect |t|
+            coefficients = rdata.get("coefficients", {})
+            if coefficients:
+                top_effects = sorted(
+                    coefficients.items(),
+                    key=lambda x: abs(x[1]["t_value"]),
+                    reverse=True
+                )
+                if top_effects:
+                    top_name, top_vals = top_effects[0]
+                    top_t = abs(top_vals["t_value"])
+                    top_readable = readable_effect_name(top_name).replace("$", "").replace("\\", "")
+                    lines.append(f"\\newcommand{{\\Exp{roman}{cmd_suffix}TopT}}{{{top_t:.1f}}}")
+
+                # Top-3 factor names and |t|-values (for cross-experiment tables)
+                if short_key == "rev":
+                    for rank in range(min(3, len(top_effects))):
+                        eff_name, eff_vals = top_effects[rank]
+                        eff_t = abs(eff_vals["t_value"])
+                        eff_readable = readable_effect_name(eff_name)
+                        ordinal = ["One", "Two", "Three"][rank]
+                        lines.append(
+                            f"\\newcommand{{\\Exp{roman}RevFactor{ordinal}}}"
+                            f"{{{eff_readable}}}"
+                        )
+                        lines.append(
+                            f"\\newcommand{{\\Exp{roman}RevFactorT{ordinal}}}"
+                            f"{{{eff_t:.1f}}}"
+                        )
+
+                    # Percentage effect of top revenue factor
+                    top_coeff = top_effects[0][1]["estimate"]
+                    effect_size = 2 * abs(top_coeff)
+                    rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
+                    csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+                    if os.path.exists(csv_path):
+                        import pandas as pd
+                        df_tmp = pd.read_csv(csv_path)
+                        grand_mean = df_tmp[rev_var].mean()
+                        if grand_mean != 0:
+                            pct_effect = effect_size / grand_mean * 100
+                            lines.append(
+                                f"\\newcommand{{\\Exp{roman}RevTopPctEffect}}"
+                                f"{{{pct_effect:.1f}}}"
+                            )
+                        # Ratio of top-1 effect to auction format effect
+                        auction_coeff = coefficients.get(
+                            "auction_type_coded", coefficients.get("auction_type", {})
+                        ).get("estimate", None)
+                        if auction_coeff is not None and abs(auction_coeff) > 0:
+                            ratio = abs(top_coeff) / abs(auction_coeff)
+                            lines.append(
+                                f"\\newcommand{{\\Exp{roman}RevTopVsAuctionRatio}}"
+                                f"{{{ratio:.1f}}}"
+                            )
+
+        # R² range across all responses
+        all_r2 = [rd.get("r_squared", 0) for rd in responses_data.values()]
+        if all_r2:
+            lines.append(f"\\newcommand{{\\Exp{roman}RsqMin}}{{{min(all_r2):.2f}}}")
+            lines.append(f"\\newcommand{{\\Exp{roman}RsqMax}}{{{max(all_r2):.2f}}}")
+
+        # Load robustness results
+        try:
+            robust_data = load_robust_data(exp_num)
+        except FileNotFoundError:
+            robust_data = None
+        if robust_data:
+            # LGBM R² for key responses
+            lgbm = robust_data.get("lightgbm", {})
+            for short_key, response_key in key_resp.items():
+                cmd_suffix = short_key.capitalize()
+                lgbm_r2 = lgbm.get(response_key, {}).get("lgbm_cv_r2", 0)
+                lines.append(f"\\newcommand{{\\Exp{roman}{cmd_suffix}LGBMRsq}}{{{lgbm_r2:.3f}}}")
+
+            # PRESS gaps for key responses
+            press = robust_data.get("press", {})
+            for short_key, response_key in key_resp.items():
+                cmd_suffix = short_key.capitalize()
+                gap = press.get(response_key, {}).get("gap_r2_pred_r2", 0)
+                pred_r2 = press.get(response_key, {}).get("predicted_r_squared", 0)
+                lines.append(f"\\newcommand{{\\Exp{roman}{cmd_suffix}PredRsq}}{{{pred_r2:.3f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}{cmd_suffix}PRESSGap}}{{{gap:.3f}}}")
+
+            # PRESS gap range
+            all_gaps = [v.get("gap_r2_pred_r2", 0) for v in press.values()]
+            if all_gaps:
+                lines.append(f"\\newcommand{{\\Exp{roman}PRESSGapMin}}{{{min(all_gaps):.3f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}PRESSGapMax}}{{{max(all_gaps):.3f}}}")
+
+            # Multiplicity
+            mult = robust_data.get("multiplicity", {})
+            n_tests = mult.get("n_tests", 0)
+            n_raw = mult.get("n_raw_sig", 0)
+            n_holm = mult.get("n_holm_sig", 0)
+            n_bh = mult.get("n_bh_sig", 0)
+            lines.append(f"\\newcommand{{\\Exp{roman}NTests}}{{{n_tests}}}")
+            lines.append(f"\\newcommand{{\\Exp{roman}NRawSig}}{{{n_raw}}}")
+            lines.append(f"\\newcommand{{\\Exp{roman}NHolmSig}}{{{n_holm}}}")
+            lines.append(f"\\newcommand{{\\Exp{roman}NBHSig}}{{{n_bh}}}")
+            if n_raw > 0:
+                bh_pct = 100 * n_bh / n_raw
+                lines.append(f"\\newcommand{{\\Exp{roman}BHPct}}{{{bh_pct:.0f}}}")
+
+            # LGBM R² range
+            all_lgbm = [v.get("lgbm_cv_r2", 0) for v in lgbm.values()]
+            if all_lgbm:
+                lines.append(f"\\newcommand{{\\Exp{roman}LGBMRsqMin}}{{{min(all_lgbm):.2f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}LGBMRsqMax}}{{{max(all_lgbm):.2f}}}")
+
+        # --- Auction format t-stat and mean revenue by format ---
+        import pandas as pd
+        csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
+
+            # Auction type t-stat for revenue
+            rev_data = responses_data.get(rev_var, {})
+            coeffs = rev_data.get("coefficients", {})
+            auction_coef = coeffs.get("auction_type_coded", coeffs.get("auction_type", {}))
+            if auction_coef:
+                auction_t_raw = auction_coef.get("t_value", 0)
+                auction_t = abs(auction_t_raw)
+                auction_p = auction_coef.get("p_value", 1)
+                lines.append(f"\\newcommand{{\\Exp{roman}RevAuctionT}}{{{auction_t:.1f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}RevAuctionAbsT}}{{{auction_t:.1f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}RevAuctionPFmt}}{{{_format_p_latex(auction_p)}}}")
+
+            # Mean revenue by auction format
+            if "auction_type" in df.columns and rev_var in df.columns:
+                fpa = df[df["auction_type"] == "first"][rev_var].mean()
+                spa = df[df["auction_type"] == "second"][rev_var].mean()
+                if spa != 0:
+                    gap_pct = (fpa - spa) / spa * 100
+                else:
+                    gap_pct = 0.0
+                lines.append(f"\\newcommand{{\\Exp{roman}RevMeanFPA}}{{{fpa:.3f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}RevMeanSPA}}{{{spa:.3f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}RevGapPct}}{{{gap_pct:.1f}}}")
+
+            # Convergence summary macros
+            conv_col = "time_to_converge"
+            if conv_col in df.columns:
+                med = df[conv_col].median()
+                mean_val = df[conv_col].mean()
+                lines.append(f"\\newcommand{{\\Exp{roman}ConvMedian}}{{{med:,.0f}}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}ConvMean}}{{{mean_val:,.0f}}}")
+            else:
+                lines.append(f"\\newcommand{{\\Exp{roman}ConvMedian}}{{N/A}}")
+                lines.append(f"\\newcommand{{\\Exp{roman}ConvMean}}{{N/A}}")
+
+        # --- Per-coefficient macros for inline t-stats ---
+        if exp_num == "1":
+            _generate_generic_coefficient_macros(
+                responses_data, lines, _EXP1_COEF_MACROS, "ExpOne", "Exp1")
+        elif exp_num == "2":
+            _generate_generic_coefficient_macros(
+                responses_data, lines, _EXP2_COEF_MACROS, "ExpTwo", "Exp2")
+            # Exp2 lifetime revenue macros
+            _generate_exp2_lifetime_macros(responses_data, lines, exp_num)
+        elif exp_num == "4a":
+            _generate_exp4a_coefficient_macros(responses_data, lines)
+            _generate_exp4a_detail_macros(responses_data, lines, exp_num)
+        elif exp_num == "4b":
+            _generate_exp4b_coefficient_macros(responses_data, lines)
+
+        # --- Cross-experiment margin ratio (top-1 / top-2 |t|) for revenue ---
+        rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
+        rev_rdata = responses_data.get(rev_var, {})
+        rev_coeffs = rev_rdata.get("coefficients", {})
+        if rev_coeffs:
+            sorted_by_t = sorted(
+                rev_coeffs.items(),
+                key=lambda x: abs(x[1]["t_value"]),
+                reverse=True
+            )
+            if len(sorted_by_t) >= 2:
+                t1 = abs(sorted_by_t[0][1]["t_value"])
+                t2 = abs(sorted_by_t[1][1]["t_value"])
+                if t2 > 0:
+                    margin = t1 / t2
+                    lines.append(
+                        f"\\newcommand{{\\Exp{roman}RevTopMarginRatio}}"
+                        f"{{{margin:.1f}}}"
+                    )
+
+        lines.append("")
+
+    numbers_path = os.path.join("paper", "numbers.tex")
+    with open(numbers_path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"\nWrote {numbers_path} ({len(lines)} lines)")
+
+    # --- Validation checks ---
+    import pandas as pd
+    errors = []
+    for exp_num in ["1", "2", "3a", "3b", "4a", "4b"]:
+        roman = _CMD_ROMAN[exp_num]
+        csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+        est_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "estimation_results.json")
+        if not os.path.exists(csv_path) or not os.path.exists(est_path):
+            continue
+        df = pd.read_csv(csv_path)
+        with open(est_path) as f:
+            est_data = json.load(f)
+        responses_data = est_data.get("responses", {})
+        first_resp = next(iter(responses_data.values()), {})
+        json_nobs = first_resp.get("n_obs", 0)
+        csv_nobs = len(df)
+        if json_nobs != csv_nobs:
+            errors.append(f"Exp{exp_num}: n_obs mismatch: JSON={json_nobs}, CSV={csv_nobs}")
+
+        # Check LGBM vs OLS gap (diagnostic, not blocking)
+        try:
+            robust_data = load_robust_data(exp_num)
+        except FileNotFoundError:
+            continue
+        lgbm = robust_data.get("lightgbm", {})
+        for resp_key, rdata in responses_data.items():
+            ols_r2 = rdata.get("r_squared", 0)
+            lgbm_r2 = lgbm.get(resp_key, {}).get("lgbm_cv_r2", 0)
+            gap = lgbm_r2 - ols_r2
+            if gap > 0.05:
+                print(f"  NOTE Exp{exp_num}: LGBM R² exceeds OLS R² by {gap:.3f} for {resp_key}",
+                      file=sys.stderr)
+
+    if errors:
+        for e in errors:
+            print(f"  ERROR: {e}", file=sys.stderr)
+        sys.exit(1)
+    else:
+        print("\n  All validation checks passed")
+
+    return numbers_path
+
+
+# ---------------------------------------------------------------------------
+# Summary statistics table generator
+# ---------------------------------------------------------------------------
+
+# Factor columns per experiment (raw value columns, not coded)
+_EXP_FACTOR_COLS = {
+    "1": ["auction_type", "alpha", "gamma", "reserve_price", "init",
+        "exploration", "asynchronous", "n_bidders", "info_feedback",
+        "decay_type"],
+    "2": ["auction_type", "n_bidders", "state_info", "eta"],
+    "3a": ["auction_type", "n_bidders", "reserve_price",
+        "eta", "exploration_intensity", "context_richness", "lam", "memory_decay"],
+    "3b": ["auction_type", "n_bidders", "reserve_price",
+        "eta", "exploration_intensity", "context_richness"],
+    "4a": ["auction_type", "objective", "n_bidders"],
+    "4b": ["auction_type", "aggressiveness", "n_bidders"],
+}
+
+# Response columns per experiment
+_EXP_RESPONSE_COLS = {
+    "1": ["avg_rev_last_1000", "time_to_converge",
+        "no_sale_rate", "price_volatility", "winner_entropy"],
+    "2": ["avg_rev_last_1000", "time_to_converge",
+        "no_sale_rate", "price_volatility", "winner_entropy"],
+    "3a": ["avg_rev_last_1000", "time_to_converge",
+        "no_sale_rate", "price_volatility", "winner_entropy"],
+    "3b": ["avg_rev_last_1000", "time_to_converge",
+        "no_sale_rate", "price_volatility", "winner_entropy"],
+    "4a": ["mean_platform_revenue", "mean_liquid_welfare", "mean_effective_poa_lp",
+        "mean_budget_utilization", "mean_bid_to_value",
+        "mean_allocative_efficiency", "mean_winner_entropy",
+        "warm_start_benefit", "inter_episode_volatility",
+        "bid_suppression_ratio", "cross_episode_drift"],
+    "4b": ["mean_platform_revenue", "mean_liquid_welfare", "mean_effective_poa_lp",
+        "mean_budget_utilization", "mean_bid_to_value",
+        "mean_allocative_efficiency", "mean_winner_entropy",
+        "warm_start_benefit", "inter_episode_volatility",
+        "bid_suppression_ratio", "cross_episode_drift"],
+}
+
+
+def generate_summary_statistics(exp_num):
+    """Generate a summary statistics table for an experiment.
+
+    Reads data.csv and produces paper/tables/expN_summary.tex with
+    factor parameters above the midrule and response variables below.
+    """
+    import pandas as pd
+
+    csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(f"exp{exp_num}: {csv_path} not found")
+
+    df = pd.read_csv(csv_path)
+    roman = EXP_ROMAN[exp_num]
+
+    factor_cols = [c for c in _EXP_FACTOR_COLS.get(exp_num, []) if c in df.columns]
+    response_cols = [c for c in _EXP_RESPONSE_COLS.get(exp_num, []) if c in df.columns]
+
+    lines = []
+    lines.append(r"\begin{table}[H]")
+    lines.append(r"\centering")
+    lines.append(
+        r"\caption{Summary Statistics for Experiment %s (%d observations).}"
+        % (roman, len(df))
+    )
+    lines.append(r"\label{tab:summary_statistics_exp%s}" % exp_num)
+    lines.append(r"\small")
+    lines.append(r"\begin{tabular}{lrrrr}")
+    lines.append(r"\toprule")
+    lines.append(
+        r"\textbf{Variable} & \textbf{Mean} & \textbf{Std} "
+        r"& \textbf{Min} & \textbf{Max} \\"
+    )
+    lines.append(r"\midrule")
+
+    def _add_row(col_name, display_name, series):
+        """Add a summary row, handling both numeric and categorical columns."""
+        if series.dtype == object:
+            # For categorical: show as fraction of most common value
+            return  # Skip categorical in numeric summary
+        mean_v = series.mean()
+        std_v = series.std()
+        min_v = series.min()
+        max_v = series.max()
+        # Format large numbers with commas
+        if abs(mean_v) >= 1000:
+            lines.append(
+                f"{display_name} & {mean_v:,.0f} & {std_v:,.0f} "
+                f"& {min_v:,.0f} & {max_v:,.0f} \\\\"
+            )
+        else:
+            lines.append(
+                f"{display_name} & {mean_v:.3f} & {std_v:.3f} "
+                f"& {min_v:.3f} & {max_v:.3f} \\\\"
+            )
+
+    # Factor rows
+    for col in factor_cols:
+        display = READABLE_NAMES.get(col, col.replace("_", " ").title())
+        if df[col].dtype == object:
+            continue  # Skip categorical factors in numeric summary
+        _add_row(col, display, df[col])
+
+    lines.append(r"\midrule")
+
+    # Response rows
+    for col in response_cols:
+        display = READABLE_RESPONSES.get(col, col.replace("_", " ").title())
+        if col in df.columns:
+            _add_row(col, display, df[col])
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(
+        r"\par\smallskip\footnotesize "
+        r"Factor parameters (above the line) describe the experimental design; "
+        r"response variables (below) are measured outcomes."
+    )
+    lines.append(r"\end{table}")
+
+    out_path = os.path.join(TABLES_DIR, f"exp{exp_num}_summary.tex")
+    with open(out_path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"  Wrote {out_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -832,9 +1417,33 @@ def main():
     os.makedirs(TABLES_DIR, exist_ok=True)
     os.makedirs(FIGURES_DIR, exist_ok=True)
 
-    for exp_num in [1, 2, 3, 4]:
+    for exp_num in ["1", "2", "3a", "3b", "4a", "4b"]:
         print(f"\nProcessing Experiment {exp_num}...")
-        process_experiment(exp_num)
+        try:
+            process_experiment(exp_num)
+        except FileNotFoundError as e:
+            print(f"  Skipping: {e}")
+
+    # Copy calibration entropy figure if available
+    cal_fig_src = os.path.join(RESULTS_DIR, "calibration", "entropy_comparison.png")
+    cal_fig_dst = os.path.join(FIGURES_DIR, "calibration_entropy.png")
+    if os.path.exists(cal_fig_src):
+        shutil.copy2(cal_fig_src, cal_fig_dst)
+        print(f"\n  Copied {cal_fig_src} -> {cal_fig_dst}")
+    else:
+        print(f"\n  NOTE: {cal_fig_src} not found (run make calibrate-multi to generate)")
+
+
+    # Generate summary statistics tables
+    for exp_num in ["1", "2", "3a", "3b", "4a", "4b"]:
+        print(f"\nGenerating summary statistics for Experiment {exp_num}...")
+        try:
+            generate_summary_statistics(exp_num)
+        except FileNotFoundError as e:
+            print(f"  Skipping: {e}")
+
+    # Generate paper numbers
+    generate_paper_numbers()
 
     print("\nDone. Tables written to paper/tables/, figures copied to paper/figures/")
 

@@ -1,0 +1,39 @@
+======================================================================
+ROBUST ANALYSIS SUMMARY -- Experiment 3a
+======================================================================
+
+KEY FINDING: reserve_price:context_richness interaction
+--------------------------------------------------
+  avg_rev_last_1000|reserve_price:context_richness: raw p=1.1169e-08, holm p=2.6804e-06 -> SURVIVES Holm-Bonferroni
+  avg_rev_all|reserve_price:context_richness: raw p=8.8652e-10, holm p=2.1543e-07 -> SURVIVES Holm-Bonferroni
+  time_to_converge|reserve_price:context_richness: raw p=7.8702e-07, holm p=1.8495e-04 -> SURVIVES Holm-Bonferroni
+  no_sale_rate|reserve_price:context_richness: raw p=7.2780e-82, holm p=1.9287e-79 -> SURVIVES Holm-Bonferroni
+  price_volatility|reserve_price:context_richness: raw p=9.1199e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  winner_entropy|reserve_price:context_richness: raw p=7.1506e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+
+MODEL ADEQUACY
+--------------------------------------------------
+  avg_rev_last_1000               R2=0.6942  Pred-R2=0.6550  Gap=0.0393
+  avg_rev_all                     R2=0.7312  Pred-R2=0.6967  Gap=0.0345
+  time_to_converge                R2=0.4231  Pred-R2=0.3491  Gap=0.0740
+  no_sale_rate                    R2=0.8055  Pred-R2=0.7805  Gap=0.0250
+  price_volatility                R2=0.6150  Pred-R2=0.5656  Gap=0.0494
+  winner_entropy                  R2=0.8085  Pred-R2=0.7839  Gap=0.0246
+
+LINEAR vs NONPARAMETRIC
+--------------------------------------------------
+  avg_rev_last_1000               OLS=0.6942  LGBM=0.7135  Gap=0.0193
+  avg_rev_all                     OLS=0.7312  LGBM=0.7643  Gap=0.0331
+  time_to_converge                OLS=0.4231  LGBM=0.4355  Gap=0.0124
+  no_sale_rate                    OLS=0.8055  LGBM=0.8871  Gap=0.0816
+  price_volatility                OLS=0.6150  LGBM=0.5822  Gap=-0.0328
+  winner_entropy                  OLS=0.8085  LGBM=0.8778  Gap=0.0693
+
+POWER ANALYSIS (80% power, alpha=0.05)
+--------------------------------------------------
+  avg_rev_last_1000               MDE=0.013253 (2.9% of mean)
+  avg_rev_all                     MDE=0.011665 (2.5% of mean)
+  time_to_converge                MDE=3903.565886 (10.0% of mean)
+  no_sale_rate                    MDE=0.002160 (11.8% of mean)
+  price_volatility                MDE=0.004992 (5.3% of mean)
+  winner_entropy                  MDE=0.020920 (2.1% of mean)

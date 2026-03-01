@@ -214,6 +214,49 @@ def grid_adjusted_bne_revenue(eta, N, auction_type, n_bid_actions=21, M=200_000,
     tie_top_rate = float(tie_top.mean())
     return rev_mean, rev_se, tie_top_rate
 
+def discrete_signal_bne_revenue(eta, N, auction_type, n_signal_bins=11,
+                                n_bid_actions=11, M=200_000, seed=7):
+    """
+    Monte Carlo BNE revenue when BOTH signals and bids are discretized.
+
+    Signals are drawn uniformly from {0, 1/(K-1), 2/(K-1), ..., 1} and
+    bids are snapped to the nearest point on {0, 1/(J-1), ..., 1}.
+
+    Returns:
+        (rev_mean, rev_se, continuous_rev, discretization_gap)
+    """
+    rng = np.random.default_rng(seed)
+    phi = compute_bne_bid_coefficient(eta, N, auction_type)
+
+    # Discrete signals: uniform over n_signal_bins points
+    signal_indices = rng.integers(0, n_signal_bins, size=(M, N))
+    signals = signal_indices / max(n_signal_bins - 1, 1)
+
+    # BNE bids from discrete signals
+    cont_bids = phi * signals
+
+    # Snap bids to grid
+    k = max(n_bid_actions - 1, 1)
+    snapped = np.round(cont_bids * k) / k
+    snapped = np.clip(snapped, 0, 1)
+
+    # Revenue calculation
+    sorted_bids = np.sort(snapped, axis=1)
+    if auction_type == "first":
+        rev = sorted_bids[:, -1]
+    else:
+        rev = sorted_bids[:, -2] if N > 1 else sorted_bids[:, -1]
+
+    # Continuous benchmark for comparison
+    R_continuous = analytical_revenue(eta, N)
+
+    rev_mean = float(np.mean(rev))
+    rev_se = float(np.std(rev) / np.sqrt(M))
+    gap = R_continuous - rev_mean
+
+    return rev_mean, rev_se, R_continuous, gap
+
+
 def bne_btv_benchmark(eta, N, auction_type, M=100_000, seed=42):
     """MC benchmark for bid-to-value ratio under BNE. Returns (median, iqr)."""
     rng = np.random.default_rng(seed)

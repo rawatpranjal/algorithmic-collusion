@@ -1,9 +1,33 @@
 \section{Discussion and Generalisability}
 \label{sec:discussion}
 
-\subsection{First-Price Underperformance Across All Settings}
+\subsection{Competitive Pressure and Budget Constraints as Primary Determinants}
 
-The most robust empirical finding across all four experiments is that first-price auctions systematically yield lower revenue than second-price auctions when bidders are autonomous learning agents. This pattern persists regardless of learning algorithm (Q-learning, LinUCB bandits, or pacing controllers), valuation structure (constant versus affiliated), or budget regime (unconstrained versus constrained). Table~\ref{tab:cross_exp_revenue} quantifies the magnitude and consistency of this effect.
+The most robust empirical finding across all experiments is that structural market parameters dominate algorithmic design choices. Table~\ref{tab:cross_exp_factors} ranks the top factors by absolute $t$-statistic for revenue in each experiment. In unconstrained settings (Experiments~1--3), the number of bidders yields the largest effect, with magnitudes consistently larger than auction format. Under budget constraints (Experiments~4a--4b), the budget multiplier dominates, with the number of bidders ranking second or third, reflecting the binding role of budget tightness in pacing environments.
+
+\begin{table}[H]
+\centering
+\caption{Top Factors by $|t|$-Statistic for Revenue Across All Experiments}
+\label{tab:cross_exp_factors}
+\begin{tabular}{llccc}
+\toprule
+Experiment & Algorithm & Factor 1 ($|t|$) & Factor 2 ($|t|$) & Factor 3 ($|t|$) \\
+\midrule
+E1 & Q-learning (constant) & \ExpOneRevFactorOne{} (\ExpOneRevFactorTOne) & \ExpOneRevFactorTwo{} (\ExpOneRevFactorTTwo) & \ExpOneRevFactorThree{} (\ExpOneRevFactorTThree) \\
+E2 & Q-learning (affiliated) & \ExpTwoRevFactorOne{} (\ExpTwoRevFactorTOne) & \ExpTwoRevFactorTwo{} (\ExpTwoRevFactorTTwo) & \ExpTwoRevFactorThree{} (\ExpTwoRevFactorTThree) \\
+E3a & LinUCB bandits & \ExpThreeARevFactorOne{} (\ExpThreeARevFactorTOne) & \ExpThreeARevFactorTwo{} (\ExpThreeARevFactorTTwo) & \ExpThreeARevFactorThree{} (\ExpThreeARevFactorTThree) \\
+E3b & Thompson bandits & \ExpThreeBRevFactorOne{} (\ExpThreeBRevFactorTOne) & \ExpThreeBRevFactorTwo{} (\ExpThreeBRevFactorTTwo) & \ExpThreeBRevFactorThree{} (\ExpThreeBRevFactorTThree) \\
+E4a & Pacing (Mult.) & \ExpFourARevFactorOne{} (\ExpFourARevFactorTOne) & \ExpFourARevFactorTwo{} (\ExpFourARevFactorTTwo) & \ExpFourARevFactorThree{} (\ExpFourARevFactorTThree) \\
+E4b & Pacing (PI) & \ExpFourBRevFactorOne{} (\ExpFourBRevFactorTOne) & \ExpFourBRevFactorTwo{} (\ExpFourBRevFactorTTwo) & \ExpFourBRevFactorThree{} (\ExpFourBRevFactorTThree) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dominance of market thickness extends classical auction theory to the RL setting: competitive pressure has long been understood as the primary driver of revenue in static equilibria (Bulow and Klemperer, 1996; Vickrey, 1961), and the factorial analysis confirms this ranking persists when bidders are learning algorithms. In unconstrained experiments, adding bidders dominates revenue with margins over the next-ranked factor of \ExpOneRevTopMarginRatio-fold (Experiment~1) to \ExpThreeARevTopMarginRatio-fold (Experiment~3a). In budget-constrained pacing (Experiments~4a--4b), the budget multiplier takes over as the primary revenue driver, reflecting the structural role of budget tightness in autobidding markets.
+
+\subsection{Auction Format Effects: Context-Dependent and Secondary}
+
+The effect of auction format on revenue is not uniform across experiments. Table~\ref{tab:cross_exp_revenue} quantifies the magnitude and direction of the first-price revenue gap in each setting.
 
 \begin{table}[H]
 \centering
@@ -13,39 +37,23 @@ The most robust empirical finding across all four experiments is that first-pric
 \toprule
 Experiment & Algorithm & Valuations & FPA Revenue & SPA Revenue & Gap (\%) \\
 \midrule
-E1 & Q-learning & Constant & 0.718 & 0.839 & $-14.4$ \\
-E2 & Q-learning & Affiliated & 0.546 & 0.549 & $-0.5$ \\
-E3 & LinUCB & Affiliated & 0.327 & 0.566 & $-42.3$ \\
-E4 & Pacing (PID/Mult) & Affiliated & 0.445 & 0.495 & $-10.0$ \\
+E1 & Q-learning & Constant & \ExpOneRevMeanFPA & \ExpOneRevMeanSPA & $\ExpOneRevGapPct$ \\
+E2 & Q-learning & Affiliated & \ExpTwoRevMeanFPA & \ExpTwoRevMeanSPA & $\ExpTwoRevGapPct$ \\
+E3a & LinUCB & Affiliated & \ExpThreeARevMeanFPA & \ExpThreeARevMeanSPA & $\ExpThreeARevGapPct$ \\
+E3b & Thompson & Affiliated & \ExpThreeBRevMeanFPA & \ExpThreeBRevMeanSPA & $\ExpThreeBRevGapPct$ \\
+E4a & Pacing (Mult.) & Log-normal & \ExpFourARevMeanFPA & \ExpFourARevMeanSPA & $\ExpFourARevGapPct$ \\
+E4b & Pacing (PI) & Log-normal & \ExpFourBRevMeanFPA & \ExpFourBRevMeanSPA & $\ExpFourBRevGapPct$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The \emph{direction} of the effect is universal: first-price always underperforms. The \emph{magnitude} varies substantially by context. The gap is smallest in Experiment~2 ($-0.5$\%), where Q-learning agents with affiliated valuations achieve near-parity between auction formats. The gap is largest in Experiment~3 ($-42.3$\%), where LinUCB bandits produce frequent zero-revenue equilibria in first-price auctions. Budget-constrained pacing (Experiment~4) attenuates the gap to $-10.0$\%, suggesting that spending constraints impose a form of discipline that partially mitigates strategic bid shading.
-
-This pattern directly contradicts the revenue equivalence theorem (Myerson, 1981), which predicts identical expected revenues across auction formats under risk-neutral bidders with independent private values. The systematic first-price shortfall arises because learning agents lack the strategic sophistication to compute and commit to theoretically optimal bid functions. Instead, they converge to locally stable equilibria characterised by excessive bid shading, a form of emergent algorithmic collusion requiring no explicit communication or coordination.
+The direction and magnitude of the effect vary by context: the revenue consequence of auction format depends on the learning algorithm and environment rather than being an inherent property of the payment rule. The measurement horizon also matters. Table~\ref{tab:cross_exp_revenue} reports end-state revenue (final 1{,}000 episodes). When lifetime revenue is used instead, the auction format effect attenuates or reverses: both formats generate above-equilibrium revenue during learning, but the surplus is larger under first-price rules, rendering the two formats statistically indistinguishable over the full trajectory in Experiment~2.\footnote{First-price learning-phase premium: \ExpTwoFPAPremium; second-price: \ExpTwoSPAPremium. Lifetime revenue model: $|t| = \ExpTwoAllRevAuctionAbsT$, $p \ExpTwoAllRevAuctionPFmt$.} The auction format $\times$ number of bidders interaction is significant in Experiments~1 and~3a but in opposite directions. Under Q-learning (Experiment~1), additional bidders reduce the auction format effect, consistent with competitive pressure disciplining bids regardless of the payment rule. Under LinUCB (Experiment~3a), additional bidders worsen first-price performance, consistent with optimism-based exploration amplifying conservative bidding in multi-agent settings.
 
 \subsection{Exploration and Aggressiveness as Moderators}
 
-Across all four experiments, factors that promote commitment to higher bids consistently improve first-price auction performance. The specific mechanism varies by algorithm, but the structural effect is identical: preventing agents from settling into conservative, collusive equilibria.
-
-\subsubsection{Q-Learning (Experiments~1--2)}
-
-Boltzmann exploration, which selects actions probabilistically based on softmax-weighted Q-values, reduces first-price losses by ensuring that high-bid actions receive occasional reinforcement even when they are not strictly greedy. In contrast, $\varepsilon$-greedy exploration (where agents either take the greedy action or randomise uniformly) reinforces underbidding by treating all exploratory bids symmetrically. A high discount factor ($\gamma$) intensifies first-price underperformance by encouraging agents to shade bids aggressively in the short term while waiting for improved long-run payoffs. Synchronous updates, which adjust Q-values for all actions rather than only the chosen action, curb first-price losses by preventing persistent miscalibrations where alternative bidding strategies are neglected.
-
-\subsubsection{Pacing Controllers (Experiment~4)}
-
-The aggressiveness parameter in pacing algorithms plays a structurally analogous role to exploration in Q-learning. Higher aggressiveness raises revenue in first-price auctions by preventing excessive bid shading: aggressive agents commit larger fractions of their budget early, forcing competitors to respond with higher bids or risk losing repeatedly. The parallel is precise: both Boltzmann exploration in Experiments~1--2 and high aggressiveness in Experiment~4 introduce forced commitment mechanisms that destabilise low-bid equilibria.
-
-\subsubsection{LinUCB Bandits (Experiment~3)}
-
-Higher exploration in LinUCB (controlled by the confidence parameter $c$) \emph{exacerbates} rather than mitigates collusion, diverging sharply from Q-learning. This suggests that contextual exploration does not automatically improve seller outcomes. LinUCB's optimism-based exploration may reinforce risk-averse bidding by inflating uncertainty estimates around aggressive actions that rarely win. The result is counterintuitive: the algorithm designed for more efficient exploration produces worse seller outcomes than the simpler Q-learning approach.
-
-The unifying insight across all three algorithm classes is that exploration \emph{mechanisms} matter more than exploration \emph{rates}. Mechanisms that preserve value-weighted action selection (Boltzmann) or impose commitment pressure (aggressiveness) reduce collusion; mechanisms that introduce symmetric randomness ($\varepsilon$-greedy) or uncertainty-driven conservatism (UCB) do not.
+Across experiments, factors that promote bid commitment improve first-price auction revenue: the discount factor and update mode in Q-learning (Experiment~1), the bidder objective in dual pacing (Experiment~4a), and controller aggressiveness in PI pacing (Experiment~4b). LinUCB (Experiment~3a) diverges: higher exploration intensity \emph{reduces} revenue, as optimism-based exploration reinforces conservative bidding rather than destabilising low-bid equilibria. The welfare consequences of algorithmic design choices are algorithm-specific.
 
 \subsection{Convergence and Constraints}
-
-Table~\ref{tab:cross_exp_convergence} compares convergence times across all experiments, revealing stark differences in how quickly agents settle into stable bidding patterns.
 
 \begin{table}[H]
 \centering
@@ -55,56 +63,30 @@ Table~\ref{tab:cross_exp_convergence} compares convergence times across all expe
 \toprule
 Experiment & Algorithm & Median & Mean \\
 \midrule
-E1 & Q-learning (constant) & 1{,}000 & 1{,}000 \\
-E2 & Q-learning (affiliated) & 86{,}179 & 57{,}723 \\
-E3 & LinUCB & 1{,}000 & 1{,}000 \\
-E4 & Pacing (PID/Mult) & 1{,}014 & 4{,}279 \\
+E1 & Q-learning (constant) & \ExpOneConvMedian & \ExpOneConvMean \\
+E2 & Q-learning (affiliated) & \ExpTwoConvMedian & \ExpTwoConvMean \\
+E3a & LinUCB & \ExpThreeAConvMedian & \ExpThreeAConvMean \\
+E3b & Thompson & \ExpThreeBConvMedian & \ExpThreeBConvMean \\
+E4a & Pacing (Mult.) & \ExpFourAConvMedian & \ExpFourAConvMean \\
+E4b & Pacing (PI) & \ExpFourBConvMedian & \ExpFourBConvMean \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Budget constraints act as a convergence accelerator. Pacing agents (Experiment~4) converge approximately as fast as the fastest unconstrained agents (Experiments~1 and~3) and dramatically faster than Q-learning with affiliated valuations (Experiment~2). The hard budget cap forces early settlement by limiting bid exploration once available headroom is exhausted: once an agent approaches its spending limit, further experimentation becomes prohibitively costly, inducing rapid commitment to a stable pacing policy.
+Table~\ref{tab:cross_exp_convergence} compares convergence times across all experiments. Budget constraints accelerate convergence: pacing agents converge as fast as the fastest unconstrained agents and dramatically faster than Q-learning with affiliated valuations. Faster convergence does not guarantee higher revenue. Experiment~3a converges substantially faster than Experiment~1 (\ExpThreeAConvMedian{} vs.\ \ExpOneConvMedian{} rounds) yet produces far lower revenues. The key determinant is \emph{which equilibrium} agents converge to, not convergence speed per se.
 
-The extreme variability in Experiment~2 (median 86{,}179 versus mean 57{,}723) suggests bimodal convergence: some replicates settle quickly while others exhibit prolonged oscillations. Budget-constrained pacing (Experiment~4) shows tighter convergence distributions (median 1{,}014, mean 4{,}279), consistent with the forced discipline imposed by spending limits.
+\subsection{Winner Concentration}
 
-Faster convergence does not guarantee higher revenue. Experiment~3 converges as quickly as Experiment~1 yet produces far lower revenues. The key determinant is not convergence speed per se but rather \emph{which equilibrium} agents converge to, a function of exploration mechanism, state representation, and budget constraints.
+In the contextual bandit experiments (Experiments~3a and~3b), first-price auctions produce higher winner entropy than second-price auctions, consistent with symmetric bid suppression preserving roughly equitable winner rotation. Under Q-learning with affiliated valuations (Experiment~2), the pattern reverses: second-price auctions exhibit marginally higher entropy, though the difference is not statistically significant. The direction of the winner concentration effect thus depends on the learning algorithm, with bandit-based learners producing more symmetric outcomes under first-price rules.
 
-\subsection{How Algorithm Class Shapes the Revenue Gap}
+\subsection{Factors with Context-Dependent Effects}
 
-The first-price revenue penalty manifests through qualitatively different mechanisms across the three algorithm classes, yet all share a common failure: no algorithm learns to implement the theoretically optimal bid function in first-price auctions.
-
-The magnitude of the gap varies by an order of magnitude. Q-learning with affiliated valuations (Experiment~2) narrows the first-price shortfall to under 1\%, while LinUCB bandits (Experiment~3) widen it to over 40\%. This variation is informative: it reveals that the revenue gap is not an inherent property of first-price auctions but rather a consequence of how specific learning dynamics interact with the payment rule. Q-learning agents, despite their simplicity, can partially offset bid shading through synchronous updates and richer state representations that encode competitive information. In contrast, LinUCB's optimism-based exploration amplifies conservative bidding by inflating uncertainty around aggressive actions, producing frequent zero-revenue equilibria that Q-learning avoids entirely.
-
-A striking cross-experiment comparison concerns the role of competition. Under Q-learning (Experiments~1--2), more bidders improve first-price revenue by introducing competitive pressure that counteracts bid-shading incentives. Under LinUCB (Experiment~3), this relationship reverses: additional bidders worsen first-price performance. The reversal suggests that optimism-based exploration, which works well in single-agent settings, can amplify underbidding when multiple agents simultaneously inflate their uncertainty estimates and retreat to conservative bids.
-
-Budget-constrained pacing (Experiment~4) introduces a qualitatively distinct form of bid suppression. Unlike the strategic collusion observed in Experiments~1--3, where agents shade bids below competitive levels to extract surplus, pacing agents suppress bids because spending constraints force them to ration across auctions. The distinction matters for policy: strategic collusion represents a market failure amenable to mechanism design interventions, while budget-mediated suppression reflects rational resource allocation under constraints. The first-price gap in Experiment~4 ($-10.0$\%) falls between the Q-learning and bandit extremes, consistent with budget constraints imposing partial discipline that limits both aggressive bidding and extreme shading.
-
-The common thread across all algorithm classes is that learning agents converge to locally stable equilibria characterised by insufficient aggression in first-price auctions. The specific mechanism varies, from Q-value underestimation to uncertainty-driven conservatism to budget-induced rationing, but the outcome is universal: no algorithm class tested here reliably discovers revenue-maximising bid functions without structural intervention.
-
-\subsection{Winner Concentration and Collusion Structure}
-
-Winner entropy, defined as the Shannon entropy of the empirical winner distribution, distinguishes between two collusion modes: symmetric bid suppression (high entropy, where multiple bidders share wins at reduced prices) and asymmetric predation (low entropy, where one bidder dominates at the expense of others). Across all experiments with sufficient statistical power, first-price auctions consistently produce higher winner entropy than second-price auctions: the effect is significant in Experiment~2 ($+0.183$, $p = 0.008$), Experiment~3 ($+0.046$, $p = 0.008$), and Experiment~4 ($+0.037$, $p < 0.001$). This pattern indicates that the bid suppression under first-price auctions is symmetric: all agents shade bids similarly, preserving a roughly equitable rotation of winners while collectively reducing prices paid to the seller. Second-price auctions, by contrast, tend toward lower entropy, with one or two bidders winning disproportionately. In Experiment~4, the bidder objective exerts a stronger effect on entropy ($-0.101$, $t = -10.9$) than auction format: utility-maximizing agents produce more concentrated winner distributions because the additional term in their bid formula amplifies heterogeneity across bidders with different dual variables. Market thickness is the dominant factor in Experiment~4 ($+0.287$, $t = 31.0$), as expected from information-theoretic bounds on entropy. These findings refine the characterisation of algorithmic collusion from a simple revenue reduction to a structural pattern: first-price collusion operates through coordinated restraint among symmetric participants rather than through market dominance by a single agent.
-
-\subsection{Factors with Minimal Impact}
-
-\subsubsection{Affiliation ($\eta$)}
-
-Experiments~2, 3, and~4 all include the affiliation parameter $\eta \in \{0, 1\}$ as a factorial treatment, controlling whether valuations are purely private or near-common values. Across all three experiments and all response variables, $\eta$ exhibits negligible main effects and minimal interactions. Whether values are independent or highly correlated, learning agents display similar bidding patterns across auction formats. The mechanism choice overshadows valuation interdependence in shaping long-run outcomes under learning. This diverges from classical auction theory, where common-value components induce winner's curse concerns that should theoretically alter optimal bidding strategies. The negligible $\eta$ effect suggests that learning agents do not internalise winner's curse logic; instead, they converge to equilibria determined primarily by auction rules and exploration mechanisms, not valuation structure.
-
-\subsubsection{Reserve Prices}
-
-Experiments~1, 3, and~4 include reserve prices as factorial treatments. Across all three, reserve prices show limited direct impact on revenue but modest effects on price volatility. Reserves reduce bidding volatility by disqualifying very low bids, effectively raising the floor of competition and discouraging extreme shading. However, reserve prices cannot by themselves resolve the fundamental first-price underperformance: even with binding reserves, first-price auctions systematically yield lower revenues than second-price auctions with equivalent reserve levels. The weak reserve-price effects are consistent with the interpretation that algorithmic collusion arises from learning dynamics rather than strategic calculation. A reserve price alters the action space but does not change the underlying reinforcement structure that drives agents toward conservative equilibria in first-price auctions.
+Two factors expected to matter based on theory show uneven effects. The affiliation parameter $\eta$, varied across Experiments~2, 3a, and~3b from independent private values to near-common values, shows no significant effect on revenue in Experiment~2 ($p = 0.056$) but becomes significant in both contextual bandit experiments (Experiment~3a, $t = -5.7$, $p < 0.001$; Experiment~3b, $t = -3.2$, $p = 0.002$), indicating that algorithm sophistication moderates sensitivity to value correlation. Reserve prices show algorithm-dependent effects on revenue: significant under Q-learning with constant valuations (Experiment~1, $t = 5.1$, positive) and Thompson sampling (Experiment~3b, $t = -7.9$, negative), but not under LinUCB or pacing. The opposite signs suggest that reserve prices interact with the learning algorithm: they support revenue when bidders shade bids (Q-learning) but reduce it when bidders are already bidding aggressively (Thompson sampling with affiliated values).
 
 \subsection{External Validity}
 
-The results presented here are likely to hold in settings characterised by repeated interactions where agents participate in thousands to hundreds of thousands of auction rounds, autonomous learning where bidders use algorithmic policies without human oversight, independent bidders without explicit communication or coordination, both private and affiliated valuation structures, and sealed-bid formats with or without reserve prices. These conditions closely approximate real-world programmatic advertising markets, where demand-side platforms submit bids autonomously across millions of daily impressions, budget constraints bind frequently, and auction formats vary by exchange. The first-price underperformance documented here suggests that sellers in such markets may systematically benefit from adopting second-price mechanisms.
-
-Several contexts may produce qualitatively different outcomes. Few-shot or one-shot auctions, where strategic sophistication may dominate learning dynamics, are outside the scope of these findings. Human bidders introduce behavioural biases, risk aversion, and strategic reasoning that reinforcement learning models do not capture. Explicit collusion through communication channels or coordinated strategies could produce collusive outcomes in both auction formats. Alternative auction formats such as ascending (English), descending (Dutch), or combinatorial auctions involve different information revelation and strategic considerations. Settings with externalities or budget pooling, where bidder values or constraints are interdependent across auctions, may exhibit different convergence properties. The experiments deliberately abstract away from these factors to isolate the core effect of learning algorithms and auction mechanisms.
+The qualitative patterns documented here are likely to hold in settings characterised by repeated interactions, autonomous learning, and sealed-bid formats, conditions that closely approximate programmatic advertising markets. External validity to specific real-world markets requires empirical validation with proprietary auction data. Settings involving few-shot auctions, human bidders, explicit coordination, or combinatorial formats may produce qualitatively different outcomes.
 
 \subsection{Practical Implications}
 
-The systematic first-price underperformance across all experiments carries direct implications for auction design in algorithmic markets. When bidders are autonomous learning agents, second-price auctions robustly outperform first-price auctions across diverse settings, algorithms, and parameter regimes. Sellers seeking stable, high revenues should favour second-price mechanisms or implement structural interventions (such as binding budget constraints (Experiment~4), enforced synchronous updating (Experiments~1--2), or carefully tuned reserves) that limit the scope for emergent algorithmic collusion.
-
-For platforms already committed to first-price formats, the results suggest actionable design levers: encourage or mandate aggressive pacing policies, provide richer state information to enable synchronous learning, and impose budget constraints that force early commitment. Platforms should exercise caution about adopting exploration mechanisms based on optimism or uncertainty quantification (e.g., Thompson sampling, UCB variants) without empirical validation, as Experiment~3 demonstrates that algorithmic sophistication does not guarantee seller-favourable outcomes.
-
-From a policy perspective, the findings raise questions about market efficiency and welfare distribution in programmatic advertising. If first-price auctions systematically transfer surplus from sellers to buyers under algorithmic bidding, without corresponding efficiency gains, then the industry-wide shift toward first-price formats may have inadvertently reduced publisher revenues. Empirical validation using real auction data remains an important next step for translating these simulation findings into regulatory or platform design recommendations.
+The most effective lever available to sellers is ensuring sufficient competition: in unconstrained settings, increasing the number of bidders improves revenue more than any other intervention tested, including switching auction formats. In budget-constrained environments, relaxing budget tightness has the largest impact. The effect of auction format is context-dependent, so sellers should choose format based on the prevailing bidding technology rather than adopting a blanket preference. For platforms committed to first-price formats, structural interventions such as binding budget constraints or lower discount factors can improve revenue regardless of the specific learning algorithm.

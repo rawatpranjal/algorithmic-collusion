@@ -2,38 +2,38 @@
 ROBUST ANALYSIS SUMMARY -- Experiment 1
 ======================================================================
 
-KEY FINDING: reserve_price:exploration interaction
+KEY FINDING: reserve_price:asynchronous interaction
 --------------------------------------------------
-  avg_rev_last_1000|reserve_price:exploration: raw p=4.4638e-07, holm p=1.3347e-04 -> SURVIVES Holm-Bonferroni
-  time_to_converge|reserve_price:exploration: raw p=2.7183e-04, holm p=7.1491e-02 -> does NOT survive Holm-Bonferroni
-  avg_regret_of_seller|reserve_price:exploration: raw p=3.5322e-05, holm p=9.7135e-03 -> SURVIVES Holm-Bonferroni
-  no_sale_rate|reserve_price:exploration: raw p=0.0000e+00, holm p=0.0000e+00 -> SURVIVES Holm-Bonferroni
-  price_volatility|reserve_price:exploration: raw p=3.2236e-13, holm p=1.0380e-10 -> SURVIVES Holm-Bonferroni
-  winner_entropy|reserve_price:exploration: raw p=1.1589e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  avg_rev_last_1000|reserve_price:asynchronous: raw p=2.1495e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  avg_rev_all|reserve_price:asynchronous: raw p=1.3892e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  time_to_converge|reserve_price:asynchronous: raw p=5.8883e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  no_sale_rate|reserve_price:asynchronous: raw p=4.8175e-18, holm p=1.5320e-15 -> SURVIVES Holm-Bonferroni
+  price_volatility|reserve_price:asynchronous: raw p=4.4542e-07, holm p=1.3407e-04 -> SURVIVES Holm-Bonferroni
+  winner_entropy|reserve_price:asynchronous: raw p=2.7732e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
 
 MODEL ADEQUACY
 --------------------------------------------------
-  avg_rev_last_1000               R2=0.8094  Pred-R2=0.7963  Gap=0.0131
-  time_to_converge                R2=0.6767  Pred-R2=0.6544  Gap=0.0222
-  avg_regret_of_seller            R2=0.9254  Pred-R2=0.9203  Gap=0.0051
-  no_sale_rate                    R2=0.9328  Pred-R2=0.9282  Gap=0.0046
-  price_volatility                R2=0.9057  Pred-R2=0.8992  Gap=0.0065
-  winner_entropy                  R2=0.9993  Pred-R2=0.9993  Gap=0.0000
+  avg_rev_last_1000               R2=0.4230  Pred-R2=0.3543  Gap=0.0687
+  avg_rev_all                     R2=0.4760  Pred-R2=0.4136  Gap=0.0624
+  time_to_converge                R2=0.3148  Pred-R2=0.2332  Gap=0.0816
+  no_sale_rate                    R2=0.4238  Pred-R2=0.3553  Gap=0.0686
+  price_volatility                R2=0.4469  Pred-R2=0.3810  Gap=0.0658
+  winner_entropy                  R2=0.4589  Pred-R2=0.3945  Gap=0.0644
 
 LINEAR vs NONPARAMETRIC
 --------------------------------------------------
-  avg_rev_last_1000               OLS=0.8094  LGBM=0.8878  Gap=0.0784
-  time_to_converge                OLS=0.6767  LGBM=0.7463  Gap=0.0696
-  avg_regret_of_seller            OLS=0.9254  LGBM=0.9696  Gap=0.0441
-  no_sale_rate                    OLS=0.9328  LGBM=0.9899  Gap=0.0572
-  price_volatility                OLS=0.9057  LGBM=0.9595  Gap=0.0538
-  winner_entropy                  OLS=0.9993  LGBM=0.9994  Gap=0.0000
+  avg_rev_last_1000               OLS=0.4230  LGBM=0.4550  Gap=0.0320
+  avg_rev_all                     OLS=0.4760  LGBM=0.5224  Gap=0.0464
+  time_to_converge                OLS=0.3148  LGBM=0.3057  Gap=-0.0090
+  no_sale_rate                    OLS=0.4238  LGBM=0.6046  Gap=0.1808
+  price_volatility                OLS=0.4469  LGBM=0.4898  Gap=0.0429
+  winner_entropy                  OLS=0.4589  LGBM=0.5074  Gap=0.0485
 
 POWER ANALYSIS (80% power, alpha=0.05)
 --------------------------------------------------
-  avg_rev_last_1000               MDE=0.005494 (0.8% of mean)
-  time_to_converge                MDE=1399.027062 (2.9% of mean)
-  avg_regret_of_seller            MDE=0.002804 (1.0% of mean)
-  no_sale_rate                    MDE=0.000917 (2.7% of mean)
-  price_volatility                MDE=0.001088 (0.7% of mean)
-  winner_entropy                  MDE=0.000562 (0.1% of mean)
+  avg_rev_last_1000               MDE=0.013752 (1.7% of mean)
+  avg_rev_all                     MDE=0.009527 (1.2% of mean)
+  time_to_converge                MDE=2286.163022 (4.3% of mean)
+  no_sale_rate                    MDE=0.001504 (13.3% of mean)
+  price_volatility                MDE=0.003822 (3.3% of mean)
+  winner_entropy                  MDE=0.023364 (2.3% of mean)

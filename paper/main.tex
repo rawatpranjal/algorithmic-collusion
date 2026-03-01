@@ -18,7 +18,8 @@
 \DeclareUnicodeCharacter{202F}{~} % Replaces narrow no-break space with LaTeX non-breaking space
 
 
-\title{Designing Auctions when Algorithms Learn to Bid: An Experimental Approach}
+\input{numbers}  % Auto-generated statistics — regenerate with: make tables
+\title{Designing Auctions when Algorithms Learn to Bid}
 \author{Pranjal Rawat}
 \date{\today}
 
@@ -27,12 +28,13 @@
 \maketitle
 
 \begin{abstract}
-Algorithms increasingly automate bidding in online auctions, raising concerns about tacit collusion. Prior work shows that reinforcement-learning agents can spontaneously converge to bid suppression, but it remains unclear which algorithmic and market design factors drive this phenomenon. This paper reports four controlled experiments, spanning Q-learning, contextual bandits, and budget-constrained pacing, that use factorial designs to isolate the effects of auction format, learning parameters, competitive pressure, and budget constraints on seller revenue. Across all settings, first-price auctions systematically underperform second-price auctions, with revenue losses driven by strategic bid shading rather than algorithmic artifacts. Collusion is amplified by fewer bidders, inefficient exploration, and tighter budgets, while reserve prices and second-price mechanisms provide robust mitigation. These results suggest that advertising exchanges relying on first-price auctions may be systematically vulnerable to coordinated bid suppression.
+Algorithms increasingly automate bidding in online auctions, raising concerns about tacit bid suppression and revenue shortfalls. Prior work identifies individual mechanisms that enable algorithmic bid suppression, but it remains unclear which factors matter most and how they interact. This paper uses factorial experimental designs across four controlled experiments (six sub-experiments), spanning Q-learning, contextual bandits, and budget-constrained pacing, to systematically rank the relative importance of auction format, competitive pressure, learning parameters, and budget constraints on seller revenue. The central finding is that structural market parameters dominate algorithmic design choices: in unconstrained settings, competitive pressure is the strongest predictor of revenue; under budget constraints, budget tightness takes over. The effect of auction format is context-dependent, favouring second-price under learning algorithms but reversing to favour first-price under budget-constrained pacing. These results imply that mechanism design must account for the prevailing bidding technology, and that no single auction format is universally superior when bidders are algorithms.
 \end{abstract}
 
-% Main sections
+% Main body
 \newpage
 \input{sections/introduction}
+\input{sections/literature}
 \input{sections/auctions}
 \input{sections/algorithms}
 \input{sections/experiments}
@@ -40,17 +42,10 @@ Algorithms increasingly automate bidding in online auctions, raising concerns ab
 \input{sections/res1}
 \input{sections/res2}
 \input{sections/res3}
-\input{sections/res4}
+\input{sections/res4a}
+\input{sections/res4b}
 
 \input{sections/discussion}
-\appendix
 \input{sections/references}
-\newpage
-\input{sections/exp1}
-\input{sections/exp2}
-\input{sections/exp3}
-\input{sections/exp4}
-\input{sections/equilibria}
-\input{sections/literature}
 
 \end{document}

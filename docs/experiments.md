@@ -1,6 +1,6 @@
 # Experimental Overview
 
-This project studies whether algorithmic bidding agents learn to collude in repeated sealed-bid auctions. Four experiments progressively increase environmental complexity, from constant valuations with Q-learning to budget-constrained autobidding with dual pacing. All experiments use factorial experimental designs with effects-coded factors (-1/+1) to enable orthogonal estimation of main effects and interactions via OLS.
+This project studies whether algorithmic bidding agents learn to collude in repeated sealed-bid auctions. Four experiments progressively increase environmental complexity, from constant valuations with Q-learning to budget-constrained autobidding with dual and PI pacing. All experiments use factorial experimental designs with effects-coded factors (-1/+1) to enable orthogonal estimation of main effects and interactions via OLS.
 
 ## Quick Reference
 
@@ -9,7 +9,8 @@ This project studies whether algorithmic bidding agents learn to collude in repe
 | 1 | Q-learning | Constant (v=1) | 2^(11-1) Res V | 11 | 1024 | How do Q-learners bid under first- vs second-price with constant values? |
 | 2 | Q-learning | Affiliated (eta) | 3 x 2^3 mixed | 4 | 24 | Does valuation interdependence alter collusion patterns? |
 | 3 | LinUCB / CTS | Affiliated (eta) | 3 x 2^7 mixed | 8 | 384 | Do bandit algorithms converge faster or to different equilibria than Q-learning? |
-| 4 | Dual Pacing | LogNormal (asymmetric) | 2^3 full | 3 | 8 x 50 seeds | How do budget constraints and bidder objectives interact with auction format? |
+| 4a | Dual Pacing | LogNormal (asymmetric) | 2^6 full | 6 | 64 x 50 seeds | How do budget constraints and bidder objectives interact with auction format? |
+| 4b | PI Pacing | LogNormal (asymmetric) | 2^6 full | 6 | 64 x 50 seeds | Does the control law itself shape collusive outcomes? |
 
 ## Experiment 1: Identical Valuations
 
@@ -91,23 +92,47 @@ where m_{-i} is the mean signal of opponents and eta in {0, 0.5, 1} controls aff
 
 **Outcome metrics.** Average revenue, time to converge, seller regret, no-sale rate, price volatility, winner entropy.
 
-## Experiment 4: Budget-Constrained Autobidding
+## Experiment 4a: Budget-Constrained Autobidding (Dual Pacing)
 
 **Research question.** How do budget constraints and bidder objectives interact with auction format in a pacing equilibrium setting?
 
-**Valuation model.** Bidder-specific means drawn from [0.5, 1.5]; per-round valuations drawn from LogNormal(mean_i, sigma=0.3). Asymmetric across bidders.
+**Valuation model.** Bidder-specific means drawn from [0.5, 1.5]; per-round valuations drawn from LogNormal(mean_i, sigma). Asymmetric across bidders. Sigma varies as a factor (0.1 low vs 0.5 high).
 
 **Algorithm.** Multiplicative dual pacing. Each bidder maintains a dual variable (pacing multiplier) updated episode-by-episode to satisfy budget constraints. Bids are shaded by the pacing multiplier: b_i = v_i / (1 + mu_i) for value-maximizers.
 
-**Design.** 2^3 full factorial (8 cells x 50 seeds = 400 runs).
+**Design.** 2^6 full factorial (64 cells x 50 seeds = 3,200 runs).
 
 | Factor | Low (-1) | High (+1) |
 |--------|----------|-----------|
 | Auction type | Second-price | First-price |
 | Bidder objective | Value-maximizer | Utility-maximizer |
 | Number of bidders (n) | 2 | 4 |
+| Budget multiplier (m) | 0.25 (tight) | 1.0 (loose) |
+| Reserve price (r) | 0.0 | 0.3 |
+| Value dispersion (sigma) | 0.1 (low) | 0.5 (high) |
 
 **Outcome metrics.** Platform revenue, liquid welfare, effective price of anarchy, budget utilization, bid-to-value ratio, allocative efficiency, dual variable CV, no-sale rate, winner entropy, warm-start benefit.
+
+## Experiment 4b: PI Controller Pacing
+
+**Research question.** Does the choice of control law (multiplicative dual vs. PI controller) affect bidding outcomes, or is the budget constraint itself the dominant factor?
+
+**Valuation model.** Same as Experiment 4a: bidder-specific means from [0.5, 1.5], per-round valuations from LogNormal(mean_i, sigma).
+
+**Algorithm.** PI pacing controller. Each bidder maintains a pacing multiplier lambda updated additively based on cumulative spending error: lambda_{t+1} = clip(lambda_t + K_P * e_t + K_I * sum(e), 0.01, 1.5), where e_t = (t/T)*B - cumulative_spend. Gains scale with aggressiveness: K_P = 0.30*a, K_I = 0.05*a. This replaces the multiplicative dual pacing of Experiment 4a with an additive PI controller.
+
+**Design.** 2^6 full factorial (64 cells x 50 seeds = 3,200 runs).
+
+| Factor | Low (-1) | High (+1) |
+|--------|----------|-----------|
+| Auction type | Second-price | First-price |
+| Aggressiveness (a) | 0.3 (conservative) | 3.0 (aggressive) |
+| Number of bidders (n) | 2 | 4 |
+| Budget multiplier (m) | 0.25 (tight) | 1.0 (loose) |
+| Reserve price (r) | 0.0 | 0.3 |
+| Value dispersion (sigma) | 0.1 (low) | 0.5 (high) |
+
+**Outcome metrics.** Same as Experiment 4a: platform revenue, liquid welfare, effective price of anarchy, budget utilization, bid-to-value ratio, allocative efficiency, dual variable CV (from lambda history), no-sale rate, winner entropy, warm-start benefit.
 
 ## Common Outcome Metrics
 
@@ -122,7 +147,7 @@ These metrics are collected across experiments (with naming variations noted in 
 | Price volatility | Standard deviation of winning bids |
 | Winner entropy | Entropy of the winner distribution (measures allocation concentration) |
 
-Experiment 4 adds budget-specific metrics: budget utilization, liquid welfare, effective price of anarchy, and allocative efficiency.
+Experiments 4a and 4b add budget-specific metrics: budget utilization, liquid welfare, effective price of anarchy, and allocative efficiency.
 
 ## Cross-Experiment Progression
 
@@ -134,4 +159,6 @@ The four experiments form a deliberate progression in environmental complexity.
 
 **Experiment 3** holds the valuation model fixed but replaces Q-learning with contextual bandit algorithms (LinUCB, CTS). These algorithms use structured exploration via confidence bounds rather than epsilon-greedy, testing whether the exploration method affects equilibrium selection and convergence speed.
 
-**Experiment 4** shifts the setting entirely: from repeated single-round auctions to budget-constrained autobidding over multi-round episodes. Agents use multiplicative dual pacing rather than Q-learning or bandits, introducing a budget constraint that creates inter-temporal strategic considerations absent from Experiments 1-3.
+**Experiment 4a** shifts the setting entirely: from repeated single-round auctions to budget-constrained autobidding over multi-round episodes. Agents use multiplicative dual pacing rather than Q-learning or bandits, introducing a budget constraint that creates inter-temporal strategic considerations absent from Experiments 1-3.
+
+**Experiment 4b** retains the budget-constrained autobidding setting of Experiment 4a but replaces multiplicative dual pacing with a proportional-integral (PI) controller. The PI agent bids lambda * v and updates lambda additively based on cumulative spending error. This isolates the effect of the control law itself from the budget constraint.

@@ -72,12 +72,17 @@ def get_rewards(bids, valuations, auction_type="first", reserve_price=0.0):
         else:
             second_highest_bid = highest_bid
     else:
-        second_idx_local = None
-        for idx_l in sorted_indices:
-            if idx_l not in highest_idx_local:
-                second_idx_local = idx_l
-                break
-        second_highest_bid = highest_bid if second_idx_local is None else valid_bids[second_idx_local]
+        if len(highest_idx_local) >= 2:
+            # 2+ tied at top: second-price = tied price
+            second_highest_bid = highest_bid
+        else:
+            # Single winner: find next-highest bid
+            second_idx_local = None
+            for idx_l in sorted_indices:
+                if idx_l not in highest_idx_local:
+                    second_idx_local = idx_l
+                    break
+            second_highest_bid = highest_bid if second_idx_local is None else valid_bids[second_idx_local]
 
     # Auction payoff
     if auction_type == "first":
@@ -166,6 +171,10 @@ def run_experiment(
     eps_end = 0.01  # floor for exponential decay (avoids log(0))
     decay_end = int(0.9 * episodes)
 
+    # Boltzmann temperature decay (mirrors epsilon schedule)
+    temp_start = 1.0
+    temp_end = 0.01  # near-greedy: with Q-diff ~0.1, prob_best ≈ 0.9999
+
     past_winner_bid = 0.0
 
     save_interval = 1000
@@ -186,14 +195,17 @@ def run_experiment(
         if progress_callback and ep % 1000 == 0:
             progress_callback(current=ep, total=episodes)
 
-        # Epsilon decay
+        # Epsilon / temperature decay
         if ep < decay_end:
             if decay_type == "linear":
-                eps = eps_start - (ep / decay_end) * eps_start
+                eps = eps_start - (ep / decay_end) * (eps_start - eps_end)
+                temp = temp_start - (ep / decay_end) * (temp_start - temp_end)
             else:  # "exponential"
                 eps = eps_start * (eps_end / eps_start) ** (ep / decay_end)
+                temp = temp_start * (temp_end / temp_start) ** (ep / decay_end)
         else:
             eps = 0.0  # Pure exploitation after decay
+            temp = temp_end  # Near-greedy temperature
 
         # Constant valuations: v_i = 1.0 for all bidders
         valuations = np.ones(n_bidders)
@@ -206,9 +218,15 @@ def run_experiment(
         for i in range(n_bidders):
             qvals = Q[i, s]
             if exploration == "boltzmann":
-                # Boltzmann
-                shifted = qvals - np.max(qvals)
-                ex = np.exp(shifted)
+                # Q-range normalized Boltzmann: divide by ptp(Q) so
+                # temperature schedule controls exploration regardless
+                # of Q-value magnitude (gamma-invariant).
+                q_range = np.ptp(qvals)
+                if q_range > 1e-8:
+                    shifted = (qvals - np.max(qvals)) / (q_range * max(temp, 1e-10))
+                else:
+                    shifted = np.zeros_like(qvals)
+                ex = np.exp(np.clip(shifted, -50, 0))
                 probs = ex / np.sum(ex)
                 a_i = np.random.choice(n_actions, p=probs)
             else:
@@ -306,24 +324,10 @@ def run_experiment(
     else:
         avg_rev_last_1000 = float(np.mean(revenues))
 
-    # Time to converge: O(n) numpy implementation
-    final_rev = avg_rev_last_1000
-    lower_band = 0.95 * final_rev
-    upper_band = 1.05 * final_rev
-    if episodes >= window_size:
-        roll_avg = np.convolve(revenues, np.ones(window_size) / window_size, mode='valid')
-        in_band = (roll_avg >= lower_band) & (roll_avg <= upper_band)
-        out_of_band = np.where(~in_band)[0]
-        if len(out_of_band) == 0:
-            time_to_converge = window_size
-        elif out_of_band[-1] < len(in_band) - 1:
-            time_to_converge = int(out_of_band[-1]) + 1 + window_size
-        else:
-            time_to_converge = episodes
-    else:
-        time_to_converge = episodes
+    # Time to converge: prospective method
+    from experiments.convergence import compute_convergence_time
+    time_to_converge = compute_convergence_time(revenues, window_size)
 
-    avg_regret_of_seller = float(np.mean(1.0 - revenues))
     no_sale_rate = no_sale_count / episodes
     winning_bids_list = winning_bids_arr[:wb_count]
     price_volatility = float(np.std(winning_bids_list)) if wb_count > 0 else 0.0
@@ -337,11 +341,11 @@ def run_experiment(
 
     summary = {
         "avg_rev_last_1000": avg_rev_last_1000,
+        "avg_rev_all": float(np.mean(revenues)),
         "time_to_converge": time_to_converge,
-        "avg_regret_of_seller": avg_regret_of_seller,
         "no_sale_rate": no_sale_rate,
         "price_volatility": price_volatility,
-        "winner_entropy": winner_entropy
+        "winner_entropy": winner_entropy,
     }
     return summary, revenues, round_history, Q
 

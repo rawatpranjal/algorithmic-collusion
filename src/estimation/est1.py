@@ -17,15 +17,14 @@ CODED_COLS = [
     "exploration_coded",
     "asynchronous_coded",
     "n_bidders_coded",
-    "n_actions_coded",
     "info_feedback_coded",
     "decay_type_coded",
 ]
 
 RESPONSE_COLS = [
     "avg_rev_last_1000",
+    "avg_rev_all",
     "time_to_converge",
-    "avg_regret_of_seller",
     "no_sale_rate",
     "price_volatility",
     "winner_entropy",

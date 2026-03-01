@@ -1,0 +1,75 @@
+======================================================================
+ROBUST ANALYSIS SUMMARY -- Experiment 4
+======================================================================
+
+KEY FINDING: objective:budget_multiplier interaction
+--------------------------------------------------
+  mean_platform_revenue|objective:budget_multiplier: raw p=3.4790e-05, holm p=1.0228e-02 -> SURVIVES Holm-Bonferroni
+  mean_liquid_welfare|objective:budget_multiplier: raw p=1.2618e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  mean_effective_poa|objective:budget_multiplier: raw p=2.7875e-06, holm p=8.3348e-04 -> SURVIVES Holm-Bonferroni
+  mean_budget_utilization|objective:budget_multiplier: raw p=1.3314e-12, holm p=4.1406e-10 -> SURVIVES Holm-Bonferroni
+  mean_bid_to_value|objective:budget_multiplier: raw p=7.4050e-03, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  mean_allocative_efficiency|objective:budget_multiplier: raw p=9.8879e-07, holm p=2.9762e-04 -> SURVIVES Holm-Bonferroni
+  mean_dual_cv|objective:budget_multiplier: raw p=4.3123e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  mean_no_sale_rate|objective:budget_multiplier: raw p=5.1699e-03, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  mean_winner_entropy|objective:budget_multiplier: raw p=2.2886e-03, holm p=6.3395e-01 -> does NOT survive Holm-Bonferroni
+  warm_start_benefit|objective:budget_multiplier: raw p=4.9541e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  inter_episode_volatility|objective:budget_multiplier: raw p=1.2496e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  bid_suppression_ratio|objective:budget_multiplier: raw p=2.5870e-03, holm p=7.1402e-01 -> does NOT survive Holm-Bonferroni
+  cross_episode_drift|objective:budget_multiplier: raw p=8.8416e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  mean_lp_offline_welfare|objective:budget_multiplier: raw p=6.6699e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  mean_effective_poa_lp|objective:budget_multiplier: raw p=3.0940e-06, holm p=9.2200e-04 -> SURVIVES Holm-Bonferroni
+
+MODEL ADEQUACY
+--------------------------------------------------
+  mean_platform_revenue           R2=0.5759  Pred-R2=0.3817  Gap=0.1943
+  mean_liquid_welfare             R2=0.3820  Pred-R2=0.0989  Gap=0.2831
+  mean_effective_poa              R2=0.5005  Pred-R2=0.2716  Gap=0.2289
+  mean_budget_utilization         R2=0.7111  Pred-R2=0.5788  Gap=0.1323
+  mean_bid_to_value               R2=0.4216  Pred-R2=0.1565  Gap=0.2650
+  mean_allocative_efficiency      R2=0.6826  Pred-R2=0.5372  Gap=0.1454
+  mean_dual_cv                    R2=0.2900  Pred-R2=-0.0353  Gap=0.3253
+  mean_no_sale_rate               R2=0.4508  Pred-R2=0.1992  Gap=0.2516
+  mean_winner_entropy             R2=0.6566  Pred-R2=0.4993  Gap=0.1573
+  warm_start_benefit              R2=0.2991  Pred-R2=-0.0221  Gap=0.3212
+  inter_episode_volatility        R2=0.5820  Pred-R2=0.3905  Gap=0.1915
+  bid_suppression_ratio           R2=0.4315  Pred-R2=0.1710  Gap=0.2605
+  cross_episode_drift             R2=0.1993  Pred-R2=-0.1675  Gap=0.3668
+  mean_lp_offline_welfare         R2=0.3814  Pred-R2=0.0980  Gap=0.2834
+  mean_effective_poa_lp           R2=0.4988  Pred-R2=0.2692  Gap=0.2296
+
+LINEAR vs NONPARAMETRIC
+--------------------------------------------------
+  mean_platform_revenue           OLS=0.5759  LGBM=-0.0519  Gap=-0.6279
+  mean_liquid_welfare             OLS=0.3820  LGBM=0.1801  Gap=-0.2019
+  mean_effective_poa              OLS=0.5005  LGBM=-0.3289  Gap=-0.8293
+  mean_budget_utilization         OLS=0.7111  LGBM=-193.7156  Gap=-194.4268
+  mean_bid_to_value               OLS=0.4216  LGBM=-0.7452  Gap=-1.1667
+  mean_allocative_efficiency      OLS=0.6826  LGBM=0.4402  Gap=-0.2424
+  mean_dual_cv                    OLS=0.2900  LGBM=-0.8774  Gap=-1.1674
+  mean_no_sale_rate               OLS=0.4508  LGBM=-1.4513  Gap=-1.9021
+  mean_winner_entropy             OLS=0.6566  LGBM=0.4323  Gap=-0.2243
+  warm_start_benefit              OLS=0.2991  LGBM=-0.9284  Gap=-1.2274
+  inter_episode_volatility        OLS=0.5820  LGBM=-4.1746  Gap=-4.7566
+  bid_suppression_ratio           OLS=0.4315  LGBM=0.1465  Gap=-0.2850
+  cross_episode_drift             OLS=0.1993  LGBM=-94.6207  Gap=-94.8200
+  mean_lp_offline_welfare         OLS=0.3814  LGBM=0.1840  Gap=-0.1974
+  mean_effective_poa_lp           OLS=0.4988  LGBM=-0.3465  Gap=-0.8453
+
+POWER ANALYSIS (80% power, alpha=0.05)
+--------------------------------------------------
+  mean_platform_revenue           MDE=60.515253 (14.5% of mean)
+  mean_liquid_welfare             MDE=26.403973 (8.8% of mean)
+  mean_effective_poa              MDE=0.016383 (1.6% of mean)
+  mean_budget_utilization         MDE=0.040919 (5.0% of mean)
+  mean_bid_to_value               MDE=0.267257 (19.7% of mean)
+  mean_allocative_efficiency      MDE=0.032843 (4.6% of mean)
+  mean_dual_cv                    MDE=0.067249 (18.2% of mean)
+  mean_no_sale_rate               MDE=0.006691 (52.6% of mean)
+  mean_winner_entropy             MDE=0.061344 (6.6% of mean)
+  warm_start_benefit              MDE=3.508132 (28.5% of mean)
+  inter_episode_volatility        MDE=0.003267 (19.0% of mean)
+  bid_suppression_ratio           MDE=0.279439 (16.7% of mean)
+  cross_episode_drift             MDE=0.044503 (135.0% of mean)
+  mean_lp_offline_welfare         MDE=28.905431 (9.1% of mean)
+  mean_effective_poa_lp           MDE=0.016473 (1.6% of mean)

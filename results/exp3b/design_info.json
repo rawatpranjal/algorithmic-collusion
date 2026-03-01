@@ -1,0 +1,50 @@
+{
+  "experiment": "3b",
+  "design": "3 x 2^5 = 96 cells (mixed-level factorial)",
+  "n_factors": 6,
+  "factors": {
+    "auction_type": {
+      "levels": [
+        "second",
+        "first"
+      ],
+      "coding": "binary +-1"
+    },
+    "n_bidders": {
+      "levels": [
+        2,
+        4
+      ],
+      "coding": "binary +-1"
+    },
+    "reserve_price": {
+      "levels": [
+        0.0,
+        0.3
+      ],
+      "coding": "binary +-1"
+    },
+    "eta": {
+      "levels": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "coding": "orthogonal contrasts: eta_linear (-1,0,+1), eta_quadratic (+1,-2,+1)"
+    },
+    "exploration_intensity": {
+      "levels": [
+        "low",
+        "high"
+      ],
+      "coding": "binary +-1"
+    },
+    "context_richness": {
+      "levels": [
+        "minimal",
+        "rich"
+      ],
+      "coding": "binary +-1"
+    }
+  }
+}

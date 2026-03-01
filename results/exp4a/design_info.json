@@ -1,0 +1,31 @@
+{
+  "experiment": "4a",
+  "design": "2^6 = 64 cells (full factorial) x seeds",
+  "n_factors": 6,
+  "factors": {
+    "auction_type": {
+      "low": "second",
+      "high": "first"
+    },
+    "objective": {
+      "low": "value_max",
+      "high": "utility_max"
+    },
+    "n_bidders": {
+      "low": 2,
+      "high": 4
+    },
+    "budget_multiplier": {
+      "low": 0.25,
+      "high": 1.0
+    },
+    "reserve_price": {
+      "low": 0.0,
+      "high": 0.3
+    },
+    "sigma": {
+      "low": 0.1,
+      "high": 0.5
+    }
+  }
+}

@@ -10,7 +10,7 @@ Usage:
     PYTHONPATH=src python3 scripts/deep_dive.py --exp 1
     PYTHONPATH=src python3 scripts/deep_dive.py --exp 2 --param eta=1.0 --verbose
     PYTHONPATH=src python3 scripts/deep_dive.py --exp 3 --list-params
-    PYTHONPATH=src python3 scripts/deep_dive.py --exp 4 --no-plots --no-save
+    PYTHONPATH=src python3 scripts/deep_dive.py --exp 4a --no-plots --no-save
 """
 
 import argparse
@@ -20,7 +20,11 @@ import sys
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
 from typing import Any
+
+# Ensure src/ is first on sys.path so src/verification shadows scripts/verification
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import matplotlib
 matplotlib.use("Agg")
@@ -36,12 +40,12 @@ EXP1_DEFAULTS = {
     "auction_type": "first",
     "alpha": 0.15,
     "gamma": 0.95,
-    "episodes": 10_000,
+    "episodes": 100_000,
     "init": "zeros",
     "exploration": "boltzmann",
     "asynchronous": 0,
     "n_bidders": 2,
-    "n_actions": 21,
+    "n_actions": 11,
     "info_feedback": "minimal",
     "reserve_price": 0.0,
     "decay_type": "linear",
@@ -52,37 +56,66 @@ EXP2_DEFAULTS = {
     "auction_type": "first",
     "n_bidders": 2,
     "state_info": "signal_only",
-    "episodes": 10_000,
+    "episodes": 100_000,
 }
 
-EXP3_DEFAULTS = {
+EXP3A_DEFAULTS = {
     "eta": 0.5,
     "auction_type": "first",
     "lam": 1.0,
     "n_bidders": 2,
     "reserve_price": 0.0,
-    "max_rounds": 5000,
+    "max_rounds": 100_000,
     "algorithm": "linucb",
+    "exploration_intensity": "low",
+    "context_richness": "minimal",
+    "memory_decay": 1.0,
+}
+
+EXP3B_DEFAULTS = {
+    "eta": 0.5,
+    "auction_type": "first",
+    "lam": 1.0,
+    "n_bidders": 2,
+    "reserve_price": 0.0,
+    "max_rounds": 100_000,
+    "algorithm": "thompson",
     "exploration_intensity": "low",
     "context_richness": "minimal",
 }
 
-EXP4_DEFAULTS = {
+EXP4A_DEFAULTS = {
     "auction_type": "first",
     "objective": "value_max",
     "n_bidders": 2,
     "n_episodes": 100,
-    "T": 100,
+    "T": 1000,
+    "budget_multiplier": 0.5,
+    "reserve_price": 0.0,
+    "sigma": 0.3,
 }
 
-DEFAULTS = {1: EXP1_DEFAULTS, 2: EXP2_DEFAULTS, 3: EXP3_DEFAULTS, 4: EXP4_DEFAULTS}
+EXP4B_DEFAULTS = {
+    "auction_type": "first",
+    "aggressiveness": 1.0,
+    "n_bidders": 2,
+    "n_episodes": 100,
+    "T": 1000,
+    "budget_multiplier": 0.5,
+    "reserve_price": 0.0,
+    "sigma": 0.3,
+}
+
+DEFAULTS = {"1": EXP1_DEFAULTS, "2": EXP2_DEFAULTS, "3a": EXP3A_DEFAULTS, "3b": EXP3B_DEFAULTS, "4a": EXP4A_DEFAULTS, "4b": EXP4B_DEFAULTS}
 
 # Type coercion for --param overrides
 PARAM_TYPES = {
     "alpha": float, "gamma": float, "episodes": int, "asynchronous": int,
     "n_bidders": int, "n_actions": int, "reserve_price": float,
     "eta": float, "lam": float, "max_rounds": int,
-    "n_episodes": int, "T": int,
+    "n_episodes": int, "T": int, "budget_multiplier": float, "sigma": float,
+    "aggressiveness": float,
+    "memory_decay": float,
 }
 
 # ---------------------------------------------------------------------------
@@ -91,7 +124,7 @@ PARAM_TYPES = {
 
 @dataclass
 class DeepDiveResult:
-    exp_num: int
+    exp_num: str
     params: dict
     summary: dict
     revenues: list
@@ -112,7 +145,7 @@ def run_exp1(params, seed):
         params["n_bidders"], params["auction_type"]
     )
     return DeepDiveResult(
-        exp_num=1, params=params, summary=summary,
+        exp_num="1", params=params, summary=summary,
         revenues=revenues, round_history=round_history,
         final_state=Q, bne_revenue=bne_rev,
     )
@@ -135,13 +168,13 @@ def run_exp2(params, seed):
     if bne_rev is None:
         bne_rev = summary.get("theoretical_revenue")
     return DeepDiveResult(
-        exp_num=2, params=params, summary=summary,
+        exp_num="2", params=params, summary=summary,
         revenues=revenues, round_history=[],
         final_state=Q, bne_revenue=bne_rev,
     )
 
 
-def run_exp3(params, seed):
+def run_exp3a(params, seed):
     from experiments.exp3 import run_bandit_experiment, simulate_linear_affiliation_revenue
 
     summary, revenues, round_history, bandits = run_bandit_experiment(**params, seed=seed, collect_history=True)
@@ -149,24 +182,49 @@ def run_exp3(params, seed):
         params["n_bidders"], params["eta"], params["auction_type"], M=50_000,
     )
     return DeepDiveResult(
-        exp_num=3, params=params, summary=summary,
+        exp_num="3a", params=params, summary=summary,
         revenues=revenues, round_history=round_history,
         final_state=bandits, bne_revenue=bne_rev,
     )
 
 
-def run_exp4(params, seed):
-    from experiments.exp4 import run_experiment
+def run_exp3b(params, seed):
+    from experiments.exp3 import run_bandit_experiment, simulate_linear_affiliation_revenue
+
+    summary, revenues, round_history, bandits = run_bandit_experiment(**params, seed=seed, collect_history=True)
+    bne_rev = simulate_linear_affiliation_revenue(
+        params["n_bidders"], params["eta"], params["auction_type"], M=50_000,
+    )
+    return DeepDiveResult(
+        exp_num="3b", params=params, summary=summary,
+        revenues=revenues, round_history=round_history,
+        final_state=bandits, bne_revenue=bne_rev,
+    )
+
+
+def run_exp4a(params, seed):
+    from experiments.exp4a import run_experiment
 
     summary, episode_data, agents = run_experiment(**params, seed=seed)
     revenues = [ep["platform_revenue"] for ep in episode_data]
     return DeepDiveResult(
-        exp_num=4, params=params, summary=summary,
+        exp_num="4a", params=params, summary=summary,
         revenues=revenues, round_history=episode_data,
         final_state=agents, bne_revenue=None,
     )
 
-RUNNERS = {1: run_exp1, 2: run_exp2, 3: run_exp3, 4: run_exp4}
+def run_exp4b(params, seed):
+    from experiments.exp4b import run_experiment
+
+    summary, episode_data, agents = run_experiment(**params, seed=seed)
+    revenues = [ep["platform_revenue"] for ep in episode_data]
+    return DeepDiveResult(
+        exp_num="4b", params=params, summary=summary,
+        revenues=revenues, round_history=episode_data,
+        final_state=agents, bne_revenue=None,
+    )
+
+RUNNERS = {"1": run_exp1, "2": run_exp2, "3a": run_exp3a, "3b": run_exp3b, "4a": run_exp4a, "4b": run_exp4b}
 
 # ---------------------------------------------------------------------------
 # Save results
@@ -207,12 +265,12 @@ def save_results(result: DeepDiveResult, output_dir: str, seed: int):
 
 
 def _save_final_state(result: DeepDiveResult, state_dir: str):
-    if result.exp_num in (1, 2):
+    if result.exp_num in ("1", "2"):
         # Q-table: numpy array (n_bidders, n_states, n_actions)
         Q = result.final_state
         if Q is not None:
             np.save(os.path.join(state_dir, "q_table.npy"), Q)
-    elif result.exp_num == 3:
+    elif result.exp_num in ("3a", "3b"):
         # Bandits: list of LinUCB or CTS objects
         bandits = result.final_state
         if bandits:
@@ -223,7 +281,7 @@ def _save_final_state(result: DeepDiveResult, state_dir: str):
                 if hasattr(b, "b"):
                     data["b"] = np.array([bi.tolist() if hasattr(bi, "tolist") else bi for bi in b.b], dtype=object)
                 np.savez(os.path.join(state_dir, f"bandit_{i}.npz"), **{k: v for k, v in data.items()})
-    elif result.exp_num == 4:
+    elif result.exp_num == "4a":
         # Agents: list of DualPacingAgent
         agents = result.final_state
         if agents:
@@ -232,6 +290,18 @@ def _save_final_state(result: DeepDiveResult, state_dir: str):
                     "mu": agent.mu,
                     "budget": agent.budget,
                     "mu_history": agent.mu_history,
+                }
+                with open(os.path.join(state_dir, f"agent_{i}.json"), "w") as f:
+                    json.dump(agent_data, f, indent=2, default=float)
+    elif result.exp_num == "4b":
+        # Agents: list of PIDPacingAgent
+        agents = result.final_state
+        if agents:
+            for i, agent in enumerate(agents):
+                agent_data = {
+                    "lambda_val": agent.lambda_val,
+                    "budget": agent.budget,
+                    "lambda_history": agent.lambda_history,
                 }
                 with open(os.path.join(state_dir, f"agent_{i}.json"), "w") as f:
                     json.dump(agent_data, f, indent=2, default=float)
@@ -253,7 +323,7 @@ def plot_trace(result: DeepDiveResult, output_dir: str):
     os.makedirs(fig_dir, exist_ok=True)
     path = os.path.join(fig_dir, "trace.png")
 
-    plotters = {1: _plot_exp1, 2: _plot_exp2, 3: _plot_exp3, 4: _plot_exp4}
+    plotters = {"1": _plot_exp1, "2": _plot_exp2, "3a": _plot_exp3, "3b": _plot_exp3, "4a": _plot_exp4a, "4b": _plot_exp4b}
     plotters[result.exp_num](result, path)
     print(f"Trace plot saved to {path}")
 
@@ -269,7 +339,7 @@ def _plot_exp1(result, path):
 
     # Revenue rolling mean
     ax = axes[0]
-    ax.plot(episodes, rolling_mean(revenues, 200), color="black", **STYLE_KW)
+    ax.plot(episodes, rolling_mean(revenues, 2000), color="black", **STYLE_KW)
     ax.axhline(bne_rev, color="gray", linestyle="--", linewidth=0.7, label=f"BNE = {bne_rev:.2f}")
     ax.set_ylabel("Revenue (rolling mean)")
     ax.set_xlabel("Episode")
@@ -282,7 +352,7 @@ def _plot_exp1(result, path):
         styles = ["-", "--"]
         for bidder_id in sorted(df["bidder_id"].unique()):
             bids = df[df["bidder_id"] == bidder_id]["bid"].values
-            ax.plot(np.arange(len(bids)), rolling_mean(bids, 200),
+            ax.plot(np.arange(len(bids)), rolling_mean(bids, 2000),
                     linestyle=styles[bidder_id % len(styles)],
                     color="black", label=f"Bidder {bidder_id}", **STYLE_KW)
         ax.axhline(bne_rev, color="gray", linestyle="--", linewidth=0.7, label="BNE bid")
@@ -312,7 +382,7 @@ def _plot_exp2(result, path):
 
     # Revenue rolling mean
     ax = axes[0]
-    ax.plot(episodes, rolling_mean(revenues, 200), color="black", **STYLE_KW)
+    ax.plot(episodes, rolling_mean(revenues, 2000), color="black", **STYLE_KW)
     if bne_rev is not None:
         ax.axhline(bne_rev, color="gray", linestyle="--", linewidth=0.7,
                    label=f"BNE = {bne_rev:.3f}")
@@ -356,7 +426,7 @@ def _plot_exp3(result, path):
 
     # Revenue rolling mean
     ax = axes[0]
-    ax.plot(rounds, rolling_mean(revenues, 100), color="black", **STYLE_KW)
+    ax.plot(rounds, rolling_mean(revenues, 2000), color="black", **STYLE_KW)
     if bne_rev is not None:
         ax.axhline(bne_rev, color="gray", linestyle="--", linewidth=0.7,
                    label=f"BNE = {bne_rev:.3f}")
@@ -398,7 +468,7 @@ def _plot_exp3(result, path):
     plt.close(fig)
 
 
-def _plot_exp4(result, path):
+def _plot_exp4a(result, path):
     episode_data = result.round_history  # episode_data stored as round_history
     agents = result.final_state
     params = result.params
@@ -443,6 +513,50 @@ def _plot_exp4(result, path):
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
 
+
+def _plot_exp4b(result, path):
+    episode_data = result.round_history
+    agents = result.final_state
+    params = result.params
+
+    ep_nums = [ep["episode"] for ep in episode_data]
+    ep_revs = [ep["platform_revenue"] for ep in episode_data]
+    ep_btvs = [ep["bid_to_value"] for ep in episode_data]
+
+    fig, axes = plt.subplots(3, 1, figsize=(10, 9))
+
+    # Platform revenue per episode
+    ax = axes[0]
+    ax.plot(ep_nums, ep_revs, color="black", **STYLE_KW)
+    ax.set_ylabel("Platform revenue")
+    ax.set_xlabel("Episode")
+
+    # Lambda trajectories (last episode)
+    ax = axes[1]
+    styles = ["-", "--", ":", "-."]
+    for i, agent in enumerate(agents):
+        if agent.lambda_history:
+            ax.plot(agent.lambda_history,
+                    linestyle=styles[i % len(styles)],
+                    color="black", label=f"Bidder {i}", **STYLE_KW)
+    ax.set_ylabel("Pacing multiplier ($\\lambda$)")
+    ax.set_xlabel("Round (last episode)")
+    ax.legend(frameon=False)
+
+    # Bid-to-value ratio
+    ax = axes[2]
+    ax.plot(ep_nums, ep_btvs, color="black", **STYLE_KW)
+    ax.axhline(1.0, color="gray", linestyle="--", linewidth=0.7,
+               label="Competitive $b/v = 1.00$")
+    ax.set_ylabel("Mean bid-to-value ratio")
+    ax.set_xlabel("Episode")
+    ax.legend(frameon=False)
+
+    fig.tight_layout()
+    fig.savefig(path, dpi=DPI, bbox_inches="tight")
+    plt.close(fig)
+
+
 # ---------------------------------------------------------------------------
 # Verbose diagnostics
 # ---------------------------------------------------------------------------
@@ -452,7 +566,7 @@ def print_verbose(result: DeepDiveResult):
     print(f"VERBOSE DIAGNOSTICS: Experiment {result.exp_num}")
     print("=" * 60)
 
-    verbose_fns = {1: _verbose_exp1, 2: _verbose_exp2, 3: _verbose_exp3, 4: _verbose_exp4}
+    verbose_fns = {"1": _verbose_exp1, "2": _verbose_exp2, "3a": _verbose_exp3, "3b": _verbose_exp3, "4a": _verbose_exp4a, "4b": _verbose_exp4b}
     verbose_fns[result.exp_num](result)
 
 
@@ -574,7 +688,7 @@ def _verbose_exp3(result):
         print(f"Achieved revenue (last 1000): {result.summary.get('avg_rev_last_1000', 'N/A')}")
 
 
-def _verbose_exp4(result):
+def _verbose_exp4a(result):
     agents = result.final_state
     episode_data = result.round_history
     params = result.params
@@ -599,6 +713,36 @@ def _verbose_exp4(result):
         print(f"  Bid-to-value: mean={np.mean(btvs):.4f}, std={np.std(btvs):.4f}")
 
         # Burn-in comparison
+        burn_in = min(10, len(episode_data))
+        if len(episode_data) > burn_in:
+            early = np.mean(revs[:burn_in])
+            late = np.mean(revs[burn_in:])
+            print(f"  Warm-start: early mean={early:.4f}, post-burn mean={late:.4f}")
+
+
+def _verbose_exp4b(result):
+    agents = result.final_state
+    episode_data = result.round_history
+    params = result.params
+
+    print(f"\nAgents: {len(agents)}")
+    for i, agent in enumerate(agents):
+        print(f"\n  Agent {i}:")
+        print(f"    Final lambda: {agent.lambda_val:.4f}")
+        print(f"    Budget: {agent.budget:.4f}")
+        if agent.lambda_history:
+            lam_arr = np.array(agent.lambda_history)
+            print(f"    Lambda history (last episode): mean={lam_arr.mean():.4f}, "
+                  f"std={lam_arr.std():.4f}, final={lam_arr[-1]:.4f}")
+        print(f"    Budget utilization: {agent.cumulative_spend / agent.budget:.2%}" if agent.budget > 0 else "")
+
+    if episode_data:
+        revs = [ep["platform_revenue"] for ep in episode_data]
+        btvs = [ep["bid_to_value"] for ep in episode_data]
+        print(f"\nEpisode statistics ({len(episode_data)} episodes):")
+        print(f"  Revenue: mean={np.mean(revs):.4f}, std={np.std(revs):.4f}")
+        print(f"  Bid-to-value: mean={np.mean(btvs):.4f}, std={np.std(btvs):.4f}")
+
         burn_in = min(10, len(episode_data))
         if len(episode_data) > burn_in:
             early = np.mean(revs[:burn_in])
@@ -638,7 +782,7 @@ def parse_args():
         description="Unified single-run deep dive analysis tool.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--exp", type=int, required=True, choices=[1, 2, 3, 4],
+    parser.add_argument("--exp", type=str, required=True, choices=["1", "2", "3a", "3b", "4a", "4b"],
                         help="Experiment number")
     parser.add_argument("--param", action="append", default=[],
                         help="Parameter override as key=value (repeatable)")

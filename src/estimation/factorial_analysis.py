@@ -13,6 +13,7 @@ For each response variable:
 8. JSON export (coefficients, p-values, R², adj-R²)
 """
 
+import hashlib
 import itertools
 import json
 import os
@@ -21,12 +22,56 @@ import sys
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+plt.rcParams.update({
+    "font.size": 11,
+    "axes.titlesize": 13,
+    "axes.labelsize": 12,
+    "xtick.labelsize": 11,
+    "ytick.labelsize": 11,
+    "legend.fontsize": 10,
+})
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from scipy import stats
 from tabulate import tabulate
+
+
+def lenth_pse(model):
+    """
+    Compute Lenth's pseudo-standard error for effect screening.
+
+    Returns (PSE, ME, SME) where:
+      PSE = pseudo-standard error (robust scale estimate)
+      ME  = margin of error (individual significance threshold)
+      SME = simultaneous margin of error (Bonferroni-corrected threshold)
+    """
+    effects = model.params.drop("Intercept", errors="ignore").values
+    abs_effects = np.abs(effects)
+    k = len(abs_effects)
+
+    # Initial scale estimate
+    s0 = 1.5 * np.median(abs_effects)
+
+    # Remove effects exceeding 2.5 * s0 and recompute
+    trimmed = abs_effects[abs_effects < 2.5 * s0]
+    if len(trimmed) == 0:
+        trimmed = abs_effects  # fallback: use all
+    pse = 1.5 * np.median(trimmed)
+
+    # Degrees of freedom for t-distribution
+    d = max(1, k // 3)
+
+    # Margin of error (individual)
+    me = stats.t.ppf(0.975, d) * pse
+
+    # Simultaneous margin of error (Bonferroni-corrected)
+    sme = stats.t.ppf(1 - 0.025 / k, d) * pse
+
+    return pse, me, sme
 
 
 def _build_formula(response, coded_cols):
@@ -67,7 +112,7 @@ def plot_pareto_chart(model, response, output_dir):
               for name in abs_t.index]
     ax.barh(range(len(abs_t)), abs_t.values, color=colors)
     ax.set_yticks(range(len(abs_t)))
-    ax.set_yticklabels([_clean_label(n) for n in abs_t.index], fontsize=8)
+    ax.set_yticklabels([_clean_label(n) for n in abs_t.index], fontsize=10)
     ax.set_xlabel("|t-statistic|")
     ax.set_title(f"Pareto Chart: {_clean_label(response)}")
 
@@ -81,7 +126,7 @@ def plot_pareto_chart(model, response, output_dir):
     os.makedirs(os.path.join(output_dir, "pareto_charts"), exist_ok=True)
     fig.savefig(os.path.join(output_dir, "pareto_charts",
                              f"pareto_{response}.png"),
-                dpi=150, bbox_inches="tight")
+                dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -100,7 +145,15 @@ def plot_half_normal(model, response, output_dir):
         if model.pvalues[name] < 0.05:
             ax.annotate(_clean_label(name),
                        (expected[i], abs_effects.iloc[i]),
-                       fontsize=7, ha="left", va="bottom")
+                       fontsize=9, ha="left", va="bottom")
+
+    # Lenth's PSE reference lines
+    pse, me, sme = lenth_pse(model)
+    ax.axhline(me, color="blue", linestyle="--", alpha=0.6,
+               label=f"ME = {me:.4f}")
+    ax.axhline(sme, color="red", linestyle="--", alpha=0.6,
+               label=f"SME = {sme:.4f}")
+    ax.legend(fontsize=9)
 
     ax.set_xlabel("Half-Normal Quantiles")
     ax.set_ylabel("|Effect|")
@@ -110,7 +163,7 @@ def plot_half_normal(model, response, output_dir):
     os.makedirs(os.path.join(output_dir, "normal_prob_plots"), exist_ok=True)
     fig.savefig(os.path.join(output_dir, "normal_prob_plots",
                              f"halfnormal_{response}.png"),
-                dpi=150, bbox_inches="tight")
+                dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -152,7 +205,7 @@ def plot_main_effects(df, coded_cols, response, output_dir, model=None):
     os.makedirs(os.path.join(output_dir, "main_effects"), exist_ok=True)
     fig.savefig(os.path.join(output_dir, "main_effects",
                              f"main_effects_{response}.png"),
-                dpi=150, bbox_inches="tight")
+                dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -193,8 +246,8 @@ def plot_interactions(df, model, coded_cols, response, output_dir, top_n=6):
         ax.set_xlabel(_clean_label(a))
         ax.set_ylabel(f"Mean {_clean_label(response)}")
         sig = "*" if pval < 0.05 else ""
-        ax.set_title(f"{_clean_label(a)} x {_clean_label(b)}{sig}", fontsize=9)
-        ax.legend(fontsize=7)
+        ax.set_title(f"{_clean_label(a)} x {_clean_label(b)}{sig}", fontsize=12)
+        ax.legend(fontsize=10)
 
     for j in range(len(top), nrows * ncols):
         axes.flat[j].set_visible(False)
@@ -204,7 +257,7 @@ def plot_interactions(df, model, coded_cols, response, output_dir, top_n=6):
     os.makedirs(os.path.join(output_dir, "interaction_plots"), exist_ok=True)
     fig.savefig(os.path.join(output_dir, "interaction_plots",
                              f"interactions_{response}.png"),
-                dpi=150, bbox_inches="tight")
+                dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -231,13 +284,96 @@ def plot_residuals(model, response, output_dir):
     os.makedirs(os.path.join(output_dir, "residuals"), exist_ok=True)
     fig.savefig(os.path.join(output_dir, "residuals",
                              f"residuals_{response}.png"),
-                dpi=150, bbox_inches="tight")
+                dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
 def _clean_label(name):
     """Remove _coded suffix for display."""
     return name.replace("_coded", "")
+
+
+def _file_sha256(filepath):
+    """Compute SHA-256 hex digest of a file."""
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def check_data_freshness(output_dir, experiment_id=None):
+    """Check whether data.csv is fresh by comparing source checksums.
+
+    Loads data_manifest.json, recomputes checksums of source files, and
+    prints a WARNING if any file has changed since data generation.
+
+    Returns True if data is fresh (or cannot be verified), False if stale.
+    """
+    from pathlib import Path
+    repo_root = Path(__file__).parent.parent.parent  # src/estimation -> repo root
+
+    manifest_path = os.path.join(output_dir, "data_manifest.json")
+    if not os.path.exists(manifest_path):
+        print(f"  WARNING: No data manifest found in {output_dir} "
+              f"— cannot verify data freshness")
+        return True  # cannot verify, don't block
+
+    with open(manifest_path) as f:
+        manifest = json.load(f)
+
+    stale_files = []
+    for rel_path, recorded_checksum in manifest.get("source_checksums", {}).items():
+        abs_path = repo_root / rel_path
+        if not abs_path.exists():
+            stale_files.append((rel_path, "file missing"))
+            continue
+        current = f"sha256:{_file_sha256(abs_path)}"
+        if current != recorded_checksum:
+            stale_files.append((rel_path, "checksum mismatch"))
+
+    if stale_files:
+        exp_label = manifest.get("experiment", experiment_id or "?")
+        gen_time = manifest.get("generated_at", "unknown")
+        print(f"\n  *** WARNING: data.csv for Experiment {exp_label} may be STALE ***")
+        print(f"  Data generated at: {gen_time}")
+        for path, reason in stale_files:
+            print(f"    Changed: {path} ({reason})")
+        print(f"  Re-run the experiment to regenerate data.\n")
+        return False
+
+    return True
+
+
+def check_all_freshness():
+    """Check data freshness for all experiments. Callable from CLI."""
+    from pathlib import Path
+    repo_root = Path(__file__).parent.parent.parent
+
+    experiments = ["1", "2", "3a", "3b", "4a", "4b"]
+    all_fresh = True
+    for exp_id in experiments:
+        output_dir = repo_root / "results" / f"exp{exp_id}"
+        if not output_dir.exists():
+            print(f"Experiment {exp_id}: no results directory")
+            continue
+        print(f"Experiment {exp_id}:", end="")
+        fresh = check_data_freshness(str(output_dir), exp_id)
+        if fresh:
+            manifest_path = output_dir / "data_manifest.json"
+            if manifest_path.exists():
+                with open(manifest_path) as f:
+                    m = json.load(f)
+                print(f"  OK (generated {m.get('generated_at', '?')})")
+            else:
+                print(f"  no manifest")
+        all_fresh = all_fresh and fresh
+
+    if all_fresh:
+        print("\nAll experiments: data appears fresh.")
+    else:
+        print("\nSome experiments have potentially stale data. "
+              "Re-run affected experiments.")
 
 
 def run_factorial_analysis(df, coded_cols, response_cols, output_dir,
@@ -255,14 +391,18 @@ def run_factorial_analysis(df, coded_cols, response_cols, output_dir,
         Column names for response variables.
     output_dir : str
         Directory to write plots and results.
-    experiment_id : int, optional
-        Experiment number for labeling.
+    experiment_id : str or int, optional
+        Experiment identifier for labeling (e.g. 1, "4a", "4b").
 
     Returns
     -------
     dict : Structured results with coefficients, p-values, R², etc.
     """
     os.makedirs(output_dir, exist_ok=True)
+
+    # Check data provenance before analysis
+    check_data_freshness(output_dir, experiment_id)
+
     analysis_log = os.path.join(output_dir, "analysis_stdout.txt")
     orig_stdout = sys.stdout
 

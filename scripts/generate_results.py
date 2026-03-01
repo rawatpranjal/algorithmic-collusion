@@ -3,7 +3,7 @@
 Generate a standalone results.pdf with ALL analysis outputs.
 
 Reads factorial ANOVA estimation results, design info, and data summaries
-from results/exp{1,2,3}/ and produces a comprehensive LaTeX document
+from results/exp{1,2,3,4a,4b}/ and produces a comprehensive LaTeX document
 compiled to paper/results.pdf.
 
 Usage:
@@ -26,51 +26,49 @@ RESULTS_DIR = "results"
 PAPER_DIR = "paper"
 
 EXP_TITLES = {
-    1: "Q-Learning with Constant Valuations",
-    2: "Q-Learning with Affiliated Values",
-    3: "LinUCB Bandits with Affiliated Values",
-    4: "Autobidding Pacing: Auction Format, Objective, and Market Thickness",
+    "1": "Q-Learning with Constant Valuations",
+    "2": "Q-Learning with Affiliated Values",
+    "3": "LinUCB Bandits with Affiliated Values",
+    "4a": "Autobidding Dual Pacing",
+    "4b": "Autobidding PI Controller Pacing",
 }
 
 EXP_DESIGNS = {
-    1: {"design": "$2^{11-1}$ half-fraction (Res~V)", "k": 11},
-    2: {"design": "$3 \\times 2^3 = 24$ mixed-level factorial", "k": 4},
-    3: {"design": "$2^{8}$ full factorial", "k": 8},
-    4: {"design": "$2 \\times 2 \\times 2 = 8$ cells $\\times$ 50 seeds", "k": 3},
+    "1": {"design": "$2^{11-1}$ half-fraction (Res~V)", "k": 11},
+    "2": {"design": "$3 \\times 2^3 = 24$ mixed-level factorial", "k": 4},
+    "3": {"design": "$2^{8}$ full factorial", "k": 8},
+    "4a": {"design": "$2^6$ full factorial $\\times$ 50 seeds", "k": 6},
+    "4b": {"design": "$2^6$ full factorial $\\times$ 50 seeds", "k": 6},
 }
 
 # Response variables expected per experiment
 EXP_RESPONSES = {
-    1: [
+    "1": [
         "avg_rev_last_1000",
         "time_to_converge",
-        "avg_regret_of_seller",
         "no_sale_rate",
         "price_volatility",
         "winner_entropy",
     ],
-    2: [
+    "2": [
         "avg_rev_last_1000",
         "time_to_converge",
         "no_sale_rate",
         "price_volatility",
         "winner_entropy",
-        "excess_regret",
-        "efficient_regret",
         "btv_median",
         "winners_curse_freq",
         "bid_dispersion",
         "signal_slope_ratio",
     ],
-    3: [
+    "3": [
         "avg_rev_last_1000",
         "time_to_converge",
-        "avg_regret_seller",
         "no_sale_rate",
         "price_volatility",
         "winner_entropy",
     ],
-    4: [
+    "4a": [
         "mean_platform_revenue",
         "mean_liquid_welfare",
         "mean_effective_poa",
@@ -84,6 +82,27 @@ EXP_RESPONSES = {
         "inter_episode_volatility",
         "bid_suppression_ratio",
         "cross_episode_drift",
+        "mean_lp_offline_welfare",
+        "mean_effective_poa_lp",
+        "mean_rev_all",
+    ],
+    "4b": [
+        "mean_platform_revenue",
+        "mean_liquid_welfare",
+        "mean_effective_poa",
+        "mean_budget_utilization",
+        "mean_bid_to_value",
+        "mean_allocative_efficiency",
+        "mean_dual_cv",
+        "mean_no_sale_rate",
+        "mean_winner_entropy",
+        "warm_start_benefit",
+        "inter_episode_volatility",
+        "bid_suppression_ratio",
+        "cross_episode_drift",
+        "mean_lp_offline_welfare",
+        "mean_effective_poa_lp",
+        "mean_rev_all",
     ],
 }
 
@@ -228,11 +247,11 @@ def gen_design_summary(exp_num, design_info):
     n_factors = design_info.get("n_factors", len(factors))
     design_desc = EXP_DESIGNS.get(exp_num, {}).get("design", f"$2^{{{n_factors}}}$")
     k = EXP_DESIGNS.get(exp_num, {}).get("k", n_factors)
-    if exp_num == 2:
+    if exp_num == "2":
         n_cells = 24  # 3 × 2^3 mixed-level
-    elif exp_num == 4:
-        n_cells = 8  # 2^3 full factorial
-    elif exp_num in (1,):
+    elif exp_num in ("4a", "4b"):
+        n_cells = 2 ** k  # 2^6 full factorial
+    elif exp_num == "1":
         n_cells = 2 ** (k - 1)  # half-fraction
     else:
         n_cells = 2 ** k if k <= 11 else 2 ** (k - 1)
@@ -906,7 +925,7 @@ def generate_results_tex():
     )
 
     # Experiment sections
-    for exp_num in [1, 2, 3, 4]:
+    for exp_num in ["1", "2", "3", "4a", "4b"]:
         print(f"  Processing Experiment {exp_num}...")
         parts.append(generate_experiment_section(exp_num))
         parts.append(r"\newpage")

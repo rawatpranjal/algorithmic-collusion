@@ -1,0 +1,19 @@
+{
+  "experiment": 4,
+  "design": "2^3 = 8 cells (full factorial) x seeds",
+  "n_factors": 3,
+  "factors": {
+    "auction_type": {
+      "low": "second",
+      "high": "first"
+    },
+    "objective": {
+      "low": "value_max",
+      "high": "utility_max"
+    },
+    "n_bidders": {
+      "low": 2,
+      "high": 4
+    }
+  }
+}

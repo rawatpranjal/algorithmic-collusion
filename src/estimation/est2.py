@@ -18,12 +18,11 @@ CODED_COLS = [
 
 RESPONSE_COLS = [
     "avg_rev_last_1000",
+    "avg_rev_all",
     "time_to_converge",
     "no_sale_rate",
     "price_volatility",
     "winner_entropy",
-    "excess_regret",
-    "efficient_regret",
     "btv_median",
     "winners_curse_freq",
     "bid_dispersion",

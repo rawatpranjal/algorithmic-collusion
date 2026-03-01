@@ -1,0 +1,302 @@
+{
+  "platform_revenue": {
+    "coefficients": {
+      "const": {
+        "estimate": 2997.8684577124573,
+        "std_err": 1061949.1848209577,
+        "t_value": 0.002822986730968574,
+        "p_value": 0.9977475854636865
+      },
+      "FPA": {
+        "estimate": 72266815995.78125,
+        "std_err": 2.4157885017215155e+18,
+        "t_value": 2.991438031279774e-08,
+        "p_value": 0.9999999761317778
+      },
+      "UtilityMax": {
+        "estimate": -677584291100.625,
+        "std_err": 6.281165805355136e+18,
+        "t_value": -1.0787556197337391e-07,
+        "p_value": 0.9999999139277547
+      },
+      "N4": {
+        "estimate": 11094099108.929688,
+        "std_err": 7.961933693056155e+16,
+        "t_value": 1.3933925521893242e-07,
+        "p_value": 0.9999998888233596
+      },
+      "FPA_x_UtilityMax": {
+        "estimate": 835469683731.625,
+        "std_err": 1.0499613261511762e+19,
+        "t_value": 7.957147210309076e-08,
+        "p_value": 0.9999999365111509
+      },
+      "FPA_x_N4": {
+        "estimate": -466682429364.6875,
+        "std_err": 7.253811942936319e+18,
+        "t_value": -6.433616325263817e-08,
+        "p_value": 0.9999999486671687
+      },
+      "UtilityMax_x_N4": {
+        "estimate": -169367581363.5,
+        "std_err": 5.770872179465438e+18,
+        "t_value": -2.9348697405941972e-08,
+        "p_value": 0.9999999765831274
+      }
+    },
+    "r_squared": 0.99989024500036,
+    "adj_r_squared": 0.9998890148811224,
+    "n_obs": 36000,
+    "n_seeds": 400
+  },
+  "liquid_welfare": {
+    "coefficients": {
+      "const": {
+        "estimate": 2998.999067592847,
+        "std_err": 643930.0201074049,
+        "t_value": 0.004657336937160697,
+        "p_value": 0.9962839961972288
+      },
+      "FPA": {
+        "estimate": 82380290.3125,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "UtilityMax": {
+        "estimate": 1895414199.0,
+        "std_err": 2.3152012900083046e+18,
+        "t_value": 8.18682249003585e-10,
+        "p_value": 0.9999999993467861
+      },
+      "N4": {
+        "estimate": -66421787.88671875,
+        "std_err": 1.2987256991686194e+17,
+        "t_value": -5.114381576435943e-10,
+        "p_value": 0.9999999995919314
+      },
+      "FPA_x_UtilityMax": {
+        "estimate": -1284647971.875,
+        "std_err": 4.402328237496487e+18,
+        "t_value": -2.9181103783518715e-10,
+        "p_value": 0.9999999997671685
+      },
+      "FPA_x_N4": {
+        "estimate": -672600859.25,
+        "std_err": 4.200620672265447e+18,
+        "t_value": -1.601193994237185e-10,
+        "p_value": 0.9999999998722432
+      },
+      "UtilityMax_x_N4": {
+        "estimate": -8367904964.0,
+        "std_err": 3.4899563400710804e+18,
+        "t_value": -2.39771050082236e-09,
+        "p_value": 0.9999999980869038
+      }
+    },
+    "r_squared": 0.9989179955124032,
+    "adj_r_squared": 0.9989058685519945,
+    "n_obs": 36000,
+    "n_seeds": 400
+  },
+  "effective_poa": {
+    "coefficients": {
+      "const": {
+        "estimate": 0.9999998861522363,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "FPA": {
+        "estimate": -41553.38750457764,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "UtilityMax": {
+        "estimate": -956061.6350097656,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "N4": {
+        "estimate": 33504.18780899048,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "FPA_x_UtilityMax": {
+        "estimate": 647986.5065917969,
+        "std_err": 4550161756702328.0,
+        "t_value": 1.424095540421879e-10,
+        "p_value": 0.9999999998863737
+      },
+      "FPA_x_N4": {
+        "estimate": 339265.10077667236,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "UtilityMax_x_N4": {
+        "estimate": 4220836.329040527,
+        "std_err": 7395480133572367.0,
+        "t_value": 5.707318866127038e-10,
+        "p_value": 0.9999999995446218
+      }
+    },
+    "r_squared": 0.9915461769697698,
+    "adj_r_squared": 0.9914514276610883,
+    "n_obs": 36000,
+    "n_seeds": 400
+  },
+  "budget_utilization": {
+    "coefficients": {
+      "const": {
+        "estimate": 0.9996309369908364,
+        "std_err": 122.92219222892174,
+        "t_value": 0.008132225099998162,
+        "p_value": 0.993511494665296
+      },
+      "FPA": {
+        "estimate": 30397379.897525787,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "UtilityMax": {
+        "estimate": -260496522.20414734,
+        "std_err": 4167940289794393.0,
+        "t_value": -6.250006096344479e-08,
+        "p_value": 0.9999999501321664
+      },
+      "N4": {
+        "estimate": 8970580.582494736,
+        "std_err": 84578238543653.33,
+        "t_value": 1.0606251367915109e-07,
+        "p_value": 0.9999999153743578
+      },
+      "FPA_x_UtilityMax": {
+        "estimate": 316452206.1871643,
+        "std_err": 4273093257089987.0,
+        "t_value": 7.405693888428519e-08,
+        "p_value": 0.9999999409111119
+      },
+      "FPA_x_N4": {
+        "estimate": -122874845.04321289,
+        "std_err": 5204212931910373.0,
+        "t_value": -2.3610649035858673e-08,
+        "p_value": 0.9999999811614276
+      },
+      "UtilityMax_x_N4": {
+        "estimate": -214934345.3678894,
+        "std_err": 4768046080198302.0,
+        "t_value": -4.50780763760887e-08,
+        "p_value": 0.9999999640328988
+      }
+    },
+    "r_squared": 0.9994120689060422,
+    "adj_r_squared": 0.9994054794536127,
+    "n_obs": 36000,
+    "n_seeds": 400
+  },
+  "bid_to_value": {
+    "coefficients": {
+      "const": {
+        "estimate": 1.2379501563455142,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "FPA": {
+        "estimate": -2365568388.6867256,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "UtilityMax": {
+        "estimate": 2139454249.298462,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "N4": {
+        "estimate": -615584250.2893524,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "FPA_x_UtilityMax": {
+        "estimate": 308585955.6720276,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "FPA_x_N4": {
+        "estimate": -2420522205.957123,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "UtilityMax_x_N4": {
+        "estimate": 4389930578.107819,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      }
+    },
+    "r_squared": 0.9994074708166389,
+    "adj_r_squared": 0.9994008298294434,
+    "n_obs": 36000,
+    "n_seeds": 400
+  },
+  "allocative_efficiency": {
+    "coefficients": {
+      "const": {
+        "estimate": 0.8382052087492736,
+        "std_err": 138.33137682357363,
+        "t_value": 0.006059400462834341,
+        "p_value": 0.9951653275082425
+      },
+      "FPA": {
+        "estimate": 14836445.602115631,
+        "std_err": 306805770319922.25,
+        "t_value": 4.835777888611711e-08,
+        "p_value": 0.9999999614160748
+      },
+      "UtilityMax": {
+        "estimate": -479487031.77763367,
+        "std_err": 1734820197193087.8,
+        "t_value": -2.763900446590582e-07,
+        "p_value": 0.9999997794726506
+      },
+      "N4": {
+        "estimate": 417331042.7814894,
+        "std_err": NaN,
+        "t_value": NaN,
+        "p_value": NaN
+      },
+      "FPA_x_UtilityMax": {
+        "estimate": 435767922.183197,
+        "std_err": 1889154466272245.0,
+        "t_value": 2.3066823277985927e-07,
+        "p_value": 0.9999998159533784
+      },
+      "FPA_x_N4": {
+        "estimate": 3112924282.6061707,
+        "std_err": 1349152313255455.5,
+        "t_value": 2.3073186415066787e-06,
+        "p_value": 0.9999981590260791
+      },
+      "UtilityMax_x_N4": {
+        "estimate": -8664892228.42575,
+        "std_err": 1164642975214895.0,
+        "t_value": -7.439955774280905e-06,
+        "p_value": 0.9999940637741547
+      }
+    },
+    "r_squared": 0.9942400639844374,
+    "adj_r_squared": 0.9941755073981956,
+    "n_obs": 36000,
+    "n_seeds": 400
+  }
+}

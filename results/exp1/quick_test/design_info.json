@@ -1,6 +1,6 @@
 {
   "experiment": 1,
-  "n_factors": 11,
+  "n_factors": 10,
   "factors": {
     "auction_type": {
       "low": "second",
@@ -33,10 +33,6 @@
     "n_bidders": {
       "low": 2,
       "high": 4
-    },
-    "n_actions": {
-      "low": 11,
-      "high": 21
     },
     "info_feedback": {
       "low": "minimal",

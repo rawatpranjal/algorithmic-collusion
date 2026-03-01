@@ -1,40 +1,29 @@
-\section{Experiment I: Q-Learning under Constant Valuations}
+\section{Q-Learning under Constant Valuations}
 \label{sec:exp1_results}
+
+Experiment~1 deploys Q-learning agents with constant valuations ($v=1$) in a $2^{10-1}$ Resolution~V half-fraction spanning 10 factors and 1{,}024 observations. Despite identical true valuations across all bidders, average revenues in the final 1{,}000 episodes range from approximately 0.3 to 1.0, revealing substantial variability driven by the interaction of learning parameters and market structure. The factorial analysis decomposes this variability into systematic effects attributable to individual factors and their interactions.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/e1_trace}
-  \caption{Representative learning trajectory for a single trial of Experiment~1 (first-price auction, 2~bidders, Boltzmann exploration, 10{,}000 episodes). Top: rolling-mean revenue converging toward the BNE prediction. Middle: per-bidder mean bids evolving over time. Bottom: exploration temperature decay schedule.}
+  \caption{Representative learning trajectory for a single trial of Experiment~1 (first-price auction, 2~bidders, Boltzmann exploration, 10{,}000 episodes). Per-bidder mean bids (200-episode rolling mean) converge toward the BNE prediction over the course of training.}
   \label{fig:e1_trace}
 \end{figure}
 
-Experiment~1 deploys Q-learning agents with constant valuations ($v=1$) in a $2^{11-1}$ Resolution~V half-fraction spanning 11 factors and 2{,}048 observations. Despite identical true valuations across all bidders, average revenues in the final 1{,}000 episodes range from approximately 0.3 to 1.0, revealing substantial variability driven by the interaction of learning parameters and auction format. The factorial analysis decomposes this variability into systematic effects attributable to individual factors and their interactions.
+\subsection{Revenue}
 
-\subsection{Revenue and Seller Regret}
-
-Auction type is the dominant factor affecting both revenue and seller regret. Table~\ref{tab:exp1_ranked_rev} ranks significant effects for revenue by absolute $t$-statistic. Auction type yields the largest $t$-statistic, followed by exploration strategy and asynchronous updating. First-price auctions consistently reduce revenue and increase regret relative to second-price auctions, as confirmed by the main effects plots (Figures~\ref{fig:e1_main_rev} and~\ref{fig:e1_main_reg}).
+Number of bidders is the dominant factor for revenue ($|t| = \ExpOneRevFactorTOne$), followed by the discount factor $\gamma$ ($|t| = \ExpOneRevFactorTTwo$) and update mode ($|t| = \ExpOneRevFactorTThree$). Table~\ref{tab:exp1_ranked_rev} ranks significant effects by absolute $t$-statistic. Moving from two to four bidders increases average revenue by \ExpOneRevTopPctEffect\% of the grand mean, an effect \ExpOneRevTopVsAuctionRatio{} times larger than that of auction format. Auction format, by contrast, does not exert a statistically significant main effect on revenue ($|t| = \ExpOneRevAuctionT$, $p \ExpOneRevAuctionPFmt$): first-price and second-price auctions produce nearly identical average revenues in the final 1{,}000 episodes (FPA mean \ExpOneRevMeanFPA{} vs.\ SPA mean \ExpOneRevMeanSPA). The main effects plot (Figure~\ref{fig:e1_main_rev}) confirms these findings.
 
 \input{tables/exp1_ranked_rev}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/e1_main_rev}
-  \caption{Experiment~1: Main effects plot for average revenue. First-price auctions ($+1$) reduce revenue relative to second-price ($-1$).}
+  \caption{Experiment~1: Main effects plot for average revenue. Number of bidders and discount factor dominate; auction format has a negligible main effect.}
   \label{fig:e1_main_rev}
 \end{figure}
 
-\input{tables/exp1_ranked_reg}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e1_main_reg}
-  \caption{Experiment~1: Main effects plot for seller regret. First-price auctions increase regret across all factor configurations.}
-  \label{fig:e1_main_reg}
-\end{figure}
-
-Exploration strategy is the second most important factor. The main effects plots show that $\varepsilon$-greedy exploration intensifies first-price losses relative to Boltzmann exploration, which uses softmax-weighted Q-values to select actions probabilistically. Boltzmann exploration provides a more controlled mechanism that ensures high-bid actions receive occasional reinforcement even when they are not strictly greedy, thereby mitigating aggressive underbidding. Asynchronous Q-updates rank third in importance, increasing first-price losses compared to synchronous updates. Synchronous learning dampens the detrimental impact of first-price auctions by maintaining more uniform knowledge updates across all possible actions and bidders.
-
-The number of bidders moderates the auction type effect through a significant two-way interaction: as the number of bidders increases, the revenue penalty from first-price auctions shrinks, consistent with the economic intuition that competitive pressure partially offsets strategic underbidding. Figure~\ref{fig:e1_int_rev} displays the top interaction effects for revenue, showing the non-additive interplay between auction format and other design factors.
+Although auction format has no significant main effect on final-episode revenue, it does interact significantly with other factors. The auction format $\times$ number of bidders interaction ($|t| = \ExpOneRevAuctionxNbidAbsT$) indicates that the effect of auction format is moderated by competitive pressure: the two formats diverge more in thin markets and converge as competition intensifies. The auction format $\times$ discount factor interaction ($|t| = \ExpOneRevAuctionxGammaAbsT$) reflects that patient agents shade bids more aggressively under first-price rules. Figure~\ref{fig:e1_int_rev} displays these top interaction effects.
 
 \begin{figure}[H]
   \centering
@@ -45,41 +34,19 @@ The number of bidders moderates the auction type effect through a significant tw
 
 \subsection{Price Volatility}
 
-Although auction type has a minimal direct effect on price volatility, Table~\ref{tab:exp1_ranked_vol} reveals that volatility depends significantly on exploration strategy and update mode. Agents using $\varepsilon$-greedy exploration or asynchronous Q-learning updates exhibit substantially higher price volatility, even when auction type itself does not raise volatility on average. The main effects plot (Figure~\ref{fig:e1_main_vol}) confirms these directional effects. Increasing the number of bidders also modestly increases price volatility under first-price auctions, pushing against the intuition that more competition always stabilises outcomes.
+Table~\ref{tab:exp1_ranked_vol} ranks the significant effects for price volatility. Market thickness, reserve price, discount factor, and update mode are the primary drivers (Figure~\ref{fig:e1_main_vol}). Neither auction format nor exploration strategy has a significant direct effect.
 
 \input{tables/exp1_ranked_vol}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/e1_main_vol}
-  \caption{Experiment~1: Main effects plot for price volatility. Exploration strategy and update mode are the primary drivers.}
+  \caption{Experiment~1: Main effects plot for price volatility. Number of bidders, reserve price, and discount factor are the primary drivers.}
   \label{fig:e1_main_vol}
 \end{figure}
 
-\subsection{Model Adequacy and Robustness}
-\label{sec:exp1_robustness}
-
-\input{tables/exp1_model_fit}
-
-\input{tables/exp1_adequacy}
-
-Table~\ref{tab:exp1_adequacy} reports model adequacy diagnostics for the three primary response variables. OLS $R^2$ ranges from 0.79 (average revenue) to 0.98 (price volatility), with predicted $R^2$ from leave-one-out cross-validation confirming strong out-of-sample performance for regret and volatility (gaps of 0.016 and 0.009, respectively). Revenue shows a larger PRESS gap of 0.097, indicating some overfitting in the full interaction model. The lack-of-fit test is significant ($p < 0.0001$) for all three responses, indicating detectable departures from the linear model with two-way interactions. However, LightGBM cross-validated $R^2$ is lower than OLS $R^2$ for every response, confirming that the detectable misfit is too small to exploit with a flexible nonparametric learner.
-
-\input{tables/exp1_inference_robust}
-
-Table~\ref{tab:exp1_inference} reports inference robustness. Under HC3 heteroskedasticity-consistent standard errors, 7 of 105 effects (6.7\%) change significance status, all involving marginal effects near the $p = 0.05$ boundary (discount factor, discount factor interactions). The dominant effects, auction type ($p \ll 0.001$) and exploration strategy ($p \ll 0.001$), remain highly significant under HC3. Holm--Bonferroni correction, which controls the family-wise error rate across 105 simultaneous tests, retains 19 of 50 OLS-significant effects; the less conservative Benjamini--Hochberg procedure retains 41. All findings reported in the preceding subsections survive both corrections.
-
-Quantile regression confirms that factor effects are broadly stable across the response distribution (Figure~\ref{fig:e1_quantile_rev}). The auction type effect on revenue is slightly larger at the 10th percentile ($-0.087$) than at the median ($-0.061$), indicating that the worst-performing configurations are disproportionately harmed by first-price auctions. The exploration strategy and number of bidders effects remain significant across all five quantiles, confirming that these findings are not driven by tail behaviour.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e1_quantile_rev}
-  \caption{Experiment~1: Quantile regression coefficients for average revenue at the 10th, 25th, 50th, 75th, and 90th percentiles. The auction type penalty is moderately larger in the left tail.}
-  \label{fig:e1_quantile_rev}
-\end{figure}
-
-\input{tables/exp1_significant}
+Model adequacy diagnostics (Online Appendix~D) confirm that the linear model captures the dominant effects.\footnote{$R^2$ values range from \ExpOneRsqMin{} to \ExpOneRsqMax{} across response variables. LightGBM cross-validated $R^2$ modestly exceeds OLS for revenue (\ExpOneRevLGBMRsq{} vs.\ \ExpOneRevRsq), and the gap exceeds the 0.05 suggestive threshold for several responses, indicating detectable nonlinear structure; however, effect rankings are unchanged under the nonparametric model. Of the \ExpOneNRawSig{} effects significant at $p < 0.05$, \ExpOneNBHSig{} (\ExpOneBHPct\%) survive Benjamini--Hochberg correction.}
 
 \subsection{Summary}
 
-First-price auctions are associated with substantially lower final revenues and higher seller regret in the constant-valuation Q-learning setting. These effects are buffered by having more bidders but intensified by $\varepsilon$-greedy exploration and asynchronous updates. Boltzmann exploration and synchronous learning both help curtail first-price losses by introducing value-weighted randomisation and uniform knowledge updates, respectively. Price volatility does not increase under first-price on average but does when agents use asynchronous updating or $\varepsilon$-greedy exploration. From the seller's perspective, these results are unambiguous: first-price auctions fare poorly when Q-learning algorithms determine bids.
+The number of bidders is the strongest determinant of seller outcomes, followed by the discount factor and update mode. Auction format does not significantly affect end-state revenue but interacts with competitive pressure and temporal discounting. This null result for auction format provides a baseline: subsequent experiments will show that its importance is context-dependent, emerging under affiliated valuations and budget-constrained pacing. Price volatility is governed by market thickness, reserve prices, and the discount factor.

@@ -13,9 +13,10 @@ Extends the baseline factorial OLS with:
   H. LASSO with cross-validation
   I. LightGBM nonparametric R² upper bound
   J. Wild bootstrap p-values
-  K. Power analysis
-  L. Response dependency analysis
-  M. Summary comparison table
+  K. Lenth's pseudo-standard error
+  L. Power analysis
+  M. Response dependency analysis
+  N. Summary comparison table
 
 Public API:
     run_robust_analysis(df, coded_cols, response_cols, output_dir,
@@ -35,6 +36,16 @@ import warnings
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+plt.rcParams.update({
+    "font.size": 11,
+    "axes.titlesize": 13,
+    "axes.labelsize": 12,
+    "xtick.labelsize": 11,
+    "ytick.labelsize": 11,
+    "legend.fontsize": 10,
+})
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -74,8 +85,8 @@ def _json_safe(obj):
 
 
 def _auto_detect_qr_responses(response_cols):
-    """Pick responses containing 'rev', 'regret', or 'revenue' for quantile regression."""
-    keywords = ("rev", "regret", "revenue")
+    """Pick responses containing 'rev' or 'revenue' for quantile regression."""
+    keywords = ("rev", "revenue")
     return [r for r in response_cols if any(k in r.lower() for k in keywords)]
 
 
@@ -451,7 +462,7 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
     print("=" * 60)
 
     quantiles = [0.10, 0.25, 0.50, 0.75, 0.90]
-    # Auto-detect revenue/regret responses
+    # Auto-detect revenue responses for quantile regression
     qr_responses = _auto_detect_qr_responses(response_cols)
     if not qr_responses:
         # Fallback: use first two responses
@@ -495,13 +506,13 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
             ax.axhline(0, color="gray", linestyle="--", alpha=0.5)
             ax.set_xlabel("Quantile (tau)")
             ax.set_ylabel("Coefficient")
-            ax.set_title(term, fontsize=9)
+            ax.set_title(term, fontsize=11)
             ax.set_xticks(quantiles)
 
         fig.suptitle(f"Quantile Regression Coefficients: {_clean(resp)}", fontsize=11)
         fig.tight_layout()
         path = os.path.join(output_dir, f"quantile_coefs_{resp}.png")
-        fig.savefig(path, dpi=150, bbox_inches="tight")
+        fig.savefig(path, dpi=200, bbox_inches="tight")
         plt.close(fig)
         print(f"\n  {resp}: Plot saved to {path}")
 
@@ -633,14 +644,14 @@ def section_lightgbm(df, coded_cols, response_cols, output_dir):
     ax.bar(x - w / 2, ols_vals, w, label="OLS (with interactions)", color="#2980b9")
     ax.bar(x + w / 2, lgbm_vals, w, label="LightGBM 5-fold CV", color="#27ae60")
     ax.set_xticks(x)
-    ax.set_xticklabels([_clean(r) for r in response_cols], fontsize=8, rotation=15)
+    ax.set_xticklabels([_clean(r) for r in response_cols], fontsize=10, rotation=15)
     ax.set_ylabel("R-squared")
     ax.set_title("Linear vs Nonparametric Model Adequacy")
     ax.legend()
     ax.set_ylim(0, 1.05)
     fig.tight_layout()
     path = os.path.join(output_dir, "lgbm_comparison.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
+    fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"\n  Plot saved to {path}")
 
@@ -711,13 +722,57 @@ def section_wild_bootstrap(df, coded_cols, response_cols, n_boot=1000):
 
 
 # ===================================================================
-# K. Power Analysis
+# K. Lenth's Pseudo-Standard Error
+# ===================================================================
+
+def section_lenth(df, coded_cols, response_cols):
+    """Compute Lenth's PSE, ME, and SME for each response variable."""
+    print("\n" + "=" * 60)
+    print("K. LENTH'S PSEUDO-STANDARD ERROR")
+    print("=" * 60)
+
+    from estimation.factorial_analysis import lenth_pse
+
+    results = {}
+    for resp in response_cols:
+        formula = _build_formula(resp, coded_cols)
+        model = smf.ols(formula, data=df).fit()
+
+        pse, me, sme = lenth_pse(model)
+
+        # Identify effects exceeding ME and SME
+        effects = model.params.drop("Intercept", errors="ignore")
+        abs_effects = effects.abs()
+
+        exceeds_me = [_clean(n) for n in abs_effects.index if abs_effects[n] > me]
+        exceeds_sme = [_clean(n) for n in abs_effects.index if abs_effects[n] > sme]
+
+        results[resp] = {
+            "pse": float(pse),
+            "me": float(me),
+            "sme": float(sme),
+            "n_exceed_me": len(exceeds_me),
+            "n_exceed_sme": len(exceeds_sme),
+            "effects_exceeding_me": exceeds_me,
+            "effects_exceeding_sme": exceeds_sme,
+        }
+
+        print(f"\n  {resp}:")
+        print(f"    PSE={pse:.6f}  ME={me:.6f}  SME={sme:.6f}")
+        print(f"    Effects > ME ({len(exceeds_me)}): {exceeds_me}")
+        print(f"    Effects > SME ({len(exceeds_sme)}): {exceeds_sme}")
+
+    return results
+
+
+# ===================================================================
+# L. Power Analysis
 # ===================================================================
 
 def section_power(df, coded_cols, response_cols, output_dir):
     """Compute minimum detectable effect sizes at 80% power."""
     print("\n" + "=" * 60)
-    print("K. POWER ANALYSIS")
+    print("L. POWER ANALYSIS")
     print("=" * 60)
 
     results = {}
@@ -730,45 +785,69 @@ def section_power(df, coded_cols, response_cols, output_dir):
         sigma = float(np.sqrt(model.mse_resid))
         df_resid = int(model.df_resid)
 
-        se_main = sigma / np.sqrt(n)
         t_crit = stats.t.ppf(0.975, df_resid)
         t_power = stats.norm.ppf(0.80)
-        mde_main = (t_crit + t_power) * se_main
-        mde_interaction = mde_main  # same SE for balanced 2^k
+
+        # Per-column SE: sigma / sqrt(sum(x^2)) accounts for coding variance.
+        # Binary +-1 columns have sum(x^2) = n; orthogonal polynomial contrasts
+        # (e.g. eta_linear, eta_quadratic) have different sums of squares.
+        per_col_mde = {}
+        for col in coded_cols:
+            ss = float((df[col] ** 2).sum())
+            se_col = sigma / np.sqrt(ss)
+            mde_col = (t_crit + t_power) * se_col
+            per_col_mde[col] = {"se": se_col, "mde": mde_col, "sum_x2": ss}
+
+        # Interaction MDE: use sum of squares of the product column
+        interaction_mdes = {}
+        for i, c1 in enumerate(coded_cols):
+            for c2 in coded_cols[i + 1:]:
+                prod = df[c1] * df[c2]
+                ss_int = float((prod ** 2).sum())
+                se_int = sigma / np.sqrt(ss_int)
+                mde_int = (t_crit + t_power) * se_int
+                interaction_mdes[f"{c1}:{c2}"] = {"se": se_int, "mde": mde_int, "sum_x2": ss_int}
+
+        # Summary stats: worst-case (largest) MDE across main effects
+        mde_values = [v["mde"] for v in per_col_mde.values()]
+        mde_max = max(mde_values)
+        mde_min = min(mde_values)
 
         resp_mean = float(df[resp].mean())
         resp_std = float(df[resp].std())
 
         results[resp] = {
             "sigma_error": sigma,
-            "se_main_effect": float(se_main),
-            "mde_main_effect": float(mde_main),
-            "mde_interaction": float(mde_interaction),
-            "mde_as_pct_mean": float(mde_main / abs(resp_mean) * 100) if resp_mean != 0 else None,
-            "mde_as_pct_std": float(mde_main / resp_std * 100) if resp_std > 0 else None,
+            "per_column_mde": {col: {"se": v["se"], "mde": v["mde"], "sum_x2": v["sum_x2"]}
+                               for col, v in per_col_mde.items()},
+            "mde_main_effect_max": float(mde_max),
+            "mde_main_effect_min": float(mde_min),
+            "mde_as_pct_mean": float(mde_max / abs(resp_mean) * 100) if resp_mean != 0 else None,
+            "mde_as_pct_std": float(mde_max / resp_std * 100) if resp_std > 0 else None,
             "n": n,
             "df_resid": df_resid,
         }
 
         print(f"\n  {resp}:")
-        print(f"    sigma_error={sigma:.6f}  SE_main={se_main:.6f}")
-        print(f"    MDE (80% power): main={mde_main:.6f}  "
-              f"interaction={mde_interaction:.6f}")
+        print(f"    sigma_error={sigma:.6f}")
+        print(f"    Per-column MDE (80% power, alpha=0.05):")
+        for col, v in per_col_mde.items():
+            print(f"      {col:40s}  sum(x²)={v['sum_x2']:8.1f}  SE={v['se']:.6f}  MDE={v['mde']:.6f}")
         if resp_mean != 0:
-            print(f"    MDE as % of mean response: {mde_main / abs(resp_mean) * 100:.1f}%")
+            print(f"    Worst-case MDE as % of mean: {mde_max / abs(resp_mean) * 100:.1f}%")
 
-    # Plot detectable effect sizes
+    # Plot detectable effect sizes (worst-case MDE across columns per response)
     fig, ax = plt.subplots(figsize=(8, 4))
     resp_labels = [_clean(r) for r in response_cols]
-    mdes = [results[r]["mde_main_effect"] for r in response_cols]
+    mdes = [results[r]["mde_main_effect_max"] for r in response_cols]
     ax.barh(resp_labels, mdes, color="#e67e22")
     ax.set_xlabel("Minimum Detectable Effect (80% power, alpha=0.05)")
-    ax.set_title("Power Analysis: Detectable Effect Sizes")
+    ax.set_title("Power Analysis: Worst-Case Detectable Effect Sizes")
     for i, v in enumerate(mdes):
-        ax.text(v + 0.001, i, f"{v:.4f}", va="center", fontsize=8)
+        ax.text(v + 0.001, i, f"{v:.4f}", va="center", fontsize=10)
     fig.tight_layout()
     path = os.path.join(output_dir, "power_analysis.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
+    fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"\n  Plot saved to {path}")
 
@@ -776,13 +855,13 @@ def section_power(df, coded_cols, response_cols, output_dir):
 
 
 # ===================================================================
-# L. Response Dependency Analysis
+# M. Response Dependency Analysis
 # ===================================================================
 
 def section_response_deps(df, response_cols, output_dir):
     """Correlation matrix and near-algebraic dependency check."""
     print("\n" + "=" * 60)
-    print("L. RESPONSE DEPENDENCY ANALYSIS")
+    print("M. RESPONSE DEPENDENCY ANALYSIS")
     print("=" * 60)
 
     avail = [r for r in response_cols if r in df.columns]
@@ -829,17 +908,17 @@ def section_response_deps(df, response_cols, output_dir):
     im = ax.imshow(corr.values, cmap="RdBu_r", vmin=-1, vmax=1, aspect="auto")
     ax.set_xticks(range(len(avail)))
     ax.set_yticks(range(len(avail)))
-    ax.set_xticklabels([_clean(r) for r in avail], rotation=45, ha="right", fontsize=8)
-    ax.set_yticklabels([_clean(r) for r in avail], fontsize=8)
+    ax.set_xticklabels([_clean(r) for r in avail], rotation=45, ha="right", fontsize=10)
+    ax.set_yticklabels([_clean(r) for r in avail], fontsize=10)
     for i in range(len(avail)):
         for j in range(len(avail)):
-            ax.text(j, i, f"{corr.iloc[i, j]:.2f}", ha="center", va="center", fontsize=7,
+            ax.text(j, i, f"{corr.iloc[i, j]:.2f}", ha="center", va="center", fontsize=8,
                     color="white" if abs(corr.iloc[i, j]) > 0.5 else "black")
     fig.colorbar(im, ax=ax, shrink=0.8)
     ax.set_title("Response Correlation Matrix")
     fig.tight_layout()
     path = os.path.join(output_dir, "response_correlations.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
+    fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"\n  Plot saved to {path}")
 
@@ -850,14 +929,14 @@ def section_response_deps(df, response_cols, output_dir):
 
 
 # ===================================================================
-# M. Summary & Comparison Table
+# N. Summary & Comparison Table
 # ===================================================================
 
 def section_summary(all_results, df, coded_cols, response_cols, output_dir,
                     experiment_id=None):
     """Master comparison table across all methods."""
     print("\n" + "=" * 60)
-    print("M. SUMMARY & COMPARISON TABLE")
+    print("N. SUMMARY & COMPARISON TABLE")
     print("=" * 60)
 
     rows = []
@@ -957,8 +1036,9 @@ def section_summary(all_results, df, coded_cols, response_cols, output_dir,
                 pw = all_results["power"][resp]
                 pct = pw.get("mde_as_pct_mean")
                 pct_str = f"({pct:.1f}% of mean)" if pct is not None else ""
+                mde_max = pw.get("mde_main_effect_max", pw.get("mde_main_effect", 0))
                 summary_lines.append(
-                    f"  {_clean(resp):30s}  MDE={pw['mde_main_effect']:.6f} {pct_str}"
+                    f"  {_clean(resp):30s}  MDE={mde_max:.6f} {pct_str}"
                 )
 
     summary_text = "\n".join(summary_lines)
@@ -989,8 +1069,8 @@ def run_robust_analysis(df, coded_cols, response_cols, output_dir,
         Response variable column names.
     output_dir : str
         Base output directory (robust/ subdirectory is created automatically).
-    experiment_id : int, optional
-        Experiment number for labeling.
+    experiment_id : str or int, optional
+        Experiment identifier for labeling (e.g. 1, "4a", "4b").
 
     Returns
     -------
@@ -1045,6 +1125,7 @@ def run_robust_analysis(df, coded_cols, response_cols, output_dir,
     all_results["wild_bootstrap"] = section_wild_bootstrap(
         df, coded_cols, active_responses, n_boot=1000
     )
+    all_results["lenth"] = section_lenth(df, coded_cols, active_responses)
     all_results["power"] = section_power(
         df, coded_cols, active_responses, robust_dir
     )
@@ -1074,51 +1155,69 @@ def run_robust_analysis(df, coded_cols, response_cols, output_dir,
 
 # Per-experiment defaults for standalone mode
 _EXP_DEFAULTS = {
-    1: {
+    "1": {
         "coded_cols": [
             "auction_type_coded", "alpha_coded", "gamma_coded",
-            "exploration_coded", "asynchronous_coded", "n_bidders_coded",
+            "reserve_price_coded", "init_coded", "exploration_coded",
+            "asynchronous_coded", "n_bidders_coded",
+            "info_feedback_coded", "decay_type_coded",
         ],
         "response_cols": [
-            "avg_rev_last_1000", "time_to_converge", "avg_regret_of_seller",
-            "price_volatility", "winner_entropy",
+            "avg_rev_last_1000", "time_to_converge",
+            "no_sale_rate", "price_volatility", "winner_entropy",
         ],
         "data_path": "results/exp1/data.csv",
         "output_dir": "results/exp1",
         "time_norm_col": "episodes",
     },
-    2: {
+    "2": {
         "coded_cols": [
             "auction_type_coded", "eta_linear_coded", "eta_quadratic_coded",
             "n_bidders_coded", "state_info_coded",
         ],
         "response_cols": [
             "avg_rev_last_1000", "time_to_converge", "no_sale_rate",
-            "price_volatility", "winner_entropy", "excess_regret",
-            "efficient_regret", "btv_median", "winners_curse_freq",
+            "price_volatility", "winner_entropy",
+            "btv_median", "winners_curse_freq",
             "bid_dispersion", "signal_slope_ratio",
         ],
         "data_path": "results/exp2/data.csv",
         "output_dir": "results/exp2",
         "time_norm_col": "episodes",
     },
-    3: {
+    "3a": {
         "coded_cols": [
-            "algorithm_coded", "auction_type_coded", "n_bidders_coded",
+            "auction_type_coded", "n_bidders_coded",
             "reserve_price_coded", "eta_linear_coded", "eta_quadratic_coded",
-            "exploration_intensity_coded", "context_richness_coded", "lam_coded",
+            "exploration_intensity_coded", "context_richness_coded",
+            "lam_coded", "memory_decay_coded",
         ],
         "response_cols": [
-            "avg_rev_last_1000", "time_to_converge", "avg_regret_seller",
+            "avg_rev_last_1000", "time_to_converge",
             "no_sale_rate", "price_volatility", "winner_entropy",
         ],
-        "data_path": "results/exp3/data.csv",
-        "output_dir": "results/exp3",
+        "data_path": "results/exp3a/data.csv",
+        "output_dir": "results/exp3a",
         "time_norm_col": "max_rounds",
     },
-    4: {
+    "3b": {
+        "coded_cols": [
+            "auction_type_coded", "n_bidders_coded",
+            "reserve_price_coded", "eta_linear_coded", "eta_quadratic_coded",
+            "exploration_intensity_coded", "context_richness_coded",
+        ],
+        "response_cols": [
+            "avg_rev_last_1000", "time_to_converge",
+            "no_sale_rate", "price_volatility", "winner_entropy",
+        ],
+        "data_path": "results/exp3b/data.csv",
+        "output_dir": "results/exp3b",
+        "time_norm_col": "max_rounds",
+    },
+    "4a": {
         "coded_cols": [
             "auction_type_coded", "objective_coded", "n_bidders_coded",
+            "budget_multiplier_coded", "reserve_price_coded", "sigma_coded",
         ],
         "response_cols": [
             "mean_platform_revenue", "mean_liquid_welfare", "mean_effective_poa",
@@ -1127,9 +1226,30 @@ _EXP_DEFAULTS = {
             "mean_winner_entropy", "warm_start_benefit",
             "inter_episode_volatility", "bid_suppression_ratio",
             "cross_episode_drift",
+            "mean_lp_offline_welfare", "mean_effective_poa_lp",
+            "mean_rev_all",
         ],
-        "data_path": "results/exp4/data.csv",
-        "output_dir": "results/exp4",
+        "data_path": "results/exp4a/data.csv",
+        "output_dir": "results/exp4a",
+        "time_norm_col": None,
+    },
+    "4b": {
+        "coded_cols": [
+            "auction_type_coded", "aggressiveness_coded", "n_bidders_coded",
+            "budget_multiplier_coded", "reserve_price_coded", "sigma_coded",
+        ],
+        "response_cols": [
+            "mean_platform_revenue", "mean_liquid_welfare", "mean_effective_poa",
+            "mean_budget_utilization", "mean_bid_to_value",
+            "mean_allocative_efficiency", "mean_dual_cv", "mean_no_sale_rate",
+            "mean_winner_entropy", "warm_start_benefit",
+            "inter_episode_volatility", "bid_suppression_ratio",
+            "cross_episode_drift",
+            "mean_lp_offline_welfare", "mean_effective_poa_lp",
+            "mean_rev_all",
+        ],
+        "data_path": "results/exp4b/data.csv",
+        "output_dir": "results/exp4b",
         "time_norm_col": None,
     },
 }
@@ -1137,8 +1257,9 @@ _EXP_DEFAULTS = {
 
 def main():
     parser = argparse.ArgumentParser(description="Robust statistical analysis")
-    parser.add_argument("--exp", type=int, required=True, choices=[1, 2, 3, 4],
-                        help="Experiment number")
+    parser.add_argument("--exp", type=str, required=True,
+                        choices=["1", "2", "3a", "3b", "4a", "4b"],
+                        help="Experiment identifier")
     args = parser.parse_args()
 
     cfg = _EXP_DEFAULTS[args.exp]

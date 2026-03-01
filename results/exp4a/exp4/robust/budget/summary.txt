@@ -1,0 +1,50 @@
+======================================================================
+Budget Robustness Check: Effect Rankings by Budget Level
+======================================================================
+Multipliers tested: [0.25, 0.5, 1.0]
+Seeds per cell: 5
+Design: 50 episodes x 500 rounds
+
+--- Platform Revenue (mean_platform_revenue) ---
+
+  Multiplier    Rank 1                          Rank 2                          Rank 3                        
+  ------------------------------------------------------------------------------------------------------------
+  0.25          n_bidders (+673.9460)           auction_type (-69.3254)         objective (-37.1507)          
+  0.50          n_bidders (+960.9896)           objective (-635.5379)           auction_type (+2.3326)        
+  1.00          objective (-2726.4521)          n_bidders (+1649.0492)          auction_type (+10.5856)       
+
+  CHANGED: Effect ranking varies across budget levels.
+    Differs between mult=0.25 and mult=0.5: ['n_bidders', 'auction_type', 'objective'] vs ['n_bidders', 'objective', 'auction_type']
+    Differs between mult=0.25 and mult=1.0: ['n_bidders', 'auction_type', 'objective'] vs ['objective', 'n_bidders', 'auction_type']
+    Differs between mult=0.5 and mult=1.0: ['n_bidders', 'objective', 'auction_type'] vs ['objective', 'n_bidders', 'auction_type']
+
+--- Effective PoA (mean_effective_poa) ---
+
+  Multiplier    Rank 1                          Rank 2                          Rank 3                        
+  ------------------------------------------------------------------------------------------------------------
+  0.25          n_bidders (+0.3037)             auction_type (+0.0161)          objective (-0.0137)           
+  0.50          n_bidders (+0.1586)             objective (-0.0470)             auction_type (+0.0118)        
+  1.00          objective (-0.0980)             n_bidders (+0.0388)             auction_type (-0.0027)        
+
+  CHANGED: Effect ranking varies across budget levels.
+    Differs between mult=0.25 and mult=0.5: ['n_bidders', 'auction_type', 'objective'] vs ['n_bidders', 'objective', 'auction_type']
+    Differs between mult=0.25 and mult=1.0: ['n_bidders', 'auction_type', 'objective'] vs ['objective', 'n_bidders', 'auction_type']
+    Differs between mult=0.5 and mult=1.0: ['n_bidders', 'objective', 'auction_type'] vs ['objective', 'n_bidders', 'auction_type']
+
+--- Bid-to-Value Ratio (mean_bid_to_value) ---
+
+  Multiplier    Rank 1                          Rank 2                          Rank 3                        
+  ------------------------------------------------------------------------------------------------------------
+  0.25          n_bidders (+0.3053)             auction_type (-0.1821)          objective (-0.0405)           
+  0.50          objective (-0.4557)             n_bidders (+0.3475)             auction_type (-0.2665)        
+  1.00          objective (-1.8011)             n_bidders (+0.5720)             auction_type (-0.5139)        
+
+  CHANGED: Effect ranking varies across budget levels.
+    Differs between mult=0.25 and mult=0.5: ['n_bidders', 'auction_type', 'objective'] vs ['objective', 'n_bidders', 'auction_type']
+    Differs between mult=0.25 and mult=1.0: ['n_bidders', 'auction_type', 'objective'] vs ['objective', 'n_bidders', 'auction_type']
+
+======================================================================
+Overall Assessment
+======================================================================
+0/3 metrics have stable effect rankings across budget levels [0.25, 0.5, 1.0].
+Conclusion: Results are SENSITIVE to budget variation. Interpret Exp4 findings with caution.

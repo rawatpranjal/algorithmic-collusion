@@ -13,7 +13,7 @@
     "n_bidders": {
       "levels": [
         2,
-        6
+        4
       ],
       "coding": "binary +-1"
     },

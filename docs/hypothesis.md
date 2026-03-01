@@ -14,7 +14,7 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 - **Source**: Banchio & Skrzypacz (2022)
 - **Testable in**: All experiments. Factor: `auction_type_coded`. Metrics: `avg_rev_last_1000`, `avg_regret_of_seller`.
 - **Expected outcome**: FPA yields lower revenue and higher seller regret than SPA across all settings.
-- **Verdict**: **Partially supported.** Auction type is the dominant effect in Exp1, Exp3, and Exp4. In Exp2 (affiliated valuations, 48 observations), the auction type main effect on revenue is not statistically significant ($p = 0.11$), though directional patterns persist. The FPA revenue gap is large in Exp3 (contextual bandits) and Exp4 (pacing), but the Exp2 design lacks power to detect it. Auction type significantly increases price volatility even in Exp2.
+- **Verdict**: **Partially supported.** Auction type is the dominant effect in Exp1, Exp3, and Exp4a. In Exp2 (affiliated valuations, 48 observations), the auction type main effect on revenue is not statistically significant ($p = 0.11$), though directional patterns persist. The FPA revenue gap is large in Exp3 (contextual bandits) and Exp4a (pacing), but the Exp2 design lacks power to detect it. Auction type significantly increases price volatility even in Exp2.
 
 ### H1.2: Revenue equivalence holds under symmetric independent private values
 
@@ -28,9 +28,9 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 
 - **Statement**: In first-price pacing markets, equilibria are computationally tractable (polynomial-time computable), while second-price pacing equilibria are PPAD-hard to find.
 - **Source**: Conitzer et al. (2022); Chen et al. (2023)
-- **Testable in**: Exp4 (pacing agents). Metrics: `inter_episode_volatility`, `dual_cv`, `price_volatility`.
+- **Testable in**: Exp4a (pacing agents). Metrics: `inter_episode_volatility`, `dual_cv`, `price_volatility`.
 - **Expected outcome**: FPA should exhibit more stable convergence (lower volatility) than SPA if agents reliably find the unique FPA equilibrium, while SPA may exhibit equilibrium selection instability.
-- **Verdict**: **Partially supported.** Exp4 shows that FPA bidding converges to stable but sub-competitive equilibria (low volatility, low revenue). SPA outcomes are more variable, consistent with equilibrium multiplicity, but SPA also achieves higher revenue on average.
+- **Verdict**: **Partially supported.** Exp4a shows that FPA bidding converges to stable but sub-competitive equilibria (low volatility, low revenue). SPA outcomes are more variable, consistent with equilibrium multiplicity, but SPA also achieves higher revenue on average.
 
 ### H1.4: FPA welfare guarantee of at least 1/2 under no-regret learning
 
@@ -44,9 +44,9 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 
 - **Statement**: In first-price auctions with value-maximizing autobidders, the Price of Anarchy is bounded by 1/2.
 - **Source**: Deng et al. (2024)
-- **Testable in**: Exp4. Factor: `auction_type_coded` crossed with `objective_coded`. Metric: `mean_effective_poa`.
+- **Testable in**: Exp4a. Factor: `auction_type_coded` crossed with `objective_coded`. Metric: `mean_effective_poa`.
 - **Expected outcome**: FPA + value-maximizer cells should exhibit effective PoA near 2 (welfare loss of ~50%).
-- **Verdict**: **Testable via Exp4 data.** The effective PoA varies across factor combinations, with auction format and objective jointly determining efficiency losses. The PoA framework provides the natural benchmark for Exp4 results.
+- **Verdict**: **Testable via Exp4a data.** The effective PoA varies across factor combinations, with auction format and objective jointly determining efficiency losses. The PoA framework provides the natural benchmark for Exp4a results.
 
 ### H1.6: Second-price auction properties break down under learning
 
@@ -176,49 +176,49 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 
 - **Statement**: Multiplicative dual pacing with step size O(1/sqrt(T)) converges to an approximate pacing equilibrium with vanishing regret.
 - **Source**: Balseiro & Gur (2019)
-- **Testable in**: Exp4 (multiplicative pacing). Metrics: `dual_cv`, `inter_episode_volatility`, `warm_start_benefit`.
+- **Testable in**: Exp4a (multiplicative pacing). Metrics: `dual_cv`, `inter_episode_volatility`, `warm_start_benefit`.
 - **Expected outcome**: Dual variables should stabilise across episodes; inter-episode volatility should decrease; warm-starting should provide measurable convergence benefits.
-- **Verdict**: **Supported.** Exp4 agents converge rapidly (median ~1,014 rounds), dual variables stabilise, and warm-starting provides measurable benefits. The pacing algorithm achieves stable spending policies consistent with approximate equilibrium, though the equilibrium itself may be sub-competitive.
+- **Verdict**: **Supported.** Exp4a agents converge rapidly (median ~1,014 rounds), dual variables stabilise, and warm-starting provides measurable benefits. The pacing algorithm achieves stable spending policies consistent with approximate equilibrium, though the equilibrium itself may be sub-competitive.
 
 ### H4.2: Liquid welfare is at least half of optimal without requiring convergence
 
 - **Statement**: In auctions with budget-constrained bidders, the liquid welfare is at least 1/2 of the offline optimal, even without convergence to equilibrium.
 - **Source**: Gaitonde et al. (2023)
-- **Testable in**: Exp4. Metric: `mean_effective_poa` (ratio of offline optimum to realised liquid welfare).
+- **Testable in**: Exp4a. Metric: `mean_effective_poa` (ratio of offline optimum to realised liquid welfare).
 - **Expected outcome**: Effective PoA should not exceed 2 (i.e., welfare should be at least half of optimal).
-- **Verdict**: **Testable via Exp4.** The effective PoA varies by factor combination. The welfare guarantee framework provides the benchmark against which Exp4 efficiency results are evaluated.
+- **Verdict**: **Testable via Exp4a.** The effective PoA varies by factor combination. The welfare guarantee framework provides the benchmark against which Exp4a efficiency results are evaluated.
 
 ### H4.3: Value-maximisers and utility-maximisers produce different equilibria
 
 - **Statement**: Agents that maximise value (bid v/mu) behave fundamentally differently from agents that maximise utility (bid v/(1+mu)). Value-maximisers bid more aggressively and may achieve different welfare and revenue outcomes.
 - **Source**: Balseiro et al. (2021)
-- **Testable in**: Exp4. Factor: `objective_coded`. Metrics: `mean_platform_revenue`, `mean_effective_poa`, `mean_bid_to_value`, `mean_allocative_efficiency`.
+- **Testable in**: Exp4a. Factor: `objective_coded`. Metrics: `mean_platform_revenue`, `mean_effective_poa`, `mean_bid_to_value`, `mean_allocative_efficiency`.
 - **Expected outcome**: Value-maximiser cells should show higher bid-to-value ratios and different efficiency patterns than utility-maximiser cells.
-- **Verdict**: **Supported.** Bidder objective is a significant factor in Exp4. Value-maximisers and utility-maximisers produce detectably different bidding behaviour, revenue outcomes, and efficiency measures, confirming that the objective function specification meaningfully shapes equilibrium selection.
+- **Verdict**: **Supported.** Bidder objective is a significant factor in Exp4a. Value-maximisers and utility-maximisers produce detectably different bidding behaviour, revenue outcomes, and efficiency measures, confirming that the objective function specification meaningfully shapes equilibrium selection.
 
 ### H4.4: Budget constraints accelerate convergence
 
 - **Statement**: Hard budget constraints impose spending discipline that forces agents to commit to stable strategies faster than unconstrained learners.
 - **Source**: Implicit in Balseiro & Gur (2019); general pacing literature
-- **Testable in**: Cross-experiment comparison of Exp4 (budget-constrained) vs. Exp1-3 (unconstrained). Metric: `time_to_converge`.
-- **Expected outcome**: Exp4 convergence times should be shorter than Exp1-3.
-- **Verdict**: **Supported.** Exp4 converges approximately as fast as the fastest unconstrained experiments (Exp1 and Exp3, median ~1,000 rounds) and dramatically faster than Q-learning with affiliated valuations (Exp2, median ~86,000 rounds). Budget constraints act as a convergence accelerator by limiting bid exploration once spending headroom is exhausted.
+- **Testable in**: Cross-experiment comparison of Exp4a (budget-constrained) vs. Exp1-3 (unconstrained). Metric: `time_to_converge`.
+- **Expected outcome**: Exp4a convergence times should be shorter than Exp1-3.
+- **Verdict**: **Supported.** Exp4a converges approximately as fast as the fastest unconstrained experiments (Exp1 and Exp3, median ~1,000 rounds) and dramatically faster than Q-learning with affiliated valuations (Exp2, median ~86,000 rounds). Budget constraints act as a convergence accelerator by limiting bid exploration once spending headroom is exhausted.
 
 ### H4.5: Complex non-equilibrium dynamics are possible under pacing
 
 - **Statement**: Budget-constrained pacing can produce limit cycles, chaotic dynamics, or other complex non-equilibrium behaviour rather than converging to a fixed point.
 - **Source**: Paes Leme et al. (2024)
-- **Testable in**: Exp4. Metrics: `inter_episode_volatility`, `cross_episode_drift`, `dual_cv`.
+- **Testable in**: Exp4a. Metrics: `inter_episode_volatility`, `cross_episode_drift`, `dual_cv`.
 - **Expected outcome**: Some parameter configurations should exhibit persistent oscillations or trending behaviour rather than convergence.
-- **Verdict**: **Partially supported.** While most Exp4 configurations converge to stable equilibria (low inter-episode volatility), the cross-episode drift metric detects progressive bid suppression in some cells, consistent with slow non-convergent dynamics. The PID vs. multiplicative pacing comparison reveals that controller structure affects convergence stability.
+- **Verdict**: **Partially supported.** While most Exp4a configurations converge to stable equilibria (low inter-episode volatility), the cross-episode drift metric detects progressive bid suppression in some cells, consistent with slow non-convergent dynamics. The PID vs. multiplicative pacing comparison reveals that controller structure affects convergence stability.
 
 ### H4.6: PoA = 1 for FPA with value-maximisers but PoA = 2 for VCG/SPA
 
 - **Statement**: In first-price auctions with value-maximising autobidders, every equilibrium achieves optimal welfare (PoA=1). In VCG/second-price auctions, the PoA can be as bad as 2.
 - **Source**: Aggarwal et al. (2019); Deng et al. (2024)
-- **Testable in**: Exp4. Factor interaction: `auction_type_coded` x `objective_coded`. Metric: `mean_effective_poa`.
+- **Testable in**: Exp4a. Factor interaction: `auction_type_coded` x `objective_coded`. Metric: `mean_effective_poa`.
 - **Expected outcome**: FPA + value-max should achieve near-optimal welfare (PoA near 1); SPA + value-max should show larger efficiency losses.
-- **Verdict**: **Testable via Exp4.** The interaction between auction format and bidder objective determines the PoA profile. These theoretical bounds provide the key benchmark for interpreting Exp4 welfare results.
+- **Verdict**: **Testable via Exp4a.** The interaction between auction format and bidder objective determines the PoA profile. These theoretical bounds provide the key benchmark for interpreting Exp4a welfare results.
 
 ---
 
@@ -230,7 +230,7 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 - **Source**: Standard IO theory; Ivaldi et al. (2002)
 - **Testable in**: All experiments. Factor: `n_bidders_coded`. Metric: `avg_rev_last_1000`.
 - **Expected outcome**: More bidders (n=4 or n=6 vs. n=2) should increase revenue.
-- **Verdict**: **Partially supported (algorithm-dependent).** In Q-learning experiments (Exp1-2), more bidders moderate the FPA revenue penalty as expected. In Exp3 (LinUCB), the effect reverses: more bidders *worsen* FPA performance, as increased competition amplifies underbidding when agents use optimism-based exploration. In Exp4 (pacing), bidder count interacts with auction format. The competitive-pressure hypothesis holds for Q-learning but fails for contextual bandits.
+- **Verdict**: **Partially supported (algorithm-dependent).** In Q-learning experiments (Exp1-2), more bidders moderate the FPA revenue penalty as expected. In Exp3 (LinUCB), the effect reverses: more bidders *worsen* FPA performance, as increased competition amplifies underbidding when agents use optimism-based exploration. In Exp4a (pacing), bidder count interacts with auction format. The competitive-pressure hypothesis holds for Q-learning but fails for contextual bandits.
 
 ### H5.2: Reserve prices anchor bids upward and reduce collusion
 
@@ -294,7 +294,7 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 - **Source**: Experimental design methodology (Box, Hunter & Hunter 2005); validated empirically in this paper
 - **Testable in**: All experiments. Diagnostic: OLS R^2 vs. LightGBM cross-validated R^2.
 - **Expected outcome**: Gap between OLS R^2 and LightGBM R^2 should be less than 0.05.
-- **Verdict**: **Supported (with caveats).** In Exp1-2 and Exp4, LightGBM R^2 falls below OLS R^2, confirming that the linear model is the correct specification. In Exp3, PRESS gaps are larger (0.14-0.18), indicating that bandit-based outcomes contain irreducible stochasticity that neither model class captures. The linear model remains a useful first-order approximation, but model adequacy is weaker for contextual bandits.
+- **Verdict**: **Supported (with caveats).** In Exp1-2 and Exp4a, LightGBM R^2 falls below OLS R^2, confirming that the linear model is the correct specification. In Exp3, PRESS gaps are larger (0.14-0.18), indicating that bandit-based outcomes contain irreducible stochasticity that neither model class captures. The linear model remains a useful first-order approximation, but model adequacy is weaker for contextual bandits.
 
 ### H7.2: HC3 robust standard errors are needed for heteroskedastic data
 
@@ -302,7 +302,7 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 - **Source**: MacKinnon & White (1985); standard econometric practice
 - **Testable in**: All experiments. Diagnostic: HC3 flip rate (fraction of effects changing significance under HC3 vs. OLS SE).
 - **Expected outcome**: A non-trivial fraction of effects should change significance if heteroskedasticity is present.
-- **Verdict**: **Partially supported.** HC3 flip rates range from 2.6\% (Exp4) to 13.3\% (Exp2). The Exp2 rate reflects the small-sample design (48 observations, 150 terms tested), where borderline effects are more sensitive to SE corrections. The dominant effects in all experiments are invariant to the HC3 correction. HC3 provides a useful robustness check but does not materially change the primary conclusions.
+- **Verdict**: **Partially supported.** HC3 flip rates range from 2.6\% (Exp4a) to 13.3\% (Exp2). The Exp2 rate reflects the small-sample design (48 observations, 150 terms tested), where borderline effects are more sensitive to SE corrections. The dominant effects in all experiments are invariant to the HC3 correction. HC3 provides a useful robustness check but does not materially change the primary conclusions.
 
 ### H7.3: Multiple testing corrections eliminate many apparently significant findings
 
@@ -310,7 +310,7 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 - **Source**: Holm (1979); Benjamini & Hochberg (1995)
 - **Testable in**: All experiments. Diagnostic: survival rate under Holm-Bonferroni and Benjamini-Hochberg corrections.
 - **Expected outcome**: Substantial attrition of significant effects under stringent correction.
-- **Verdict**: **Supported.** Holm-Bonferroni retains 19/50 (Exp1), 0/31 (Exp2), 14/27 (Exp3), and 50/62 (Exp4) of OLS-significant effects. Benjamini-Hochberg retains more (41/50, 2/31, 18/27, 57/62). The near-total elimination of Exp2 findings under correction reflects the low power of the 48-observation design rather than false discoveries. In Exp4, 81\% of findings survive Holm, reflecting the strong signal in the $2^3$ factorial with 15 replicates per cell. The attrition is concentrated among marginal effects near the significance boundary, validating the factorial approach while confirming the importance of multiple testing control.
+- **Verdict**: **Supported.** Holm-Bonferroni retains 19/50 (Exp1), 0/31 (Exp2), 14/27 (Exp3), and 50/62 (Exp4a) of OLS-significant effects. Benjamini-Hochberg retains more (41/50, 2/31, 18/27, 57/62). The near-total elimination of Exp2 findings under correction reflects the low power of the 48-observation design rather than false discoveries. In Exp4a, 81\% of findings survive Holm, reflecting the strong signal in the $2^6$ factorial with 50 replicates per cell. The attrition is concentrated among marginal effects near the significance boundary, validating the factorial approach while confirming the importance of multiple testing control.
 
 ---
 
@@ -318,17 +318,17 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 
 | # | Hypothesis | Source | Exp | Verdict |
 |---|-----------|--------|-----|---------|
-| H1.1 | FPA more prone to bid suppression | Banchio & Skrzypacz 2022 | 1-4 | Partially supported |
+| H1.1 | FPA more prone to bid suppression | Banchio & Skrzypacz 2022 | 1-4a | Partially supported |
 | H1.2 | Revenue equivalence under symmetric IPV | Myerson 1981 | 1-2 | Challenged |
-| H1.3 | FPA unique eq., SPA multiple eq. | Conitzer et al. 2022 | 4 | Partially supported |
+| H1.3 | FPA unique eq., SPA multiple eq. | Conitzer et al. 2022 | 4a | Partially supported |
 | H1.4 | FPA welfare >= 1/2 under no-regret | Fikioris & Tardos 2024 | 1, 3 | Partially supported |
-| H1.5 | FPA PoA = 1/2 under autobidding | Deng et al. 2024 | 4 | Testable |
-| H1.6 | SPA properties break under learning | Kolumbus & Nisan 2022 | 1-4 | Partially supported |
+| H1.5 | FPA PoA = 1/2 under autobidding | Deng et al. 2024 | 4a | Testable |
+| H1.6 | SPA properties break under learning | Kolumbus & Nisan 2022 | 1-4a | Partially supported |
 | H1.7 | Affiliation increases SPA advantage | Milgrom & Weber 1982 | 2-3 | Null |
 | H2.1 | Sync -> competitive, async -> collusion | Asker et al. 2024 | 1 | Supported |
 | H2.2 | Q-learning collusion is genuine | Calvano et al. 2023 | 1-2 | Supported |
 | H2.3 | Sophisticated algorithms -> less collusion | Abada et al. 2024 | 1-3 | Challenged |
-| H2.4 | Collusion is exception not rule | Bichler et al. 2025 | 1-4 | Partially supported |
+| H2.4 | Collusion is exception not rule | Bichler et al. 2025 | 1-4a | Partially supported |
 | H2.5 | Mean-based learners -> Nash | Feng et al. 2021 | 3 | Challenged |
 | H2.6 | Learning rate determines cooperation | Dolgopolov 2024 | 1 | Partially supported |
 | H2.7 | Exploration mechanism > exploration rate | Cross-experiment | 1, 3 | Supported |
@@ -337,21 +337,21 @@ This document maps testable hypotheses from the algorithmic collusion and auctio
 | H3.2 | Spontaneous coupling via affiliation | Banchio & Mantegazza 2023 | 2 | Challenged |
 | H3.3 | Revenue ranking depends on affiliation | Milgrom & Weber 1982 | 2 | Challenged |
 | H3.4 | Signal informativeness matters | Levin et al. 1996 | 2-3 | Partially supported |
-| H4.1 | Gradient pacing -> approx. NE | Balseiro & Gur 2019 | 4 | Supported |
-| H4.2 | Liquid welfare >= 1/2 optimal | Gaitonde et al. 2023 | 4 | Testable |
-| H4.3 | Value-max vs. utility-max differ | Balseiro et al. 2021 | 4 | Supported |
-| H4.4 | Budget constraints accelerate convergence | Pacing literature | 4 | Supported |
-| H4.5 | Complex dynamics possible under pacing | Paes Leme et al. 2024 | 4 | Partially supported |
-| H4.6 | FPA PoA=1 (value-max), SPA PoA=2 | Aggarwal et al. 2019 | 4 | Testable |
-| H5.1 | More bidders -> more competitive | IO theory | 1-4 | Partially supported |
+| H4.1 | Gradient pacing -> approx. NE | Balseiro & Gur 2019 | 4a | Supported |
+| H4.2 | Liquid welfare >= 1/2 optimal | Gaitonde et al. 2023 | 4a | Testable |
+| H4.3 | Value-max vs. utility-max differ | Balseiro et al. 2021 | 4a | Supported |
+| H4.4 | Budget constraints accelerate convergence | Pacing literature | 4a | Supported |
+| H4.5 | Complex dynamics possible under pacing | Paes Leme et al. 2024 | 4a | Partially supported |
+| H4.6 | FPA PoA=1 (value-max), SPA PoA=2 | Aggarwal et al. 2019 | 4a | Testable |
+| H5.1 | More bidders -> more competitive | IO theory | 1-4a | Partially supported |
 | H5.2 | Reserve prices anchor bids upward | Myerson 1981 | 1, 3 | Partially supported |
 | H5.3 | Information feedback affects collusion | Banchio & Skrzypacz 2022 | 1-3 | Partially supported |
 | H5.4 | Algorithmic heterogeneity reduces collusion | Bichler et al. 2025 | -- | Not testable |
 | H6.1 | Q-learning can provably collude | Bertrand et al. 2025 | 1-2 | Supported |
-| H6.2 | Collusion without punishment threats | Arunachaleswaran et al. 2025 | 1-4 | Supported |
+| H6.2 | Collusion without punishment threats | Arunachaleswaran et al. 2025 | 1-4a | Supported |
 | H6.3 | Spontaneous coupling mechanism | Banchio & Mantegazza 2023 | 2 | Challenged |
-| H7.1 | Linear factorial models sufficient | Box et al. 2005 | 1-4 | Supported (with caveats) |
-| H7.2 | HC3 robust SE needed | MacKinnon & White 1985 | 1-4 | Partially supported |
-| H7.3 | Multiple testing eliminates many findings | Holm 1979 | 1-4 | Supported |
+| H7.1 | Linear factorial models sufficient | Box et al. 2005 | 1-4a | Supported (with caveats) |
+| H7.2 | HC3 robust SE needed | MacKinnon & White 1985 | 1-4a | Partially supported |
+| H7.3 | Multiple testing eliminates many findings | Holm 1979 | 1-4a | Supported |
 
 **Verdict distribution**: 10 Supported, 5 Challenged, 13 Partially supported, 3 Null, 3 Testable, 1 Not testable.

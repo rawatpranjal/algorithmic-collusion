@@ -1,0 +1,1692 @@
+{
+  "experiment": "3a",
+  "n_observations": 768,
+  "n_factors": 9,
+  "factors": [
+    "auction_type_coded",
+    "n_bidders_coded",
+    "reserve_price_coded",
+    "eta_linear_coded",
+    "eta_quadratic_coded",
+    "exploration_intensity_coded",
+    "context_richness_coded",
+    "lam_coded",
+    "memory_decay_coded"
+  ],
+  "responses": {
+    "avg_rev_last_1000": {
+      "r_squared": 0.6942026659529099,
+      "adj_r_squared": 0.6755925930648436,
+      "f_statistic": 37.302522678353704,
+      "f_pvalue": 8.929079848440805e-156,
+      "n_obs": 768,
+      "coefficients": {
+        "auction_type": {
+          "estimate": -0.048182031249999986,
+          "std_err": 0.003857825279565278,
+          "t_value": -12.489428047770327,
+          "p_value": 1.4927449280446336e-32
+        },
+        "n_bidders": {
+          "estimate": 0.13076432291666668,
+          "std_err": 0.003857825279565278,
+          "t_value": 33.89586449373932,
+          "p_value": 1.6736943642027566e-151
+        },
+        "reserve_price": {
+          "estimate": 0.005539322916666609,
+          "std_err": 0.003857825279565272,
+          "t_value": 1.4358667164135595,
+          "p_value": 0.15147277272860663
+        },
+        "eta_linear": {
+          "estimate": -0.013483984374999931,
+          "std_err": 0.002362425862936193,
+          "t_value": -5.707685725316715,
+          "p_value": 1.6714259293763735e-08
+        },
+        "eta_quadratic": {
+          "estimate": 0.00015989583333332396,
+          "std_err": 0.0027278944158134946,
+          "t_value": 0.058615110763237104,
+          "p_value": 0.9532748711649215
+        },
+        "exploration_intensity": {
+          "estimate": -0.016846874999999994,
+          "std_err": 0.0038578252795652755,
+          "t_value": -4.366935716150008,
+          "p_value": 1.4440955762251862e-05
+        },
+        "context_richness": {
+          "estimate": -0.013376562500000244,
+          "std_err": 0.003857825279565275,
+          "t_value": -3.467384220549149,
+          "p_value": 0.0005566422546572578
+        },
+        "lam": {
+          "estimate": -0.008485416666667064,
+          "std_err": 0.003857825279565278,
+          "t_value": -2.199533688478305,
+          "p_value": 0.02815580211663187
+        },
+        "memory_decay": {
+          "estimate": -0.007362239583333652,
+          "std_err": 0.003857825279565275,
+          "t_value": -1.9083911400371343,
+          "p_value": 0.056736443696336
+        },
+        "auction_type:n_bidders": {
+          "estimate": -0.024483333333333322,
+          "std_err": 0.003857825279565278,
+          "t_value": -6.346408030197844,
+          "p_value": 3.8885243217997523e-10
+        },
+        "auction_type:reserve_price": {
+          "estimate": 0.014952604166666642,
+          "std_err": 0.003857825279565279,
+          "t_value": 3.875915336516117,
+          "p_value": 0.00011588381984826991
+        },
+        "auction_type:eta_linear": {
+          "estimate": 0.0038304687500000136,
+          "std_err": 0.004724851725872385,
+          "t_value": 0.8107066575285524,
+          "p_value": 0.41780092441807426
+        },
+        "auction_type:eta_quadratic": {
+          "estimate": 0.0048390624999999875,
+          "std_err": 0.0027278944158134946,
+          "t_value": 1.7739185475611285,
+          "p_value": 0.07649745094679178
+        },
+        "auction_type:exploration_intensity": {
+          "estimate": -0.007796614583333379,
+          "std_err": 0.003857825279565277,
+          "t_value": -2.0209869598376287,
+          "p_value": 0.043649197187153446
+        },
+        "auction_type:context_richness": {
+          "estimate": 0.002795052083333343,
+          "std_err": 0.003857825279565278,
+          "t_value": 0.7245149483929727,
+          "p_value": 0.4689840408166376
+        },
+        "auction_type:lam": {
+          "estimate": -0.0014044270833332775,
+          "std_err": 0.003857825279565278,
+          "t_value": -0.36404631665733095,
+          "p_value": 0.7159298585698359
+        },
+        "auction_type:memory_decay": {
+          "estimate": 0.0036546874999999236,
+          "std_err": 0.0038578252795652794,
+          "t_value": 0.9473439658759646,
+          "p_value": 0.34378005079810536
+        },
+        "n_bidders:reserve_price": {
+          "estimate": -0.039977604166666646,
+          "std_err": 0.0038578252795652777,
+          "t_value": -10.362730624019228,
+          "p_value": 1.483117167505539e-23
+        },
+        "n_bidders:eta_linear": {
+          "estimate": -0.016321484375000046,
+          "std_err": 0.004724851725872386,
+          "t_value": -3.4543908088431037,
+          "p_value": 0.0005837038549740369
+        },
+        "n_bidders:eta_quadratic": {
+          "estimate": 0.002286848958333347,
+          "std_err": 0.002727894415813496,
+          "t_value": 0.8383201875690548,
+          "p_value": 0.4021279598765989
+        },
+        "n_bidders:exploration_intensity": {
+          "estimate": -0.010080468750000085,
+          "std_err": 0.003857825279565278,
+          "t_value": -2.6129925591487675,
+          "p_value": 0.009161866987266065
+        },
+        "n_bidders:context_richness": {
+          "estimate": 0.000550260416666783,
+          "std_err": 0.0038578252795652794,
+          "t_value": 0.14263487244523146,
+          "p_value": 0.8866182941398352
+        },
+        "n_bidders:lam": {
+          "estimate": -0.007237239583333388,
+          "std_err": 0.0038578252795652764,
+          "t_value": -1.8759894652743125,
+          "p_value": 0.0610594079820856
+        },
+        "n_bidders:memory_decay": {
+          "estimate": 0.0013270833333334092,
+          "std_err": 0.0038578252795652764,
+          "t_value": 0.34399778039791196,
+          "p_value": 0.7309479761802948
+        },
+        "reserve_price:eta_linear": {
+          "estimate": 0.00015781249999999216,
+          "std_err": 0.004724851725872386,
+          "t_value": 0.033400519033399724,
+          "p_value": 0.9733644142964744
+        },
+        "reserve_price:eta_quadratic": {
+          "estimate": 0.0006263020833333216,
+          "std_err": 0.0027278944158134946,
+          "t_value": 0.22959176121431737,
+          "p_value": 0.818473945139248
+        },
+        "reserve_price:exploration_intensity": {
+          "estimate": -0.0029596354166666725,
+          "std_err": 0.003857825279565279,
+          "t_value": -0.7671771534972627,
+          "p_value": 0.44322664083957675
+        },
+        "reserve_price:context_richness": {
+          "estimate": -0.02229453125,
+          "std_err": 0.003857825279565277,
+          "t_value": -5.779041204404229,
+          "p_value": 1.1168530037186123e-08
+        },
+        "reserve_price:lam": {
+          "estimate": -0.0028111979166666728,
+          "std_err": 0.0038578252795652772,
+          "t_value": -0.7287001647164942,
+          "p_value": 0.4664210547839621
+        },
+        "reserve_price:memory_decay": {
+          "estimate": 0.005180729166666642,
+          "std_err": 0.0038578252795652777,
+          "t_value": 1.3429144119379186,
+          "p_value": 0.17972111115131284
+        },
+        "eta_linear:eta_quadratic": {
+          "estimate": -0.013483984374999933,
+          "std_err": 0.0023624258629361948,
+          "t_value": -5.707685725316711,
+          "p_value": 1.6714259293764042e-08
+        },
+        "eta_linear:exploration_intensity": {
+          "estimate": 0.0020835937499999457,
+          "std_err": 0.004724851725872386,
+          "t_value": 0.4409860607033622,
+          "p_value": 0.6593549215386874
+        },
+        "eta_linear:context_richness": {
+          "estimate": -0.0017874999999999298,
+          "std_err": 0.004724851725872385,
+          "t_value": -0.37831875023969985,
+          "p_value": 0.7053048709103631
+        },
+        "eta_linear:lam": {
+          "estimate": 0.00441249999999998,
+          "std_err": 0.004724851725872386,
+          "t_value": 0.9338917401022284,
+          "p_value": 0.35067152197022133
+        },
+        "eta_linear:memory_decay": {
+          "estimate": 0.003177734375000055,
+          "std_err": 0.004724851725872386,
+          "t_value": 0.6725574810314974,
+          "p_value": 0.5014437435003103
+        },
+        "eta_quadratic:exploration_intensity": {
+          "estimate": 0.004025781249999987,
+          "std_err": 0.0027278944158134937,
+          "t_value": 1.475783383206731,
+          "p_value": 0.14043741418063943
+        },
+        "eta_quadratic:context_richness": {
+          "estimate": -0.0020195312500000183,
+          "std_err": 0.0027278944158134946,
+          "t_value": -0.7403260325226947,
+          "p_value": 0.45934252828015987
+        },
+        "eta_quadratic:lam": {
+          "estimate": 0.0013635416666666277,
+          "std_err": 0.0027278944158134937,
+          "t_value": 0.499851335433744,
+          "p_value": 0.6173318480927306
+        },
+        "eta_quadratic:memory_decay": {
+          "estimate": 0.0037782552083333422,
+          "std_err": 0.002727894415813494,
+          "t_value": 1.3850445187434488,
+          "p_value": 0.1664660550087745
+        },
+        "exploration_intensity:context_richness": {
+          "estimate": 0.013661458333333326,
+          "std_err": 0.0038578252795652777,
+          "t_value": 3.541233037612522,
+          "p_value": 0.0004237981141369871
+        },
+        "exploration_intensity:lam": {
+          "estimate": -0.005785416666666659,
+          "std_err": 0.003857825279565275,
+          "t_value": -1.4996575136027408,
+          "p_value": 0.1341396591472114
+        },
+        "exploration_intensity:memory_decay": {
+          "estimate": -0.004197135416666694,
+          "std_err": 0.0038578252795652785,
+          "t_value": -1.0879537336485208,
+          "p_value": 0.2769780690703952
+        },
+        "context_richness:lam": {
+          "estimate": -0.007246875000000021,
+          "std_err": 0.0038578252795652777,
+          "t_value": -1.8784870943705987,
+          "p_value": 0.060716727647682434
+        },
+        "context_richness:memory_decay": {
+          "estimate": 0.0016419270833332444,
+          "std_err": 0.0038578252795652777,
+          "t_value": 0.42560949870655274,
+          "p_value": 0.6705190759352084
+        },
+        "lam:memory_decay": {
+          "estimate": -0.00801484375,
+          "std_err": 0.003857825279565278,
+          "t_value": -2.0775548836942557,
+          "p_value": 0.03810278186715349
+        }
+      }
+    },
+    "avg_rev_all": {
+      "r_squared": 0.7312052657958503,
+      "adj_r_squared": 0.7148470800351552,
+      "f_statistic": 44.6996553586501,
+      "f_pvalue": 1.4923469412002155e-175,
+      "n_obs": 768,
+      "coefficients": {
+        "auction_type": {
+          "estimate": -0.045816660156249966,
+          "std_err": 0.003395737635886862,
+          "t_value": -13.492402849987574,
+          "p_value": 3.633768008405174e-37
+        },
+        "n_bidders": {
+          "estimate": 0.12802020963541672,
+          "std_err": 0.003395737635886862,
+          "t_value": 37.70026526268475,
+          "p_value": 7.572747111860892e-173
+        },
+        "reserve_price": {
+          "estimate": 0.005654345052083277,
+          "std_err": 0.0033957376358868564,
+          "t_value": 1.6651301302924557,
+          "p_value": 0.09632002544038056
+        },
+        "eta_linear": {
+          "estimate": -0.01348470800781243,
+          "std_err": 0.0020794561270719115,
+          "t_value": -6.484728305761511,
+          "p_value": 1.6470185591487683e-10
+        },
+        "eta_quadratic": {
+          "estimate": 0.00013345117187500612,
+          "std_err": 0.0024011491094659736,
+          "t_value": 0.05557804442419083,
+          "p_value": 0.9556933100698987
+        },
+        "exploration_intensity": {
+          "estimate": -0.015734735677083334,
+          "std_err": 0.00339573763588686,
+          "t_value": -4.633672375272866,
+          "p_value": 4.261015202002549e-06
+        },
+        "context_richness": {
+          "estimate": -0.01541155859375036,
+          "std_err": 0.0033957376358868595,
+          "t_value": -4.538500981606416,
+          "p_value": 6.633825316130845e-06
+        },
+        "lam": {
+          "estimate": -0.008392764322916996,
+          "std_err": 0.003395737635886862,
+          "t_value": -2.4715585309714494,
+          "p_value": 0.013681847686305933
+        },
+        "memory_decay": {
+          "estimate": -0.004358089843750357,
+          "std_err": 0.0033957376358868595,
+          "t_value": -1.2834000476636238,
+          "p_value": 0.19976315522049862
+        },
+        "auction_type:n_bidders": {
+          "estimate": -0.02083643880208332,
+          "std_err": 0.003395737635886862,
+          "t_value": -6.136056738270795,
+          "p_value": 1.3932046030483884e-09
+        },
+        "auction_type:reserve_price": {
+          "estimate": 0.013698946614583308,
+          "std_err": 0.0033957376358868625,
+          "t_value": 4.034159314845172,
+          "p_value": 6.062988859493572e-05
+        },
+        "auction_type:eta_linear": {
+          "estimate": 0.0034706855468750078,
+          "std_err": 0.004158912254143822,
+          "t_value": 0.8345176177778012,
+          "p_value": 0.40426501130635395
+        },
+        "auction_type:eta_quadratic": {
+          "estimate": 0.002993755859374991,
+          "std_err": 0.0024011491094659736,
+          "t_value": 1.2468013117439491,
+          "p_value": 0.21287412377633516
+        },
+        "auction_type:exploration_intensity": {
+          "estimate": -0.004957003906250054,
+          "std_err": 0.0033957376358868603,
+          "t_value": -1.4597723492720425,
+          "p_value": 0.14478700340200557
+        },
+        "auction_type:context_richness": {
+          "estimate": 0.0029781263020833594,
+          "std_err": 0.0033957376358868616,
+          "t_value": 0.877018963600103,
+          "p_value": 0.38076765153844516
+        },
+        "auction_type:lam": {
+          "estimate": -0.0011691210937499544,
+          "std_err": 0.0033957376358868616,
+          "t_value": -0.34429076068611414,
+          "p_value": 0.7307277459489321
+        },
+        "auction_type:memory_decay": {
+          "estimate": 0.001995970052083254,
+          "std_err": 0.0033957376358868634,
+          "t_value": 0.5877868864159075,
+          "p_value": 0.5568588822169269
+        },
+        "n_bidders:reserve_price": {
+          "estimate": -0.036726985677083324,
+          "std_err": 0.0033957376358868616,
+          "t_value": -10.815613458750434,
+          "p_value": 2.2512073533463084e-25
+        },
+        "n_bidders:eta_linear": {
+          "estimate": -0.015321681640625043,
+          "std_err": 0.004158912254143823,
+          "t_value": -3.6840598465040832,
+          "p_value": 0.0002466839542800007
+        },
+        "n_bidders:eta_quadratic": {
+          "estimate": 0.0017693235677083466,
+          "std_err": 0.0024011491094659745,
+          "t_value": 0.7368653453187052,
+          "p_value": 0.4614432768796801
+        },
+        "n_bidders:exploration_intensity": {
+          "estimate": -0.009551540364583421,
+          "std_err": 0.003395737635886862,
+          "t_value": -2.8128028100995657,
+          "p_value": 0.005044411231208573
+        },
+        "n_bidders:context_richness": {
+          "estimate": -0.0027880507812499036,
+          "std_err": 0.0033957376358868634,
+          "t_value": -0.8210442266755834,
+          "p_value": 0.4118917108327508
+        },
+        "n_bidders:lam": {
+          "estimate": -0.004104949218750063,
+          "std_err": 0.0033957376358868603,
+          "t_value": -1.208853468350472,
+          "p_value": 0.22711433014455765
+        },
+        "n_bidders:memory_decay": {
+          "estimate": 0.002929595052083414,
+          "std_err": 0.0033957376358868603,
+          "t_value": 0.862727149801812,
+          "p_value": 0.3885735759464748
+        },
+        "reserve_price:eta_linear": {
+          "estimate": -0.001457498046875022,
+          "std_err": 0.004158912254143823,
+          "t_value": -0.35045174262159823,
+          "p_value": 0.7261017770368621
+        },
+        "reserve_price:eta_quadratic": {
+          "estimate": -4.797981770834556e-05,
+          "std_err": 0.0024011491094659736,
+          "t_value": -0.01998202340670817,
+          "p_value": 0.984063226005939
+        },
+        "reserve_price:exploration_intensity": {
+          "estimate": -0.0013438528645833329,
+          "std_err": 0.0033957376358868625,
+          "t_value": -0.3957469653665866,
+          "p_value": 0.6924084540207076
+        },
+        "reserve_price:context_richness": {
+          "estimate": -0.021091821614583336,
+          "std_err": 0.003395737635886861,
+          "t_value": -6.211263612265147,
+          "p_value": 8.865228592993724e-10
+        },
+        "reserve_price:lam": {
+          "estimate": -0.003555751302083339,
+          "std_err": 0.003395737635886861,
+          "t_value": -1.047121916753939,
+          "p_value": 0.29539327943116056
+        },
+        "reserve_price:memory_decay": {
+          "estimate": 0.00546196484374997,
+          "std_err": 0.0033957376358868616,
+          "t_value": 1.6084766932600414,
+          "p_value": 0.10816736582945496
+        },
+        "eta_linear:eta_quadratic": {
+          "estimate": -0.013484708007812424,
+          "std_err": 0.0020794561270719132,
+          "t_value": -6.484728305761503,
+          "p_value": 1.647018559148846e-10
+        },
+        "eta_linear:exploration_intensity": {
+          "estimate": 0.0025643144531249445,
+          "std_err": 0.004158912254143823,
+          "t_value": 0.6165829660315468,
+          "p_value": 0.5377039254788787
+        },
+        "eta_linear:context_richness": {
+          "estimate": 0.002149396484375052,
+          "std_err": 0.004158912254143822,
+          "t_value": 0.5168169831506915,
+          "p_value": 0.6054419735904271
+        },
+        "eta_linear:lam": {
+          "estimate": 0.005414388671874979,
+          "std_err": 0.004158912254143823,
+          "t_value": 1.3018761495821978,
+          "p_value": 0.19337335095414582
+        },
+        "eta_linear:memory_decay": {
+          "estimate": 0.004003970703125071,
+          "std_err": 0.004158912254143823,
+          "t_value": 0.9627446934317087,
+          "p_value": 0.335997540200356
+        },
+        "eta_quadratic:exploration_intensity": {
+          "estimate": 0.005092335286458323,
+          "std_err": 0.0024011491094659727,
+          "t_value": 2.1207909439621946,
+          "p_value": 0.03427920408961503
+        },
+        "eta_quadratic:context_richness": {
+          "estimate": -0.0009109941406250149,
+          "std_err": 0.0024011491094659736,
+          "t_value": -0.37939923723755087,
+          "p_value": 0.7045028210563922
+        },
+        "eta_quadratic:lam": {
+          "estimate": 0.0017629615885416251,
+          "std_err": 0.0024011491094659727,
+          "t_value": 0.7342157892617157,
+          "p_value": 0.46305527103876665
+        },
+        "eta_quadratic:memory_decay": {
+          "estimate": 0.0031564707031250033,
+          "std_err": 0.002401149109465973,
+          "t_value": 1.3145667175275997,
+          "p_value": 0.18907240894008925
+        },
+        "exploration_intensity:context_richness": {
+          "estimate": 0.009913493489583328,
+          "std_err": 0.0033957376358868616,
+          "t_value": 2.919393237220528,
+          "p_value": 0.0036161521824638375
+        },
+        "exploration_intensity:lam": {
+          "estimate": -0.0035199778645833247,
+          "std_err": 0.0033957376358868595,
+          "t_value": -1.0365871106717635,
+          "p_value": 0.30027488609561187
+        },
+        "exploration_intensity:memory_decay": {
+          "estimate": -0.0025798867187500317,
+          "std_err": 0.003395737635886862,
+          "t_value": -0.7597426525198095,
+          "p_value": 0.4476560771833362
+        },
+        "context_richness:lam": {
+          "estimate": -0.003717805989583267,
+          "std_err": 0.0033957376358868616,
+          "t_value": -1.0948448873943382,
+          "p_value": 0.2739491902084006
+        },
+        "context_richness:memory_decay": {
+          "estimate": 0.0019162226562499246,
+          "std_err": 0.0033957376358868616,
+          "t_value": 0.5643023288957559,
+          "p_value": 0.5727234081599761
+        },
+        "lam:memory_decay": {
+          "estimate": -0.005822368489583368,
+          "std_err": 0.003395737635886862,
+          "t_value": -1.7146108191785392,
+          "p_value": 0.08684514185721538
+        }
+      }
+    },
+    "time_to_converge": {
+      "r_squared": 0.42312752326924175,
+      "adj_r_squared": 0.3880204845747004,
+      "f_statistic": 12.052498273943925,
+      "f_pvalue": 1.2762218602630962e-60,
+      "n_obs": 768,
+      "coefficients": {
+        "auction_type": {
+          "estimate": -12445.312500000004,
+          "std_err": 1136.3258130211768,
+          "t_value": -10.952239540270014,
+          "p_value": 6.207688638310964e-26
+        },
+        "n_bidders": {
+          "estimate": -15992.187500000011,
+          "std_err": 1136.3258130211768,
+          "t_value": -14.07359343310278,
+          "p_value": 6.182779075247249e-40
+        },
+        "reserve_price": {
+          "estimate": 2062.500000000002,
+          "std_err": 1136.325813021175,
+          "t_value": 1.815060413453415,
+          "p_value": 0.06992884340228621
+        },
+        "eta_linear": {
+          "estimate": 259.7656250000052,
+          "std_err": 695.8546058637803,
+          "t_value": 0.3733044558605057,
+          "p_value": 0.7090312862192278
+        },
+        "eta_quadratic": {
+          "estimate": -445.31249999999676,
+          "std_err": 803.5036880245905,
+          "t_value": -0.5542133864933404,
+          "p_value": 0.5796041939121765
+        },
+        "exploration_intensity": {
+          "estimate": 5747.39583333333,
+          "std_err": 1136.3258130211761,
+          "t_value": 5.0578766824389865,
+          "p_value": 5.37986998490253e-07
+        },
+        "context_richness": {
+          "estimate": 1671.8749999999645,
+          "std_err": 1136.325813021176,
+          "t_value": 1.4712989715114466,
+          "p_value": 0.14164537901274815
+        },
+        "lam": {
+          "estimate": -2291.6666666666897,
+          "std_err": 1136.3258130211768,
+          "t_value": -2.016733792726032,
+          "p_value": 0.044092519759677984
+        },
+        "memory_decay": {
+          "estimate": 4567.708333333296,
+          "std_err": 1136.325813021176,
+          "t_value": 4.0197171277743164,
+          "p_value": 6.438187003419171e-05
+        },
+        "auction_type:n_bidders": {
+          "estimate": 4755.208333333342,
+          "std_err": 1136.3258130211768,
+          "t_value": 4.1847226199064815,
+          "p_value": 3.2066013856837276e-05
+        },
+        "auction_type:reserve_price": {
+          "estimate": -4434.895833333332,
+          "std_err": 1136.325813021177,
+          "t_value": -3.9028382375140867,
+          "p_value": 0.00010395369268663277
+        },
+        "auction_type:eta_linear": {
+          "estimate": -1734.3749999999905,
+          "std_err": 1391.7092117275604,
+          "t_value": -1.2462193864816569,
+          "p_value": 0.2130875030254788
+        },
+        "auction_type:eta_quadratic": {
+          "estimate": -1699.2187500000016,
+          "std_err": 803.5036880245904,
+          "t_value": -2.114761606356185,
+          "p_value": 0.0347918611218846
+        },
+        "auction_type:exploration_intensity": {
+          "estimate": -2072.9166666666565,
+          "std_err": 1136.3258130211764,
+          "t_value": -1.8242273852385205,
+          "p_value": 0.06853031468473357
+        },
+        "auction_type:context_richness": {
+          "estimate": 2091.145833333343,
+          "std_err": 1136.3258130211768,
+          "t_value": 1.8402695858624942,
+          "p_value": 0.06613835654730124
+        },
+        "auction_type:lam": {
+          "estimate": 976.5625000000073,
+          "std_err": 1136.3258130211768,
+          "t_value": 0.8594036048548409,
+          "p_value": 0.3904027332914458
+        },
+        "auction_type:memory_decay": {
+          "estimate": -2872.395833333333,
+          "std_err": 1136.3258130211773,
+          "t_value": -2.527792469746352,
+          "p_value": 0.011690129954932078
+        },
+        "n_bidders:reserve_price": {
+          "estimate": 6804.687500000007,
+          "std_err": 1136.3258130211766,
+          "t_value": 5.988324318628495,
+          "p_value": 3.3397021910423166e-09
+        },
+        "n_bidders:eta_linear": {
+          "estimate": 1148.4375000000114,
+          "std_err": 1391.7092117275606,
+          "t_value": 0.8251993234811096,
+          "p_value": 0.4095306195278434
+        },
+        "n_bidders:eta_quadratic": {
+          "estimate": -1277.3437499999982,
+          "std_err": 803.5036880245907,
+          "t_value": -1.5897173454677485,
+          "p_value": 0.11233568388817544
+        },
+        "n_bidders:exploration_intensity": {
+          "estimate": 2375.0000000000045,
+          "std_err": 1136.3258130211768,
+          "t_value": 2.0900695670069616,
+          "p_value": 0.03696036015991627
+        },
+        "n_bidders:context_richness": {
+          "estimate": -992.1875000000041,
+          "std_err": 1136.3258130211773,
+          "t_value": -0.8731540625325152,
+          "p_value": 0.38286900980494176
+        },
+        "n_bidders:lam": {
+          "estimate": 1981.7708333333394,
+          "std_err": 1136.3258130211761,
+          "t_value": 1.7440163821187504,
+          "p_value": 0.08158122433991652
+        },
+        "n_bidders:memory_decay": {
+          "estimate": 164.0625,
+          "std_err": 1136.3258130211761,
+          "t_value": 0.14437980561561228,
+          "p_value": 0.8852407976344483
+        },
+        "reserve_price:eta_linear": {
+          "estimate": 1398.437499999999,
+          "std_err": 1391.7092117275606,
+          "t_value": 1.0048345503613405,
+          "p_value": 0.3153126974434095
+        },
+        "reserve_price:eta_quadratic": {
+          "estimate": 988.2812499999993,
+          "std_err": 803.5036880245904,
+          "t_value": 1.2299647963404918,
+          "p_value": 0.21911035241200763
+        },
+        "reserve_price:exploration_intensity": {
+          "estimate": -2263.0208333333385,
+          "std_err": 1136.325813021177,
+          "t_value": -1.9915246203169406,
+          "p_value": 0.046799059564702476
+        },
+        "reserve_price:context_richness": {
+          "estimate": -5661.458333333325,
+          "std_err": 1136.3258130211764,
+          "t_value": -4.982249165211755,
+          "p_value": 7.87018023818823e-07
+        },
+        "reserve_price:lam": {
+          "estimate": -505.20833333333763,
+          "std_err": 1136.3258130211766,
+          "t_value": -0.44459813157823824,
+          "p_value": 0.6567432538375415
+        },
+        "reserve_price:memory_decay": {
+          "estimate": 1843.7499999999918,
+          "std_err": 1136.3258130211766,
+          "t_value": 1.6225540059659207,
+          "p_value": 0.10512071260369314
+        },
+        "eta_linear:eta_quadratic": {
+          "estimate": 259.7656250000032,
+          "std_err": 695.8546058637808,
+          "t_value": 0.3733044558605026,
+          "p_value": 0.7090312862192303
+        },
+        "eta_linear:exploration_intensity": {
+          "estimate": -1355.4687499999995,
+          "std_err": 1391.7092117275606,
+          "t_value": -0.9739597457412997,
+          "p_value": 0.33040226743053003
+        },
+        "eta_linear:context_richness": {
+          "estimate": 890.6250000000014,
+          "std_err": 1391.7092117275604,
+          "t_value": 0.6399504957608553,
+          "p_value": 0.5224075184045383
+        },
+        "eta_linear:lam": {
+          "estimate": 2046.8750000000066,
+          "std_err": 1391.7092117275606,
+          "t_value": 1.470763420081968,
+          "p_value": 0.14179017345394257
+        },
+        "eta_linear:memory_decay": {
+          "estimate": -207.03124999999693,
+          "std_err": 1391.7092117275606,
+          "t_value": -0.14876042226019637,
+          "p_value": 0.881784162928332
+        },
+        "eta_quadratic:exploration_intensity": {
+          "estimate": -1239.5833333333385,
+          "std_err": 803.50368802459,
+          "t_value": -1.5427226431042877,
+          "p_value": 0.1233356397183656
+        },
+        "eta_quadratic:context_richness": {
+          "estimate": 433.59375000000114,
+          "std_err": 803.5036880245905,
+          "t_value": 0.5396288236908894,
+          "p_value": 0.5896191846892158
+        },
+        "eta_quadratic:lam": {
+          "estimate": -360.6770833333292,
+          "std_err": 803.50368802459,
+          "t_value": -0.4488804329200431,
+          "p_value": 0.6536524209645695
+        },
+        "eta_quadratic:memory_decay": {
+          "estimate": 401.04166666666583,
+          "std_err": 803.5036880245902,
+          "t_value": 0.4991161492396192,
+          "p_value": 0.6178493916293246
+        },
+        "exploration_intensity:context_richness": {
+          "estimate": -2315.104166666669,
+          "std_err": 1136.3258130211766,
+          "t_value": -2.03735947924253,
+          "p_value": 0.041977681883423094
+        },
+        "exploration_intensity:lam": {
+          "estimate": 934.8958333333212,
+          "std_err": 1136.325813021176,
+          "t_value": 0.8227357177143515,
+          "p_value": 0.4109295633923632
+        },
+        "exploration_intensity:memory_decay": {
+          "estimate": 309.89583333333803,
+          "std_err": 1136.325813021177,
+          "t_value": 0.27271741060727156,
+          "p_value": 0.785148321994789
+        },
+        "context_richness:lam": {
+          "estimate": -177.08333333333712,
+          "std_err": 1136.3258130211766,
+          "t_value": -0.15583852034701334,
+          "p_value": 0.8762038065294726
+        },
+        "context_richness:memory_decay": {
+          "estimate": 3317.7083333333308,
+          "std_err": 1136.3258130211766,
+          "t_value": 2.9196805135601562,
+          "p_value": 0.003612860081356549
+        },
+        "lam:memory_decay": {
+          "estimate": -2885.416666666679,
+          "std_err": 1136.3258130211768,
+          "t_value": -2.5392511844777617,
+          "p_value": 0.011317429641748384
+        }
+      }
+    },
+    "no_sale_rate": {
+      "r_squared": 0.8054774973996903,
+      "adj_r_squared": 0.7936393367988416,
+      "f_statistic": 68.04076448683611,
+      "f_pvalue": 1.9051924431887256e-225,
+      "n_obs": 768,
+      "coefficients": {
+        "auction_type": {
+          "estimate": -0.0017571093750000041,
+          "std_err": 0.0006288996876341504,
+          "t_value": -2.7939421970617464,
+          "p_value": 0.005344819458831191
+        },
+        "n_bidders": {
+          "estimate": -0.013903854166666675,
+          "std_err": 0.0006288996876341504,
+          "t_value": -22.10822240820536,
+          "p_value": 3.891672476701096e-83
+        },
+        "reserve_price": {
+          "estimate": 0.017360859374999982,
+          "std_err": 0.0006288996876341494,
+          "t_value": 27.60513276816785,
+          "p_value": 4.086315695710608e-115
+        },
+        "eta_linear": {
+          "estimate": 0.000914189453125002,
+          "std_err": 0.0003851208335248481,
+          "t_value": 2.373773043534967,
+          "p_value": 0.017867679863787993
+        },
+        "eta_quadratic": {
+          "estimate": 0.00020047526041667407,
+          "std_err": 0.00044469923381220897,
+          "t_value": 0.45081089683489833,
+          "p_value": 0.6522610121678499
+        },
+        "exploration_intensity": {
+          "estimate": -0.000403125000000002,
+          "std_err": 0.0006288996876341501,
+          "t_value": -0.6410004773837826,
+          "p_value": 0.5217254970876175
+        },
+        "context_richness": {
+          "estimate": 0.013357630208333318,
+          "std_err": 0.0006288996876341499,
+          "t_value": 21.23968332467015,
+          "p_value": 3.596260256248238e-78
+        },
+        "lam": {
+          "estimate": -0.0016038541666666753,
+          "std_err": 0.0006288996876341504,
+          "t_value": -2.550254354077029,
+          "p_value": 0.010969534359944197
+        },
+        "memory_decay": {
+          "estimate": -0.0007243229166666743,
+          "std_err": 0.0006288996876341499,
+          "t_value": -1.1517304443121859,
+          "p_value": 0.24981256365959392
+        },
+        "auction_type:n_bidders": {
+          "estimate": 0.0018198177083333402,
+          "std_err": 0.0006288996876341504,
+          "t_value": 2.8936533824325608,
+          "p_value": 0.003922462880227357
+        },
+        "auction_type:reserve_price": {
+          "estimate": -0.0016645312499999918,
+          "std_err": 0.0006288996876341505,
+          "t_value": -2.646735692081149,
+          "p_value": 0.008304167287587096
+        },
+        "auction_type:eta_linear": {
+          "estimate": -0.002080253906249994,
+          "std_err": 0.000770241667049696,
+          "t_value": -2.700780800677946,
+          "p_value": 0.007079628699249966
+        },
+        "auction_type:eta_quadratic": {
+          "estimate": 0.00013869140624999583,
+          "std_err": 0.0004446992338122089,
+          "t_value": 0.3118768725123631,
+          "p_value": 0.7552240151180295
+        },
+        "auction_type:exploration_intensity": {
+          "estimate": 0.000291796875000011,
+          "std_err": 0.0006288996876341502,
+          "t_value": 0.46397999671095086,
+          "p_value": 0.6428017395380017
+        },
+        "auction_type:context_richness": {
+          "estimate": -0.000417447916666672,
+          "std_err": 0.0006288996876341504,
+          "t_value": -0.6637750421487152,
+          "p_value": 0.5070459044139648
+        },
+        "auction_type:lam": {
+          "estimate": -0.0008211718750000014,
+          "std_err": 0.0006288996876341504,
+          "t_value": -1.3057279104226578,
+          "p_value": 0.19206041310705158
+        },
+        "auction_type:memory_decay": {
+          "estimate": -0.0013091927083333323,
+          "std_err": 0.0006288996876341506,
+          "t_value": -2.081719444413094,
+          "p_value": 0.03771931777116626
+        },
+        "n_bidders:reserve_price": {
+          "estimate": -0.012927630208333332,
+          "std_err": 0.0006288996876341503,
+          "t_value": -20.55594948212746,
+          "p_value": 2.7107485219448096e-74
+        },
+        "n_bidders:eta_linear": {
+          "estimate": -0.0007114257812499891,
+          "std_err": 0.0007702416670496961,
+          "t_value": -0.9236396986610798,
+          "p_value": 0.35598208118040453
+        },
+        "n_bidders:eta_quadratic": {
+          "estimate": -0.0002536263020833332,
+          "std_err": 0.0004446992338122091,
+          "t_value": -0.5703322218684919,
+          "p_value": 0.5686295823695027
+        },
+        "n_bidders:exploration_intensity": {
+          "estimate": -7.812499999946827e-07,
+          "std_err": 0.0006288996876341504,
+          "t_value": -0.0012422489871694116,
+          "p_value": 0.9990091716369591
+        },
+        "n_bidders:context_richness": {
+          "estimate": -0.011022994791666671,
+          "std_err": 0.0006288996876341506,
+          "t_value": -17.527429267986964,
+          "p_value": 1.378099140251304e-57
+        },
+        "n_bidders:lam": {
+          "estimate": -5.0416666666666925e-05,
+          "std_err": 0.0006288996876341501,
+          "t_value": -0.08016646797254544,
+          "p_value": 0.9361270432730273
+        },
+        "n_bidders:memory_decay": {
+          "estimate": 1.9218749999987128e-05,
+          "std_err": 0.0006288996876341501,
+          "t_value": 0.030559325084555066,
+          "p_value": 0.975629414464831
+        },
+        "reserve_price:eta_linear": {
+          "estimate": 0.0014412695312500008,
+          "std_err": 0.0007702416670496961,
+          "t_value": 1.871191332417245,
+          "p_value": 0.06172222721713485
+        },
+        "reserve_price:eta_quadratic": {
+          "estimate": 0.00021263671875000468,
+          "std_err": 0.0004446992338122089,
+          "t_value": 0.4781585003580163,
+          "p_value": 0.6326819405060125
+        },
+        "reserve_price:exploration_intensity": {
+          "estimate": 3.619791666658939e-06,
+          "std_err": 0.0006288996876341505,
+          "t_value": 0.005755753640578493,
+          "p_value": 0.9954091861185282
+        },
+        "reserve_price:context_richness": {
+          "estimate": 0.013764375000000013,
+          "std_err": 0.0006288996876341502,
+          "t_value": 21.88643955569455,
+          "p_value": 7.277966053841212e-82
+        },
+        "reserve_price:lam": {
+          "estimate": -0.0017386197916666674,
+          "std_err": 0.0006288996876341503,
+          "t_value": -2.7645423043651984,
+          "p_value": 0.005845478217714065
+        },
+        "reserve_price:memory_decay": {
+          "estimate": -0.0005145572916666653,
+          "std_err": 0.0006288996876341503,
+          "t_value": -0.8181865912549136,
+          "p_value": 0.41352021864525124
+        },
+        "eta_linear:eta_quadratic": {
+          "estimate": 0.0009141894531250034,
+          "std_err": 0.00038512083352484834,
+          "t_value": 2.373773043534969,
+          "p_value": 0.017867679863787924
+        },
+        "eta_linear:exploration_intensity": {
+          "estimate": -0.0004744335937499935,
+          "std_err": 0.0007702416670496961,
+          "t_value": -0.6159542050837701,
+          "p_value": 0.5381186057465914
+        },
+        "eta_linear:context_richness": {
+          "estimate": 0.00027400390625000856,
+          "std_err": 0.000770241667049696,
+          "t_value": 0.35573757947884405,
+          "p_value": 0.7221408660757667
+        },
+        "eta_linear:lam": {
+          "estimate": -0.0008224023437499905,
+          "std_err": 0.0007702416670496961,
+          "t_value": -1.067719884461832,
+          "p_value": 0.2860032621144921
+        },
+        "eta_linear:memory_decay": {
+          "estimate": -0.0006516601562499997,
+          "std_err": 0.0007702416670496961,
+          "t_value": -0.8460463567831814,
+          "p_value": 0.39780680562821236
+        },
+        "eta_quadratic:exploration_intensity": {
+          "estimate": 8.138671874999843e-05,
+          "std_err": 0.00044469923381220875,
+          "t_value": 0.18301519895212384,
+          "p_value": 0.85483740120285
+        },
+        "eta_quadratic:context_richness": {
+          "estimate": -4.444661458332866e-05,
+          "std_err": 0.00044469923381220897,
+          "t_value": -0.09994758525286311,
+          "p_value": 0.9204136446672313
+        },
+        "eta_quadratic:lam": {
+          "estimate": -0.00020944661458333048,
+          "std_err": 0.00044469923381220875,
+          "t_value": -0.4709848784488289,
+          "p_value": 0.6377936022330275
+        },
+        "eta_quadratic:memory_decay": {
+          "estimate": -3.675130208333063e-05,
+          "std_err": 0.00044469923381220886,
+          "t_value": -0.08264305240258242,
+          "p_value": 0.9341582416555493
+        },
+        "exploration_intensity:context_richness": {
+          "estimate": -0.0014820052083333321,
+          "std_err": 0.0006288996876341503,
+          "t_value": -2.356504920376839,
+          "p_value": 0.01871366900903651
+        },
+        "exploration_intensity:lam": {
+          "estimate": -0.0007750520833333372,
+          "std_err": 0.0006288996876341499,
+          "t_value": -1.232393811879596,
+          "p_value": 0.21820262031888804
+        },
+        "exploration_intensity:memory_decay": {
+          "estimate": -0.0011859374999999975,
+          "std_err": 0.0006288996876341505,
+          "t_value": -1.8857339625359972,
+          "p_value": 0.059731469095335055
+        },
+        "context_richness:lam": {
+          "estimate": -0.0011292968749999962,
+          "std_err": 0.0006288996876341503,
+          "t_value": -1.7956709109656004,
+          "p_value": 0.07296432691386796
+        },
+        "context_richness:memory_decay": {
+          "estimate": -0.0008220572916666676,
+          "std_err": 0.0006288996876341503,
+          "t_value": -1.3071357926081255,
+          "p_value": 0.191582155534675
+        },
+        "lam:memory_decay": {
+          "estimate": 0.00034802083333332085,
+          "std_err": 0.0006288996876341504,
+          "t_value": 0.5533805154881472,
+          "p_value": 0.5801739546716975
+        }
+      }
+    },
+    "price_volatility": {
+      "r_squared": 0.615046060551269,
+      "adj_r_squared": 0.5916187115391747,
+      "f_statistic": 26.25333580140688,
+      "f_pvalue": 9.827467454256662e-121,
+      "n_obs": 768,
+      "coefficients": {
+        "auction_type": {
+          "estimate": -0.019446530397841777,
+          "std_err": 0.001453101526784883,
+          "t_value": -13.38277473348264,
+          "p_value": 1.1887101678645547e-36
+        },
+        "n_bidders": {
+          "estimate": -0.017886609417178175,
+          "std_err": 0.001453101526784883,
+          "t_value": -12.309263384199932,
+          "p_value": 9.531399384406567e-32
+        },
+        "reserve_price": {
+          "estimate": -0.0034689404474475705,
+          "std_err": 0.0014531015267848803,
+          "t_value": -2.3872663977739514,
+          "p_value": 0.01723017862810052
+        },
+        "eta_linear": {
+          "estimate": -0.004034412728590456,
+          "std_err": 0.0008898393212705344,
+          "t_value": -4.533866544389185,
+          "p_value": 6.777002031159151e-06
+        },
+        "eta_quadratic": {
+          "estimate": -0.0007597534511808352,
+          "std_err": 0.0010274979433421154,
+          "t_value": -0.7394208972424852,
+          "p_value": 0.4598914555909095
+        },
+        "exploration_intensity": {
+          "estimate": 0.009810548343710146,
+          "std_err": 0.0014531015267848818,
+          "t_value": 6.751454157106881,
+          "p_value": 3.006722671964263e-11
+        },
+        "context_richness": {
+          "estimate": 0.02456725868694648,
+          "std_err": 0.0014531015267848816,
+          "t_value": 16.906773707205275,
+          "p_value": 2.76350435211176e-54
+        },
+        "lam": {
+          "estimate": -0.010865894014070367,
+          "std_err": 0.001453101526784883,
+          "t_value": -7.477725275061908,
+          "p_value": 2.1944542170303693e-13
+        },
+        "memory_decay": {
+          "estimate": -0.00768007504989409,
+          "std_err": 0.0014531015267848816,
+          "t_value": -5.285298314211362,
+          "p_value": 1.663445954221866e-07
+        },
+        "auction_type:n_bidders": {
+          "estimate": 0.02268528342583289,
+          "std_err": 0.001453101526784883,
+          "t_value": 15.61163002562258,
+          "p_value": 1.450335521193914e-47
+        },
+        "auction_type:reserve_price": {
+          "estimate": -0.006989049887758886,
+          "std_err": 0.001453101526784883,
+          "t_value": -4.80974643473315,
+          "p_value": 1.8397027112195039e-06
+        },
+        "auction_type:eta_linear": {
+          "estimate": 0.0015524956629684853,
+          "std_err": 0.0017796786425410681,
+          "t_value": 0.8723460662267625,
+          "p_value": 0.38330921809467144
+        },
+        "auction_type:eta_quadratic": {
+          "estimate": -0.0019968540226949095,
+          "std_err": 0.0010274979433421154,
+          "t_value": -1.9434141310295914,
+          "p_value": 0.05235386542081768
+        },
+        "auction_type:exploration_intensity": {
+          "estimate": -0.00034491172018882014,
+          "std_err": 0.0014531015267848823,
+          "t_value": -0.23736243740103166,
+          "p_value": 0.8124428704218922
+        },
+        "auction_type:context_richness": {
+          "estimate": -0.004310793914292997,
+          "std_err": 0.0014531015267848827,
+          "t_value": -2.9666157765528016,
+          "p_value": 0.00311025678307895
+        },
+        "auction_type:lam": {
+          "estimate": 4.535920056169141e-05,
+          "std_err": 0.0014531015267848827,
+          "t_value": 0.031215437961897064,
+          "p_value": 0.9751063430429316
+        },
+        "auction_type:memory_decay": {
+          "estimate": 0.000847355955549238,
+          "std_err": 0.0014531015267848833,
+          "t_value": 0.5831360988410002,
+          "p_value": 0.5599835247762013
+        },
+        "n_bidders:reserve_price": {
+          "estimate": 0.010046730259482686,
+          "std_err": 0.0014531015267848825,
+          "t_value": 6.913990574156218,
+          "p_value": 1.0368958954699989e-11
+        },
+        "n_bidders:eta_linear": {
+          "estimate": 0.002269564254679984,
+          "std_err": 0.0017796786425410683,
+          "t_value": 1.2752663320381512,
+          "p_value": 0.202624609665973
+        },
+        "n_bidders:eta_quadratic": {
+          "estimate": -0.00031362814189001844,
+          "std_err": 0.0010274979433421158,
+          "t_value": -0.3052348123149408,
+          "p_value": 0.7602751721407015
+        },
+        "n_bidders:exploration_intensity": {
+          "estimate": 0.0025535559364212646,
+          "std_err": 0.001453101526784883,
+          "t_value": 1.7573141926780818,
+          "p_value": 0.07928747726835594
+        },
+        "n_bidders:context_richness": {
+          "estimate": 0.0007877039645384121,
+          "std_err": 0.0014531015267848833,
+          "t_value": 0.5420846031875538,
+          "p_value": 0.5879272523991652
+        },
+        "n_bidders:lam": {
+          "estimate": 0.00046670318977790927,
+          "std_err": 0.001453101526784882,
+          "t_value": 0.32117727576168204,
+          "p_value": 0.7481688719825765
+        },
+        "n_bidders:memory_decay": {
+          "estimate": -0.00012341129855223537,
+          "std_err": 0.001453101526784882,
+          "t_value": -0.08492957737460642,
+          "p_value": 0.9323408888790028
+        },
+        "reserve_price:eta_linear": {
+          "estimate": 0.0026105703384570796,
+          "std_err": 0.0017796786425410683,
+          "t_value": 1.4668773766535985,
+          "p_value": 0.14284423929112153
+        },
+        "reserve_price:eta_quadratic": {
+          "estimate": 0.0011128889367429521,
+          "std_err": 0.0010274979433421154,
+          "t_value": 1.083105756030117,
+          "p_value": 0.27912256092122545
+        },
+        "reserve_price:exploration_intensity": {
+          "estimate": -0.003524782839351097,
+          "std_err": 0.001453101526784883,
+          "t_value": -2.4256961914767197,
+          "p_value": 0.015522803186562274
+        },
+        "reserve_price:context_richness": {
+          "estimate": 0.0001606712603786141,
+          "std_err": 0.0014531015267848823,
+          "t_value": 0.1105712556328488,
+          "p_value": 0.9119870276963911
+        },
+        "reserve_price:lam": {
+          "estimate": -0.000977309286895266,
+          "std_err": 0.0014531015267848825,
+          "t_value": -0.6725677930141953,
+          "p_value": 0.5014371850312496
+        },
+        "reserve_price:memory_decay": {
+          "estimate": -0.0011467488539260188,
+          "std_err": 0.0014531015267848825,
+          "t_value": -0.7891732496237228,
+          "p_value": 0.43026946519460363
+        },
+        "eta_linear:eta_quadratic": {
+          "estimate": -0.0040344127285904625,
+          "std_err": 0.0008898393212705349,
+          "t_value": -4.53386654438919,
+          "p_value": 6.7770020311589524e-06
+        },
+        "eta_linear:exploration_intensity": {
+          "estimate": -0.00035053524177374763,
+          "std_err": 0.0017796786425410683,
+          "t_value": -0.1969654708409856,
+          "p_value": 0.8439099141421542
+        },
+        "eta_linear:context_richness": {
+          "estimate": -0.0024327804897934895,
+          "std_err": 0.0017796786425410681,
+          "t_value": -1.3669774034709472,
+          "p_value": 0.17205726193880472
+        },
+        "eta_linear:lam": {
+          "estimate": 0.0030642514758046965,
+          "std_err": 0.0017796786425410683,
+          "t_value": 1.721800443382005,
+          "p_value": 0.0855333963371257
+        },
+        "eta_linear:memory_decay": {
+          "estimate": 0.0014628378273277586,
+          "std_err": 0.0017796786425410683,
+          "t_value": 0.8219674003836351,
+          "p_value": 0.41136642883331165
+        },
+        "eta_quadratic:exploration_intensity": {
+          "estimate": -0.0013002281006473735,
+          "std_err": 0.001027497943342115,
+          "t_value": -1.2654313413204084,
+          "p_value": 0.20612440036543914
+        },
+        "eta_quadratic:context_richness": {
+          "estimate": -0.0007365167633717762,
+          "std_err": 0.0010274979433421154,
+          "t_value": -0.7168060706536575,
+          "p_value": 0.4737252523397246
+        },
+        "eta_quadratic:lam": {
+          "estimate": -0.0015784444389893583,
+          "std_err": 0.001027497943342115,
+          "t_value": -1.536202042269004,
+          "p_value": 0.12492631920296661
+        },
+        "eta_quadratic:memory_decay": {
+          "estimate": -0.0002174119839017301,
+          "std_err": 0.0010274979433421152,
+          "t_value": -0.2115935952091154,
+          "p_value": 0.8324837366433311
+        },
+        "exploration_intensity:context_richness": {
+          "estimate": -0.006234657619970232,
+          "std_err": 0.0014531015267848825,
+          "t_value": -4.290586380268261,
+          "p_value": 2.0244779767746857e-05
+        },
+        "exploration_intensity:lam": {
+          "estimate": 0.0020241221194926473,
+          "std_err": 0.0014531015267848816,
+          "t_value": 1.3929667557167875,
+          "p_value": 0.16405799142371064
+        },
+        "exploration_intensity:memory_decay": {
+          "estimate": -0.00019441781041922273,
+          "std_err": 0.001453101526784883,
+          "t_value": -0.13379506306719635,
+          "p_value": 0.8936018638620576
+        },
+        "context_richness:lam": {
+          "estimate": -0.0033032057124567334,
+          "std_err": 0.0014531015267848825,
+          "t_value": -2.2732105441836348,
+          "p_value": 0.023306034959358814
+        },
+        "context_richness:memory_decay": {
+          "estimate": -0.0019310547978193832,
+          "std_err": 0.0014531015267848825,
+          "t_value": -1.3289193922272007,
+          "p_value": 0.18429379663824824
+        },
+        "lam:memory_decay": {
+          "estimate": 0.0015812560435751674,
+          "std_err": 0.001453101526784883,
+          "t_value": 1.0881937802885926,
+          "p_value": 0.2768721781079417
+        }
+      }
+    },
+    "winner_entropy": {
+      "r_squared": 0.8084775684423745,
+      "adj_r_squared": 0.7968219847791165,
+      "f_statistic": 69.36397110604993,
+      "f_pvalue": 7.473593813831223e-228,
+      "n_obs": 768,
+      "coefficients": {
+        "auction_type": {
+          "estimate": 0.025749441787452136,
+          "std_err": 0.0060896643947548346,
+          "t_value": 4.228384376917505,
+          "p_value": 2.6557701856526802e-05
+        },
+        "n_bidders": {
+          "estimate": 0.3231121795451852,
+          "std_err": 0.0060896643947548346,
+          "t_value": 53.05911107736725,
+          "p_value": 1.6303983365647989e-251
+        },
+        "reserve_price": {
+          "estimate": -0.04568188051667772,
+          "std_err": 0.006089664394754824,
+          "t_value": -7.501543197688306,
+          "p_value": 1.8543658001425652e-13
+        },
+        "eta_linear": {
+          "estimate": 0.0016861720034389977,
+          "std_err": 0.0037291426179859653,
+          "t_value": 0.4521607715688989,
+          "p_value": 0.6512887907539897
+        },
+        "eta_quadratic": {
+          "estimate": -0.0004079139008261157,
+          "std_err": 0.004306042988681413,
+          "t_value": -0.09473056862143084,
+          "p_value": 0.9245550843788426
+        },
+        "exploration_intensity": {
+          "estimate": -0.0380812757618771,
+          "std_err": 0.00608966439475483,
+          "t_value": -6.253427659277478,
+          "p_value": 6.866420902337422e-10
+        },
+        "context_richness": {
+          "estimate": -0.028373404005806166,
+          "std_err": 0.00608966439475483,
+          "t_value": -4.659272197371803,
+          "p_value": 3.777558204785641e-06
+        },
+        "lam": {
+          "estimate": -0.02140116708271328,
+          "std_err": 0.0060896643947548346,
+          "t_value": -3.5143426132229205,
+          "p_value": 0.000468298408836953
+        },
+        "memory_decay": {
+          "estimate": -0.0037694903401477298,
+          "std_err": 0.00608966439475483,
+          "t_value": -0.6189980425513234,
+          "p_value": 0.5361126313383825
+        },
+        "auction_type:n_bidders": {
+          "estimate": -0.020107986363365415,
+          "std_err": 0.0060896643947548346,
+          "t_value": -3.301985965053325,
+          "p_value": 0.0010072208443181623
+        },
+        "auction_type:reserve_price": {
+          "estimate": 0.0025856951909306158,
+          "std_err": 0.006089664394754835,
+          "t_value": 0.4246038900202338,
+          "p_value": 0.6712517783272836
+        },
+        "auction_type:eta_linear": {
+          "estimate": 0.007493035001287321,
+          "std_err": 0.007458285235971929,
+          "t_value": 1.0046592164573958,
+          "p_value": 0.31539708764532143
+        },
+        "auction_type:eta_quadratic": {
+          "estimate": 0.004714050685042391,
+          "std_err": 0.004306042988681413,
+          "t_value": 1.0947523509248376,
+          "p_value": 0.2739897120724746
+        },
+        "auction_type:exploration_intensity": {
+          "estimate": -0.004537175006001786,
+          "std_err": 0.006089664394754832,
+          "t_value": -0.745061584988125,
+          "p_value": 0.4564766133843682
+        },
+        "auction_type:context_richness": {
+          "estimate": -0.014611142037888346,
+          "std_err": 0.0060896643947548346,
+          "t_value": -2.3993345266240373,
+          "p_value": 0.016677039004228338
+        },
+        "auction_type:lam": {
+          "estimate": -0.003370871299372334,
+          "std_err": 0.0060896643947548346,
+          "t_value": -0.5535397488038489,
+          "p_value": 0.5800650040279828
+        },
+        "auction_type:memory_decay": {
+          "estimate": 0.012377886677580958,
+          "std_err": 0.006089664394754836,
+          "t_value": 2.0326057193303306,
+          "p_value": 0.04245731979866502
+        },
+        "n_bidders:reserve_price": {
+          "estimate": -0.001501288377179044,
+          "std_err": 0.006089664394754834,
+          "t_value": -0.24653056061219691,
+          "p_value": 0.8053415281828804
+        },
+        "n_bidders:eta_linear": {
+          "estimate": 0.0050726656664550375,
+          "std_err": 0.00745828523597193,
+          "t_value": 0.6801383301873666,
+          "p_value": 0.49663459703658985
+        },
+        "n_bidders:eta_quadratic": {
+          "estimate": 0.004514220328193379,
+          "std_err": 0.004306042988681415,
+          "t_value": 1.0483453927559863,
+          "p_value": 0.29482981798546204
+        },
+        "n_bidders:exploration_intensity": {
+          "estimate": -0.0025607184775299704,
+          "std_err": 0.0060896643947548346,
+          "t_value": -0.4205023974285964,
+          "p_value": 0.6742434287692214
+        },
+        "n_bidders:context_richness": {
+          "estimate": -0.010815117078378948,
+          "std_err": 0.006089664394754836,
+          "t_value": -1.775979163596314,
+          "p_value": 0.07615687101815063
+        },
+        "n_bidders:lam": {
+          "estimate": -0.01743887777300407,
+          "std_err": 0.006089664394754832,
+          "t_value": -2.8636845386791063,
+          "p_value": 0.004308735498290889
+        },
+        "n_bidders:memory_decay": {
+          "estimate": 0.0017027401472765047,
+          "std_err": 0.006089664394754832,
+          "t_value": 0.279611492013109,
+          "p_value": 0.7798555602439269
+        },
+        "reserve_price:eta_linear": {
+          "estimate": -0.002283677553895104,
+          "std_err": 0.00745828523597193,
+          "t_value": -0.30619337845658373,
+          "p_value": 0.7595455628061484
+        },
+        "reserve_price:eta_quadratic": {
+          "estimate": 0.007445154390696147,
+          "std_err": 0.004306042988681413,
+          "t_value": 1.7290014080830125,
+          "p_value": 0.08423571443626963
+        },
+        "reserve_price:exploration_intensity": {
+          "estimate": 0.005211554720845772,
+          "std_err": 0.006089664394754835,
+          "t_value": 0.8558032730563282,
+          "p_value": 0.392390129704161
+        },
+        "reserve_price:context_richness": {
+          "estimate": 0.01099123637171927,
+          "std_err": 0.006089664394754833,
+          "t_value": 1.8049001815578332,
+          "p_value": 0.07150624504740624
+        },
+        "reserve_price:lam": {
+          "estimate": -0.0213650857566807,
+          "std_err": 0.006089664394754834,
+          "t_value": -3.508417602632246,
+          "p_value": 0.00047867387020153473
+        },
+        "reserve_price:memory_decay": {
+          "estimate": 0.0033311984516618057,
+          "std_err": 0.006089664394754834,
+          "t_value": 0.5470249648783672,
+          "p_value": 0.5845303766759042
+        },
+        "eta_linear:eta_quadratic": {
+          "estimate": 0.0016861720034390723,
+          "std_err": 0.003729142617985968,
+          "t_value": 0.4521607715689186,
+          "p_value": 0.6512887907539755
+        },
+        "eta_linear:exploration_intensity": {
+          "estimate": 0.0018002540535638333,
+          "std_err": 0.00745828523597193,
+          "t_value": 0.24137640176069672,
+          "p_value": 0.8093318391931876
+        },
+        "eta_linear:context_richness": {
+          "estimate": 0.001188125456624195,
+          "std_err": 0.007458285235971929,
+          "t_value": 0.15930276451398873,
+          "p_value": 0.873474832726234
+        },
+        "eta_linear:lam": {
+          "estimate": 0.0018358186562428673,
+          "std_err": 0.00745828523597193,
+          "t_value": 0.2461448708596664,
+          "p_value": 0.8056399518954247
+        },
+        "eta_linear:memory_decay": {
+          "estimate": -0.0030398921141224214,
+          "std_err": 0.00745828523597193,
+          "t_value": -0.4075859286610237,
+          "p_value": 0.6836983520117745
+        },
+        "eta_quadratic:exploration_intensity": {
+          "estimate": 0.002474458073463765,
+          "std_err": 0.004306042988681411,
+          "t_value": 0.574647786835377,
+          "p_value": 0.5657082823896604
+        },
+        "eta_quadratic:context_richness": {
+          "estimate": 0.000937031294349182,
+          "std_err": 0.004306042988681413,
+          "t_value": 0.21760843930546026,
+          "p_value": 0.8277956058878044
+        },
+        "eta_quadratic:lam": {
+          "estimate": 0.0026088521469483294,
+          "std_err": 0.004306042988681411,
+          "t_value": 0.6058583608676901,
+          "p_value": 0.5447989595812165
+        },
+        "eta_quadratic:memory_decay": {
+          "estimate": 0.0026516038835867556,
+          "std_err": 0.004306042988681412,
+          "t_value": 0.6157866724871515,
+          "p_value": 0.5382291239336051
+        },
+        "exploration_intensity:context_richness": {
+          "estimate": -0.0066801068953212545,
+          "std_err": 0.006089664394754834,
+          "t_value": -1.0969581346839052,
+          "p_value": 0.2730249128369798
+        },
+        "exploration_intensity:lam": {
+          "estimate": -0.021140568370294592,
+          "std_err": 0.00608966439475483,
+          "t_value": -3.471549004983502,
+          "p_value": 0.0005482190727743918
+        },
+        "exploration_intensity:memory_decay": {
+          "estimate": 0.009353842887267243,
+          "std_err": 0.006089664394754835,
+          "t_value": 1.5360194389897608,
+          "p_value": 0.12497109432184489
+        },
+        "context_richness:lam": {
+          "estimate": -0.02243675284925095,
+          "std_err": 0.006089664394754834,
+          "t_value": -3.6843989085139466,
+          "p_value": 0.0002463619228631503
+        },
+        "context_richness:memory_decay": {
+          "estimate": 0.006093468965889415,
+          "std_err": 0.006089664394754834,
+          "t_value": 1.000624758753185,
+          "p_value": 0.3173430247755177
+        },
+        "lam:memory_decay": {
+          "estimate": 0.0030596412798592765,
+          "std_err": 0.0060896643947548346,
+          "t_value": 0.5024318388538151,
+          "p_value": 0.6155167783904643
+        }
+      }
+    }
+  }
+}
