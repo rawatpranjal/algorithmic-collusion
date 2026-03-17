@@ -1,20 +1,30 @@
-\documentclass[12pt]{article}
+\documentclass[11pt,notitlepage,a4paper]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{tabularx}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\setcounter{secnumdepth}{3}
 \usepackage{amsfonts}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric}
 \usepackage{float}
-\usepackage{fullpage}
+\usepackage[round]{natbib}
+\usepackage[singlespacing]{setspace}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{linkcolor}{rgb}{0, 0, 0.35}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=linkcolor,
+    citecolor=linkcolor,
+    urlcolor=linkcolor,
+    bookmarks=true,
+}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
 \DeclareUnicodeCharacter{202F}{~} % Replaces narrow no-break space with LaTeX non-breaking space
 
 
@@ -28,24 +38,36 @@
 \maketitle
 
 \begin{abstract}
-Algorithms increasingly automate bidding in online auctions, raising concerns about tacit bid suppression and revenue shortfalls. Prior work identifies individual mechanisms that enable algorithmic bid suppression, but it remains unclear which factors matter most and how they interact. This paper uses factorial experimental designs across four controlled experiments (six sub-experiments), spanning Q-learning, contextual bandits, and budget-constrained pacing, to systematically rank the relative importance of auction format, competitive pressure, learning parameters, and budget constraints on seller revenue. The central finding is that structural market parameters dominate algorithmic design choices: in unconstrained settings, competitive pressure is the strongest predictor of revenue; under budget constraints, budget tightness takes over. The effect of auction format is context-dependent, favouring second-price under learning algorithms but reversing to favour first-price under budget-constrained pacing. These results imply that mechanism design must account for the prevailing bidding technology, and that no single auction format is universally superior when bidders are algorithms.
+Algorithms increasingly automate bidding in online auctions, raising concerns about tacit bid suppression and revenue shortfalls. Prior work identifies individual mechanisms that enable algorithmic bid suppression, but it remains unclear which factors matter most and how they interact, and the policy conclusions drawn from this literature rest on algorithms unlike those deployed in practice. This paper develops a computational laboratory framework, based on factorial experimental designs and large-scale Monte Carlo simulation, that addresses both algorithmic collusion and auction design under autobidding within a common methodology. Across four experiments (six sub-experiments) spanning Q-learning, contextual bandits, and budget-constrained pacing, the framework systematically ranks the relative importance of auction format, competitive pressure, learning parameters, and budget constraints on seller revenue. The central finding is that structural market parameters dominate algorithmic design choices: in unconstrained settings, competitive pressure is the strongest predictor of revenue; under budget constraints, budget tightness takes over. The effect of auction format is context-dependent, favouring second-price under learning algorithms but reversing to favour first-price under budget-constrained pacing. These results imply that mechanism design must account for the prevailing bidding technology, and that no single auction format is universally superior when bidders are algorithms.
 \end{abstract}
 
-% Main body
 \newpage
+\tableofcontents
+\newpage
+
+% ── Main Body ──────────────────────────────────────────────
 \input{sections/introduction}
 \input{sections/literature}
 \input{sections/auctions}
 \input{sections/algorithms}
 \input{sections/experiments}
-\input{sections/inference}
 \input{sections/res1}
 \input{sections/res2}
 \input{sections/res3}
 \input{sections/res4a}
-\input{sections/res4b}
-
 \input{sections/discussion}
-\input{sections/references}
+
+% ── Bibliography ───────────────────────────────────────────
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% ── Appendices ─────────────────────────────────────────────
+\appendix
+\input{sections/equilibria}
+\input{sections/appendix_algorithms}
+\input{sections/appendix_design}
+\input{sections/appendix_inference}
+\input{sections/exp4a}
+\input{sections/appendix_robustness}
 
 \end{document}

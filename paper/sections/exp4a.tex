@@ -1,11 +1,14 @@
-\section{Experiment~4a Technical Details}
-\label{sec:exp4a_appendix}
+\section{Autobidding Technical Details}
+\label{sec:exp4_appendix}
 
-\subsection{Setup and Design}
+\subsection{Shared Environment}
 
-Experiment~4a studies autobidding with regenerating budgets. Each of $n \in \{2, 4\}$ advertisers participates in a sequence of $D = 100$ episodes, each comprising $T = 1{,}000$ single-item auctions. Between episodes, budgets regenerate to their initial level while dual variables persist (warm-starting).
+Experiments~4a and~4b share a common auction environment. Each of $n \in \{2, 4\}$ advertisers participates in a sequence of $D = 100$ episodes, each comprising $T = 1{,}000$ single-item auctions. Between episodes, budgets regenerate to their initial level while control variables persist (warm-starting).
 
 Valuations follow a log-normal model with bidder-specific asymmetry. Each bidder $i$ draws a mean $\mu_i \sim \mathrm{Uniform}(0.5, 1.5)$ once per seed. In each round $t$, the valuation $v_{it} \sim \mathrm{LogNormal}(\mu_i, \sigma)$ with $\sigma \in \{0.1, 0.5\}$. The budget per bidder per episode is $B_i = m \cdot \mathbb{E}[v_{it}] \cdot T$, where $\mathbb{E}[v_{it}] = \exp(\mu_i + \sigma^2/2)$ and $m \in \{0.25, 1.0\}$ is the budget multiplier. The auction may impose a reserve price $r \in \{0.0, 0.3\}$: bids below $r$ are excluded, and in second-price auctions the payment is the maximum of the second-highest bid and $r$.
+
+\subsection{Multiplicative Dual Pacing (Experiment~4a)}
+\label{sec:exp4a_appendix}
 
 All bidders use a multiplicative dual pacing algorithm. In each round the agent computes a bid as a function of its current dual variable $\mu_t$:
 \begin{align}
@@ -19,9 +22,53 @@ where $S_{it}$ is the cumulative spend at round $t$. The dual update follows
 \end{equation}
 with step size $\alpha_p = 1/\sqrt{T}$ and target spend rate $\rho = B_i / T$.
 
-\subsection{Factorial Design}
+\subsubsection{Factorial Design}
 
 The experiment uses a $2^6 = 64$ cell full factorial with six factors (Table~\ref{tab:exp4aparams}). Each cell is replicated across independent seeds, yielding \ExpFourANobs{} total runs. This design estimates all main effects and two-way interactions without aliasing.
+
+\subsection{PI Controller Pacing (Experiment~4b)}
+\label{sec:exp4b_appendix}
+
+Experiment~4b replaces the multiplicative dual pacing with a proportional-integral (PI) controller. The PI controller computes a spending error $e_t = (t/T)\,B^i - C_t^i$ at each round, where $C_t^i$ is cumulative spend, and updates the bid multiplier:
+\begin{align}
+  e_t^i &= \tfrac{t}{T}\,B^i - {\textstyle\sum_{\tau \le t}} c_\tau^i, \label{eq:pid_error_exp4b}\\
+  \lambda_{t+1}^i &= \operatorname{clip}\!\bigl(\lambda_t^i + K_P\,e_t^i + K_I\!\textstyle\sum_{\tau} e_\tau^i,\; 0.01,\; 1.5\bigr), \label{eq:pid_update_exp4b}
+\end{align}
+with $K_P = 0.30 \times a$ and $K_I = 0.05 \times a$, where $a$ is the aggressiveness parameter. The agent bids $b_t = \min(\lambda_t \cdot v_t,\; B^i - S_t^i)$.
+
+The competitive benchmark is $\lambda = 1$ (full-value bidding) for both auction formats.
+
+\subsubsection{Factorial Design}
+
+The experiment uses a $2^6 = 64$ cell full factorial with six factors (Table~\ref{tab:exp4bparams}). The aggressiveness factor replaces the bidder objective factor from Experiment~4a, testing how controller responsiveness affects bidding outcomes. Each cell is replicated across 8 independent seeds for 512 total runs.
+
+\begin{table}[H]
+\centering
+\caption{Parameter settings for Experiment~4b (PI Controller Pacing).}
+\label{tab:exp4bparams}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Factor} & \textbf{Low ($-1$)} & \textbf{High ($+1$)}\\
+\midrule
+Auction type & Second-price & First-price \\
+Aggressiveness $a$ & 0.3 (conservative) & 3.0 (aggressive) \\
+Number of bidders ($n$) & 2 & 4 \\
+Budget multiplier ($m$) & 0.25 (tight) & 1.0 (loose) \\
+Reserve price ($r$) & 0.0 & 0.3 \\
+Value dispersion ($\sigma$) & 0.1 (low) & 0.5 (high) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Fixed parameters}} \\
+\midrule
+Episodes ($D$) & \multicolumn{2}{l}{100} \\
+Rounds per episode ($T$) & \multicolumn{2}{l}{1{,}000} \\
+Log-normal $\mu$ range & \multicolumn{2}{l}{$[0.5, 1.5]$} \\
+Initial $\lambda_0$ & \multicolumn{2}{l}{1.0} \\
+Burn-in episodes & \multicolumn{2}{l}{10} \\
+$K_P$ & \multicolumn{2}{l}{$0.30 \times a$} \\
+$K_I$ & \multicolumn{2}{l}{$0.05 \times a$} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Response Variables}
 
@@ -53,5 +100,4 @@ Cross-episode drift    & Slope of btv across episodes \\
 \end{tabular}
 \end{table}
 
-The effective PoA metric compares realised liquid welfare against offline optima computed with full hindsight. Section~\ref{sec:appendix_welfare} establishes the LP relaxation as an upper bound on achievable liquid welfare. Analysis applies the same factorial ANOVA engine used in Experiments~1 through~3 to the run-level data, treating each seed as an independent replicate within its factorial cell.
-
+The effective PoA metric compares realised liquid welfare against offline optima computed with full hindsight. Section~\ref{sec:welfare} establishes the LP relaxation as an upper bound on achievable liquid welfare. Experiment~4b uses the same response variables (Table~\ref{tab:exp4a_responses}), with the dual variable CV computed from $\lambda$ history rather than $\mu$ history and the bid suppression ratio using a competitive benchmark of $\lambda = 1.0$ (full-value bidding). Analysis applies the same factorial ANOVA engine used in Experiments~1 through~3 to the run-level data, treating each seed as an independent replicate within its factorial cell.

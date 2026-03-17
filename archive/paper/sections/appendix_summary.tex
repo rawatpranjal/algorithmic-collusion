@@ -1,0 +1,42 @@
+\section{Summary Statistics and Response Variables}
+\label{sec:appendix_summary}
+
+\subsection{Experiment~1}
+
+\input{tables/exp1_summary}
+
+\subsection{Experiment~2}
+
+\subsubsection{Experiment-Specific Response Variables}
+
+Table~\ref{tab:exp2_responses} defines the additional outcome metrics computed in Experiment~2 beyond the shared response variables defined in the main paper. These metrics exploit the affiliated valuation structure and known Bayesian Nash Equilibrium benchmarks to decompose revenue shortfalls and characterise bidding behaviour. Signal slope ratio compares observed bidding to the theoretical linear equilibrium, while winner's curse frequency measures overbidding directly.
+
+\begin{table}[H]
+\centering
+\caption{Additional response variables for Experiment~2.}
+\label{tab:exp2_responses}
+\begin{tabular}{l l}
+\toprule
+\textbf{Metric} & \textbf{Definition} \\
+\midrule
+Bid-to-value median & Median of payment / winner valuation in final window \\
+Winner's curse frequency & Fraction of wins where payment exceeds winner's valuation \\
+Bid dispersion & Mean within-round standard deviation of bids \\
+Signal slope ratio & OLS slope of bid on signal, divided by BNE slope \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Summary Statistics}
+
+\input{tables/exp2_summary}
+
+\subsection{Experiment~3}
+
+\input{tables/exp3_summary}
+
+\subsection{Experiment~4b}
+
+Experiment~4b uses the same response variables as Experiment~4a (Table~\ref{tab:exp4a_responses}), with the dual variable CV computed from $\lambda$ history. The bid suppression ratio uses a competitive benchmark of $\lambda = 1.0$ (full-value bidding) for both auction formats. All remaining metrics are defined identically to Experiment~4a.
+
+\input{tables/exp4b_summary}

@@ -1,0 +1,51 @@
+\section{Experiment~4b Technical Details}
+\label{sec:exp4b_appendix}
+
+\subsection{Setup and Design}
+
+Experiment~4b replaces the multiplicative dual pacing of Experiment~4a with a proportional-integral (PI) controller. Each of $n \in \{2, 4\}$ advertisers participates in $D = 100$ episodes of $T = 1{,}000$ auctions each. Between episodes, budgets regenerate while the pacing multiplier $\lambda$ persists (warm-starting). The valuation model, budget formula, reserve price mechanism, and auction rules are identical to Experiment~4a.
+
+The PI controller computes a spending error $e_t = (t/T)\,B^i - C_t^i$ at each round, where $C_t^i$ is cumulative spend, and updates the bid multiplier:
+\begin{align}
+  e_t^i &= \tfrac{t}{T}\,B^i - {\textstyle\sum_{\tau \le t}} c_\tau^i, \label{eq:pid_error_exp4b}\\
+  \lambda_{t+1}^i &= \operatorname{clip}\!\bigl(\lambda_t^i + K_P\,e_t^i + K_I\!\textstyle\sum_{\tau} e_\tau^i,\; 0.01,\; 1.5\bigr), \label{eq:pid_update_exp4b}
+\end{align}
+with $K_P = 0.30 \times a$ and $K_I = 0.05 \times a$, where $a$ is the aggressiveness parameter. The agent bids $b_t = \min(\lambda_t \cdot v_t,\; B^i - S_t^i)$.
+
+The competitive benchmark is $\lambda = 1$ (full-value bidding) for both auction formats.
+
+\subsection{Factorial Design}
+
+The experiment uses a $2^6 = 64$ cell full factorial with six factors (Table~\ref{tab:exp4bparams}). The aggressiveness factor replaces the bidder objective factor from Experiment~4a, testing how controller responsiveness affects bidding outcomes. Each cell is replicated across 8 independent seeds for 512 total runs.
+
+\begin{table}[H]
+\centering
+\caption{Parameter settings for Experiment~4b (PI Controller Pacing).}
+\label{tab:exp4bparams}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Factor} & \textbf{Low ($-1$)} & \textbf{High ($+1$)}\\
+\midrule
+Auction type & Second-price & First-price \\
+Aggressiveness $a$ & 0.3 (conservative) & 3.0 (aggressive) \\
+Number of bidders ($n$) & 2 & 4 \\
+Budget multiplier ($m$) & 0.25 (tight) & 1.0 (loose) \\
+Reserve price ($r$) & 0.0 & 0.3 \\
+Value dispersion ($\sigma$) & 0.1 (low) & 0.5 (high) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Fixed parameters}} \\
+\midrule
+Episodes ($D$) & \multicolumn{2}{l}{100} \\
+Rounds per episode ($T$) & \multicolumn{2}{l}{1{,}000} \\
+Log-normal $\mu$ range & \multicolumn{2}{l}{$[0.5, 1.5]$} \\
+Initial $\lambda_0$ & \multicolumn{2}{l}{1.0} \\
+Burn-in episodes & \multicolumn{2}{l}{10} \\
+$K_P$ & \multicolumn{2}{l}{$0.30 \times a$} \\
+$K_I$ & \multicolumn{2}{l}{$0.05 \times a$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Response Variables}
+
+All response variables are identical to Experiment~4a (Table~\ref{tab:exp4a_responses}), with the dual variable CV computed from $\lambda$ history rather than $\mu$ history. The bid suppression ratio divides observed bid-to-value ratio by the competitive benchmark of~1.0. The estimation strategy mirrors Experiment~4a: factorial ANOVA on run-level data, with the aggressiveness factor replacing the objective factor in all model specifications.

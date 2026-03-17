@@ -1,7 +1,7 @@
 \section{Experimental Design}
 
 \subsection{Auction Settings}
-We model a sealed-bid auction with $n$ bidders. In each round, bidder $i$ submits a bid $b_i \in [0,1]$, discretized into a finite grid (e.g.\ $11$ equally spaced actions). The grid size balances computational tractability against approximation accuracy. We verify in Online Appendix~D that effect rankings are stable across grid sizes of 6, 11, and 21, confirming that the discrete action space does not drive the qualitative findings.\footnote{Coarser grids introduce approximation error proportional to grid spacing, but the relative ordering of factor importance is preserved.} Let $r \ge 0$ be a reserve price. Any bid below $r$ is ineligible to win. Among the remaining bids, the highest wins:
+We model a sealed-bid auction with $n$ bidders. In each round, bidder $i$ submits a bid $b_i \in [0,1]$, discretized into a finite grid (e.g.\ $11$ equally spaced actions). The grid size balances computational tractability against approximation accuracy. We verify in Appendix~\ref{sec:appendix_robustness} that effect rankings are stable across grid sizes of 6, 11, and 21, confirming that the discrete action space does not drive the qualitative findings.\footnote{Coarser grids introduce approximation error proportional to grid spacing, but the relative ordering of factor importance is preserved.} Let $r \ge 0$ be a reserve price. Any bid below $r$ is ineligible to win. Among the remaining bids, the highest wins:
 \[
 \text{Winner} \;=\;\arg\max_i\; \{\,b_i : b_i \ge r\}.
 \]

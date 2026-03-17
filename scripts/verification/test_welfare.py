@@ -2,7 +2,7 @@
 """
 Tests 7-9: LP optimality and PoA bounds verification.
 
-All formulas from paper/sections/appendix_welfare.tex.
+All formulas from paper/sections/auctions.tex and paper/sections/appendix_robustness.tex.
 Zero imports from project source code.
 """
 
@@ -141,7 +141,7 @@ def _solve_unconstrained_ilp(valuations, budgets_unused):
 
 def test_7_lp_equals_optimal(verbose=False, quick=False):
     """
-    Claim (appendix_welfare.tex Proposition):
+    Claim (auctions.tex Proposition):
     LP* = W* (the LP relaxation achieves the same value as the non-linear optimum).
 
     Method (both directions of the proof):
@@ -294,7 +294,7 @@ def test_7_lp_equals_optimal(verbose=False, quick=False):
 
 def test_8_poa_ge_one(verbose=False, quick=False):
     """
-    Claim (appendix_welfare.tex eq:poa_def):
+    Claim (auctions.tex eq:poa_def):
     PoA = W* / W(x_obs) >= 1 by construction (W* is the optimum over all
     allocations, so it must exceed any particular allocation's welfare).
 
@@ -387,7 +387,7 @@ def test_8_poa_ge_one(verbose=False, quick=False):
 
 def test_9_poa_le_two(verbose=False, quick=False):
     """
-    Claim (appendix_welfare.tex table, multiple sources):
+    Claim (auctions.tex table, multiple sources):
     PoA <= 2 for budget-constrained autobidding in FPA and SPA.
 
     This is an EMPIRICAL check, not a proof of the theoretical bound. The PoA <= 2

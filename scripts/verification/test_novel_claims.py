@@ -2,7 +2,7 @@
 """
 Verification of mathematical claims used in the paper.
 
-1. LP benchmark correctness (appendix_welfare.tex Lemma):
+1. LP benchmark correctness (auctions.tex Lemma):
    The LP relaxation with budget constraints computes the same optimum
    as the nonlinear liquid welfare maximization (LP* = W*).
    This validates the PoA benchmark used in Experiment 4.
@@ -136,7 +136,7 @@ def _generate_random_instance(rng, N, T, budget_frac, dist="lognormal"):
 
 def test_lp_equals_wstar():
     """
-    Verify LP benchmark (appendix_welfare.tex Lemma): LP* = W*.
+    Verify LP benchmark (auctions.tex Lemma): LP* = W*.
 
     Method: Solve both LP formulations on each instance:
       - Paper's LP (budget constraints in LP form)

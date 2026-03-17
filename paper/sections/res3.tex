@@ -1,7 +1,7 @@
 \section{Contextual Bandits}
 \label{sec:exp3_results}
 
-Experiment~3 replaces Q-learning with contextual bandits. Unlike the previous Q-learning experiments, we analyse two distinct algorithm classes separately: LinUCB (Experiment~IIIa) and Contextual Thompson Sampling (Experiment~IIIb). Each receives a tailored factorial design because the algorithms respond to fundamentally different hyperparameters; regularisation and memory decay drive LinUCB behaviour but are structurally irrelevant for Thompson Sampling, whose Bayesian posterior update washes out the prior after a few dozen rounds. Separating the two avoids wasting design cells on factors with no effect.
+Experiment~3 replaces Q-learning with contextual bandits. LinUCB uses optimism-based exploration while Contextual Thompson Sampling uses posterior sampling, creating a natural contrast for how exploration style affects outcomes. Each receives a tailored factorial design because the algorithms respond to fundamentally different hyperparameters. Regularisation and memory decay drive LinUCB behaviour but are structurally irrelevant for Thompson Sampling, whose Bayesian posterior update washes out the prior after a few dozen rounds. Separating the two avoids wasting design cells on factors with no effect.
 
 \subsection{LinUCB}
 
@@ -49,7 +49,7 @@ Table~\ref{tab:exp3a_ranked_vol} and the main effects plot (Figure~\ref{fig:e3a_
   \label{fig:e3a_main_vol}
 \end{figure}
 
-Model adequacy diagnostics (Online Appendix~D) confirm that the linear model captures the dominant effects.\footnote{$R^2$ values reach \ExpThreeARsqMax{} across \ExpThreeANobs{} observations. Of the \ExpThreeANRawSig{} effects significant at $p < 0.05$, \ExpThreeANBHSig{} (\ExpThreeABHPct\%) survive Benjamini--Hochberg correction.}
+Model adequacy diagnostics (Appendix~\ref{sec:appendix_robustness}) confirm that the linear model captures the dominant effects.\footnote{$R^2$ values reach \ExpThreeARsqMax{} across \ExpThreeANobs{} observations. Of the \ExpThreeANRawSig{} effects significant at $p < 0.05$, \ExpThreeANBHSig{} (\ExpThreeABHPct\%) survive Benjamini--Hochberg correction.}
 
 \subsection{Contextual Thompson Sampling}
 
@@ -99,4 +99,4 @@ Model adequacy diagnostics confirm that the linear model captures the dominant e
 
 \subsection{Summary}
 
-Replacing Q-learning with contextual bandits does not improve seller welfare. LinUCB and Thompson Sampling respond to different design levers, validating the decision to analyse them separately. The welfare consequences of exploration are algorithm-specific.
+Replacing Q-learning with contextual bandits does not improve seller welfare: richer algorithm design does not translate into higher revenue for the auctioneer because bandits converge more rapidly to shaded equilibria. LinUCB and Thompson Sampling respond to different design levers, validating the decision to analyse them separately. Higher exploration intensity reduces revenue under both algorithms, but the magnitudes and moderating factors differ.

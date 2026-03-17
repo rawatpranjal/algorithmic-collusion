@@ -150,7 +150,7 @@ pdf:
 	$(PYTHON) scripts/generate_results.py
 
 paper:
-	cd paper && pdflatex -interaction=nonstopmode main.tex && cd ..
+	cd paper && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex && cd ..
 
 # ── Full Pipeline ────────────────────────────────────────────
 all: experiments analyze robust traces tables pdf paper
@@ -215,4 +215,4 @@ calibrate-exp4b:
 # ── Cleanup ──────────────────────────────────────────────────
 clean:
 	rm -f main.aux main.log main.out
-	rm -f paper/*.aux paper/*.log paper/*.out
+	rm -f paper/*.aux paper/*.log paper/*.out paper/*.bbl paper/*.blg paper/*.toc

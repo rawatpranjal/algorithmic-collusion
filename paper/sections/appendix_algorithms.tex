@@ -73,7 +73,7 @@ Each experiment runs for a set number of \emph{episodes}, during which agents co
 
 \subsection{PID Pacing}
 
-This controller is used in Experiment~4b; Experiment~4a uses the multiplicative pacing described in the main paper. As an alternative to the multiplicative dual update of Balseiro and Gur (2019), we implement a proportional--integral (PI) controller that operates directly on the cumulative spending error:
+This controller is used in Experiment~4b; Experiment~4a uses the multiplicative pacing described in the main paper. As an alternative to the multiplicative dual update of \citet{Balseiro2019Learning}, we implement a proportional--integral (PI) controller that operates directly on the cumulative spending error:
 \begin{align}
 e_t^i &\;=\; \tfrac{t}{T}\,B^i \;-\; {\textstyle\sum_{\tau \le t}} c_\tau^i, \label{eq:pid_error}\\
 \lambda_{t+1}^i &\;=\; \operatorname{clip}\!\bigl(\lambda_t^i + K_P\,e_t^i + K_I\!\textstyle\sum_{\tau} e_\tau^i,\; 0.01,\; 1.5\bigr), \label{eq:pid_update}

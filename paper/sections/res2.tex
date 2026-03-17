@@ -1,7 +1,7 @@
 \section{Q-Learning under Affiliated Valuations}
 \label{sec:exp2_results}
 
-Experiment~1 established the factor hierarchy under identical valuations. A natural question is whether valuation interdependence changes this picture. Experiment~2 generalises the Q-learning framework to affiliated valuations by introducing the affiliation parameter $\eta \in \{0, 0.5, 1\}$. The design is a $3 \times 2^3 = 24$ mixed-level factorial crossing four structural factors: auction format, affiliation strength ($\eta$), number of bidders, and state information, with Q-learning hyperparameters fixed at levels identified in Experiment~1 ($\alpha = 0.1$, $\gamma = 0.95$, $\varepsilon$-greedy exploration, asynchronous updates, zero initialisation). The primary question is whether valuation interdependence, ranging from purely private values ($\eta = 0$) to near-common values ($\eta = 1$), alters the relative performance of first-price and second-price auctions under algorithmic bidding.
+Experiment~1 established the factor hierarchy under identical valuations. Under affiliated values, \citet{MilgromWeber1982} predict that the second-price auction should weakly dominate the first-price auction in revenue. Experiment~2 tests whether Q-learning preserves this ordering by generalising the framework to affiliated valuations with the affiliation parameter $\eta \in \{0, 0.5, 1\}$. The design is a $3 \times 2^3 = 24$ mixed-level factorial crossing four structural factors: auction format, affiliation strength ($\eta$), number of bidders, and state information, with Q-learning hyperparameters fixed at levels identified in Experiment~1 ($\alpha = 0.1$, $\gamma = 0.95$, $\varepsilon$-greedy exploration, asynchronous updates, zero initialisation). The primary question is whether valuation interdependence, ranging from purely private values ($\eta = 0$) to near-common values ($\eta = 1$), alters the relative performance of first-price and second-price auctions under algorithmic bidding.
 
 \begin{figure}[H]
   \centering
@@ -23,7 +23,7 @@ Number of bidders is the dominant factor for revenue ($|t| = \ExpTwoRevNbidAbsT$
   \label{fig:e2_main_rev}
 \end{figure}
 
-The affiliation parameter $\eta$ has no significant effect on any primary outcome, despite spanning the full range from independent private values to near-common values. The number of bidders continues to moderate the auction type effect, with more bidders dampening the revenue penalty from first-price auctions. State information, which determines whether agents observe a signal correlated with the common value component, also influences revenue outcomes. The interaction plot (Figure~\ref{fig:e2_int_rev}) displays these moderating relationships, showing how auction format interacts with competitive pressure and information availability.
+The affiliation parameter $\eta$ has no significant effect on any primary outcome, despite spanning the full range from independent private values to near-common values. Q-learning does not exploit the informational structure that drives the Milgrom-Weber revenue ranking; the tabular state representation is too coarse to condition on the correlation structure that affiliation introduces. The number of bidders continues to moderate the auction type effect, with more bidders dampening the revenue penalty from first-price auctions. State information also influences revenue outcomes. The interaction plot (Figure~\ref{fig:e2_int_rev}) displays these moderating relationships.
 
 \begin{figure}[H]
   \centering
@@ -47,7 +47,7 @@ Unlike Experiment~1, where auction type had minimal effect on volatility, first-
   \label{fig:e2_main_vol}
 \end{figure}
 
-Model adequacy diagnostics (Online Appendix~D) confirm that the linear model adequately captures the systematic variation.\footnote{$R^2$ values range from \ExpTwoRsqMin{} to \ExpTwoRsqMax{} across \ExpTwoNobs{} observations. LightGBM cross-validated $R^2$ closely matches OLS for revenue (\ExpTwoRevLGBMRsq{} vs.\ \ExpTwoRevRsq). Of the \ExpTwoNRawSig{} effects significant at $p < 0.05$, \ExpTwoNBHSig{} (\ExpTwoBHPct\%) survive Benjamini--Hochberg correction.}
+Model adequacy diagnostics (Appendix~\ref{sec:appendix_robustness}) confirm that the linear model adequately captures the systematic variation.\footnote{$R^2$ values range from \ExpTwoRsqMin{} to \ExpTwoRsqMax{} across \ExpTwoNobs{} observations. LightGBM cross-validated $R^2$ closely matches OLS for revenue (\ExpTwoRevLGBMRsq{} vs.\ \ExpTwoRevRsq). Of the \ExpTwoNRawSig{} effects significant at $p < 0.05$, \ExpTwoNBHSig{} (\ExpTwoBHPct\%) survive Benjamini--Hochberg correction.}
 
 \subsection{Summary}
 

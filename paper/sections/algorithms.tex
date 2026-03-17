@@ -20,9 +20,9 @@ Q(s_t,a_t)
 \Bigr],
 \label{eq:qlearning_async}
 \end{equation}
-where $\alpha$ is the learning rate and $\gamma$ the discount factor. Only $Q(s_t,a_t)$ changes, reflecting the experience from action $a_t$. A \emph{synchronous} variant updates Q-values for all actions simultaneously using counterfactual rewards, accelerating convergence at the cost of additional computation (Online Appendix~A).
+where $\alpha$ is the learning rate and $\gamma$ the discount factor. Only $Q(s_t,a_t)$ changes, reflecting the experience from action $a_t$. A \emph{synchronous} variant updates Q-values for all actions simultaneously using counterfactual rewards, accelerating convergence at the cost of additional computation (Appendix~\ref{sec:appendix_algorithms}).
 
-Agents select actions using either \emph{Boltzmann} (softmax) exploration, which draws actions probabilistically in proportion to exponentiated Q-values, or \emph{$\varepsilon$-greedy} exploration, which selects the greedy action with probability $1-\varepsilon$ and randomises otherwise. Both exploration methods use a decaying schedule that transitions from full exploration to near-greedy exploitation.\footnote{$\varepsilon$ starts at 1.0 and decays over the first 90\% of episodes to a floor of 0.01; agents then switch to pure exploitation ($\varepsilon = 0$) for the final 10\%. For Boltzmann exploration, the temperature $\tau$ follows an analogous schedule (1.0 to 0.01). Both schedules admit linear and exponential variants (Experiment~1).} Full specifications appear in Online Appendix~A.
+Agents select actions using either \emph{Boltzmann} (softmax) exploration, which draws actions probabilistically in proportion to exponentiated Q-values, or \emph{$\varepsilon$-greedy} exploration, which selects the greedy action with probability $1-\varepsilon$ and randomises otherwise. Both exploration methods use a decaying schedule that transitions from full exploration to near-greedy exploitation.\footnote{$\varepsilon$ starts at 1.0 and decays over the first 90\% of episodes to a floor of 0.01; agents then switch to pure exploitation ($\varepsilon = 0$) for the final 10\%. For Boltzmann exploration, the temperature $\tau$ follows an analogous schedule (1.0 to 0.01). Both schedules admit linear and exponential variants (Experiment~1).} Full specifications appear in Appendix~\ref{sec:appendix_algorithms}.
 
 \subsection{Contextual Bandits}
 
@@ -38,25 +38,25 @@ c\sqrt{\mathbf{x}^\top \mathbf{A}_a^{-1}\mathbf{x}}\Bigr],
 \quad
 \hat{\boldsymbol{\theta}}_{a} \;=\; \mathbf{A}_a^{-1}\mathbf{b}_a,
 \end{equation}
-and $c>0$ controls exploration. After observing the reward, $\mathbf{A}_a$ and $\mathbf{b}_a$ are updated, refining the estimate of $\boldsymbol{\theta}_a$. As an alternative, \emph{Contextual Thompson Sampling} (CTS) uses posterior sampling from a Bayesian linear model to balance exploration and exploitation; the two methods are compared in Experiment~3 (see Online Appendix~A for the CTS formulation).
+and $c>0$ controls exploration. After observing the reward, $\mathbf{A}_a$ and $\mathbf{b}_a$ are updated, refining the estimate of $\boldsymbol{\theta}_a$. As an alternative, \emph{Contextual Thompson Sampling} (CTS) uses posterior sampling from a Bayesian linear model to balance exploration and exploitation; the two methods are compared in Experiment~3 (see Appendix~\ref{sec:appendix_algorithms} for the CTS formulation).
 
-In standard implementations, the precision matrices $\mathbf{A}_a$ accumulate all past observations with equal weight, progressively reducing uncertainty and concentrating the policy around the estimated optimum. Experiment~3 introduces an optional \emph{memory decay} parameter $\delta \in (0,1]$ that applies exponential discounting to historical observations, preventing early experiences from permanently anchoring the policy.\footnote{At each update, $\mathbf{A}_a \leftarrow \delta\,\mathbf{A}_a + \mathbf{x}\mathbf{x}^\top$ and $\mathbf{b}_a \leftarrow \delta\,\mathbf{b}_a + r\,\mathbf{x}$. Setting $\delta = 1$ recovers the standard algorithm; $\delta < 1$ produces an effective observation window of approximately $1/(1-\delta)$ rounds.} This mechanism tests whether the rigidity of full-memory bandit learners contributes to bid suppression, following Douglas et al.\ (2024), who show that deterministic convergence is a key driver of naive algorithmic collusion. The discounted variant draws on Russac et al.\ (2019), who analyse weighted linear bandits in non-stationary environments.
+In standard implementations, the precision matrices $\mathbf{A}_a$ accumulate all past observations with equal weight, progressively reducing uncertainty and concentrating the policy around the estimated optimum. Experiment~3 introduces an optional \emph{memory decay} parameter $\delta \in (0,1]$ that applies exponential discounting to historical observations, preventing early experiences from permanently anchoring the policy.\footnote{At each update, $\mathbf{A}_a \leftarrow \delta\,\mathbf{A}_a + \mathbf{x}\mathbf{x}^\top$ and $\mathbf{b}_a \leftarrow \delta\,\mathbf{b}_a + r\,\mathbf{x}$. Setting $\delta = 1$ recovers the standard algorithm; $\delta < 1$ produces an effective observation window of approximately $1/(1-\delta)$ rounds.} This mechanism tests whether the rigidity of full-memory bandit learners contributes to bid suppression, following \citet{Douglas2024}, who show that deterministic convergence is a key driver of naive algorithmic collusion. The discounted variant draws on \citet{Russac2019}, who analyse weighted linear bandits in non-stationary environments.
 
 \subsection{Budget-Constrained Pacing (Experiment~4a)}
 
-Experiment~4a replaces the unconstrained bidding of prior experiments with \emph{budget-constrained pacing agents}. Each agent~$i$ has a total budget $B^i$ over a horizon of $T$ rounds. At each round~$t$, the agent observes its private valuation $v_t^i$ and computes a bid using a Lagrangian dual variable $\mu_t^i$ that controls bid shading. Following the dual decomposition framework of Balseiro and Gur (2019), the bid depends on the agent's objective:
+Experiment~4a replaces the unconstrained bidding of prior experiments with \emph{budget-constrained pacing agents}. Each agent~$i$ has a total budget $B^i$ over a horizon of $T$ rounds. At each round~$t$, the agent observes its private valuation $v_t^i$ and computes a bid using a Lagrangian dual variable $\mu_t^i$ that controls bid shading. Following the dual decomposition framework of \citet{Balseiro2019Learning}, the bid depends on the agent's objective:
 \begin{align}
 b_t^i &\;=\; \min\!\bigl(v_t^i / \mu_t^i,\; B^i - S_t^i\bigr) & &\text{(value-maximizer),} \label{eq:bid_vmax_algo}\\
 b_t^i &\;=\; \min\!\bigl(v_t^i / (1 + \mu_t^i),\; B^i - S_t^i\bigr) & &\text{(utility-maximizer),} \label{eq:bid_umax_algo}
 \end{align}
 where $S_t^i$ is the cumulative spend at round~$t$. The hard budget cap ensures spending never exceeds the remaining budget.
 
-Following Balseiro and Gur (2019), the dual variable is updated via an exponential multiplicative rule:
+Following \citet{Balseiro2019Learning}, the dual variable is updated via an exponential multiplicative rule:
 \begin{equation}
 \mu_{t+1}^i \;=\; \operatorname{clip}\!\bigl(\mu_t^i \cdot \exp\!\bigl(\alpha_p\,(c_t^i - B^i/T)\bigr),\; \mu_{\min},\; \mu_{\max}\bigr),
 \label{eq:dual_update}
 \end{equation}
-where $\alpha_p = 1/\!\sqrt{T}$ is the dual step size and $c_t^i$ is the payment made by agent~$i$ in round~$t$.\footnote{The dual variable is clipped to $[\mu_{\min}, \mu_{\max}] = [10^{-4}, 100]$ for numerical stability.} When the per-round cost exceeds the target spend rate $B^i/T$, the dual variable rises, reducing bids; underspending reverses this adjustment. An alternative PI-based controller is described in Online Appendix~A and used in Experiment~4b.
+where $\alpha_p = 1/\!\sqrt{T}$ is the dual step size and $c_t^i$ is the payment made by agent~$i$ in round~$t$.\footnote{The dual variable is clipped to $[\mu_{\min}, \mu_{\max}] = [10^{-4}, 100]$ for numerical stability.} When the per-round cost exceeds the target spend rate $B^i/T$, the dual variable rises, reducing bids; underspending reverses this adjustment. An alternative PI-based controller is described in Appendix~\ref{sec:appendix_algorithms} and used in Experiment~4b.
 
 Both algorithms implement the same closed-loop pacing structure illustrated in Figure~\ref{fig:pacing_loop}: the multiplier governs bids, the auction determines payments, and the control law updates the multiplier in response. They differ only in how the error signal is defined and propagated.
 
@@ -91,3 +91,5 @@ Both algorithms implement the same closed-loop pacing structure illustrated in F
 \end{figure}
 
 The budget per episode is $B^i = 0.5 \cdot \mathbb{E}[v_t^i] \cdot T$, where $\mathbb{E}[v_t^i] = \exp(\mu_i + \sigma^2/2)$ under the log-normal valuation model. Note that $\eta$ throughout this paper denotes the affiliation parameter (Experiments~2 and~3); the dual step size above uses $\alpha_p$ to avoid notation collision.
+
+In summary, Experiments~1--2 employ Q-learning under varying valuation models; Experiments~3a--3b replace Q-learning with contextual bandits (LinUCB and Thompson Sampling, respectively); and Experiments~4a--4b shift to budget-constrained pacing agents (multiplicative dual pacing and PI control, respectively).

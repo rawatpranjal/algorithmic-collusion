@@ -11,7 +11,7 @@ In a Resolution~V\footnote{In a Resolution~$R$ design, no $p$-factor interaction
 
 \subsection{Inference Corrections}
 
-We compute HC3 robust standard errors (MacKinnon and White, 1985) to account for non-constant error variance across the design space. Comparing OLS standard errors to HC3 robust standard errors, we verify that significance claims hold under heteroscedasticity. The fraction of effects changing significance status under HC3 ranges from 0\% (Experiment~4a) to 6.7\% (Experiment~1); per-experiment details appear in Section~\ref{sec:appendix_robustness}.
+We compute HC3 robust standard errors \citep{MacKinnonWhite1985} to account for non-constant error variance across the design space. Comparing OLS standard errors to HC3 robust standard errors, we verify that significance claims hold under heteroscedasticity. The fraction of effects changing significance status under HC3 ranges from 0\% (Experiment~4a) to 6.7\% (Experiment~1); per-experiment details appear in Section~\ref{sec:appendix_robustness}.
 
 The hat matrix $H = X(X^\top X)^{-1}X^\top$ has diagonal elements $h_{ii}$ (leverages). The HC3 sandwich estimator is
 \begin{align}
@@ -20,11 +20,11 @@ The hat matrix $H = X(X^\top X)^{-1}X^\top$ has diagonal elements $h_{ii}$ (leve
 \end{align}
 where $\hat{e}_i$ denotes the $i$-th OLS residual.
 
-With $k$ main effects, $\binom{k}{2}$ two-way interactions, and $m$ response variables, each experiment involves many simultaneous hypothesis tests. We apply Holm--Bonferroni sequential correction (Holm, 1979) to control the family-wise error rate at $\alpha = 0.05$. Key findings, including the auction type main effect and the auction type $\times$ exploration interaction, survive this stringent correction across all responses.
+With $k$ main effects, $\binom{k}{2}$ two-way interactions, and $m$ response variables, each experiment involves many simultaneous hypothesis tests. We apply Holm--Bonferroni sequential correction \citep{Holm1979} to control the family-wise error rate at $\alpha = 0.05$. Key findings, including the auction type main effect and the auction type $\times$ exploration interaction, survive this stringent correction across all responses.
 
 The family-wise error rate is the probability of at least one false rejection: $\text{FWER} = \Pr(V \geq 1) \leq \alpha$, where $V$ is the number of false rejections. Given ordered $p$-values $p_{(1)} \leq \cdots \leq p_{(m)}$, the Holm step-down procedure rejects $H_{(k)}$ while $p_{(k)} \leq \alpha/(m - k + 1)$, stopping at the first non-rejection. The adjusted $p$-values are $\tilde{p}_{(k)} = \max_{j \leq k}\{(m - j + 1)\,p_{(j)}\}$, ensuring monotonicity.
 
-We also apply Benjamini--Hochberg (BH) correction (Benjamini and Hochberg, 1995) to control the false discovery rate (FDR), a less conservative criterion that is better suited to exploratory screening of many effects. The FDR is the expected proportion of false discoveries among rejections: $\text{FDR} = \mathbb{E}[V/R]$, where $V$ is the number of false rejections and $R = \max(R_{\text{obs}}, 1)$ is the total number of rejections. The BH step-up procedure finds the largest $k$ such that $p_{(k)} \leq (k/m)\,q$ and rejects $H_{(1)}, \ldots, H_{(k)}$. The FWER controls the probability of \emph{any} false positive; the FDR controls the \emph{rate} of false positives among discoveries, making it more powerful when many effects are truly active.
+We also apply Benjamini--Hochberg (BH) correction \citep{BenjaminiHochberg1995} to control the false discovery rate (FDR), a less conservative criterion that is better suited to exploratory screening of many effects. The FDR is the expected proportion of false discoveries among rejections: $\text{FDR} = \mathbb{E}[V/R]$, where $V$ is the number of false rejections and $R = \max(R_{\text{obs}}, 1)$ is the total number of rejections. The BH step-up procedure finds the largest $k$ such that $p_{(k)} \leq (k/m)\,q$ and rejects $H_{(1)}, \ldots, H_{(k)}$. The FWER controls the probability of \emph{any} false positive; the FDR controls the \emph{rate} of false positives among discoveries, making it more powerful when many effects are truly active.
 
 For the top~10 effects by absolute $t$-statistic in each response, we compute Rademacher wild bootstrap $p$-values (1{,}000 iterations) to validate inference under minimal distributional assumptions. Bootstrap $p$-values align closely with HC3 asymptotic $p$-values (differences below 0.01), confirming robustness.
 
@@ -33,11 +33,11 @@ The Rademacher wild bootstrap assigns random weights $w_i^* \in \{-1, +1\}$ with
   y_i^* = \mathbf{x}_i^\top \tilde{\boldsymbol{\beta}} + \tilde{e}_i \cdot w_i^*,
   \label{eq:wildboot}
 \end{align}
-where $\tilde{\boldsymbol{\beta}}$ and $\tilde{e}_i$ are obtained from the restricted model imposing the null. The bootstrap $p$-value is $\hat{p}^* = B^{-1}\sum_{b=1}^{B} \mathbf{1}(|t^{*b}| \geq |t|)$, where $t^{*b}$ is the $t$-statistic from the $b$-th bootstrap sample. Using restricted rather than unrestricted residuals ensures that the bootstrap distribution is centred under $H_0$, improving size accuracy in finite samples (Davidson and Flachaire, 2008).
+where $\tilde{\boldsymbol{\beta}}$ and $\tilde{e}_i$ are obtained from the restricted model imposing the null. The bootstrap $p$-value is $\hat{p}^* = B^{-1}\sum_{b=1}^{B} \mathbf{1}(|t^{*b}| \geq |t|)$, where $t^{*b}$ is the $t$-statistic from the $b$-th bootstrap sample. Using restricted rather than unrestricted residuals ensures that the bootstrap distribution is centred under $H_0$, improving size accuracy in finite samples \citep{DavidsonFlachaire2008}.
 
 We fit quantile regressions at the 10th, 25th, 50th, 75th, and 90th percentiles of each response to assess whether factor effects are uniform across the outcome distribution or concentrated in the tails. An effect that is large at extreme quantiles but small at the median indicates that the factor primarily influences worst-case or best-case configurations rather than the typical outcome. This complements the OLS analysis, which estimates effects at the conditional mean.
 
-The quantile regression estimator (Koenker and Bassett, 1978) minimises the asymmetric check function:
+The quantile regression estimator \citep{KoenkerBassett1978} minimises the asymmetric check function:
 \begin{align}
   \hat{\boldsymbol{\beta}}(\tau) = \arg\min_{\boldsymbol{\beta}} \sum_{i=1}^{n} \rho_\tau\!\bigl(y_i - \mathbf{x}_i^\top \boldsymbol{\beta}\bigr), \qquad \rho_\tau(u) = u\bigl(\tau - \mathbf{1}\{u < 0\}\bigr).
   \label{eq:quantreg}
@@ -46,7 +46,7 @@ The coefficient $\beta_j(\tau)$ measures the marginal effect of factor $j$ on th
 
 \subsubsection{Lenth's Pseudo-Standard Error}
 
-For each response variable, we compute Lenth's pseudo-standard error (Lenth, 1989): $\text{PSE} = 1.5 \cdot \text{median}_{|e_j| < 2.5\,s_0} |e_j|$, where $s_0 = 1.5 \cdot \text{median}_j |e_j|$ and $e_j$ are the estimated effects (OLS coefficients excluding the intercept). The margin of error $\text{ME} = t_{\alpha/2,\, d} \cdot \text{PSE}$ (with $d = \lfloor k/3 \rfloor$) provides an individual significance threshold, and the simultaneous margin of error $\text{SME} = t_{\gamma,\, d} \cdot \text{PSE}$ (where $\gamma = 1 - \alpha/(2k)$) applies a Bonferroni correction. Effects exceeding ME on the half-normal plot are flagged as likely active. In our replicated designs, Lenth's method serves as a complementary check rather than the primary inference tool, since we have independent error estimates from replication.
+For each response variable, we compute Lenth's pseudo-standard error \citep{Lenth1989}: $\text{PSE} = 1.5 \cdot \text{median}_{|e_j| < 2.5\,s_0} |e_j|$, where $s_0 = 1.5 \cdot \text{median}_j |e_j|$ and $e_j$ are the estimated effects (OLS coefficients excluding the intercept). The margin of error $\text{ME} = t_{\alpha/2,\, d} \cdot \text{PSE}$ (with $d = \lfloor k/3 \rfloor$) provides an individual significance threshold, and the simultaneous margin of error $\text{SME} = t_{\gamma,\, d} \cdot \text{PSE}$ (where $\gamma = 1 - \alpha/(2k)$) applies a Bonferroni correction. Effects exceeding ME on the half-normal plot are flagged as likely active. In our replicated designs, Lenth's method serves as a complementary check rather than the primary inference tool, since we have independent error estimates from replication.
 
 \subsection{Model Adequacy}
 
@@ -74,7 +74,7 @@ Gradient-boosted machines (LightGBM, 200 trees, maximum depth~4) are fit using f
 
 We fit five-fold cross-validated LASSO models with regularisation parameter $\lambda$ chosen to minimise mean squared error. Surviving variables are compared to OLS significance: in all experiments, LASSO retains auction type and number of bidders, corroborating OLS effect selection. Heredity is verified by checking that no interaction survives whose parent main effects were dropped.
 
-The LASSO estimator (Tibshirani, 1996) solves
+The LASSO estimator \citep{Tibshirani1996} solves
 \begin{align}
   \hat{\boldsymbol{\beta}}^{\text{lasso}} = \arg\min_{\boldsymbol{\beta}} \left\{ \frac{1}{2n} \|y - X\boldsymbol{\beta}\|_2^2 + \lambda \|\boldsymbol{\beta}\|_1 \right\},
   \label{eq:lasso}
@@ -85,7 +85,7 @@ where $\lambda \geq 0$ controls the strength of $L_1$ penalisation and is chosen
 
 Four types of diagnostic plots accompany each response variable. Pareto charts rank effects by absolute $t$-statistic in descending order, with effects surpassing the critical threshold $t_{\alpha/2,\,\text{df}}$ shown in red, providing a visual hierarchy of effect importance. Main effects plots display the mean response at the low ($-1$) and high ($+1$) levels of each factor; steeper slopes correspond to larger $|\beta_j|$ values. Interaction plots show the mean response across the four combinations $(x_j, x_l) \in \{(-1,-1), (-1,+1), (+1,-1), (+1,+1)\}$ for the top six interactions by $|t|$-statistic; non-parallel lines indicate that the effect of one factor depends on the level of another. Half-normal probability plots display $|\hat{\beta}_j|$ against expected order statistics from a half-normal distribution, separating active effects (large departures from the reference line) from noise (points following the line). Residual diagnostics include quantile--quantile plots assessing normality and residuals-versus-fitted plots checking for heteroscedasticity and nonlinearity.
 
-Under the effect sparsity principle, most factorial effects are inert and drawn from $N(0, \sigma_e^2)$; their absolute values follow a half-normal distribution. To construct the plot, the $m$ estimated effects $|\hat{\beta}_{(1)}| \leq \cdots \leq |\hat{\beta}_{(m)}|$ are sorted in ascending order and plotted against half-normal quantiles $z_i = \Phi^{-1}\!\bigl((1 + p_i)/2\bigr)$, where $p_i = (i - 0.5)/m$ (Daniel, 1959). Inert effects cluster along a reference line through the origin; active effects depart upward, producing a visual separation that aids identification without relying on a formal significance threshold.
+Under the effect sparsity principle, most factorial effects are inert and drawn from $N(0, \sigma_e^2)$; their absolute values follow a half-normal distribution. To construct the plot, the $m$ estimated effects $|\hat{\beta}_{(1)}| \leq \cdots \leq |\hat{\beta}_{(m)}|$ are sorted in ascending order and plotted against half-normal quantiles $z_i = \Phi^{-1}\!\bigl((1 + p_i)/2\bigr)$, where $p_i = (i - 0.5)/m$ \citep{Daniel1959}. Inert effects cluster along a reference line through the origin; active effects depart upward, producing a visual separation that aids identification without relying on a formal significance threshold.
 
 \subsection{Power Analysis}
 

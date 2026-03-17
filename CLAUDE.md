@@ -15,7 +15,7 @@ make robust           # Robustness checks for all experiments
 make traces           # Single-run trace plots for paper figures
 make tables           # Generate LaTeX tables + copy figures
 make pdf              # Standalone results PDF
-make paper            # Compile main paper
+make paper            # Compile main paper (pdflatex + bibtex + 2x pdflatex)
 make check-freshness  # Verify data.csv files match current code
 make all              # Full pipeline: experiments -> analyze -> robust -> traces -> tables -> pdf -> paper
 ```
@@ -115,7 +115,7 @@ PYTHONPATH=src python3 src/estimation/est4b.py
 PYTHONPATH=src python3 scripts/generate_trace_plots.py
 python3 scripts/generate_tables.py
 python3 scripts/generate_results.py
-cd paper && pdflatex main.tex && cd ..
+cd paper && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex && cd ..
 ```
 </details>
 
@@ -259,26 +259,49 @@ src/
 └── cloud/         # Distributed execution support
 
 scripts/
-├── run_experiment.py      # Unified CLI (factorial design)
-├── deep_dive.py           # Unified single-run analysis (trace + verbose + save)
-├── generate_trace_plots.py # Single-run trace visualizations
-├── generate_tables.py     # JSON → LaTeX tables + figure copy
-├── generate_results.py    # Standalone results.pdf generator
-├── debug_exp2.py          # Q-learning diagnostics with BNE comparison
-└── debug_exp3.py          # Algorithm comparison diagnostics
+├── run_experiment.py          # Unified CLI (factorial design)
+├── deep_dive.py               # Unified single-run analysis (trace + verbose + save)
+├── generate_trace_plots.py    # Single-run trace visualizations
+├── generate_tables.py         # JSON → LaTeX tables + figure copy
+├── generate_results.py        # Standalone results.pdf generator
+├── budget_robustness.py       # Budget sensitivity analysis
+├── calibrate_exp4b.py         # PI controller calibration
+├── calibration_exploration.py # Parameter space exploration
+├── check_consistency.py       # Cross-experiment consistency checks
+├── discretization_robustness.py # Action-space discretization sensitivity
+├── debug_exp2.py              # Q-learning diagnostics with BNE comparison
+├── debug_exp3.py              # Algorithm comparison diagnostics
+└── verification/              # Mathematical claim verification suite
+    ├── run_all.py             # Runner for all verification tests
+    ├── helpers.py             # Pure-math helpers (LP, BNE, welfare)
+    ├── test_equilibria.py     # BNE and valuation model tests
+    ├── test_model.py          # Simulation model correctness tests
+    ├── test_novel_claims.py   # LP benchmark and parametrization verification
+    ├── test_pacing.py         # Pacing algorithm tests
+    ├── test_payment_rules_exp4.py # Payment rule verification for Exp4
+    └── test_welfare.py        # LP optimality and PoA bounds tests
 
-paper/             # LaTeX paper source
+results/           # Experiment output data (see Output Structure section)
+
+reviews/           # Audit reports (simulation_audit.md, code_audit.md, etc.)
+
+paper/             # LaTeX paper source (single unified document, no separate appendix)
+├── main.tex       # Unified document: main body + \appendix + 8 appendix sections
+├── references.bib # Canonical bibliography (natbib/plainnat)
+├── numbers.tex    # Auto-generated statistics macros
 ├── tables/        # Auto-generated .tex table snippets
 ├── figures/       # Publication figures
-└── sections/      # Paper section .tex files
+└── sections/      # Paper section .tex files (13 main body + 8 appendix)
 
 archive/
+├── paper/         # Superseded paper files (appendix.tex, references.tex, appendix_welfare.tex, dead section files)
 ├── scripts/       # Superseded utility scripts
-├── estimation/    # Old per-experiment robust_analysis*.py
+├── iteration1/    # First iteration code
+├── iteration3/    # Third iteration code
+├── cate/          # Old CATE analysis
 ├── old_results/   # Stale DoubleML/CATE/grid results
 ├── doubleml_estimation/   # Old DoubleML est*.py files
 ├── random_sampling_results/  # Old random-sampling data.csv files
-├── v1/            # First iteration code
 └── v2/            # Second iteration code
 
 docs/
@@ -295,7 +318,7 @@ run_experiment.py → results/expN/data.csv
 est*.py           → results/expN/estimation_results.json + plots + robust/
 generate_tables.py→ paper/tables/*.tex + paper/figures/*.png
 generate_results.py → paper/results.pdf
-pdflatex main.tex → paper/main.pdf
+pdflatex + bibtex → paper/main.pdf (single unified document with natbib bibliography)
 ```
 
 ### Experiment Module Contract
@@ -355,6 +378,8 @@ Assumes `cell_id < 10000`. Max current design: Exp1 = 512 cells.
 | Three-level factors need TWO contrast columns | Single column loses quadratic information |
 | Parameter defaults in `deep_dive.py` and `generate_trace_plots.py` must match production values in `run_experiment.py` | Validation non-representative otherwise |
 | `data_manifest.json` written alongside `data.csv` | Enables staleness detection in `make analyze` |
+| All citations use `\citet{}` or `\citep{}` natbib commands | Never use inline text citations; `references.bib` is the canonical source |
+| `make paper` runs pdflatex + bibtex + 2x pdflatex | Bibliography and cross-references require multiple passes |
 
 ## Common Modification Recipes
 
@@ -414,57 +439,124 @@ Before searching the web for papers/references, check `docs/transcriptions/` fir
 
 ## Paper Writing Guide
 
+### Voice and Register
+
+- Voice of a senior statistician and economist: precise, measured, data-driven.
+- Simple, direct sentences. No jargon unless defined. No unusual or rare words.
+- Primary audience: economists. Secondary: CS and statistics researchers.
+- CS/stats concepts (Q-learning, contextual bandits, factorial ANOVA) need brief plain-language explanation; auction theory and equilibrium concepts can assume familiarity.
+- Explain intuition before formalism. Use concrete examples early; do not front-load notation.
+- Formal academic register. No conversational tone, no enthusiasm ("exciting", "groundbreaking", "novel").
+- Active voice preferred. Short declarative sentences.
+- No long convoluted sentences. If a sentence has more than one subordinate clause, split it.
+- Focus on what was done and what was found, not on what was "argued" or "proposed."
+- Weigh competing interpretations, but take a position. The reader wants guidance, not a menu of possibilities.
+
+### Reporting vs. Interpretation
+
+- Maintain a clear division between reporting facts and interpreting them.
+- Report results first: direction, magnitude, statistical significance, table/figure reference.
+- Interpret second: what the result means economically, why it matters, how it connects to prior work.
+- State what the data shows with confidence. Do not hedge statistically significant findings.
+- Qualify clearly when extrapolating beyond experimental scope ("this suggests", "the results are consistent with").
+- Distinguish between: (1) robust empirical findings (state directly), (2) plausible interpretations (signal uncertainty), (3) speculation (mark explicitly or omit).
+- Never overstate. "X is the dominant factor" requires X to have the largest effect size. "X contributes to" if it is one of several factors.
+
+### Paragraph Discipline
+
+- Before writing a paragraph, plan in bullets what it will say. Write prose only after the structure is clear.
+- Each paragraph focuses on one main point. Topic sentence states the claim. Evidence follows. A concluding sentence synthesizes or transitions.
+- Each sentence carries one idea. Do not stack multiple complex concepts into a single sentence.
+- Aim for 4-8 sentences per paragraph. Paragraphs within a section should be roughly equal in length, creating a visually uniform page. No stub paragraphs of 1-2 sentences; merge orphans into adjacent paragraphs.
+
+### Cross-referencing and Non-repetition
+
+- One canonical location per idea. Do not duplicate content across sections.
+- Cross-reference liberally: "as shown in Table~\ref{...}", "Section~\ref{...} discusses", "recall the definition from Equation~\ref{...}".
+- Cross-references over restatement. Never re-explain a concept introduced in an earlier section; use a `\ref{}` pointer.
+- Section openings do not re-motivate. Do not restate the introduction; start at the technical content.
+- When two sections touch the same topic (e.g., auction format effects in results and discussion), the results section reports facts and the discussion section interprets and synthesizes. Neither repeats the other.
+
+### Footnotes
+
+- Relegate technical details to footnotes: grid sizes, convergence thresholds, hyperparameter values, step counts, implementation specifics, historical side notes.
+- Main text carries the argument. Footnotes carry the evidence trail and interesting tangents.
+- Use footnotes for tedious but necessary information that would break the flow of a paragraph.
+
+### Figures and Tables
+
+- Prefer 1x2 or 1x3 panel figures (subfigures side by side) to show more information per float.
+- If a graph can convey everything a table does, use the graph. But tables excel at precise coefficient values.
+- Do not duplicate content between a table and a figure for the same result. Pick one as primary; the other, if included, must show something different (e.g., table for coefficients, figure for interaction pattern).
+- Main body: figures preferred for visual patterns (main effects, interactions); tables for ranked coefficients and model fit.
+- Appendixes: tables preferred for detailed results.
+- Figure captions label what is shown (axes, panels, legend). Interpretation belongs in the citing prose paragraph.
+- Table captions identify rows, columns, and units. The conclusion belongs in the citing prose paragraph.
+- Do not restate numbers in prose that are already visible in a table or figure. Reference the float and state the interpretation.
+
 ### Formatting Rules (hard constraints)
 
 - No em dashes (`---`) in any LaTeX file. Use commas, semicolons, or restructure.
+- No colons in running prose. Use commas, semicolons, or separate sentences.
 - No bullet lists (`\begin{itemize}`, `\begin{enumerate}`) in the paper. Use flowing prose.
 - No `\paragraph{Bold.}` starters. Use `\subsection{}` or `\subsubsection{}`.
 - No `\textbf{}` in running prose (only in table headers/captions).
 - No data variable names in prose. Use full English names ("average revenue" not `avg_rev_last_1000`).
 - No DoubleML terminology (CATE, ATE, GATE, BLP, partial-dependence).
 - `\section`, `\subsection`, `\subsubsection` only. Keep hierarchy broad; avoid over-granular subsectioning.
-- No stub paragraphs. When editing cuts leave 1–2 sentence orphans, merge them into the adjacent paragraph so every paragraph is at least 3–4 sentences. The paper should read as flowing prose, not a bulleted outline.
 
-### Audience & Tone
+### Citation Style
 
-- Primary audience: economists. Secondary: CS and statistics researchers.
-- CS/stats concepts (Q-learning, contextual bandits, factorial ANOVA) need brief plain-language explanation; auction theory and equilibrium concepts can assume familiarity.
-- Formal academic register. No conversational tone, no LinkedIn-style enthusiasm ("exciting", "groundbreaking", "novel").
-- Balanced, measured tone. Short declarative sentences. Active voice preferred.
-- No long convoluted sentences. If a sentence has more than one subordinate clause, split it.
+- All citations use natbib commands via `references.bib`. Never use inline text citations like "Author (Year)".
+- `\citet{Key}` for textual citations where the author is part of the sentence: "As \citet{Calvano2020} show..."
+- `\citep{Key}` for parenthetical citations: "...under budget constraints \citep{Balseiro2019Learning}."
+- Multiple parenthetical: `\citep{Key1, Key2}` renders as "(Author1, Year1; Author2, Year2)".
+- When adding a new reference, add the bib entry to `paper/references.bib` first, then use `\citet` or `\citep` in the text.
 
-### Claims & Confidence
-
-- State what the data shows with confidence. Do not hedge empirical findings that are statistically significant.
-- Qualify clearly when extrapolating beyond experimental scope ("the results are likely to hold", "this suggests").
-- Distinguish between: (1) robust empirical findings (state directly), (2) plausible interpretations (signal uncertainty), (3) speculation (mark explicitly or omit).
-- Never overstate. "X is the dominant factor" requires X to have the largest effect size. "X contributes to" if it is one of several factors.
-
-### Structure & Flow
-
-- Every section follows a logical progression: setup, method, result, interpretation.
-- Each paragraph opens with a topic sentence stating the claim. Supporting evidence (table/figure references, numbers) follows. A concluding sentence synthesizes or transitions.
-- Cross-reference liberally: "as shown in Table~\ref{...}" or "Section~\ref{...} discusses". Never duplicate content across sections; refer readers to the canonical location.
-- Tables are the primary evidence format. Figures supplement tables for visual patterns (main effects, interactions). Use figures sparingly.
-
-### Notation & Definitions
+### Notation and Definitions
 
 - Define all notation before first use. Every symbol in an equation must be explained in the surrounding prose.
 - After each equation or definition, add 1-2 sentences of intuition explaining what it means economically or computationally.
-- Move lengthy derivations to the appendix. The main text should present the result and its intuition.
-- Move technical implementation details (grid sizes, convergence thresholds, hyperparameter values) to footnotes or appendix tables.
+- Move lengthy derivations to the appendix. The main text presents the result and its intuition.
+- Move technical implementation details to footnotes or appendix tables.
 
-### Results Sections Pattern
+### Section-Specific Guidelines
 
-Each experiment's results section follows this template:
+**Introduction.** Write last, after all other sections are complete. This is the high-level coverage of the entire paper. State the most important results upfront, since some readers only read the introduction. Structure: motivation and gap, what this paper does, key findings, paper outline.
+
+**Literature Review.** Reference map first, then the gap, then how this paper fills it. Important references get dedicated space; minor ones get a parenthetical citation. Connect each stream of literature to our experimental setup (e.g., "we test this prediction in Experiment 2"). Do not just survey; show where the field stands and where it falls short.
+
+**Theory (Auctions, Algorithms).** Very formal: full notation, definitions, key properties. Include a narrative explanation of how each auction format or algorithm works and what behaviour to expect. Relegate technical details (proof steps, implementation constants) to footnotes.
+
+**Experimental Design.** Clean recipe: state what was done clearly and concisely. Factor definitions, design table, number of cells and replicates. Justifications for specific choices go in footnotes or the design appendix, not the main text.
+
+**Statistical Inference.** Main body, concise (2-3 pages). Model specification, why factorial ANOVA with effects coding, how robustness is assessed. Full details of the 13 robustness checks belong in the appendix.
+
+**Results (one section per experiment, standalone).** Structured walk through the factorial analysis: dominant effect first, then main effects, then interactions, covering all significant effects but briefly. Each section stands alone. Cross-experiment comparison happens only in the Discussion. Follow the results template below.
+
+**Robustness.** Appendix only. Main body results sections note "robustness checks confirm these findings (Appendix~\ref{...})" in the summary paragraph.
+
+**Discussion.** Equal weight to: (1) cross-experiment synthesis connecting patterns into unified takeaways, and (2) policy and practical implications for auction designers and regulators. Close with limitations, open questions, and future directions.
+
+**Appendix sections.** Light orientation: one sentence at the top of each appendix section stating what it contains and which main-body section it supports. Then straight to the content.
+
+### Results Sections Template
+
+Each experiment's results section follows this structure:
 1. One-paragraph setup: what this experiment tests, the design (factors, cells, replicates), and the key question.
-2. Primary finding: state the dominant effect, reference the ranked-effects table.
+2. Primary finding: state the dominant effect, reference the ranked-effects table or figure.
 3. Main effects: 1-2 figures showing the largest effects, with interpretation.
 4. Interactions: reference interaction plots for notable non-additive effects.
-5. Summary paragraph: what this experiment establishes, with forward reference to discussion.
+5. Summary paragraph: what this experiment establishes, with forward reference to discussion. Note that robustness checks confirm findings (Appendix~\ref{...}).
 
-Results prose should report effect direction and magnitude, reference the table, and interpret economically. Do not restate numbers that are already in a table.
+Results prose reports effect direction and magnitude, references the table/figure, and interprets economically. Do not restate numbers already visible in a float.
+
+### Writing Workflow
+
+- Work one subsection at a time. Outline each paragraph in bullets first. Write prose only after the user approves the outline.
+- Painfully slow and deliberate. Keep asking for feedback. When in doubt, ask precise, careful questions.
+- Every section follows a logical progression: setup, method, result, interpretation.
 
 ### Audit Reports
 
-- When producing an audit document, always put TLDR bullets at the top summarizing: number of issues by severity, actions required, and key findings.
+- When producing an audit document, put TLDR bullets at the top summarizing: number of issues by severity, actions required, and key findings.

@@ -39,3 +39,50 @@ A defining feature of these repeated interactions is that bidders may condition 
 Experiment~4a introduces hard budget constraints and autobidding pacing agents. Each of $n \in \{2, 4\}$ advertisers participates in $D = 100$ episodes, each comprising $T = 1{,}000$ single-item auctions. Between episodes, budgets regenerate to their initial level while dual variables persist (warm-starting), mimicking the daily budget cycle in real ad exchanges. Valuations follow a log-normal model with bidder-specific asymmetry: each bidder~$i$ draws a mean $\mu_i \sim \mathrm{Uniform}(0.5, 1.5)$ once per seed, and in each round $v_{it} \sim \mathrm{LogNormal}(\mu_i, 0.3)$. The budget per episode is $B_i = 0.5 \cdot \mathbb{E}[v_{it}] \cdot T$. All bidders use multiplicative dual pacing, computing bids as $v_t / \mu_t$ (value-maximizers) or $v_t / (1 + \mu_t)$ (utility-maximizers), subject to a hard budget cap that prevents spending from exceeding the remaining budget. The dual variable $\mu_t$ is updated via an exponential rule after each round (Section~\ref{sec:algorithms}). This setup allows us to study how budget discipline interacts with auction format and bidder objectives, bridging the bid suppression literature with the pacing efficiency literature.
 
 Across all experiments, the auctions are repeated for many rounds, allowing for long-run behavior to emerge under different reserve price levels, different degrees of valuation interdependence, and varying budget regimes. The discrete setup (both for signals and for bids) is maintained for computational tractability, but the core elements of a standard first- or second-price auction, with or without a reserve, are preserved, and the ultimate allocation and payment follow the standard textbook rules.
+
+\subsection{Liquid Welfare and Price of Anarchy}
+\label{sec:welfare}
+
+Experiments~4a and~4b evaluate allocative efficiency using liquid welfare and the Price of Anarchy. Following \citet{Gaitonde2023} and \citet{Deng2021TowardsEfficient}, the liquid welfare of an allocation $x$ for $N$ bidders over $T$ rounds is
+\begin{equation}
+  W(x) = \sum_{i=1}^{N} W_i(x), \qquad
+  W_i(x) = \min\!\Big\{B_i,\; \sum_{t=1}^{T} x_{ti}\, v_{ti}\Big\},
+  \label{eq:liquid_welfare_def}
+\end{equation}
+where $v_{ti}$ is bidder~$i$'s valuation in round~$t$, $B_i$ is bidder~$i$'s budget, and $x_{ti} \in [0,1]$ is the fraction of the item allocated to bidder~$i$ in round~$t$. In the integer case ($x_{ti} \in \{0,1\}$, at most one winner per round), liquid welfare reduces to $W(x) = \sum_{i=1}^{N} \min\{B_i,\; \sum_{t:\, \text{winner}_t = i} v_{ti}\}$, which is how it is computed in the experimental code.
+
+The optimal fractional liquid welfare is the solution to
+\begin{equation}
+  W^* = \max_{x} \sum_{i=1}^{N} \min\!\Big\{B_i,\; \sum_{t=1}^{T} x_{ti}\, v_{ti}\Big\}
+  \quad \text{s.t.} \quad
+  \sum_{i=1}^{N} x_{ti} \leq 1 \;\; \forall t, \quad
+  x_{ti} \in [0,1] \;\; \forall t,i.
+  \label{eq:welfare_opt}
+\end{equation}
+The $\min$ operator makes this a non-linear program. We linearise it via the LP relaxation $\mathrm{LP}^* = \max_{x} \sum_{t,i} v_{ti}\, x_{ti}$ subject to $\sum_i x_{ti} \le 1$ per round and $\sum_t v_{ti}\, x_{ti} \le B_i$ per bidder. At any LP-feasible point the budget constraint ensures $\min\{B_i, \sum_t v_{ti}\, x_{ti}\} = \sum_t v_{ti}\, x_{ti}$, giving $\mathrm{LP}^* = W^*$. The LP relaxation allows fractional allocations, so $\mathrm{LP}^*$ is an upper bound on the optimal integer liquid welfare, making it a conservative benchmark.
+
+The Price of Anarchy is defined as the ratio of optimal to realised liquid welfare:
+\begin{equation}
+  \text{PoA} = \frac{W^*}{W(x^{\text{obs}})},
+  \label{eq:poa_def}
+\end{equation}
+where $x^{\text{obs}}$ is the allocation produced by the bidding algorithm. By construction, $\text{PoA} \geq 1$, with values closer to~1 indicating higher efficiency. The literature defines the worst-case PoA as the supremum of this ratio over all instances and equilibria; our experiments report the per-instance empirical PoA.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Theoretical Price of Anarchy bounds for autobidding.}
+\label{tab:poa_bounds}
+\begin{tabular}{lll}
+\toprule
+\textbf{Setting} & \textbf{PoA bound} & \textbf{Source} \\
+\midrule
+SPA + budget constraints & $\leq 2$ (tight) & \citet{Aggarwal2019} \\
+FPA + RoS constraints (no budgets) & $= 1$ & \citet{Deng2021TowardsEfficient} \\
+FPA + budget constraints & $\leq 2$ (if $v_{ij} \leq B_i$) & \citet{Aggarwal2024Survey} \\
+Any core auction + learning dynamics & $\leq 2$ & \citet{Gaitonde2023} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The PoA~$= 1$ result of \citet{Deng2021TowardsEfficient} requires return-on-spend constraints, not budget constraints. Experiments~4a and~4b use cumulative budget constraints, for which the applicable theoretical bound is PoA~$\leq 2$ regardless of auction format.

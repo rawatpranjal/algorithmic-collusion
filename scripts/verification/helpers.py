@@ -1,5 +1,5 @@
 """
-Pure-math helpers re-derived from paper LaTeX (equilibria.tex, appendix_welfare.tex).
+Pure-math helpers re-derived from paper LaTeX (equilibria.tex, auctions.tex, appendix_robustness.tex).
 Zero imports from project source code.
 
 All formulas use exact rational arithmetic (fractions.Fraction) where possible,
@@ -135,7 +135,7 @@ def bne_regret_exact(eta, n):
 
 
 # ---------------------------------------------------------------------------
-# LP for optimal liquid welfare (appendix_welfare.tex L25-41)
+# LP for optimal liquid welfare (auctions.tex)
 # ---------------------------------------------------------------------------
 
 def solve_welfare_lp(valuations, budgets):
@@ -260,7 +260,7 @@ def solve_welfare_ilp(valuations, budgets):
 
 
 # ---------------------------------------------------------------------------
-# Liquid welfare computation (appendix_welfare.tex L9-14)
+# Liquid welfare computation (auctions.tex)
 # ---------------------------------------------------------------------------
 
 def compute_liquid_welfare(allocation, valuations, budgets):
