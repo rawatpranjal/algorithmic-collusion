@@ -1,0 +1,334 @@
+\section{Global Sensitivity Analysis}
+\label{sec:appendix_sensitivity}
+
+This appendix reports variance-based sensitivity indices for all six experiments, quantifying how much of the total output variance each factor explains individually and through interactions. The analysis validates the factorial ANOVA findings reported in the main text by decomposing output variance through Sobol' indices and confirming the rankings with multiple independent sensitivity methods.
+
+\subsection{Methodology}
+
+\subsubsection{Sobol--Hoeffding Decomposition}
+
+For a square-integrable function $Y = f(X_1, \ldots, X_k)$ with independent inputs, the Sobol--Hoeffding decomposition \citep{Sobol2001} partitions the function into summands of increasing dimension,
+\begin{equation}
+\label{eq:sobol_decomp}
+f(X_1, \ldots, X_k) = f_0 + \sum_i f_i(X_i) + \sum_{i<j} f_{ij}(X_i, X_j) + \cdots + f_{1\ldots k}(X_1, \ldots, X_k),
+\end{equation}
+where $f_0 = \mathbb{E}[Y]$ and each summand has zero mean and is orthogonal to every other summand. The total variance then decomposes as
+\begin{equation}
+\label{eq:variance_decomp}
+\mathrm{Var}(Y) = \sum_i V_i + \sum_{i<j} V_{ij} + \cdots + V_{1\ldots k},
+\end{equation}
+with $V_i = \mathrm{Var}(f_i)$, $V_{ij} = \mathrm{Var}(f_{ij})$, and so on.
+
+The first-order Sobol' index $S_i = V_i / \mathrm{Var}(Y)$ measures the fraction of output variance attributable to factor $X_i$ alone. The total-order index $S_{T_i}$ captures both the direct and all interaction contributions involving $X_i$,
+\begin{equation}
+\label{eq:total_order}
+S_{T_i} = S_i + \sum_{j \neq i} S_{ij} + \sum_{j < \ell,\, j \neq i,\, \ell \neq i} S_{ij\ell} + \cdots
+\end{equation}
+The gap $S_{T_i} - S_i$ quantifies how much of factor $i$'s influence operates through interactions with other factors rather than through its own main effect.
+
+\subsubsection{Equivalence with ANOVA for Orthogonal Designs}
+
+For balanced factorial designs with effects coding ($\pm 1$), the columns of the design matrix are mutually orthogonal. Under orthogonality, the Type~III ANOVA sum of squares decomposition coincides exactly with the Sobol--Hoeffding decomposition \citep{Saltelli2008}. The first-order index for factor $i$ is
+\begin{equation}
+S_i = \frac{\mathrm{SS}_i}{\mathrm{SS}_{\mathrm{total}}},
+\end{equation}
+where $\mathrm{SS}_i$ is the Type~III sum of squares for factor $i$ and $\mathrm{SS}_{\mathrm{total}}$ is the total (corrected) sum of squares. The second-order index $S_{ij} = \mathrm{SS}_{ij} / \mathrm{SS}_{\mathrm{total}}$ is computed analogously from the interaction sum of squares. This equivalence provides exact, closed-form Sobol' indices without Monte Carlo sampling.\footnote{For three-level factors such as affiliation ($\eta$), which are represented by two orthogonal contrast columns (linear and quadratic), the first-order index is the sum of the two contrast contributions, $S_\eta = (\mathrm{SS}_{\eta,\mathrm{lin}} + \mathrm{SS}_{\eta,\mathrm{quad}}) / \mathrm{SS}_{\mathrm{total}}$.}
+
+\subsubsection{Multi-Method Validation}
+
+To assess robustness of the factor rankings, seven independent sensitivity methods are applied to each response variable in each experiment. In addition to analytical Sobol' indices, we compute random forest permutation importance, SHAP values via TreeSHAP on a LightGBM surrogate, Morris elementary effects \citep{Morris1991}, Monte Carlo Sobol' indices via three surrogate models (neural network, LightGBM, Kriging), Fourier amplitude sensitivity testing (FAST), and Borgonovo's $\delta$ moment-independent measure \citep{Borgonovo2007}. Cross-method concordance is assessed by computing pairwise Spearman rank correlations across all seven methods; the mean Spearman correlation provides a scalar measure of agreement on which factors matter most.
+
+\subsection{Experiment~1: Q-Learning with Constant Valuations}
+\label{sec:sens_exp1}
+
+Table~\ref{tab:sens_exp1} reports analytical Sobol' indices for all five response variables across the ten factors of the Resolution~V fractional factorial design. The number of bidders is the dominant factor for four of five responses: revenue ($S_T = 0.24$), convergence time ($S_T = 0.11$), price volatility ($S_T = 0.17$), and winner entropy ($S_T = 0.31$). Reserve price dominates the no-sale rate ($S_T = 0.27$). The update mode contributes substantially to winner entropy ($S_T = 0.13$) through interactions, as indicated by the $S_T - S_1$ gap of 0.07. The discount factor ($\gamma$) and information feedback operate primarily through interactions across most responses. Convergence time shows the weakest model fit ($R^2 = 0.31$), suggesting that timing of convergence depends on factor combinations not captured by two-way interactions. Learning rate and initialisation are negligible across all five responses. Cross-method concordance is high (mean Spearman $\rho = 0.87$), confirming stable factor rankings across all seven methods.
+
+\begin{table}[H]
+\centering
+\caption{Experiment~1: Analytical Sobol' indices for all five response variables. $S_1$ is the first-order (main effect) index; $S_T$ is the total-order index including all interactions.}
+\label{tab:sens_exp1}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{No-Sale Rate} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders     & 0.188 & 0.238 & 0.093 & 0.111 & 0.038 & 0.101 & 0.139 & 0.165 & 0.272 & 0.309 \\
+Reserve price         & 0.015 & 0.043 & 0.009 & 0.022 & 0.152 & 0.266 & 0.098 & 0.138 & 0.001 & 0.014 \\
+Update mode           & 0.033 & 0.057 & 0.022 & 0.037 & 0.009 & 0.086 & 0.039 & 0.060 & 0.060 & 0.127 \\
+Discount factor ($\gamma$)  & 0.051 & 0.096 & 0.034 & 0.053 & 0.016 & 0.047 & 0.053 & 0.072 & 0.000 & 0.001 \\
+Auction format        & 0.000 & 0.045 & 0.072 & 0.100 & 0.001 & 0.004 & 0.003 & 0.013 & 0.001 & 0.005 \\
+Information feedback  & 0.008 & 0.036 & 0.000 & 0.008 & 0.003 & 0.008 & 0.000 & 0.029 & 0.003 & 0.065 \\
+Exploration strategy  & 0.000 & 0.017 & 0.002 & 0.018 & 0.000 & 0.037 & 0.001 & 0.024 & 0.000 & 0.043 \\
+Initialisation        & 0.002 & 0.006 & 0.000 & 0.010 & 0.009 & 0.026 & 0.011 & 0.025 & 0.000 & 0.006 \\
+Decay type            & 0.001 & 0.006 & 0.010 & 0.023 & 0.007 & 0.020 & 0.005 & 0.013 & 0.000 & 0.011 \\
+Learning rate ($\alpha$)    & 0.001 & 0.005 & 0.000 & 0.004 & 0.003 & 0.016 & 0.001 & 0.006 & 0.000 & 0.001 \\
+\midrule
+Residual              & \multicolumn{2}{c}{0.577} & \multicolumn{2}{c}{0.685} & \multicolumn{2}{c}{0.576} & \multicolumn{2}{c}{0.553} & \multicolumn{2}{c}{0.541} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Experiment~2: Q-Learning with Affiliated Values}
+\label{sec:sens_exp2}
+
+Tables~\ref{tab:sens_exp2a} and~\ref{tab:sens_exp2b} report indices for all eight response variables in the affiliated-values Q-learning experiment. The number of bidders is the dominant factor for revenue ($S_T = 0.22$), price volatility ($S_T = 0.17$), winner entropy ($S_T = 0.16$), and bid-to-value ratio ($S_T = 0.27$), while its effect on convergence time operates entirely through interactions ($S_1 = 0.01$, $S_T = 0.11$). Auction format is the most important factor for winner's curse frequency ($S_T = 0.36$), with substantial interaction effects ($S_T - S_1 = 0.22$); it also contributes meaningfully to convergence time ($S_T = 0.11$) and bid-to-value ratio ($S_T = 0.16$). State information is the second-ranked factor for revenue ($S_T = 0.16$) and winner entropy ($S_T = 0.15$), acting through both direct and interactive channels. The affiliation parameter $\eta$ overwhelmingly drives signal responsiveness ($S_T = 0.40$) and is the top factor for bid dispersion ($S_T = 0.12$), confirming that the experimental manipulation of signal correlation successfully modulates bidding behaviour. Convergence time has the weakest model fit ($R^2 = 0.18$), and bid dispersion is similarly noisy ($R^2 = 0.28$). Cross-method concordance is low (mean Spearman $\rho = 0.33$), reflecting the small design (24 cells) and difficulty distinguishing factor rankings with limited data.
+
+\begin{table}[H]
+\centering
+\caption{Experiment~2: Analytical Sobol' indices for market performance responses. $R^2$: revenue 0.40, convergence 0.18, volatility 0.36, entropy 0.29.}
+\label{tab:sens_exp2a}
+\small
+\begin{tabular}{l cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders     & 0.142 & 0.223 & 0.013 & 0.110 & 0.136 & 0.173 & 0.125 & 0.155 \\
+State information     & 0.114 & 0.156 & 0.004 & 0.064 & 0.098 & 0.120 & 0.111 & 0.145 \\
+Auction format        & 0.033 & 0.078 & 0.000 & 0.114 & 0.051 & 0.099 & 0.004 & 0.012 \\
+Affiliation ($\eta$)  & 0.025 & 0.052 & 0.023 & 0.047 & 0.006 & 0.047 & 0.001 & 0.022 \\
+\midrule
+Residual              & \multicolumn{2}{c}{0.588} & \multicolumn{2}{c}{0.813} & \multicolumn{2}{c}{0.635} & \multicolumn{2}{c}{0.712} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~2: Analytical Sobol' indices for bidding behaviour responses. $R^2$: bid-to-value 0.49, winner's curse 0.55, bid dispersion 0.28, signal slope 0.41.}
+\label{tab:sens_exp2b}
+\small
+\begin{tabular}{l cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Bid-to-Value} & \multicolumn{2}{c}{Winner's Curse} & \multicolumn{2}{c}{Bid Disp.} & \multicolumn{2}{c}{Signal Slope} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders     & 0.139 & 0.266 & 0.089 & 0.294 & 0.066 & 0.087 & 0.016 & 0.063 \\
+State information     & 0.099 & 0.146 & 0.042 & 0.106 & 0.049 & 0.068 & 0.020 & 0.089 \\
+Auction format        & 0.060 & 0.160 & 0.146 & 0.361 & 0.065 & 0.083 & 0.002 & 0.086 \\
+Affiliation ($\eta$)  & 0.059 & 0.073 & 0.026 & 0.039 & 0.086 & 0.119 & 0.352 & 0.397 \\
+\midrule
+Residual              & \multicolumn{2}{c}{0.499} & \multicolumn{2}{c}{0.448} & \multicolumn{2}{c}{0.688} & \multicolumn{2}{c}{0.487} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experiment~3a: LinUCB Contextual Bandits}
+\label{sec:sens_exp3a}
+
+Table~\ref{tab:sens_exp3a} reports indices for all five response variables in the eight-factor LinUCB design. The number of bidders dominates four of five responses, explaining approximately half of revenue variance alone ($S_1 = 0.48$, $S_T = 0.55$) and nearly all winner entropy variance ($S_1 = 0.75$, $S_T = 0.75$). For the no-sale rate, three factors contribute substantially through interactions: reserve price ($S_T = 0.45$), context richness ($S_T = 0.34$), and number of bidders ($S_T = 0.33$). The large gaps between $S_1$ and $S_T$ for these factors indicate that no-sale outcomes depend on factor combinations rather than individual settings. Price volatility shows the most distributed pattern, with auction format ($S_T = 0.24$), number of bidders ($S_T = 0.24$), and context richness ($S_T = 0.17$) all contributing meaningfully. Convergence time has moderate model fit ($R^2 = 0.42$) with auction format ($S_T = 0.14$) as the second-ranked factor after bidders. Algorithmic parameters (regularisation $\lambda$, memory decay, exploration intensity) are consistently negligible, confirming that market structure dominates algorithm tuning. Cross-method concordance is moderate (mean Spearman $\rho = 0.33$).
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3a: Analytical Sobol' indices for all five LinUCB response variables.}
+\label{tab:sens_exp3a}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{No-Sale Rate} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders         & 0.479 & 0.551 & 0.158 & 0.210 & 0.131 & 0.330 & 0.080 & 0.236 & 0.746 & 0.752 \\
+Reserve price             & 0.001 & 0.067 & 0.003 & 0.071 & 0.205 & 0.452 & 0.003 & 0.046 & 0.015 & 0.020 \\
+Context richness          & 0.005 & 0.026 & 0.002 & 0.036 & 0.121 & 0.335 & 0.151 & 0.170 & 0.006 & 0.013 \\
+Auction format            & 0.065 & 0.092 & 0.096 & 0.138 & 0.002 & 0.010 & 0.094 & 0.242 & 0.005 & 0.011 \\
+Exploration intensity     & 0.008 & 0.020 & 0.020 & 0.036 & 0.000 & 0.003 & 0.024 & 0.040 & 0.010 & 0.015 \\
+Affiliation ($\eta$)      & 0.027 & 0.037 & 0.000 & 0.015 & 0.003 & 0.007 & 0.022 & 0.032 & 0.000 & 0.002 \\
+Regularisation ($\lambda$) & 0.002 & 0.008 & 0.003 & 0.014 & 0.002 & 0.006 & 0.029 & 0.037 & 0.003 & 0.016 \\
+Memory decay ($\gamma_m$) & 0.002 & 0.006 & 0.013 & 0.032 & 0.000 & 0.003 & 0.015 & 0.017 & 0.000 & 0.002 \\
+\midrule
+Residual                  & \multicolumn{2}{c}{0.302} & \multicolumn{2}{c}{0.577} & \multicolumn{2}{c}{0.194} & \multicolumn{2}{c}{0.381} & \multicolumn{2}{c}{0.192} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Experiment~3b: Thompson Sampling Bandits}
+\label{sec:sens_exp3b}
+
+Table~\ref{tab:sens_exp3b} reports indices for the six-factor Thompson Sampling design. Unlike LinUCB, no single factor dominates all responses. The number of bidders has the highest total-order index for revenue ($S_T = 0.31$), no-sale rate ($S_T = 0.41$), price volatility ($S_T = 0.37$), and winner entropy ($S_T = 0.32$), but reserve price is competitive for no-sale rate ($S_T = 0.41$) and entropy ($S_T = 0.24$). Convergence time is the most diffusely driven response, with five of six factors exceeding $S_T = 0.10$; exploration intensity ($S_T = 0.11$) and auction format ($S_T = 0.11$) rank nearly as high as the number of bidders ($S_T = 0.16$). The no-sale rate shows the strongest interaction effects: three factors each exceed $S_T = 0.33$ despite much lower first-order contributions. Winner entropy uniquely shows a substantial exploration intensity contribution ($S_T = 0.12$), suggesting that the Thompson Sampling exploration parameter affects winner diversity more than aggregate revenue. The overall model fit ranges from $R^2 = 0.34$ (convergence) to $R^2 = 0.82$ (no-sale rate). Cross-method concordance is notably low (mean Spearman $\rho = 0.04$), reflecting disagreement among methods when many factors have similar importance levels.
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3b: Analytical Sobol' indices for all five Thompson Sampling response variables.}
+\label{tab:sens_exp3b}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{No-Sale Rate} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders         & 0.176 & 0.306 & 0.030 & 0.156 & 0.193 & 0.412 & 0.093 & 0.374 & 0.292 & 0.324 \\
+Reserve price             & 0.147 & 0.186 & 0.024 & 0.122 & 0.155 & 0.406 & 0.033 & 0.159 & 0.197 & 0.236 \\
+Context richness          & 0.020 & 0.086 & 0.002 & 0.065 & 0.112 & 0.327 & 0.000 & 0.131 & 0.005 & 0.050 \\
+Auction format            & 0.034 & 0.075 & 0.010 & 0.114 & 0.001 & 0.009 & 0.046 & 0.188 & 0.000 & 0.002 \\
+Exploration intensity     & 0.027 & 0.050 & 0.025 & 0.108 & 0.000 & 0.007 & 0.042 & 0.065 & 0.016 & 0.123 \\
+Affiliation ($\eta$)      & 0.048 & 0.081 & 0.005 & 0.023 & 0.007 & 0.019 & 0.004 & 0.027 & 0.005 & 0.015 \\
+\midrule
+Residual                  & \multicolumn{2}{c}{0.382} & \multicolumn{2}{c}{0.658} & \multicolumn{2}{c}{0.175} & \multicolumn{2}{c}{0.418} & \multicolumn{2}{c}{0.367} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Experiment~4a: Dual Pacing Autobidders}
+\label{sec:sens_exp4a}
+
+Tables~\ref{tab:sens_exp4a_primary} and~\ref{tab:sens_exp4a_secondary} report total-order indices for fourteen response variables in the budget-constrained dual pacing experiment.\footnote{Lifetime revenue and LP-based price of anarchy are omitted as they are numerically identical to platform revenue and effective PoA respectively.} Budget multiplier is the dominant factor for seven responses, including revenue ($S_T = 0.54$), liquid welfare ($S_T = 0.52$), pacing stability ($S_T = 0.43$), and LP welfare ($S_T = 0.54$). The bidder objective dominates budget utilisation ($S_T = 0.66$), allocative efficiency ($S_T = 0.48$), and effective price of anarchy ($S_T = 0.35$). The number of bidders drives winner entropy ($S_T = 0.63$) and is the second-ranked factor for no-sale rate ($S_T = 0.24$) and warm-start benefit ($S_T = 0.17$). Value dispersion ($\sigma$) contributes meaningfully to allocative efficiency ($S_T = 0.25$) and welfare ($S_T = 0.16$) but not to revenue. Auction format and reserve price are negligible across primary responses ($S_T < 0.04$); only no-sale rate shows meaningful contributions from auction format ($S_T = 0.09$) and reserve price ($S_T = 0.14$). Three secondary responses have very weak model fit ($R^2 \leq 0.12$): bid-to-value ratio, bid suppression ratio, and cross-episode drift; their Sobol' indices should be interpreted cautiously. Cross-method concordance is strong (mean Spearman $\rho = 0.72$).
+
+\begin{table}[H]
+\centering
+\caption{Experiment~4a: Total-order Sobol' indices ($S_T$) for performance and efficiency responses. $R^2$: revenue 0.89, welfare 0.80, PoA 0.64, budget utilisation 0.96, allocative efficiency 0.89, no-sale rate 0.74, LP welfare 0.80.}
+\label{tab:sens_exp4a_primary}
+\small
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Revenue & Welfare & Eff.\ PoA & Budget & Alloc.\ Eff. & No-Sale & LP Welfare \\
+\midrule
+Budget multiplier         & 0.540 & 0.519 & 0.285 & 0.548 & 0.277 & 0.401 & 0.535 \\
+Bidder objective          & 0.384 & 0.010 & 0.345 & 0.661 & 0.477 & 0.128 & 0.001 \\
+Number of bidders         & 0.171 & 0.177 & 0.159 & 0.030 & 0.130 & 0.238 & 0.188 \\
+Value dispersion ($\sigma$) & 0.014 & 0.163 & 0.139 & 0.007 & 0.252 & 0.027 & 0.127 \\
+Auction format            & 0.008 & 0.001 & 0.005 & 0.018 & 0.004 & 0.093 & 0.001 \\
+Reserve price             & 0.001 & 0.003 & 0.001 & 0.001 & 0.001 & 0.142 & 0.003 \\
+\midrule
+Residual                  & 0.111 & 0.203 & 0.360 & 0.043 & 0.108 & 0.258 & 0.203 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~4a: Total-order Sobol' indices ($S_T$) for stability and dynamics responses. $R^2$: pacing stability 0.62, entropy 0.87, warm start 0.48, inter-episode volatility 0.28, bid-to-value 0.12, bid suppression 0.12, cross-episode drift 0.12.}
+\label{tab:sens_exp4a_secondary}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Pacing Stab. & Entropy & Warm Start & Inter-Ep.\ Vol. & Bid-to-Value & Bid Supp. & Drift \\
+\midrule
+Budget multiplier         & 0.431 & 0.119 & 0.245 & 0.125 & 0.051 & 0.057 & 0.041 \\
+Bidder objective          & 0.403 & 0.144 & 0.218 & 0.066 & 0.046 & 0.049 & 0.041 \\
+Number of bidders         & 0.064 & 0.630 & 0.174 & 0.071 & 0.023 & 0.023 & 0.041 \\
+Value dispersion ($\sigma$) & 0.127 & 0.087 & 0.025 & 0.124 & 0.030 & 0.030 & 0.041 \\
+Auction format            & 0.022 & 0.001 & 0.047 & 0.035 & 0.036 & 0.025 & 0.041 \\
+Reserve price             & 0.003 & 0.002 & 0.001 & 0.005 & 0.007 & 0.007 & 0.004 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Experiment~4b: PI Controller Pacing}
+\label{sec:sens_exp4b}
+
+Tables~\ref{tab:sens_exp4b_primary} and~\ref{tab:sens_exp4b_secondary} report total-order indices for fourteen response variables in the PI controller pacing experiment.\footnote{As in Experiment~4a, lifetime revenue and LP-based PoA are omitted as numerically identical to platform revenue and effective PoA. Bid suppression ratio and bid-to-value ratio yield identical Sobol' indices, indicating perfect correlation between these metrics under PI control; both are shown for completeness.} Budget multiplier dominates the majority of responses, including revenue ($S_T = 0.53$), welfare ($S_T = 0.50$), budget utilisation ($S_T = 0.70$), allocative efficiency ($S_T = 0.74$), bid-to-value ratio ($S_T = 0.76$), and pacing stability ($S_T = 0.75$). A notable difference from Experiment~4a emerges for the price of anarchy and inter-episode volatility: auction format becomes the most important factor ($S_T = 0.19$ and $0.33$ respectively), whereas it was negligible under dual pacing. Auction format also contributes substantially to no-sale rate ($S_T = 0.30$), alongside reserve price ($S_T = 0.30$) and budget multiplier ($S_T = 0.33$). Aggressiveness is negligible across all responses ($S_T < 0.04$). Two secondary responses have essentially no model fit: warm-start benefit ($R^2 = 0.03$) and cross-episode drift ($R^2 = 0.05$); these metrics are driven by noise rather than systematic factor effects. Cross-method concordance is strong (mean Spearman $\rho = 0.77$).
+
+\begin{table}[H]
+\centering
+\caption{Experiment~4b: Total-order Sobol' indices ($S_T$) for performance and efficiency responses. $R^2$: revenue 0.77, welfare 0.73, PoA 0.39, budget utilisation 0.82, allocative efficiency 0.83, no-sale rate 0.70, LP welfare 0.73.}
+\label{tab:sens_exp4b_primary}
+\small
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Revenue & Welfare & Eff.\ PoA & Budget & Alloc.\ Eff. & No-Sale & LP Welfare \\
+\midrule
+Budget multiplier         & 0.529 & 0.495 & 0.170 & 0.702 & 0.738 & 0.332 & 0.506 \\
+Auction format            & 0.116 & 0.004 & 0.191 & 0.099 & 0.030 & 0.300 & 0.001 \\
+Number of bidders         & 0.131 & 0.168 & 0.147 & 0.107 & 0.044 & 0.104 & 0.176 \\
+Value dispersion ($\sigma$) & 0.065 & 0.118 & 0.042 & 0.015 & 0.036 & 0.025 & 0.107 \\
+Reserve price             & 0.001 & 0.004 & 0.032 & 0.002 & 0.025 & 0.302 & 0.003 \\
+Aggressiveness            & 0.001 & 0.001 & 0.007 & 0.000 & 0.001 & 0.008 & 0.001 \\
+\midrule
+Residual                  & 0.232 & 0.268 & 0.609 & 0.178 & 0.173 & 0.303 & 0.269 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~4b: Total-order Sobol' indices ($S_T$) for stability and dynamics responses. $R^2$: pacing stability 0.88, entropy 0.80, warm start 0.03, inter-episode volatility 0.61, bid-to-value 0.89, bid suppression 0.89, cross-episode drift 0.05.}
+\label{tab:sens_exp4b_secondary}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Pacing Stab. & Entropy & Warm Start & Inter-Ep.\ Vol. & Bid-to-Value & Bid Supp. & Drift \\
+\midrule
+Budget multiplier         & 0.748 & 0.192 & 0.014 & 0.256 & 0.759 & 0.759 & 0.010 \\
+Auction format            & 0.195 & 0.031 & 0.003 & 0.330 & 0.194 & 0.194 & 0.012 \\
+Number of bidders         & 0.012 & 0.576 & 0.005 & 0.267 & 0.010 & 0.010 & 0.026 \\
+Value dispersion ($\sigma$) & 0.006 & 0.080 & 0.017 & 0.070 & 0.002 & 0.002 & 0.013 \\
+Reserve price             & 0.001 & 0.005 & 0.011 & 0.022 & 0.001 & 0.001 & 0.034 \\
+Aggressiveness            & 0.006 & 0.001 & 0.004 & 0.033 & 0.000 & 0.000 & 0.007 \\
+\midrule
+Residual                  & 0.118 & 0.202 & 0.970 & 0.392 & 0.114 & 0.114 & 0.946 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Cross-Method Concordance}
+\label{sec:sens_concordance}
+
+Table~\ref{tab:sens_concordance} summarises the agreement among the seven sensitivity methods across all experiments. The mean pairwise Spearman rank correlation provides a scalar measure of whether different methods agree on which factors matter most. Concordance is highest for Experiment~1 ($\rho = 0.87$) and Experiment~4b ($\rho = 0.77$), both of which have clear dominant factors and large sample sizes. Concordance is lowest for Experiment~3b ($\rho = 0.04$), where many factors have similar total-order indices and the methods disagree on their relative ranking. In all experiments, the identity of the top one or two factors is consistent across methods even when the full ranking shows disagreement; the low concordance values primarily reflect instability in the ordering of minor factors.
+
+\begin{table}[H]
+\centering
+\caption{Cross-method concordance: mean pairwise Spearman $\rho$ across seven sensitivity methods, averaged over all response variables within each experiment.}
+\label{tab:sens_concordance}
+\small
+\begin{tabular}{lcc}
+\toprule
+Experiment & Mean Spearman $\rho$ & Number of responses \\
+\midrule
+1: Q-Learning (constant)       & 0.87 & 5 \\
+2: Q-Learning (affiliated)     & 0.33 & 8 \\
+3a: LinUCB                     & 0.33 & 5 \\
+3b: Thompson Sampling          & 0.04 & 5 \\
+4a: Dual Pacing                & 0.72 & 16 \\
+4b: PI Pacing                  & 0.77 & 16 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cross-Experiment Synthesis}
+\label{sec:sens_synthesis}
+
+Table~\ref{tab:sens_dominant} summarises the dominant factor for each response variable that is comparable across multiple experiments. The entries report the factor with the highest total-order index and its $S_T$ value.
+
+\begin{table}[H]
+\centering
+\caption{Dominant factor (highest $S_T$) for comparable responses across experiments. Factor abbreviations: N = number of bidders, R = reserve price, A = auction format, B = budget multiplier, O = bidder objective.}
+\label{tab:sens_dominant}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l cccccc}
+\toprule
+Response & Exp~1 & Exp~2 & Exp~3a & Exp~3b & Exp~4a & Exp~4b \\
+\midrule
+Revenue        & N (0.24) & N (0.22) & N (0.55) & N (0.31) & B (0.54) & B (0.53) \\
+Conv.\ time    & N (0.11) & A (0.11) & N (0.21) & N (0.16) & -- & -- \\
+No-sale rate   & R (0.27) & -- & R (0.45) & N (0.41) & B (0.40) & B (0.33) \\
+Volatility     & N (0.17) & N (0.17) & A (0.24) & N (0.37) & -- & -- \\
+Winner entropy & N (0.31) & N (0.16) & N (0.75) & N (0.32) & N (0.63) & N (0.58) \\
+\midrule
+Eff.\ PoA      & -- & -- & -- & -- & O (0.35) & A (0.19) \\
+Liq.\ welfare  & -- & -- & -- & -- & B (0.52) & B (0.50) \\
+Budget util.   & -- & -- & -- & -- & O (0.66) & B (0.70) \\
+Alloc.\ eff.   & -- & -- & -- & -- & O (0.48) & B (0.74) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Market structure is the primary determinant of algorithmic auction outcomes across all six experiments. In the four learning experiments (1, 2, 3a, 3b), the number of bidders is the dominant factor for revenue in every case, achieving total-order indices from 0.22 to 0.55 (Table~\ref{tab:sens_dominant}). It also dominates winner entropy in all six experiments ($S_T = 0.16$--$0.75$), reflecting the mechanical relationship between market size and competitive balance. In the two autobidding experiments (4a, 4b), budget multiplier replaces number of bidders as the dominant revenue factor ($S_T = 0.53$--$0.54$) and drives most welfare and efficiency metrics. This transition is consistent with the theoretical distinction between the two experimental families: in learning experiments the number of competitors determines equilibrium revenue, while in autobidding the budget constraint is the binding force that shapes market outcomes.
+
+Reserve price and auction format occupy distinct niches in the factor importance hierarchy. Reserve price is the dominant factor for no-sale rate in Experiments~1 and 3a ($S_T = 0.27$ and $0.45$), confirming its direct role as a bid-acceptance threshold. In Experiment~3b, reserve price ranks second to the number of bidders for no-sale rate ($S_T = 0.41$ vs $0.41$), essentially tied. Auction format is rarely the top-ranked factor; across 51 well-fitted response variables, it is dominant in only five cases.\footnote{Well-fitted responses are those with $R^2 > 0.15$, excluding three Experiment~4a responses and two Experiment~4b responses where the model explains negligible variance.} Its strongest contributions are to winner's curse frequency in Experiment~2 ($S_T = 0.36$), inter-episode volatility in Experiment~4b ($S_T = 0.33$), price volatility in Experiment~3a ($S_T = 0.24$), effective price of anarchy in Experiment~4b ($S_T = 0.19$), and convergence time in Experiment~2 ($S_T = 0.11$). The choice between first-price and second-price formats thus matters most for stability and strategic behaviour rather than for aggregate revenue.
+
+Algorithmic tuning parameters are consistently negligible across all four algorithm families tested. In Experiment~1, learning rate ($\alpha$), decay type, and initialisation each have $S_T < 0.03$ across all five responses. In Experiments~3a and 3b, regularisation ($\lambda$), memory decay, and exploration intensity fall below $S_T = 0.04$ for both revenue and no-sale rate. In Experiment~4b, the aggressiveness parameter has $S_T < 0.04$ for every response. This pattern suggests that market outcomes are robust to moderate variation in algorithmic hyperparameters, and that the market environment matters far more than the algorithm's internal configuration.
+
+Interaction effects are pervasive across all experiments. The gap between total-order and first-order indices ($S_T - S_1$) frequently exceeds 0.10, indicating that a factor's influence on the response depends substantially on the levels of other factors. This pattern is most pronounced for the no-sale rate in Experiment~3b, where three factors each have $S_T > 0.33$ despite $S_1 < 0.20$. Even dominant factors operate partly through interactions: the number of bidders in Experiment~3b has $S_1 = 0.18$ but $S_T = 0.31$ for revenue, and budget multiplier in Experiment~4a has $S_1 = 0.35$ but $S_T = 0.54$. The residual fraction (variance not explained by any first- or second-order term) ranges from 0.04 (Experiment~4a budget utilisation) to 0.97 (Experiment~4b warm-start benefit), reflecting both replication noise and higher-order interactions beyond the two-way terms in the model. These interaction effects mean that isolated factor-by-factor analysis can substantially understate a factor's true importance, reinforcing the value of total-order indices over first-order indices alone.

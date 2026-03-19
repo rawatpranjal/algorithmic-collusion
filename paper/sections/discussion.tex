@@ -1,149 +1,117 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{Robustness Summary}
-\label{sec:robustness}
+\subsection{Primary Findings}
 
-All findings reported in Sections~\ref{sec:exp1_results}--\ref{sec:exp4_results} are subjected to a comprehensive suite of robustness checks detailed in Appendix~\ref{sec:appendix_robustness}. This subsection summarises the key diagnostics.
-
-\subsubsection{Inference Corrections}
-
-Across all six sub-experiments, the dominant effects survive both Holm--Bonferroni and Benjamini--Hochberg corrections. HC3 heteroskedasticity-consistent standard errors produce negligible changes in significance status, with the fraction of effects changing significance ranging from 0\% (Experiment~4a) to 6.7\% (Experiment~1). Rademacher wild bootstrap $p$-values for the top~10 effects in each response align closely with asymptotic $p$-values, with differences below 0.01 in all cases.
-
-\subsubsection{Model Adequacy}
-
-LightGBM cross-validated $R^2$ values match or fall below OLS $R^2$ in Experiments~2, 3b, 4a, and~4b, confirming that the linear model with two-way interactions is correctly specified. In Experiments~1 and~3a, LightGBM modestly exceeds OLS for some responses, indicating detectable nonlinear structure; however, the dominant factor rankings (number of bidders, auction type) are unchanged under the nonparametric model. PRESS-based leave-one-out cross-validated $R^2$ gaps remain below 0.10 in all experiments, indicating minimal overfitting.
-
-\subsubsection{Variable Selection}
-
-LASSO variable selection retains auction type and number of bidders across all six sub-experiments. No interaction survives LASSO whose parent main effects were dropped, confirming effect heredity. LASSO-selected variables are a subset of the OLS-significant effects in every case.
-
-\subsubsection{Distributional Heterogeneity}
-
-Quantile regression at the 10th, 25th, 50th, 75th, and 90th percentiles confirms that factor effects are broadly stable across the response distribution. The most notable heterogeneity occurs in Experiment~3a, where the auction type coefficient grows from the lower to upper quantiles, indicating that first-price auctions disproportionately suppress revenue among the best-performing configurations. In Experiment~4a, the bidder objective effect grows toward the upper tail, reflecting that the revenue penalty from utility-maximizing objectives is concentrated among high-revenue cells.
-
-\subsubsection{Supplementary Robustness Checks}
-
-Discretisation sensitivity analysis across grid sizes of 6, 11, and 21 discrete bid levels (Experiments~1--3) confirms that effect rankings are stable across granularities. Budget sensitivity analysis (Experiment~4a) with budget multipliers $m \in \{0.25, 0.5, 1.0\}$ confirms that the number of bidders retains its dominant ranking across all budget levels. Full diagnostic tables, quantile regression figures, and per-experiment model adequacy statistics appear in Appendix~\ref{sec:appendix_robustness}.
-
-All primary findings survive these checks.
-
-\subsection{Competitive Pressure and Budget Constraints as Primary Determinants}
-
-The most robust empirical finding across all experiments is that structural market parameters dominate algorithmic design choices. Table~\ref{tab:cross_exp_factors} ranks the top factors by absolute $t$-statistic for revenue in each experiment. In unconstrained settings (Experiments~1--3), the number of bidders yields the largest effect, with magnitudes consistently larger than auction format. Under budget constraints (Experiments~4a--4b), the budget multiplier dominates, with the number of bidders ranking second to fourth, reflecting the binding role of budget tightness in pacing environments.
+The most robust empirical finding across all experiments is that structural market parameters dominate algorithmic design choices. In unconstrained settings (Experiments~1a--2b), the number of bidders yields the largest effect on revenue in every case. Table~\ref{tab:cross_exp_summary} ranks the top factors by absolute $t$-statistic for revenue across all six sub-experiments. The dominance of market thickness confirms the prediction of \citet{BulowKlemperer1996} that an additional bidder matters more than an optimal reserve, and extends it from static equilibria to settings where bidders are learning algorithms.
 
 \begin{table}[H]
 \centering
-\caption{Top Factors by $|t|$-Statistic for Revenue Across All Experiments}
-\label{tab:cross_exp_factors}
-\begin{tabular}{llccc}
+\caption{Cross-experiment summary of revenue drivers, format effects, and convergence. Factor rankings by absolute $t$-statistic for revenue; FPA and SPA columns show mean revenue in final evaluation period; convergence in rounds (episodes for Experiments~3a--3b).}
+\label{tab:cross_exp_summary}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l lll ccc c}
 \toprule
-Experiment & Algorithm & Factor 1 ($|t|$) & Factor 2 ($|t|$) & Factor 3 ($|t|$) \\
+& & \multicolumn{3}{c}{\textbf{Top Revenue Drivers ($|t|$)}}
+& \multicolumn{3}{c}{\textbf{Revenue by Format}}
+& \textbf{Conv.} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8} \cmidrule(lr){9-9}
+\textbf{Exp} & \textbf{Algorithm}
+& \textbf{Rank 1} & \textbf{Rank 2} & \textbf{Rank 3}
+& \textbf{FPA} & \textbf{SPA} & \textbf{Gap (\%)}
+& \textbf{Median} \\
 \midrule
-E1 & Q-learning (constant) & \ExpOneRevFactorOne{} (\ExpOneRevFactorTOne) & \ExpOneRevFactorTwo{} (\ExpOneRevFactorTTwo) & \ExpOneRevFactorThree{} (\ExpOneRevFactorTThree) \\
-E2 & Q-learning (affiliated) & \ExpTwoRevFactorOne{} (\ExpTwoRevFactorTOne) & \ExpTwoRevFactorTwo{} (\ExpTwoRevFactorTTwo) & \ExpTwoRevFactorThree{} (\ExpTwoRevFactorTThree) \\
-E3a & LinUCB bandits & \ExpThreeARevFactorOne{} (\ExpThreeARevFactorTOne) & \ExpThreeARevFactorTwo{} (\ExpThreeARevFactorTTwo) & \ExpThreeARevFactorThree{} (\ExpThreeARevFactorTThree) \\
-E3b & Thompson bandits & \ExpThreeBRevFactorOne{} (\ExpThreeBRevFactorTOne) & \ExpThreeBRevFactorTwo{} (\ExpThreeBRevFactorTTwo) & \ExpThreeBRevFactorThree{} (\ExpThreeBRevFactorTThree) \\
-E4a & Pacing (Mult.) & \ExpFourARevFactorOne{} (\ExpFourARevFactorTOne) & \ExpFourARevFactorTwo{} (\ExpFourARevFactorTTwo) & \ExpFourARevFactorThree{} (\ExpFourARevFactorTThree) \\
-E4b & Pacing (PI) & \ExpFourBRevFactorOne{} (\ExpFourBRevFactorTOne) & \ExpFourBRevFactorTwo{} (\ExpFourBRevFactorTTwo) & \ExpFourBRevFactorThree{} (\ExpFourBRevFactorTThree) \\
+1a & Q-learn (const.) & \ExpOneARevFactorOne{} (\ExpOneARevFactorTOne) & \ExpOneARevFactorTwo{} (\ExpOneARevFactorTTwo) & \ExpOneARevFactorThree{} (\ExpOneARevFactorTThree) & \ExpOneARevMeanFPA & \ExpOneARevMeanSPA & $\ExpOneARevGapPct$ & \ExpOneAConvMedian \\
+1b & Q-learn (affil.) & \ExpOneBRevFactorOne{} (\ExpOneBRevFactorTOne) & \ExpOneBRevFactorTwo{} (\ExpOneBRevFactorTTwo) & \ExpOneBRevFactorThree{} (\ExpOneBRevFactorTThree) & \ExpOneBRevMeanFPA & \ExpOneBRevMeanSPA & $\ExpOneBRevGapPct$ & \ExpOneBConvMedian \\
+2a & LinUCB & \ExpTwoARevFactorOne{} (\ExpTwoARevFactorTOne) & \ExpTwoARevFactorTwo{} (\ExpTwoARevFactorTTwo) & \ExpTwoARevFactorThree{} (\ExpTwoARevFactorTThree) & \ExpTwoARevMeanFPA & \ExpTwoARevMeanSPA & $\ExpTwoARevGapPct$ & \ExpTwoAConvMedian \\
+2b & Thompson & \ExpTwoBRevFactorOne{} (\ExpTwoBRevFactorTOne) & \ExpTwoBRevFactorTwo{} (\ExpTwoBRevFactorTTwo) & \ExpTwoBRevFactorThree{} (\ExpTwoBRevFactorTThree) & \ExpTwoBRevMeanFPA & \ExpTwoBRevMeanSPA & $\ExpTwoBRevGapPct$ & \ExpTwoBConvMedian \\
+3a & Pacing (Mult.) & \ExpThreeARevFactorOne{} (\ExpThreeARevFactorTOne) & \ExpThreeARevFactorTwo{} (\ExpThreeARevFactorTTwo) & \ExpThreeARevFactorThree{} (\ExpThreeARevFactorTThree) & \ExpThreeARevMeanFPA & \ExpThreeARevMeanSPA & $\ExpThreeARevGapPct$ & \ExpThreeAConvMedian \\
+3b & Pacing (PI) & \ExpThreeBRevFactorOne{} (\ExpThreeBRevFactorTOne) & \ExpThreeBRevFactorTwo{} (\ExpThreeBRevFactorTTwo) & \ExpThreeBRevFactorThree{} (\ExpThreeBRevFactorTThree) & \ExpThreeBRevMeanFPA & \ExpThreeBRevMeanSPA & $\ExpThreeBRevGapPct$ & \ExpThreeBConvMedian \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
-The dominance of market thickness confirms the prediction of \citet{BulowKlemperer1996} that an additional bidder matters more than an optimal reserve, and extends it from static equilibria to settings where bidders are learning algorithms. In unconstrained experiments, adding bidders dominates revenue with margins over the next-ranked factor of \ExpOneRevTopMarginRatio-fold (Experiment~1) to \ExpThreeARevTopMarginRatio-fold (Experiment~3a). In budget-constrained pacing (Experiments~4a--4b), the budget multiplier takes over as the primary revenue driver, with the number of bidders ranking second to fourth.
+Under budget constraints (Experiments~3a--3b), the budget multiplier takes over as the primary revenue driver. The structural shift from market thickness to budget tightness is the defining feature of constraint-driven environments.
 
-\subsection{Auction Format Effects: Context-Dependent and Secondary}
+The effect of auction format on revenue reverses between the two species of bid suppression. Under learning-driven suppression (Experiments~1a--2b), second-price auctions weakly dominate; under constraint-driven suppression (Experiments~3a--3b), first-price auctions dominate (Table~\ref{tab:cross_exp_summary}). This reversal qualifies the universal first-price penalty found by \citet{BanchioSkrzypacz2022}, who studied a single algorithm class. A platform choosing between formats must first assess which species of bid suppression its bidding agents are likely to produce.
 
-The effect of auction format on revenue is not uniform across experiments. Table~\ref{tab:cross_exp_revenue} quantifies the magnitude and direction of the first-price revenue gap in each setting.
+The auction format $\times$ number of bidders interaction is significant in Experiments~1a and~2a but with opposite signs. Under Q-learning (Experiment~1a), additional bidders reduce the format effect; under LinUCB (Experiment~2a), additional bidders widen it. The measurement horizon also matters; when lifetime revenue is used instead of end-state revenue, the two formats become statistically indistinguishable in Experiment~1b.\footnote{First-price learning-phase premium: \ExpOneBFPAPremium; second-price: \ExpOneBSPAPremium. Lifetime revenue model: $|t| = \ExpOneBAllRevAuctionAbsT$, $p \ExpOneBAllRevAuctionPFmt$.} All primary findings survive comprehensive robustness checks (Appendix~\ref{sec:appendix_robustness}).
 
-\begin{table}[H]
+Quantile regression reveals that these mean effects mask distributional heterogeneity. In Experiment~1a, the auction format coefficient reverses sign across quantiles, indicating that first-price auctions compress the revenue distribution even though the average effect is negligible. In Experiments~2b, 3a, and~3b, the format effect grows toward the upper tail, so that the best-performing configurations are most sensitive to format choice (Appendix~\ref{sec:appendix_robustness}).
+
+\subsection{Algorithm-Class Dependence of Secondary Effects}
+
+Beyond the headline findings, a pervasive meta-pattern emerges across experiments. The direction and significance of nearly every secondary effect depends on the algorithm class. The affiliation parameter $\eta$ (spanning independent private to near-common values) shows no significant effect on revenue in Experiment~1b ($p = 0.056$). It becomes significant in both contextual bandit experiments (Experiment~2a, $t = -5.7$, $p < 0.001$; Experiment~2b, $t = -3.2$, $p = 0.002$). \citet{MilgromWeber1982} predict that second-price auctions should weakly dominate first-price auctions under affiliation; this prediction emerges only under contextual bandits, not under Q-learning. Reserve prices show similarly algorithm-dependent effects, significant and positive under Q-learning with constant valuations (Experiment~1a, $t = 5.1$) but significant and negative under Thompson Sampling (Experiment~2b, $t = -7.9$). Classical theory predictions are gated by the learning algorithm.
+
+Efficiency outcomes under budget-constrained pacing illustrate a further dimension of algorithm-class dependence. Under utility-maximizing objectives, dual pacing agents achieve near-perfect allocative efficiency; under value-maximizing objectives with four bidders, efficiency drops substantially, with bid-to-value ratios exceeding 1.5.\footnote{Utility-maximizing efficiency ranges from \ExpThreeAUtilEffLow{} to \ExpThreeAUtilEffHigh{} across cells; value-maximizing four-bidder efficiency drops to \ExpThreeAValFourEffLow--\ExpThreeAValFourEffHigh.} All observed Price of Anarchy values fall well within the theoretical worst-case bound of~2 \citep{Aggarwal2019, Gaitonde2023} for both auction formats. However, the effect of auction format on the Price of Anarchy differs sharply between the two pacing mechanisms, with negligible contribution under dual pacing ($S_T = 0.005$) and dominant contribution under PI control ($S_T = 0.19$). Even within the same species of bid suppression, the mechanism choice matters for welfare.
+
+Convergence speed varies substantially across algorithm classes. Table~\ref{tab:cross_exp_summary} compares convergence times across all experiments. In unconstrained settings, contextual bandits converge substantially faster than Q-learning, yet faster convergence does not translate into higher revenue. Experiment~2a converges far faster than Experiment~1a (\ExpTwoAConvMedian{} vs.\ \ExpOneAConvMedian{} rounds) but produces lower revenues.\footnote{Pacing experiments use a different convergence concept (within-episode budget depletion rather than cross-episode strategy settling), so direct comparison of convergence times between pacing and learning experiments is not meaningful.} First-price auctions produce higher winner entropy than second-price auctions under LinUCB (Experiment~2a), but this pattern does not replicate under Thompson Sampling (Experiment~2b) or Q-learning (Experiment~1b), where the auction format effect on winner entropy is not statistically significant. Higher exploration intensity reduces revenue under both bandit algorithms.
+
+One finding is consistent across all algorithm classes: algorithmic tuning parameters contribute negligibly to revenue. Learning rate, discount factor, decay type, regularisation, memory decay, and aggressiveness each achieve $S_T < 0.04$ in every experiment where they are varied. Market structure dominates algorithm configuration universally.
+
+\subsection{Implications}
+
+The most effective way to improve seller revenue is ensuring sufficient competition. In unconstrained settings, increasing the number of bidders improves revenue more than any other intervention tested, including switching auction formats. In budget-constrained environments, relaxing budget tightness has the largest impact. The effect of auction format is context-dependent; sellers should choose format based on the prevailing bidding technology rather than adopting a blanket preference.
+
+The dominance of structural market parameters over algorithmic design choices carries a direct implication for competition policy. Structural market interventions, such as lowering barriers to entry in auction platforms or preventing excessive market concentration among bidders, are likely to be more effective than algorithm-specific regulation. Across all unconstrained experiments, adding bidders produces a larger revenue improvement than any algorithmic intervention, and under budget constraints, relaxing budget tightness dominates all other factors. The context-dependence of auction format effects complicates prescriptive regulation. A blanket mandate requiring a particular auction format ignores the finding that the welfare consequences of format choice depend on the learning algorithm, the value environment, and the presence of budget constraints. Under Q-learning with constant valuations, the two formats produce statistically indistinguishable revenue. Under contextual bandits with affiliated values, second-price auctions yield higher revenue. Under budget-constrained pacing, first-price auctions perform better. This heterogeneity supports outcome-based monitoring over rule-based mandates \citep{OECD2023, Johnson2023}. The ranked-effects tables produced by the factorial analysis quantify the marginal contribution of each factor, offering a transparent and reproducible evidentiary basis that could support such outcome-based regulatory approaches \citep{Harrington2018, Gal2019}.
+
+\subsection{Practitioner's Guide}
+\label{sec:practitioners_guide}
+
+The factorial laboratory is a general-purpose diagnostic for algorithmic markets, not a method tied to the specific algorithms or auction formats studied here. Any researcher who suspects that autonomous bidding agents may suppress prices, inflate costs, or distort allocations can apply the same workflow. The first step is to characterise the algorithm-mechanism pair under study. Nearly every secondary finding depends on the algorithm class, so the pair must be identified before any design decisions are made. The researcher should determine whether agents are learning values from scratch (Q-learning, contextual bandits), managing budget constraints across repeated auctions (multiplicative pacing, PI controllers), or following a different approach altogether (deep reinforcement learning, transformer-based bidders, LLM agents). The market rules matter equally. Sealed-bid versus open formats, first-price versus second-price payment rules, reserve price policies, and single-item versus combinatorial allocation all shape which theoretical predictions serve as benchmarks and which factors are worth screening.
+
+The second step is to survey the relevant theory and empirical literature for candidate factors, plausible ranges, and theoretical predictions. Classical auction theory supplies equilibrium benchmarks against which simulated outcomes can be compared, including revenue equivalence under independent private values, revenue rankings under affiliation, and the marginal value of an additional bidder. The algorithmic collusion literature identifies mechanism-specific factors such as exploration parameters, discount rates, synchronisation modes, and state representations. The autobidding literature highlights budget multipliers, pacing objectives, and the distinction between value-maximising and utility-maximising agents. Each candidate factor should have a theoretical or empirical basis for inclusion and a range spanning practically relevant levels. Section~\ref{sec:literature} discusses the four bodies of literature this paper draws on.
+
+The third step is to screen the candidate factors down to a manageable set. No single experiment can test everything, so the screening stage selects the factors most likely to matter. A sequential approach begins with a large screening design that spans many factors at two levels each, then follows up on active factors with focused designs that add levels or new response variables. The key discipline is to separate structural market parameters (number of bidders, reserve prices, value environments) from algorithmic tuning parameters (learning rates, discount factors, exploration intensity), because the two categories may operate at different effect scales. Factor levels should span the range encountered in practice rather than being chosen for theoretical convenience. Table~\ref{tab:params} lists the factor definitions and ranges used in this paper.
+
+The fourth step is to select an experimental design that provides orthogonal or near-orthogonal estimation of main effects and interactions. Two-level factorial designs, whether full or fractional, are the standard choice for screening. When some factors have more than two natural levels, as with the affiliation parameter spanning independent, moderate, and common values, mixed-level designs accommodate the extra levels while preserving balance. Space-filling designs such as Latin hypercubes or Sobol sequences are an alternative when factors are continuous and the researcher wants to map the response surface rather than screen for active factors. The choice depends on the research question; factor identification favours factorials, while functional-form mapping favours space-filling designs. Replication should scale inversely with design size to supply pure-error degrees of freedom for lack-of-fit testing. Section~\ref{sec:inference} details the designs used in this paper.
+
+Estimation combines ANOVA with a surrogate model. An OLS model with main effects and all two-way interactions, fit using effects coding ($-1$/$+1$), guarantees orthogonal estimation of all estimable effects (Section~\ref{sec:appendix_inference}). The linear model should always be accompanied by a nonparametric surrogate, such as gradient-boosted trees with cross-validation, to benchmark model adequacy; a meaningful $R^2$ gap signals detectable nonlinearity that the linear model misses. Pareto charts of absolute $t$-statistics and half-normal probability plots are the primary tools for separating active effects from noise, providing a visual complement to the numerical significance tests.
+
+The final step is to report results in a structured way. Variance decomposition through Sobol indices, both first-order $S_i$ and total-order $S_{T_i}$, quantifies each factor's contribution to outcome variability; for balanced factorials these coincide with the ANOVA sum-of-squares decomposition (Section~\ref{sec:appendix_sensitivity}). Effect direction and magnitude come from the OLS coefficients. Multiple-testing corrections are essential when many effects are tested simultaneously; family-wise error rate control via Holm--Bonferroni and false discovery rate control via Benjamini--Hochberg guard against false positives. Quantile regressions at multiple percentiles reveal whether effects are uniform across the outcome distribution or concentrated in the tails. Power analysis establishes what the design can and cannot detect. Together, these diagnostics provide a transparent, reproducible evidentiary basis for ranking the factors that matter most. Appendix~\ref{sec:appendix_robustness} presents the full battery applied in this paper. Figure~\ref{fig:lab_pipeline} summarises this workflow.
+
+\begin{figure}[H]
 \centering
-\caption{First-Price Revenue Gap Across All Experiments}
-\label{tab:cross_exp_revenue}
-\begin{tabular}{lllccc}
-\toprule
-Experiment & Algorithm & Valuations & FPA Revenue & SPA Revenue & Gap (\%) \\
-\midrule
-E1 & Q-learning & Constant & \ExpOneRevMeanFPA & \ExpOneRevMeanSPA & $\ExpOneRevGapPct$ \\
-E2 & Q-learning & Affiliated & \ExpTwoRevMeanFPA & \ExpTwoRevMeanSPA & $\ExpTwoRevGapPct$ \\
-E3a & LinUCB & Affiliated & \ExpThreeARevMeanFPA & \ExpThreeARevMeanSPA & $\ExpThreeARevGapPct$ \\
-E3b & Thompson & Affiliated & \ExpThreeBRevMeanFPA & \ExpThreeBRevMeanSPA & $\ExpThreeBRevGapPct$ \\
-E4a & Pacing (Mult.) & Log-normal & \ExpFourARevMeanFPA & \ExpFourARevMeanSPA & $\ExpFourARevGapPct$ \\
-E4b & Pacing (PI) & Log-normal & \ExpFourBRevMeanFPA & \ExpFourBRevMeanSPA & $\ExpFourBRevGapPct$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{tikzpicture}[
+  node distance=0.45cm,
+  block/.style={rectangle, draw, rounded corners, minimum width=2.0cm,
+                minimum height=0.9cm, text centered, font=\small},
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+]
+  % Nodes
+  \node[block] (spec) {Specify};
+  \node[block, right=of spec] (design) {Design};
+  \node[block, right=of design] (sim) {Simulate};
+  \node[block, right=of sim] (est) {Estimate};
+  \node[block, right=of est] (val) {Validate};
+  \node[block, right=of val] (dec) {Decide};
 
-The direction and magnitude of the effect vary by context. The revenue consequence of auction format depends on the learning algorithm and environment rather than being an inherent property of the payment rule. This qualifies the universal first-price penalty found by \citet{BanchioSkrzypacz2022}, who studied a single algorithm class.
+  % Forward arrows
+  \draw[arrow] (spec) -- (design);
+  \draw[arrow] (design) -- (sim);
+  \draw[arrow] (sim) -- (est);
+  \draw[arrow] (est) -- (val);
+  \draw[arrow] (val) -- (dec);
 
-The measurement horizon also matters. Table~\ref{tab:cross_exp_revenue} reports end-state revenue (final 1{,}000 episodes). When lifetime revenue is used instead, the auction format effect attenuates or reverses, rendering the two formats statistically indistinguishable over the full trajectory in Experiment~2.\footnote{First-price learning-phase premium: \ExpTwoFPAPremium; second-price: \ExpTwoSPAPremium. Lifetime revenue model: $|t| = \ExpTwoAllRevAuctionAbsT$, $p \ExpTwoAllRevAuctionPFmt$.} The auction format $\times$ number of bidders interaction is significant in Experiments~1 and~3a but in opposite directions. Under Q-learning (Experiment~1), additional bidders reduce the format effect. Under LinUCB (Experiment~3a), additional bidders widen it. The direction of the interaction is algorithm-specific.
+  % Annotations below
+  \node[below=0.15cm of spec, font=\scriptsize, align=center] {algorithm,\\mechanism, factors};
+  \node[below=0.15cm of design, font=\scriptsize, align=center] {factorial or\\space-filling};
+  \node[below=0.15cm of sim, font=\scriptsize, align=center] {run auction\\experiments};
+  \node[below=0.15cm of est, font=\scriptsize, align=center] {OLS + surrogate\\benchmarking};
+  \node[below=0.15cm of val, font=\scriptsize, align=center] {robustness\\checks};
+  \node[below=0.15cm of dec, font=\scriptsize, align=center] {Sobol indices,\\policy guidance};
 
-\subsection{Exploration and Aggressiveness as Moderators}
+  % Feedback arrow from Validate back to Specify
+  \draw[arrow, rounded corners=10pt, gray]
+    (val.south) -- ++(0, -1.3) -| (spec.south)
+    node[pos=0.25, below, font=\scriptsize] {iterate};
+\end{tikzpicture}
+\caption{Laboratory pipeline for diagnosing algorithmic markets. The six stages correspond to the workflow described in the Practitioner's Guide. A feedback loop from validation to specification supports iterative refinement of factor sets and design choices.}
+\label{fig:lab_pipeline}
+\end{figure}
 
-Across experiments, factors that promote bid commitment improve first-price auction revenue. The discount factor and update mode matter in Q-learning (Experiment~1), and the bidder objective matters in dual pacing (Experiment~4a). In PI pacing (Experiment~4b), auction format itself is a strong revenue driver, with first-price rules increasing revenue. This effect is moderated by budget tightness through a significant auction format $\times$ budget multiplier interaction. LinUCB (Experiment~3a) diverges: higher exploration intensity \emph{reduces} revenue. The welfare consequences of algorithmic design choices are algorithm-specific.
+\subsection{Limitations and Future Directions}
 
-\subsection{Convergence and Constraints}
+The qualitative patterns documented here are likely to hold in settings characterised by repeated interactions, autonomous learning, and sealed-bid formats, conditions that closely approximate programmatic advertising markets. External validity to specific real-world markets requires empirical validation with proprietary auction data. The algorithms studied here are stylised; the experiments do not include deep reinforcement learning, LLM-based bidders, or transformer architectures. Agents have no explicit communication channels, episode lengths are fixed, bidder populations are symmetric, and no combinatorial formats are tested. Settings involving few-shot auctions or human bidders may produce qualitatively different outcomes.
 
-\begin{table}[H]
-\centering
-\caption{Convergence Time Across All Experiments (rounds)}
-\label{tab:cross_exp_convergence}
-\begin{tabular}{llcc}
-\toprule
-Experiment & Algorithm & Median & Mean \\
-\midrule
-E1 & Q-learning (constant) & \ExpOneConvMedian & \ExpOneConvMean \\
-E2 & Q-learning (affiliated) & \ExpTwoConvMedian & \ExpTwoConvMean \\
-E3a & LinUCB & \ExpThreeAConvMedian & \ExpThreeAConvMean \\
-E3b & Thompson & \ExpThreeBConvMedian & \ExpThreeBConvMean \\
-E4a & Pacing (Mult.) & \ExpFourAConvMedian & \ExpFourAConvMean \\
-E4b & Pacing (PI) & \ExpFourBConvMedian & \ExpFourBConvMean \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Table~\ref{tab:cross_exp_convergence} compares convergence times across all experiments. In unconstrained settings, contextual bandits converge substantially faster than Q-learning. Pacing experiments use a different convergence concept (within-episode budget depletion rather than cross-episode strategy settling), so direct comparison of convergence times between pacing and unconstrained experiments is not meaningful. Faster convergence does not guarantee higher revenue. Experiment~3a converges substantially faster than Experiment~1 (\ExpThreeAConvMedian{} vs.\ \ExpOneConvMedian{} rounds) yet produces far lower revenues. The key determinant is \emph{which equilibrium} agents converge to, not convergence speed per se.
-
-\subsection{Winner Concentration}
-
-In the LinUCB experiment (Experiment~3a), first-price auctions produce higher winner entropy than second-price auctions. This pattern does not replicate under Thompson sampling (Experiment~3b), where the auction format effect on winner entropy is not statistically significant. Under Q-learning with affiliated valuations (Experiment~2), the pattern reverses: second-price auctions exhibit marginally higher entropy, though the difference is not statistically significant. The direction of the winner concentration effect depends on the learning algorithm, with only LinUCB producing more symmetric outcomes under first-price rules.
-
-\subsection{Factors with Context-Dependent Effects}
-
-Two factors expected to matter based on theory show uneven effects. The affiliation parameter $\eta$, varied across Experiments~2, 3a, and~3b from independent private values to near-common values, shows no significant effect on revenue in Experiment~2 ($p = 0.056$) but becomes significant in both contextual bandit experiments (Experiment~3a, $t = -5.7$, $p < 0.001$; Experiment~3b, $t = -3.2$, $p = 0.002$). \citet{MilgromWeber1982} predict that SPA should weakly dominate FPA under affiliation. This prediction emerges only under contextual bandits, not under Q-learning, indicating that algorithm sophistication moderates sensitivity to value correlation.
-
-Reserve prices show algorithm-dependent effects on revenue. They are significant under Q-learning with constant valuations (Experiment~1, $t = 5.1$, positive) and Thompson sampling (Experiment~3b, $t = -7.9$, negative), but not under LinUCB or pacing. The opposite signs confirm that the Bulow-Klemperer prediction extends to the Q-learning setting, while Thompson sampling with affiliated values produces the reverse effect.
-
-\subsection{Key Takeaways}
-
-Competition is the single most important determinant of auction revenue when bidders are learning algorithms. In every unconstrained experiment, increasing the number of bidders produces a larger revenue effect than any other factor. This confirms the \citet{BulowKlemperer1996} prediction and extends it from static equilibria to the algorithmic setting.
-
-Auction format effects are context-dependent rather than universal, qualifying the findings of \citet{BanchioSkrzypacz2022}. There is no blanket advantage for either format. The direction shifts from negligible under Q-learning with constant valuations, to favouring second-price under affiliated values, to favouring first-price under budget-constrained pacing.
-
-Value affiliation has no effect on revenue under Q-learning but becomes a significant driver under contextual bandits. The \citet{MilgromWeber1982} revenue ranking (SPA $\geq$ FPA under affiliation) emerges only when algorithms exploit contextual structure.
-
-Higher exploration intensity reduces revenue under both LinUCB and Thompson sampling. Budget tightness replaces competition as the primary revenue driver under pacing, with the budget multiplier dominating all other factors in Experiments~4a and~4b.
-
-Faster convergence does not imply higher revenue. LinUCB agents converge substantially faster than Q-learning agents but produce lower revenues.
-
-First-price auctions produce more symmetric winner distributions only under LinUCB, not under Thompson sampling or Q-learning. Reserve prices have opposite effects depending on the algorithm, improving revenue under Q-learning (Experiment~1, $t = 5.1$) but reducing it under Thompson sampling (Experiment~3b, $t = -7.9$). Higher discount factors suppress revenue under Q-learning, ranking as the second most important revenue driver in Experiment~1.
-
-\subsection{Methodological Contribution}
-
-Beyond the empirical findings, this paper contributes a computational laboratory framework for studying auction markets under algorithmic bidding. The combination of orthogonal factorial designs and Monte Carlo replication provides a systematic method for ranking factor importance, separating main effects from interactions, and validating findings through comprehensive robustness checks. The same framework accommodates unconstrained learning agents (Experiments~1--3b) and budget-constrained pacing agents (Experiments~4a--4b), demonstrating that a single experimental methodology can address both the algorithmic collusion question and the auction design question under autobidding. This laboratory approach fills a gap between theoretical analysis, which is tractable only for simple cases, and empirical observation of proprietary markets, which lacks controlled variation. The framework is also modular with respect to experimental design: the two-level factorials used here for screening can be replaced with response surface designs, space-filling designs, or definitive screening designs as the research question shifts from identifying important factors to mapping their precise functional forms (Section~\ref{sec:experiments}).
-
-\subsection{External Validity}
-
-The qualitative patterns documented here are likely to hold in settings characterised by repeated interactions, autonomous learning, and sealed-bid formats, conditions that closely approximate programmatic advertising markets. External validity to specific real-world markets requires empirical validation with proprietary auction data. Settings involving few-shot auctions, human bidders, explicit coordination, or combinatorial formats may produce qualitatively different outcomes.
-
-\subsection{Practical Implications}
-
-The most effective lever available to sellers is ensuring sufficient competition. In unconstrained settings, increasing the number of bidders improves revenue more than any other intervention tested, including switching auction formats. In budget-constrained environments, relaxing budget tightness has the largest impact. The effect of auction format is context-dependent, so sellers should choose format based on the prevailing bidding technology rather than adopting a blanket preference. For platforms committed to first-price formats, structural interventions such as binding budget constraints or lower discount factors can improve revenue regardless of the specific learning algorithm.
-
-\subsection{Legal and Policy Implications}
-
-The dominance of structural market parameters over algorithmic design choices carries a direct implication for competition policy. Regulating specific algorithms or prohibiting particular learning rules may be less effective than ensuring sufficient competition and appropriate budget flexibility. Across all unconstrained experiments, adding bidders produces a larger revenue improvement than any algorithmic intervention, and under budget constraints, relaxing budget tightness dominates all other factors. These findings suggest that policies aimed at maintaining competitive market structure, such as lowering barriers to entry in auction platforms or preventing excessive market concentration among bidders, are likely to be more effective levers against algorithmic revenue shortfalls than algorithm-specific regulations.
-
-The context-dependence of auction format effects complicates prescriptive regulation. A blanket mandate requiring a particular auction format, for instance requiring second-price auctions on the grounds that they are less vulnerable to bid suppression, ignores the finding that the welfare consequences of format choice depend on the learning algorithm, the value environment, and the presence of budget constraints. Under Q-learning with constant valuations, the two formats produce statistically indistinguishable revenue. Under contextual bandits with affiliated values, second-price auctions yield higher revenue. Under budget-constrained pacing, first-price auctions perform better. This heterogeneity supports outcome-based monitoring over rule-based mandates: regulators should assess whether auction outcomes fall below competitive benchmarks rather than prescribing specific mechanisms \citep{OECD2023, Johnson2023}.
-
-The factorial decomposition methodology provides a systematic framework for attributing revenue shortfalls to specific design choices, which could support outcome-based regulatory approaches. Rather than asking whether an algorithm ``colluded,'' regulators could ask which modifiable features of the market environment are responsible for observed revenue gaps, and whether feasible design changes would close them. The ranked-effects tables produced by the factorial analysis quantify the marginal contribution of each factor, offering a transparent and reproducible evidentiary basis. This paper provides empirical foundations for the ongoing policy debate without taking a normative position on the appropriate legal framework for addressing algorithmic convergence \citep{Harrington2018, Gal2019}.
+This work can be extended in three directions. Response surface designs can map the precise functional forms of the factors identified as important by the screening factorials, moving from factor identification to functional-form estimation. Multi-agent architectures beyond tabular methods and PI controllers, including transformers, LLM-based bidders, and deep reinforcement learning, would test whether the dominance of structural parameters persists when algorithmic complexity increases. Empirical validation with proprietary auction data would test whether the laboratory patterns replicate in real advertising exchanges.

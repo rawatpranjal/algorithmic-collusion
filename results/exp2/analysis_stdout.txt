@@ -33,8 +33,8 @@ RESPONSE: avg_rev_last_1000
 Dep. Variable:      avg_rev_last_1000   R-squared:                       0.404
 Model:                            OLS   Adj. R-squared:                  0.357
 Method:                 Least Squares   F-statistic:                     8.581
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           5.00e-14
-Time:                        17:33:40   Log-Likelihood:                 147.20
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           5.00e-14
+Time:                        17:26:28   Log-Likelihood:                 147.20
 No. Observations:                 192   AIC:                            -264.4
 Df Residuals:                     177   BIC:                            -215.5
 Df Model:                          14                                         
@@ -113,8 +113,8 @@ RESPONSE: avg_rev_all
 Dep. Variable:            avg_rev_all   R-squared:                       0.254
 Model:                            OLS   Adj. R-squared:                  0.195
 Method:                 Least Squares   F-statistic:                     4.311
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           1.48e-06
-Time:                        17:33:41   Log-Likelihood:                 140.93
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           1.48e-06
+Time:                        17:26:29   Log-Likelihood:                 140.93
 No. Observations:                 192   AIC:                            -251.9
 Df Residuals:                     177   BIC:                            -203.0
 Df Model:                          14                                         
@@ -192,8 +192,8 @@ RESPONSE: time_to_converge
 Dep. Variable:       time_to_converge   R-squared:                       0.183
 Model:                            OLS   Adj. R-squared:                  0.118
 Method:                 Least Squares   F-statistic:                     2.825
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           0.000769
-Time:                        17:33:42   Log-Likelihood:                -2163.9
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           0.000769
+Time:                        17:26:29   Log-Likelihood:                -2163.9
 No. Observations:                 192   AIC:                             4358.
 Df Residuals:                     177   BIC:                             4407.
 Df Model:                          14                                         
@@ -270,8 +270,8 @@ RESPONSE: no_sale_rate
 Dep. Variable:           no_sale_rate   R-squared:                         nan
 Model:                            OLS   Adj. R-squared:                    nan
 Method:                 Least Squares   F-statistic:                       nan
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):                nan
-Time:                        17:33:43   Log-Likelihood:                    inf
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):                nan
+Time:                        17:26:30   Log-Likelihood:                    inf
 No. Observations:                 192   AIC:                              -inf
 Df Residuals:                     177   BIC:                              -inf
 Df Model:                          14                                         
@@ -345,8 +345,8 @@ RESPONSE: price_volatility
 Dep. Variable:       price_volatility   R-squared:                       0.363
 Model:                            OLS   Adj. R-squared:                  0.313
 Method:                 Least Squares   F-statistic:                     7.213
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           9.77e-12
-Time:                        17:33:44   Log-Likelihood:                 390.20
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           9.77e-12
+Time:                        17:26:31   Log-Likelihood:                 390.20
 No. Observations:                 192   AIC:                            -750.4
 Df Residuals:                     177   BIC:                            -701.5
 Df Model:                          14                                         
@@ -425,8 +425,8 @@ RESPONSE: winner_entropy
 Dep. Variable:         winner_entropy   R-squared:                       0.287
 Model:                            OLS   Adj. R-squared:                  0.231
 Method:                 Least Squares   F-statistic:                     5.093
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           5.49e-08
-Time:                        17:33:45   Log-Likelihood:                -36.518
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           5.49e-08
+Time:                        17:26:31   Log-Likelihood:                -36.518
 No. Observations:                 192   AIC:                             103.0
 Df Residuals:                     177   BIC:                             151.9
 Df Model:                          14                                         
@@ -503,8 +503,8 @@ RESPONSE: btv_median
 Dep. Variable:             btv_median   R-squared:                       0.485
 Model:                            OLS   Adj. R-squared:                  0.445
 Method:                 Least Squares   F-statistic:                     11.92
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           3.48e-19
-Time:                        17:33:45   Log-Likelihood:                 95.250
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           3.48e-19
+Time:                        17:26:32   Log-Likelihood:                 95.250
 No. Observations:                 192   AIC:                            -160.5
 Df Residuals:                     177   BIC:                            -111.6
 Df Model:                          14                                         
@@ -585,8 +585,8 @@ RESPONSE: winners_curse_freq
 Dep. Variable:     winners_curse_freq   R-squared:                       0.546
 Model:                            OLS   Adj. R-squared:                  0.511
 Method:                 Least Squares   F-statistic:                     15.23
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           9.80e-24
-Time:                        17:33:46   Log-Likelihood:                 96.476
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           9.80e-24
+Time:                        17:26:33   Log-Likelihood:                 96.476
 No. Observations:                 192   AIC:                            -163.0
 Df Residuals:                     177   BIC:                            -114.1
 Df Model:                          14                                         
@@ -668,8 +668,8 @@ RESPONSE: bid_dispersion
 Dep. Variable:         bid_dispersion   R-squared:                       0.281
 Model:                            OLS   Adj. R-squared:                  0.224
 Method:                 Least Squares   F-statistic:                     4.944
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           1.03e-07
-Time:                        17:33:47   Log-Likelihood:                 307.43
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           1.03e-07
+Time:                        17:26:33   Log-Likelihood:                 307.43
 No. Observations:                 192   AIC:                            -584.9
 Df Residuals:                     177   BIC:                            -536.0
 Df Model:                          14                                         
@@ -748,8 +748,8 @@ RESPONSE: signal_slope_ratio
 Dep. Variable:     signal_slope_ratio   R-squared:                       0.409
 Model:                            OLS   Adj. R-squared:                  0.362
 Method:                 Least Squares   F-statistic:                     8.755
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           2.61e-14
-Time:                        17:33:48   Log-Likelihood:                 183.81
+Date:                Tue, 17 Mar 2026   Prob (F-statistic):           2.61e-14
+Time:                        17:26:34   Log-Likelihood:                 183.81
 No. Observations:                 192   AIC:                            -337.6
 Df Residuals:                     177   BIC:                            -288.8
 Df Model:                          14                                         

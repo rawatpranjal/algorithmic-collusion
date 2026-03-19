@@ -2,6 +2,7 @@
         experiments exp1 exp2 exp3 exp3a exp3b exp4a exp4b \
         analyze analyze1 analyze2 analyze3 analyze3a analyze3b analyze4a analyze4b \
         robust robust1 robust2 robust3 robust3a robust3b robust4a robust4b \
+        sensitivity sensitivity1 sensitivity2 sensitivity3a sensitivity3b sensitivity4a sensitivity4b \
         traces tables pdf paper all clean help \
         dive1 dive2 dive3 dive3a dive3b dive4a dive4b \
         check check-freshness discretization budget-robust \
@@ -30,6 +31,8 @@ help:
 	@echo "  make analyze1       Run factorial ANOVA for experiment 1"
 	@echo "  make robust         Run robustness checks for all experiments"
 	@echo "  make robust1        Run robustness checks for experiment 1"
+	@echo "  make sensitivity    Run global sensitivity analysis for all experiments"
+	@echo "  make sensitivity1   Run sensitivity analysis for experiment 1"
 	@echo "  make traces         Generate single-run trace plots for paper"
 	@echo "  make tables         Generate LaTeX tables + copy figures"
 	@echo "  make pdf            Generate standalone results PDF"
@@ -138,9 +141,41 @@ robust4a:
 robust4b:
 	$(PY) src/estimation/robust_analysis.py --exp 4b
 
+# ── Sensitivity Analysis ───────────────────────────────────
+# Note: est*.py now runs sensitivity automatically after robustness.
+# These targets are for standalone re-runs of sensitivity only.
+sensitivity: sensitivity1 sensitivity2 sensitivity3a sensitivity3b sensitivity4a sensitivity4b
+
+sensitivity1:
+	$(PY) src/estimation/sensitivity_analysis.py --exp 1
+
+sensitivity2:
+	$(PY) src/estimation/sensitivity_analysis.py --exp 2
+
+sensitivity3a:
+	$(PY) src/estimation/sensitivity_analysis.py --exp 3a
+
+sensitivity3b:
+	$(PY) src/estimation/sensitivity_analysis.py --exp 3b
+
+sensitivity4a:
+	$(PY) src/estimation/sensitivity_analysis.py --exp 4a
+
+sensitivity4b:
+	$(PY) src/estimation/sensitivity_analysis.py --exp 4b
+
 # ── Trace Plots ─────────────────────────────────────────────
 traces:
 	$(PY) scripts/generate_trace_plots.py
+
+# ── Figures ─────────────────────────────────────────────────
+sensitivity-heatmap:
+	$(PYTHON) scripts/generate_sensitivity_heatmap.py
+
+forest-plot:
+	$(PYTHON) scripts/generate_forest_plot.py
+
+figures: forest-plot
 
 # ── Tables, PDF, Paper ──────────────────────────────────────
 tables:
@@ -153,7 +188,7 @@ paper:
 	cd paper && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex && cd ..
 
 # ── Full Pipeline ────────────────────────────────────────────
-all: experiments analyze robust traces tables pdf paper
+all: experiments analyze robust sensitivity traces tables pdf paper
 
 # ── Deep Dive ────────────────────────────────────────────────
 dive1:

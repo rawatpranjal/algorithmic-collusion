@@ -1,7 +1,7 @@
 === Factorial Analysis: Experiment 1 ===
 Observations: 1024
 Factors (10): ['auction_type_coded', 'alpha_coded', 'gamma_coded', 'reserve_price_coded', 'init_coded', 'exploration_coded', 'asynchronous_coded', 'n_bidders_coded', 'info_feedback_coded', 'decay_type_coded']
-Responses: ['avg_rev_last_1000', 'avg_rev_all', 'time_to_converge', 'no_sale_rate', 'price_volatility', 'winner_entropy']
+Responses: ['avg_rev_last_1000', 'avg_rev_all', 'time_to_converge', 'no_sale_rate', 'price_volatility', 'winner_entropy', 'ratio_to_theory']
 
 === Summary Statistics ===
 |                     |     count |       mean |        std |       min |        25% |        50% |        75% |         max |
@@ -22,6 +22,7 @@ Responses: ['avg_rev_last_1000', 'avg_rev_all', 'time_to_converge', 'no_sale_rat
 | no_sale_rate        | 1024.0000 |     0.0113 |     0.0220 |    0.0000 |     0.0000 |     0.0003 |     0.0099 |      0.1589 |
 | price_volatility    | 1024.0000 |     0.1162 |     0.0571 |    0.0402 |     0.0770 |     0.1020 |     0.1438 |      0.3192 |
 | winner_entropy      | 1024.0000 |     1.0283 |     0.3526 |    0.4931 |     0.6931 |     0.9960 |     1.3861 |      1.3863 |
+| ratio_to_theory     | 1024.0000 |     1.0788 |     0.4026 |    0.0000 |     0.9000 |     1.0000 |     1.2000 |      1.8410 |
 
 
 ============================================================
@@ -34,8 +35,8 @@ RESPONSE: avg_rev_last_1000
 Dep. Variable:      avg_rev_last_1000   R-squared:                       0.423
 Model:                            OLS   Adj. R-squared:                  0.390
 Method:                 Least Squares   F-statistic:                     12.90
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           4.91e-82
-Time:                        17:23:18   Log-Likelihood:                 472.13
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):           4.91e-82
+Time:                        04:38:05   Log-Likelihood:                 472.13
 No. Observations:                1024   AIC:                            -832.3
 Df Residuals:                     968   BIC:                            -556.1
 Df Model:                          55                                         
@@ -203,8 +204,8 @@ RESPONSE: avg_rev_all
 Dep. Variable:            avg_rev_all   R-squared:                       0.476
 Model:                            OLS   Adj. R-squared:                  0.446
 Method:                 Least Squares   F-statistic:                     15.99
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):          6.24e-101
-Time:                        17:23:19   Log-Likelihood:                 848.02
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):          6.24e-101
+Time:                        04:38:06   Log-Likelihood:                 848.02
 No. Observations:                1024   AIC:                            -1584.
 Df Residuals:                     968   BIC:                            -1308.
 Df Model:                          55                                         
@@ -376,8 +377,8 @@ RESPONSE: time_to_converge
 Dep. Variable:       time_to_converge   R-squared:                       0.315
 Model:                            OLS   Adj. R-squared:                  0.276
 Method:                 Least Squares   F-statistic:                     8.086
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           2.76e-49
-Time:                        17:23:21   Log-Likelihood:                -11838.
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):           2.76e-49
+Time:                        04:38:08   Log-Likelihood:                -11838.
 No. Observations:                1024   AIC:                         2.379e+04
 Df Residuals:                     968   BIC:                         2.406e+04
 Df Model:                          55                                         
@@ -543,8 +544,8 @@ RESPONSE: no_sale_rate
 Dep. Variable:           no_sale_rate   R-squared:                       0.424
 Model:                            OLS   Adj. R-squared:                  0.391
 Method:                 Least Squares   F-statistic:                     12.95
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           2.54e-82
-Time:                        17:23:22   Log-Likelihood:                 2738.2
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):           2.54e-82
+Time:                        04:38:08   Log-Likelihood:                 2738.2
 No. Observations:                1024   AIC:                            -5364.
 Df Residuals:                     968   BIC:                            -5088.
 Df Model:                          55                                         
@@ -718,8 +719,8 @@ RESPONSE: price_volatility
 Dep. Variable:       price_volatility   R-squared:                       0.447
 Model:                            OLS   Adj. R-squared:                  0.415
 Method:                 Least Squares   F-statistic:                     14.22
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           2.71e-90
-Time:                        17:23:24   Log-Likelihood:                 1783.2
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):           2.71e-90
+Time:                        04:38:09   Log-Likelihood:                 1783.2
 No. Observations:                1024   AIC:                            -3454.
 Df Residuals:                     968   BIC:                            -3178.
 Df Model:                          55                                         
@@ -892,8 +893,8 @@ RESPONSE: winner_entropy
 Dep. Variable:         winner_entropy   R-squared:                       0.459
 Model:                            OLS   Adj. R-squared:                  0.428
 Method:                 Least Squares   F-statistic:                     14.93
-Date:                Fri, 27 Feb 2026   Prob (F-statistic):           1.30e-94
-Time:                        17:23:25   Log-Likelihood:                -70.589
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):           1.30e-94
+Time:                        04:38:10   Log-Likelihood:                -70.589
 No. Observations:                1024   AIC:                             253.2
 Df Residuals:                     968   BIC:                             529.3
 Df Model:                          55                                         
@@ -1046,6 +1047,177 @@ Adj R² = 0.4282
   reserve_price:asynchronous               coef=-0.0184  p=0.0277
   asynchronous:decay_type                  coef=-0.0172  p=0.0396
   init:decay_type                          coef=-0.0164  p=0.0496
+
+  Plots saved to results/exp1/
+
+============================================================
+RESPONSE: ratio_to_theory
+============================================================
+
+--- OLS Regression Summary ---
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:        ratio_to_theory   R-squared:                       0.695
+Model:                            OLS   Adj. R-squared:                  0.678
+Method:                 Least Squares   F-statistic:                     40.08
+Date:                Thu, 19 Mar 2026   Prob (F-statistic):          3.00e-210
+Time:                        04:38:11   Log-Likelihood:                 86.812
+No. Observations:                1024   AIC:                            -61.62
+Df Residuals:                     968   BIC:                             214.5
+Df Model:                          55                                         
+Covariance Type:            nonrobust                                         
+===========================================================================================================
+                                              coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------
+Intercept                                   1.0788      0.007    150.981      0.000       1.065       1.093
+auction_type_coded                          0.2661      0.007     37.245      0.000       0.252       0.280
+alpha_coded                                 0.0043      0.007      0.609      0.543      -0.010       0.018
+gamma_coded                                -0.0759      0.007    -10.621      0.000      -0.090      -0.062
+reserve_price_coded                         0.0317      0.007      4.440      0.000       0.018       0.046
+init_coded                                 -0.0129      0.007     -1.811      0.071      -0.027       0.001
+exploration_coded                           0.0029      0.007      0.404      0.686      -0.011       0.017
+asynchronous_coded                          0.0410      0.007      5.737      0.000       0.027       0.055
+n_bidders_coded                            -0.0296      0.007     -4.142      0.000      -0.044      -0.016
+info_feedback_coded                         0.0255      0.007      3.573      0.000       0.012       0.040
+decay_type_coded                            0.0076      0.007      1.062      0.289      -0.006       0.022
+auction_type_coded:alpha_coded             -0.0062      0.007     -0.873      0.383      -0.020       0.008
+auction_type_coded:gamma_coded             -0.0521      0.007     -7.294      0.000      -0.066      -0.038
+auction_type_coded:reserve_price_coded     -0.0021      0.007     -0.290      0.772      -0.016       0.012
+auction_type_coded:init_coded              -0.0075      0.007     -1.047      0.295      -0.022       0.007
+auction_type_coded:exploration_coded       -0.0083      0.007     -1.167      0.244      -0.022       0.006
+auction_type_coded:asynchronous_coded      -0.0149      0.007     -2.086      0.037      -0.029      -0.001
+auction_type_coded:n_bidders_coded         -0.1443      0.007    -20.189      0.000      -0.158      -0.130
+auction_type_coded:info_feedback_coded      0.0102      0.007      1.425      0.154      -0.004       0.024
+auction_type_coded:decay_type_coded         0.0011      0.007      0.152      0.879      -0.013       0.015
+alpha_coded:gamma_coded                     0.0010      0.007      0.145      0.884      -0.013       0.015
+alpha_coded:reserve_price_coded             0.0050      0.007      0.696      0.487      -0.009       0.019
+alpha_coded:init_coded                      0.0111      0.007      1.553      0.121      -0.003       0.025
+alpha_coded:exploration_coded               0.0006      0.007      0.082      0.935      -0.013       0.015
+alpha_coded:asynchronous_coded              0.0030      0.007      0.421      0.674      -0.011       0.017
+alpha_coded:n_bidders_coded                 0.0011      0.007      0.161      0.872      -0.013       0.015
+alpha_coded:info_feedback_coded             0.0050      0.007      0.705      0.481      -0.009       0.019
+alpha_coded:decay_type_coded               -0.0123      0.007     -1.727      0.085      -0.026       0.002
+gamma_coded:reserve_price_coded             0.0258      0.007      3.612      0.000       0.012       0.040
+gamma_coded:init_coded                      0.0009      0.007      0.119      0.905      -0.013       0.015
+gamma_coded:exploration_coded               0.0138      0.007      1.930      0.054      -0.000       0.028
+gamma_coded:asynchronous_coded              0.0193      0.007      2.695      0.007       0.005       0.033
+gamma_coded:n_bidders_coded                 0.0577      0.007      8.082      0.000       0.044       0.072
+gamma_coded:info_feedback_coded             0.0148      0.007      2.077      0.038       0.001       0.029
+gamma_coded:decay_type_coded               -0.0028      0.007     -0.386      0.700      -0.017       0.011
+reserve_price_coded:init_coded             -0.0004      0.007     -0.049      0.961      -0.014       0.014
+reserve_price_coded:exploration_coded      -0.0105      0.007     -1.468      0.142      -0.025       0.004
+reserve_price_coded:asynchronous_coded     -0.0130      0.007     -1.813      0.070      -0.027       0.001
+reserve_price_coded:n_bidders_coded        -0.0143      0.007     -2.002      0.046      -0.028      -0.000
+reserve_price_coded:info_feedback_coded    -0.0237      0.007     -3.323      0.001      -0.038      -0.010
+reserve_price_coded:decay_type_coded        0.0089      0.007      1.248      0.212      -0.005       0.023
+init_coded:exploration_coded               -0.0008      0.007     -0.106      0.916      -0.015       0.013
+init_coded:asynchronous_coded               0.0073      0.007      1.016      0.310      -0.007       0.021
+init_coded:n_bidders_coded                  0.0015      0.007      0.211      0.833      -0.013       0.016
+init_coded:info_feedback_coded             -0.0024      0.007     -0.329      0.742      -0.016       0.012
+init_coded:decay_type_coded                 0.0083      0.007      1.162      0.245      -0.006       0.022
+exploration_coded:asynchronous_coded       -0.0080      0.007     -1.123      0.262      -0.022       0.006
+exploration_coded:n_bidders_coded          -0.0144      0.007     -2.017      0.044      -0.028      -0.000
+exploration_coded:info_feedback_coded       0.0193      0.007      2.698      0.007       0.005       0.033
+exploration_coded:decay_type_coded         -0.0053      0.007     -0.735      0.462      -0.019       0.009
+asynchronous_coded:n_bidders_coded         -0.0057      0.007     -0.793      0.428      -0.020       0.008
+asynchronous_coded:info_feedback_coded     -0.0178      0.007     -2.497      0.013      -0.032      -0.004
+asynchronous_coded:decay_type_coded         0.0066      0.007      0.929      0.353      -0.007       0.021
+n_bidders_coded:info_feedback_coded         0.0035      0.007      0.483      0.629      -0.011       0.017
+n_bidders_coded:decay_type_coded           -0.0003      0.007     -0.042      0.967      -0.014       0.014
+info_feedback_coded:decay_type_coded       -0.0018      0.007     -0.257      0.797      -0.016       0.012
+==============================================================================
+Omnibus:                      369.101   Durbin-Watson:                   2.389
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             2288.314
+Skew:                          -1.518   Prob(JB):                         0.00
+Kurtosis:                       9.664   Cond. No.                         1.00
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+R² = 0.6948
+Adj R² = 0.6775
+
+--- ANOVA Table (Type III) ---
+|                                         |    sum_sq |       df |          F |   PR(>F) |
+|-----------------------------------------|-----------|----------|------------|----------|
+| Intercept                               | 1191.6684 |   1.0000 | 22795.1303 |   0.0000 |
+| auction_type_coded                      |   72.5179 |   1.0000 |  1387.1771 |   0.0000 |
+| alpha_coded                             |    0.0194 |   1.0000 |     0.3706 |   0.5428 |
+| gamma_coded                             |    5.8974 |   1.0000 |   112.8104 |   0.0000 |
+| reserve_price_coded                     |    1.0306 |   1.0000 |    19.7143 |   0.0000 |
+| init_coded                              |    0.1714 |   1.0000 |     3.2784 |   0.0705 |
+| exploration_coded                       |    0.0085 |   1.0000 |     0.1633 |   0.6862 |
+| asynchronous_coded                      |    1.7204 |   1.0000 |    32.9091 |   0.0000 |
+| n_bidders_coded                         |    0.8967 |   1.0000 |    17.1528 |   0.0000 |
+| info_feedback_coded                     |    0.6674 |   1.0000 |    12.7659 |   0.0004 |
+| decay_type_coded                        |    0.0589 |   1.0000 |     1.1269 |   0.2887 |
+| auction_type_coded:alpha_coded          |    0.0398 |   1.0000 |     0.7616 |   0.3831 |
+| auction_type_coded:gamma_coded          |    2.7814 |   1.0000 |    53.2041 |   0.0000 |
+| auction_type_coded:reserve_price_coded  |    0.0044 |   1.0000 |     0.0842 |   0.7718 |
+| auction_type_coded:init_coded           |    0.0573 |   1.0000 |     1.0957 |   0.2955 |
+| auction_type_coded:exploration_coded    |    0.0712 |   1.0000 |     1.3612 |   0.2436 |
+| auction_type_coded:asynchronous_coded   |    0.2275 |   1.0000 |     4.3524 |   0.0372 |
+| auction_type_coded:n_bidders_coded      |   21.3078 |   1.0000 |   407.5915 |   0.0000 |
+| auction_type_coded:info_feedback_coded  |    0.1062 |   1.0000 |     2.0308 |   0.1545 |
+| auction_type_coded:decay_type_coded     |    0.0012 |   1.0000 |     0.0231 |   0.8791 |
+| alpha_coded:gamma_coded                 |    0.0011 |   1.0000 |     0.0211 |   0.8845 |
+| alpha_coded:reserve_price_coded         |    0.0253 |   1.0000 |     0.4846 |   0.4865 |
+| alpha_coded:init_coded                  |    0.1261 |   1.0000 |     2.4118 |   0.1207 |
+| alpha_coded:exploration_coded           |    0.0004 |   1.0000 |     0.0067 |   0.9348 |
+| alpha_coded:asynchronous_coded          |    0.0093 |   1.0000 |     0.1772 |   0.6738 |
+| alpha_coded:n_bidders_coded             |    0.0013 |   1.0000 |     0.0258 |   0.8725 |
+| alpha_coded:info_feedback_coded         |    0.0260 |   1.0000 |     0.4964 |   0.4813 |
+| alpha_coded:decay_type_coded            |    0.1559 |   1.0000 |     2.9812 |   0.0846 |
+| gamma_coded:reserve_price_coded         |    0.6820 |   1.0000 |    13.0454 |   0.0003 |
+| gamma_coded:init_coded                  |    0.0007 |   1.0000 |     0.0142 |   0.9053 |
+| gamma_coded:exploration_coded           |    0.1948 |   1.0000 |     3.7264 |   0.0538 |
+| gamma_coded:asynchronous_coded          |    0.3796 |   1.0000 |     7.2617 |   0.0072 |
+| gamma_coded:n_bidders_coded             |    3.4150 |   1.0000 |    65.3254 |   0.0000 |
+| gamma_coded:info_feedback_coded         |    0.2256 |   1.0000 |     4.3155 |   0.0380 |
+| gamma_coded:decay_type_coded            |    0.0078 |   1.0000 |     0.1487 |   0.6999 |
+| reserve_price_coded:init_coded          |    0.0001 |   1.0000 |     0.0024 |   0.9608 |
+| reserve_price_coded:exploration_coded   |    0.1127 |   1.0000 |     2.1554 |   0.1424 |
+| reserve_price_coded:asynchronous_coded  |    0.1719 |   1.0000 |     3.2873 |   0.0701 |
+| reserve_price_coded:n_bidders_coded     |    0.2094 |   1.0000 |     4.0062 |   0.0456 |
+| reserve_price_coded:info_feedback_coded |    0.5773 |   1.0000 |    11.0426 |   0.0009 |
+| reserve_price_coded:decay_type_coded    |    0.0814 |   1.0000 |     1.5579 |   0.2123 |
+| init_coded:exploration_coded            |    0.0006 |   1.0000 |     0.0111 |   0.9160 |
+| init_coded:asynchronous_coded           |    0.0539 |   1.0000 |     1.0319 |   0.3100 |
+| init_coded:n_bidders_coded              |    0.0023 |   1.0000 |     0.0445 |   0.8330 |
+| init_coded:info_feedback_coded          |    0.0057 |   1.0000 |     0.1084 |   0.7420 |
+| init_coded:decay_type_coded             |    0.0706 |   1.0000 |     1.3508 |   0.2454 |
+| exploration_coded:asynchronous_coded    |    0.0660 |   1.0000 |     1.2618 |   0.2616 |
+| exploration_coded:n_bidders_coded       |    0.2126 |   1.0000 |     4.0666 |   0.0440 |
+| exploration_coded:info_feedback_coded   |    0.3805 |   1.0000 |     7.2778 |   0.0071 |
+| exploration_coded:decay_type_coded      |    0.0283 |   1.0000 |     0.5408 |   0.4623 |
+| asynchronous_coded:n_bidders_coded      |    0.0329 |   1.0000 |     0.6287 |   0.4280 |
+| asynchronous_coded:info_feedback_coded  |    0.3260 |   1.0000 |     6.2353 |   0.0127 |
+| asynchronous_coded:decay_type_coded     |    0.0451 |   1.0000 |     0.8624 |   0.3533 |
+| n_bidders_coded:info_feedback_coded     |    0.0122 |   1.0000 |     0.2337 |   0.6289 |
+| n_bidders_coded:decay_type_coded        |    0.0001 |   1.0000 |     0.0017 |   0.9668 |
+| info_feedback_coded:decay_type_coded    |    0.0034 |   1.0000 |     0.0659 |   0.7974 |
+| Residual                                |   50.6045 | 968.0000 |   nan      | nan      |
+
+--- Significant Effects (p < 0.05): 18 ---
+  auction_type                             coef=+0.2661  p=0.0000
+  auction_type:n_bidders                   coef=-0.1443  p=0.0000
+  gamma                                    coef=-0.0759  p=0.0000
+  gamma:n_bidders                          coef=+0.0577  p=0.0000
+  auction_type:gamma                       coef=-0.0521  p=0.0000
+  asynchronous                             coef=+0.0410  p=0.0000
+  reserve_price                            coef=+0.0317  p=0.0000
+  n_bidders                                coef=-0.0296  p=0.0000
+  gamma:reserve_price                      coef=+0.0258  p=0.0003
+  info_feedback                            coef=+0.0255  p=0.0004
+  reserve_price:info_feedback              coef=-0.0237  p=0.0009
+  exploration:info_feedback                coef=+0.0193  p=0.0071
+  gamma:asynchronous                       coef=+0.0193  p=0.0072
+  asynchronous:info_feedback               coef=-0.0178  p=0.0127
+  auction_type:asynchronous                coef=-0.0149  p=0.0372
+  gamma:info_feedback                      coef=+0.0148  p=0.0380
+  exploration:n_bidders                    coef=-0.0144  p=0.0440
+  reserve_price:n_bidders                  coef=-0.0143  p=0.0456
 
   Plots saved to results/exp1/
 

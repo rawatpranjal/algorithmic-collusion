@@ -1,137 +1,373 @@
-\section{Model Adequacy and Robustness Diagnostics}
+\section{Appendix: Model Adequacy and Robustness Diagnostics}
 \label{sec:appendix_robustness}
 
-\subsection{Experiment~1}
-\label{sec:exp1_robustness}
+This appendix reports model adequacy diagnostics and robustness checks for all six sub-experiments. The following overview summarises cross-experiment patterns, with per-experiment details in the subsections below.
 
-\input{tables/exp1_model_fit}
+Across all six sub-experiments, the dominant effects survive both Holm--Bonferroni and Benjamini--Hochberg corrections. HC3 heteroskedasticity-consistent standard errors produce negligible changes in significance, with at most 2.1\% of effects (Experiment~2b) changing status under HC3. Rademacher wild bootstrap $p$-values for the top~10 effects in each response align closely with asymptotic $p$-values, with differences below 0.01 in all cases.
 
-\input{tables/exp1_adequacy}
+LightGBM cross-validated $R^2$ values match or fall below OLS $R^2$ in Experiments~1b, 2b, 3a, and~3b, confirming that the linear model with two-way interactions is correctly specified. In Experiments~1a and~2a, LightGBM modestly exceeds OLS for some responses, indicating mild nonlinearity. However, the dominant factor rankings are unchanged under the nonparametric model. PRESS-based leave-one-out cross-validated $R^2$ gaps remain below 0.10 in all experiments, indicating minimal overfitting.
 
-Table~\ref{tab:exp1_adequacy} reports model adequacy diagnostics for the primary response variables. OLS $R^2$ ranges from \ExpOneRsqMin{} to \ExpOneRsqMax{} across response variables. LightGBM cross-validated $R^2$ modestly exceeds OLS $R^2$ for revenue and no-sale rate, with gaps exceeding the 0.05 threshold described in the main paper. The dominant effect rankings (number of bidders, exploration strategy, auction type) are unchanged under the nonparametric model.
+LASSO variable selection retains auction type and number of bidders across all six sub-experiments. No interaction survives LASSO whose parent main effects were dropped, confirming effect heredity. LASSO-selected variables are a subset of the OLS-significant effects in every case. Quantile regression at the 10th, 25th, 50th, 75th, and 90th percentiles reveals that most factor effects are stable across the response distribution, but the auction format effect exhibits systematic distributional heterogeneity. In Experiment~1a, the auction format coefficient reverses sign across quantiles, from $+0.033$ at the 10th percentile to $-0.047$ at the 90th (Section~\ref{sec:exp1a_robustness}). In Experiments~2b, 3a, and~3b, the format effect grows monotonically toward the upper tail. In Experiment~3a, the bidder objective effect grows toward the upper tail, reflecting that the revenue penalty from utility-maximizing objectives is concentrated among high-revenue cells. All quantile regression $p$-values are Holm--Bonferroni corrected across the full family of factor$\times$quantile tests within each experiment. These distributional patterns are invisible to standard OLS, which conditions on the mean. In Experiment~1a, the auction format main effect is statistically insignificant at the conditional mean, yet quantile regression reveals a significant sign reversal between the 10th and 90th percentiles ($p < 0.001$ at both tails after correction), demonstrating that systematic quantile analysis is necessary to detect tail-risk heterogeneity that mean-regression approaches mask.
 
-\input{tables/exp1_inference_robust}
+Discretisation sensitivity analysis across grid sizes of 6, 11, and 21 discrete bid levels (Experiments~1a--2b) confirms that effect rankings are stable across granularities. Budget sensitivity analysis (Experiment~3a) with budget multipliers $m \in \{0.25, 0.5, 1.0\}$ confirms that the number of bidders retains its dominant ranking across all budget levels.
 
-Table~\ref{tab:exp1_inference} reports inference robustness. All findings reported in the results section survive both Holm--Bonferroni and Benjamini--Hochberg corrections.
+\subsection{Q-Learning Experiments}
 
-Quantile regression confirms that factor effects are broadly stable across the response distribution (Figure~\ref{fig:e1_quantile_rev}). The auction type effect on revenue is slightly larger at the 10th percentile ($-0.087$) than at the median ($-0.061$), indicating that the worst-performing configurations are disproportionately harmed by first-price auctions. The exploration strategy and number of bidders effects remain significant across all five quantiles, confirming that these findings are not driven by tail behaviour.
+\subsubsection{Experiment~1a}
+\label{sec:exp1a_robustness}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e1_quantile_rev}
-  \caption{Experiment~1: Quantile regression coefficients for average revenue at the 10th, 25th, 50th, 75th, and 90th percentiles. The auction type penalty is moderately larger in the left tail.}
-  \label{fig:e1_quantile_rev}
-\end{figure}
+\input{tables/exp1a_model_fit}
 
-\input{tables/exp1_significant}
+\input{tables/exp1a_adequacy}
 
-\subsection{Experiment~2}
-\label{sec:exp2_robustness}
+Table~\ref{tab:exp1a_adequacy} reports model adequacy diagnostics for the primary response variables. OLS $R^2$ ranges from \ExpOneARsqMin{} to \ExpOneARsqMax{} across response variables. LightGBM cross-validated $R^2$ modestly exceeds OLS $R^2$ for revenue and no-sale rate, with gaps exceeding the 0.05 threshold described in the main paper. The dominant effect rankings (number of bidders, exploration strategy, auction type) are unchanged under the nonparametric model.
 
-\input{tables/exp2_model_fit}
+\input{tables/exp1a_inference_robust}
 
-\input{tables/exp2_adequacy}
+Table~\ref{tab:exp1a_inference} reports inference robustness. All findings reported in the results section survive both Holm--Bonferroni and Benjamini--Hochberg corrections.
 
-Table~\ref{tab:exp2_adequacy} reports model adequacy. LightGBM cross-validated $R^2$ is comparable to OLS $R^2$, confirming that the linear model with two-way interactions is correctly specified for this design.
-
-\input{tables/exp2_inference_robust}
-
-Table~\ref{tab:exp2_inference} reports inference robustness. Holm--Bonferroni and Benjamini--Hochberg corrections retain the key effects involving affiliation and number of bidders. Quantile regression effects are broadly symmetric across the response distribution (Figure~\ref{fig:e2_quantile_rev}).
+Quantile regression reveals a sign reversal in the auction format effect (Figure~\ref{fig:e1a_quantile_rev}). First-price auctions increase revenue at the 10th percentile ($+0.033$, $p < 0.001$) but decrease it at the 90th ($-0.047$, $p < 0.001$), with the crossover between the 50th and 75th percentiles. The OLS main effect averages to near zero, masking genuine distributional heterogeneity. First-price auctions compress the revenue distribution, raising the floor and lowering the ceiling. The number of bidders effect remains significant and positive across all five quantiles, confirming that market thickness benefits revenue uniformly.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/e2_quantile_rev}
-  \caption{Experiment~2: Quantile regression coefficients for average revenue. The wide confidence bands reflect the limited replication of the $3 \times 2^3$ design.}
-  \label{fig:e2_quantile_rev}
+  \includegraphics[width=0.7\textwidth]{figures/e1a_quantile_rev}
+  \caption{Experiment~1a: Quantile regression coefficients for average revenue at the 10th, 25th, 50th, 75th, and 90th percentiles. The auction format coefficient reverses sign across quantiles, indicating that first-price auctions compress the revenue distribution.}
+  \label{fig:e1a_quantile_rev}
 \end{figure}
 
-\input{tables/exp2_significant}
+\input{tables/exp1a_significant}
 
-\subsection{Experiment~3a (LinUCB)}
+\subsubsection{Experiment~1b}
+\label{sec:exp1b_robustness}
+
+\input{tables/exp1b_model_fit}
+
+\input{tables/exp1b_adequacy}
+
+Table~\ref{tab:exp1b_adequacy} reports model adequacy. LightGBM cross-validated $R^2$ is comparable to OLS $R^2$, confirming that the linear model with two-way interactions is correctly specified for this design.
+
+\input{tables/exp1b_inference_robust}
+
+Table~\ref{tab:exp1b_inference} reports inference robustness. Holm--Bonferroni and Benjamini--Hochberg corrections retain the key effects involving affiliation and number of bidders. Quantile regression effects are broadly symmetric across the response distribution (Figure~\ref{fig:e1b_quantile_rev}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e1b_quantile_rev}
+  \caption{Experiment~1b: Quantile regression coefficients for average revenue. The wide confidence bands reflect the limited replication of the $3 \times 2^3$ design.}
+  \label{fig:e1b_quantile_rev}
+\end{figure}
+
+\input{tables/exp1b_significant}
+
+\subsection{Contextual Bandit Experiments}
+
+\subsubsection{Experiment~2a (LinUCB)}
+\label{sec:exp2a_robustness}
+
+\input{tables/exp2a_model_fit}
+
+\input{tables/exp2a_adequacy}
+
+Table~\ref{tab:exp2a_adequacy} reports model adequacy for the LinUCB design. LightGBM cross-validated $R^2$ modestly exceeds OLS $R^2$ for revenue. The lack-of-fit test is significant for the primary responses, indicating detectable departures from the linear model with two-way interactions; however, the dominant factors (number of bidders, auction type) are robustly identified under both the linear and nonparametric models.
+
+\input{tables/exp2a_inference_robust}
+
+Table~\ref{tab:exp2a_inference} shows that Holm--Bonferroni and Benjamini--Hochberg corrections retain the key effects despite modest model misfit. Quantile regression (Figure~\ref{fig:e2a_quantile_rev}) shows that the auction format main effect is stable across quantiles ($-0.055$ at the 10th to $-0.050$ at the 90th percentile). The auction format $\times$ number of bidders interaction, however, grows from $-0.007$ at the 10th percentile to $-0.040$ at the 90th, indicating that the first-price penalty in thick markets is concentrated among the best-performing configurations.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e2a_quantile_rev}
+  \caption{Experiment~2a: Quantile regression coefficients for average revenue (LinUCB). The auction format main effect is stable across quantiles, but the format $\times$ bidders interaction grows substantially toward the upper tail.}
+  \label{fig:e2a_quantile_rev}
+\end{figure}
+
+\input{tables/exp2a_significant}
+
+\subsubsection{Experiment~2b (Thompson Sampling)}
+\label{sec:exp2b_robustness}
+
+\input{tables/exp2b_model_fit}
+
+\input{tables/exp2b_adequacy}
+
+Table~\ref{tab:exp2b_adequacy} reports model adequacy for the Thompson Sampling design. LightGBM cross-validated $R^2$ and OLS $R^2$ are comparable, confirming that the linear model with two-way interactions is correctly specified.
+
+\input{tables/exp2b_inference_robust}
+
+Table~\ref{tab:exp2b_inference} shows that Holm--Bonferroni and Benjamini--Hochberg corrections retain the key effects. Quantile regression (Figure~\ref{fig:e2b_quantile_rev}) reveals that the auction format effect grows monotonically from $-0.018$ at the 10th percentile to $-0.039$ at the 90th, indicating that the first-price revenue penalty intensifies among the best-performing configurations.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/e2b_quantile_rev}
+  \caption{Experiment~2b: Quantile regression coefficients for average revenue (Thompson Sampling).}
+  \label{fig:e2b_quantile_rev}
+\end{figure}
+
+\input{tables/exp2b_significant}
+
+\subsection{Pacing Experiments}
+
+\subsubsection{Experiment~3a}
 \label{sec:exp3a_robustness}
 
 \input{tables/exp3a_model_fit}
 
 \input{tables/exp3a_adequacy}
 
-Table~\ref{tab:exp3a_adequacy} reports model adequacy for the LinUCB design. LightGBM cross-validated $R^2$ modestly exceeds OLS $R^2$ for revenue. The lack-of-fit test is significant for the primary responses, indicating detectable departures from the linear model with two-way interactions; however, the dominant factors (number of bidders, auction type) are robustly identified under both the linear and nonparametric models.
+Table~\ref{tab:exp3a_adequacy} reports model adequacy for the three primary responses. Platform revenue ($R^2 = 0.89$) shows a small PRESS gap, indicating strong generalisability. Effective Price of Anarchy ($R^2 = 0.64$) shows moderate explanatory power. The bid-to-value ratio is poorly explained by the factorial model ($R^2 = 0.12$), reflecting seed-level noise in bidding behaviour.\footnote{The LightGBM cross-validated $R^2$ for bid-to-value is deeply negative ($-24.5$), indicating that the nonparametric model severely overfits on this noisy response.} LightGBM cross-validated $R^2$ is substantially lower than OLS $R^2$ for all responses, confirming that the $2^6$ factorial with a linear model is the correct specification.
 
 \input{tables/exp3a_inference_robust}
 
-Table~\ref{tab:exp3a_inference} shows that Holm--Bonferroni and Benjamini--Hochberg corrections retain the key effects despite modest model misfit. Quantile regression reveals notable heterogeneity across the revenue distribution (Figure~\ref{fig:e3a_quantile_rev}): the auction type coefficient grows in magnitude from the lower to upper quantiles, indicating that first-price auctions disproportionately suppress revenue among the best-performing configurations.
+Table~\ref{tab:exp3a_inference} reports inference robustness. Quantile regression reveals moderate heterogeneity for platform revenue (Figure~\ref{fig:e3a_quantile_rev}), where the objective coefficient grows from $-1{,}049$ at the 10th percentile to $-1{,}712$ at the 90th percentile, indicating that the revenue penalty from utility-maximizing objectives is concentrated among high-revenue configurations. The number of bidders effect remains stable across quantiles ($890$--$1{,}114$), confirming that market thickness benefits revenue uniformly.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/e3a_quantile_rev}
-  \caption{Experiment~3a: Quantile regression coefficients for average revenue (LinUCB). The auction type penalty grows substantially from the 10th to the 90th percentile, indicating that the first-price disadvantage intensifies at higher revenue levels.}
+  \caption{Experiment~3a: Quantile regression coefficients for platform revenue. The objective effect (utility-maximizer vs.\ value-maximizer) grows substantially toward the upper tail.}
   \label{fig:e3a_quantile_rev}
 \end{figure}
 
 \input{tables/exp3a_significant}
 
-\subsection{Experiment~3b (Thompson Sampling)}
+\subsubsection{Experiment~3b}
 \label{sec:exp3b_robustness}
 
 \input{tables/exp3b_model_fit}
 
 \input{tables/exp3b_adequacy}
 
-Table~\ref{tab:exp3b_adequacy} reports model adequacy for the Thompson Sampling design. LightGBM cross-validated $R^2$ and OLS $R^2$ are comparable, confirming that the linear model with two-way interactions is correctly specified.
+Experiment~3b shares the $2^6$ factorial structure of Experiment~3a. Table~\ref{tab:exp3b_adequacy} reports model adequacy for the three primary responses. Platform revenue achieves $R^2 = 0.77$ with a PRESS gap of 0.021, comparable to Experiment~3a. The bid-to-value ratio is well-explained ($R^2 = 0.89$, gap 0.011), while effective Price of Anarchy has moderate explanatory power ($R^2 = 0.39$, gap 0.056). LightGBM cross-validated $R^2$ matches or falls below OLS for all responses, confirming that the linear factorial model captures the dominant variation.
 
 \input{tables/exp3b_inference_robust}
 
-Table~\ref{tab:exp3b_inference} shows that Holm--Bonferroni and Benjamini--Hochberg corrections retain the key effects. Quantile regression coefficients are broadly stable across the revenue distribution (Figure~\ref{fig:e3b_quantile_rev}).
+\input{tables/exp3b_significant}
+
+Quantile regression reveals that the auction format effect on revenue grows monotonically across quantiles, from $+356$ at the 10th percentile to $+601$ at the 90th (Figure~\ref{fig:e3b_quantile_rev}). The first-price revenue advantage nearly doubles from the lowest to highest quantile, indicating that the best-performing configurations benefit most from first-price rules. The budget multiplier effect is stable across quantiles, confirming that budget tightness affects revenue uniformly.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/e3b_quantile_rev}
-  \caption{Experiment~3b: Quantile regression coefficients for average revenue (Thompson Sampling).}
+  \caption{Experiment~3b: Quantile regression coefficients for platform revenue. The auction format effect grows monotonically toward the upper tail.}
   \label{fig:e3b_quantile_rev}
 \end{figure}
 
-\input{tables/exp3b_significant}
+\subsection{Sensitivity Analyses}
 
-\subsection{Experiment~4a}
-\label{sec:exp4a_robustness}
-
-\input{tables/exp4a_model_fit}
-
-\input{tables/exp4a_adequacy}
-
-Table~\ref{tab:exp4a_adequacy} reports model adequacy for the three primary responses. Platform revenue ($R^2 = 0.83$) and effective Price of Anarchy ($R^2 = 0.87$) show small PRESS gaps, indicating strong generalisability. The bid-to-value ratio achieves $R^2 = 0.99$. LightGBM cross-validated $R^2$ is substantially lower than OLS $R^2$ for all responses, confirming that the $2^6$ factorial with a linear model is the correct specification.
-
-\input{tables/exp4a_inference_robust}
-
-Table~\ref{tab:exp4a_inference} reports inference robustness. Quantile regression reveals moderate heterogeneity for platform revenue (Figure~\ref{fig:e4a_quantile_rev}): the objective coefficient grows from $-546$ at the 10th percentile to $-953$ at the 90th percentile, indicating that the revenue penalty from utility-maximizing objectives is concentrated among high-revenue configurations. The number of bidders effect remains stable across quantiles ($988$--$1{,}169$), confirming that market thickness benefits revenue uniformly.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e4a_quantile_rev}
-  \caption{Experiment~4a: Quantile regression coefficients for platform revenue. The objective effect (utility-maximiser vs.\ value-maximiser) grows substantially toward the upper tail.}
-  \label{fig:e4a_quantile_rev}
-\end{figure}
-
-\input{tables/exp4a_significant}
-
-\subsection{Experiment~4b}
-\label{sec:exp4b_robustness}
-
-\input{tables/exp4b_model_fit}
-
-\input{tables/exp4b_adequacy}
-
-Experiment~4b shares the $2^6$ factorial structure of Experiment~4a. Table~\ref{tab:exp4b_adequacy} reports model adequacy for the three primary responses. Platform revenue achieves $R^2 = 0.77$ with a PRESS gap of 0.022, comparable to Experiment~4a. The bid-to-value ratio is well-explained ($R^2 = 0.86$, gap 0.013), while effective Price of Anarchy has moderate explanatory power ($R^2 = 0.39$, gap 0.056). LightGBM cross-validated $R^2$ matches or falls below OLS for all responses, confirming that the linear factorial model captures the dominant variation.
-
-\input{tables/exp4b_inference_robust}
-
-\input{tables/exp4b_significant}
-
-\subsection{Discretisation Sensitivity}
+\subsubsection{Discretisation Sensitivity}
 \label{sec:discretization_robust}
 
-To verify that results are not driven by action space granularity, we re-run a representative subset of factorial cells at grid sizes of 6, 11, and 21 discrete bid levels for Experiments~1--3. Effect rankings are stable across grid sizes: the dominant factors (number of bidders, auction type) retain their relative ordering at all granularities. Mean response values shift modestly with grid size, consistent with the theoretical prediction that coarser grids introduce approximation error proportional to the grid spacing. Full results are available in \texttt{results/expN/robust/discretization/}.
+To verify that results are not driven by action space granularity, we re-run a representative subset of factorial cells at grid sizes of 6, 11, and 21 discrete bid levels for Experiments~1a--2b. Effect rankings are stable across grid sizes. The dominant factors (number of bidders, auction type) retain their relative ordering at all granularities. Mean response values shift modestly with grid size, consistent with the theoretical prediction that coarser grids introduce approximation error proportional to the grid spacing. Full results are available in \texttt{results/expN/robust/discretization/}.
 
-\subsection{Budget Sensitivity (Experiment~4a)}
+\subsubsection{Budget Sensitivity (Experiment~3a)}
 \label{sec:budget_robust}
 
-We re-run Experiment~4a with budget multipliers $m \in \{0.25, 0.5, 1.0\}$, where $B_i = m \cdot \mathbb{E}[v_i] \cdot T$. The baseline ($m = 0.5$) produces moderately constrained budgets. Tighter budgets ($m = 0.25$) amplify the effect of bidder objective on revenue, while relaxed budgets ($m = 1.0$) reduce auction format effects as budget constraints become non-binding. The ranking of number of bidders as the dominant factor is preserved across all budget levels. Full results are reported in \texttt{results/exp4a/robust/budget/}.
+We re-run Experiment~3a with budget multipliers $m \in \{0.25, 0.5, 1.0\}$, where $B_i = m \cdot \mathbb{E}[v_i] \cdot T$. The baseline ($m = 0.5$) produces moderately constrained budgets. Tighter budgets ($m = 0.25$) amplify the effect of bidder objective on revenue, while relaxed budgets ($m = 1.0$) reduce auction format effects as budget constraints become non-binding. The ranking of number of bidders as the dominant factor is preserved across all budget levels. Full results are reported in \texttt{results/exp3a/robust/budget/}.
+
+\subsubsection{Detailed Sensitivity Analysis}
+\label{sec:appendix_sensitivity_tables}
+
+Tables~\ref{tab:sens_exp1a}--\ref{tab:sens_exp3b_secondary} report per-experiment Sobol' indices for all response variables. The cross-experiment synthesis appears in Section~\ref{sec:sens_synthesis}.
+
+\begin{table}[H]
+\centering
+\caption{Experiment~1a: Analytical Sobol' indices for all five response variables. $S_1$ is the first-order (main effect) index; $S_T$ is the total-order index including all interactions.}
+\label{tab:sens_exp1a}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{No-Sale Rate} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders     & 0.188 & 0.238 & 0.093 & 0.111 & 0.038 & 0.101 & 0.139 & 0.165 & 0.272 & 0.309 \\
+Reserve price         & 0.015 & 0.043 & 0.009 & 0.022 & 0.152 & 0.266 & 0.098 & 0.138 & 0.001 & 0.014 \\
+Update mode           & 0.033 & 0.057 & 0.022 & 0.037 & 0.009 & 0.086 & 0.039 & 0.060 & 0.060 & 0.127 \\
+Discount factor ($\gamma$)  & 0.051 & 0.096 & 0.034 & 0.053 & 0.016 & 0.047 & 0.053 & 0.072 & 0.000 & 0.001 \\
+Auction format        & 0.000 & 0.045 & 0.072 & 0.100 & 0.001 & 0.004 & 0.003 & 0.013 & 0.001 & 0.005 \\
+Information feedback  & 0.008 & 0.036 & 0.000 & 0.008 & 0.003 & 0.008 & 0.000 & 0.029 & 0.003 & 0.065 \\
+Exploration strategy  & 0.000 & 0.017 & 0.002 & 0.018 & 0.000 & 0.037 & 0.001 & 0.024 & 0.000 & 0.043 \\
+Initialisation        & 0.002 & 0.006 & 0.000 & 0.010 & 0.009 & 0.026 & 0.011 & 0.025 & 0.000 & 0.006 \\
+Decay type            & 0.001 & 0.006 & 0.010 & 0.023 & 0.007 & 0.020 & 0.005 & 0.013 & 0.000 & 0.011 \\
+Learning rate ($\alpha$)    & 0.001 & 0.005 & 0.000 & 0.004 & 0.003 & 0.016 & 0.001 & 0.006 & 0.000 & 0.001 \\
+\midrule
+Residual              & \multicolumn{2}{c}{0.577} & \multicolumn{2}{c}{0.685} & \multicolumn{2}{c}{0.576} & \multicolumn{2}{c}{0.553} & \multicolumn{2}{c}{0.541} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~1b: Analytical Sobol' indices for market performance responses. $R^2$: revenue 0.40, convergence 0.18, volatility 0.36, entropy 0.29.}
+\label{tab:sens_exp1b_a}
+\small
+\begin{tabular}{l cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders     & 0.142 & 0.223 & 0.013 & 0.110 & 0.136 & 0.173 & 0.125 & 0.155 \\
+State information     & 0.114 & 0.156 & 0.004 & 0.064 & 0.098 & 0.120 & 0.111 & 0.145 \\
+Auction format        & 0.033 & 0.078 & 0.000 & 0.114 & 0.051 & 0.099 & 0.004 & 0.012 \\
+Affiliation ($\eta$)  & 0.025 & 0.052 & 0.023 & 0.047 & 0.006 & 0.047 & 0.001 & 0.022 \\
+\midrule
+Residual              & \multicolumn{2}{c}{0.588} & \multicolumn{2}{c}{0.813} & \multicolumn{2}{c}{0.635} & \multicolumn{2}{c}{0.712} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~1b: Analytical Sobol' indices for bidding behaviour responses. $R^2$: bid-to-value 0.49, winner's curse 0.55, bid dispersion 0.28, signal slope 0.41.}
+\label{tab:sens_exp1b_b}
+\small
+\begin{tabular}{l cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Bid-to-Value} & \multicolumn{2}{c}{Winner's Curse} & \multicolumn{2}{c}{Bid Disp.} & \multicolumn{2}{c}{Signal Slope} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders     & 0.139 & 0.266 & 0.089 & 0.294 & 0.066 & 0.087 & 0.016 & 0.063 \\
+State information     & 0.099 & 0.146 & 0.042 & 0.106 & 0.049 & 0.068 & 0.020 & 0.089 \\
+Auction format        & 0.060 & 0.160 & 0.146 & 0.361 & 0.065 & 0.083 & 0.002 & 0.086 \\
+Affiliation ($\eta$)  & 0.059 & 0.073 & 0.026 & 0.039 & 0.086 & 0.119 & 0.352 & 0.397 \\
+\midrule
+Residual              & \multicolumn{2}{c}{0.499} & \multicolumn{2}{c}{0.448} & \multicolumn{2}{c}{0.688} & \multicolumn{2}{c}{0.487} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~2a: Analytical Sobol' indices for all five LinUCB response variables.}
+\label{tab:sens_exp2a}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{No-Sale Rate} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders         & 0.479 & 0.551 & 0.158 & 0.210 & 0.131 & 0.330 & 0.080 & 0.236 & 0.746 & 0.752 \\
+Reserve price             & 0.001 & 0.067 & 0.003 & 0.071 & 0.205 & 0.452 & 0.003 & 0.046 & 0.015 & 0.020 \\
+Context richness          & 0.005 & 0.026 & 0.002 & 0.036 & 0.121 & 0.335 & 0.151 & 0.170 & 0.006 & 0.013 \\
+Auction format            & 0.065 & 0.092 & 0.096 & 0.138 & 0.002 & 0.010 & 0.094 & 0.242 & 0.005 & 0.011 \\
+Exploration intensity     & 0.008 & 0.020 & 0.020 & 0.036 & 0.000 & 0.003 & 0.024 & 0.040 & 0.010 & 0.015 \\
+Affiliation ($\eta$)      & 0.027 & 0.037 & 0.000 & 0.015 & 0.003 & 0.007 & 0.022 & 0.032 & 0.000 & 0.002 \\
+Regularisation ($\lambda$) & 0.002 & 0.008 & 0.003 & 0.014 & 0.002 & 0.006 & 0.029 & 0.037 & 0.003 & 0.016 \\
+Memory decay ($\gamma_m$) & 0.002 & 0.006 & 0.013 & 0.032 & 0.000 & 0.003 & 0.015 & 0.017 & 0.000 & 0.002 \\
+\midrule
+Residual                  & \multicolumn{2}{c}{0.302} & \multicolumn{2}{c}{0.577} & \multicolumn{2}{c}{0.194} & \multicolumn{2}{c}{0.381} & \multicolumn{2}{c}{0.192} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~2b: Analytical Sobol' indices for all five Thompson Sampling response variables.}
+\label{tab:sens_exp2b}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
+\toprule
+& \multicolumn{2}{c}{Revenue} & \multicolumn{2}{c}{Conv.\ Time} & \multicolumn{2}{c}{No-Sale Rate} & \multicolumn{2}{c}{Volatility} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11}
+Factor & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ & $S_1$ & $S_T$ \\
+\midrule
+Number of bidders         & 0.176 & 0.306 & 0.030 & 0.156 & 0.193 & 0.412 & 0.093 & 0.374 & 0.292 & 0.324 \\
+Reserve price             & 0.147 & 0.186 & 0.024 & 0.122 & 0.155 & 0.406 & 0.033 & 0.159 & 0.197 & 0.236 \\
+Context richness          & 0.020 & 0.086 & 0.002 & 0.065 & 0.112 & 0.327 & 0.000 & 0.131 & 0.005 & 0.050 \\
+Auction format            & 0.034 & 0.075 & 0.010 & 0.114 & 0.001 & 0.009 & 0.046 & 0.188 & 0.000 & 0.002 \\
+Exploration intensity     & 0.027 & 0.050 & 0.025 & 0.108 & 0.000 & 0.007 & 0.042 & 0.065 & 0.016 & 0.123 \\
+Affiliation ($\eta$)      & 0.048 & 0.081 & 0.005 & 0.023 & 0.007 & 0.019 & 0.004 & 0.027 & 0.005 & 0.015 \\
+\midrule
+Residual                  & \multicolumn{2}{c}{0.382} & \multicolumn{2}{c}{0.658} & \multicolumn{2}{c}{0.175} & \multicolumn{2}{c}{0.418} & \multicolumn{2}{c}{0.367} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3a: Total-order Sobol' indices ($S_T$) for performance and efficiency responses. $R^2$: revenue 0.89, welfare 0.80, PoA 0.64, budget utilisation 0.96, allocative efficiency 0.89, no-sale rate 0.74, LP welfare 0.80.}
+\label{tab:sens_exp3a_primary}
+\small
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Revenue & Welfare & Eff.\ PoA & Budget & Alloc.\ Eff. & No-Sale & LP Welfare \\
+\midrule
+Budget multiplier         & 0.540 & 0.519 & 0.285 & 0.548 & 0.277 & 0.401 & 0.535 \\
+Bidder objective          & 0.384 & 0.010 & 0.345 & 0.661 & 0.477 & 0.128 & 0.001 \\
+Number of bidders         & 0.171 & 0.177 & 0.159 & 0.030 & 0.130 & 0.238 & 0.188 \\
+Value dispersion ($\sigma$) & 0.014 & 0.163 & 0.139 & 0.007 & 0.252 & 0.027 & 0.127 \\
+Auction format            & 0.008 & 0.001 & 0.005 & 0.018 & 0.004 & 0.093 & 0.001 \\
+Reserve price             & 0.001 & 0.003 & 0.001 & 0.001 & 0.001 & 0.142 & 0.003 \\
+\midrule
+Residual                  & 0.111 & 0.203 & 0.360 & 0.043 & 0.108 & 0.258 & 0.203 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3a: Total-order Sobol' indices ($S_T$) for stability and dynamics responses. $R^2$: pacing stability 0.62, entropy 0.87, warm start 0.48, inter-episode volatility 0.28, bid-to-value 0.12, bid suppression 0.12, cross-episode drift 0.12.}
+\label{tab:sens_exp3a_secondary}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Pacing Stab. & Entropy & Warm Start & Inter-Ep.\ Vol. & Bid-to-Value & Bid Supp. & Drift \\
+\midrule
+Budget multiplier         & 0.431 & 0.119 & 0.245 & 0.125 & 0.051 & 0.057 & 0.041 \\
+Bidder objective          & 0.403 & 0.144 & 0.218 & 0.066 & 0.046 & 0.049 & 0.041 \\
+Number of bidders         & 0.064 & 0.630 & 0.174 & 0.071 & 0.023 & 0.023 & 0.041 \\
+Value dispersion ($\sigma$) & 0.127 & 0.087 & 0.025 & 0.124 & 0.030 & 0.030 & 0.041 \\
+Auction format            & 0.022 & 0.001 & 0.047 & 0.035 & 0.036 & 0.025 & 0.041 \\
+Reserve price             & 0.003 & 0.002 & 0.001 & 0.005 & 0.007 & 0.007 & 0.004 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3b: Total-order Sobol' indices ($S_T$) for performance and efficiency responses. $R^2$: revenue 0.77, welfare 0.73, PoA 0.39, budget utilisation 0.82, allocative efficiency 0.83, no-sale rate 0.70, LP welfare 0.73.}
+\label{tab:sens_exp3b_primary}
+\small
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Revenue & Welfare & Eff.\ PoA & Budget & Alloc.\ Eff. & No-Sale & LP Welfare \\
+\midrule
+Budget multiplier         & 0.529 & 0.495 & 0.170 & 0.702 & 0.738 & 0.332 & 0.506 \\
+Auction format            & 0.116 & 0.004 & 0.191 & 0.099 & 0.030 & 0.300 & 0.001 \\
+Number of bidders         & 0.131 & 0.168 & 0.147 & 0.107 & 0.044 & 0.104 & 0.176 \\
+Value dispersion ($\sigma$) & 0.065 & 0.118 & 0.042 & 0.015 & 0.036 & 0.025 & 0.107 \\
+Reserve price             & 0.001 & 0.004 & 0.032 & 0.002 & 0.025 & 0.302 & 0.003 \\
+Aggressiveness            & 0.001 & 0.001 & 0.007 & 0.000 & 0.001 & 0.008 & 0.001 \\
+\midrule
+Residual                  & 0.232 & 0.268 & 0.609 & 0.178 & 0.173 & 0.303 & 0.269 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Experiment~3b: Total-order Sobol' indices ($S_T$) for stability and dynamics responses. $R^2$: pacing stability 0.88, entropy 0.80, warm start 0.03, inter-episode volatility 0.61, bid-to-value 0.89, bid suppression 0.89, cross-episode drift 0.05.}
+\label{tab:sens_exp3b_secondary}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l ccccccc}
+\toprule
+Factor & Pacing Stab. & Entropy & Warm Start & Inter-Ep.\ Vol. & Bid-to-Value & Bid Supp. & Drift \\
+\midrule
+Budget multiplier         & 0.748 & 0.192 & 0.014 & 0.256 & 0.759 & 0.759 & 0.010 \\
+Auction format            & 0.195 & 0.031 & 0.003 & 0.330 & 0.194 & 0.194 & 0.012 \\
+Number of bidders         & 0.012 & 0.576 & 0.005 & 0.267 & 0.010 & 0.010 & 0.026 \\
+Value dispersion ($\sigma$) & 0.006 & 0.080 & 0.017 & 0.070 & 0.002 & 0.002 & 0.013 \\
+Reserve price             & 0.001 & 0.005 & 0.011 & 0.022 & 0.001 & 0.001 & 0.034 \\
+Aggressiveness            & 0.006 & 0.001 & 0.004 & 0.033 & 0.000 & 0.000 & 0.007 \\
+\midrule
+Residual                  & 0.118 & 0.202 & 0.970 & 0.392 & 0.114 & 0.114 & 0.946 \\
+\bottomrule
+\end{tabular}}
+\end{table}

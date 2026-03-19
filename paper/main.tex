@@ -9,7 +9,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,backgrounds,fit,decorations.pathreplacing}
 \usepackage{float}
 \usepackage[round]{natbib}
 \usepackage[singlespacing]{setspace}
@@ -30,7 +30,7 @@
 
 \input{numbers}  % Auto-generated statistics — regenerate with: make tables
 \title{Designing Auctions when Algorithms Learn to Bid}
-\author{Pranjal Rawat}
+\author{Pranjal Rawat\thanks{I thank John Rust, Nathan Miller, and Harry Paarsch for helpful comments and discussions. I am especially grateful to Harry Paarsch for the opportunity to present this paper at the WEAI Conference. I also thank participants at the Georgetown EGSO seminar and EconBrew for valuable feedback.}}
 \date{\today}
 
 \begin{document}
@@ -38,7 +38,7 @@
 \maketitle
 
 \begin{abstract}
-Algorithms increasingly automate bidding in online auctions, raising concerns about tacit bid suppression and revenue shortfalls. Prior work identifies individual mechanisms that enable algorithmic bid suppression, but it remains unclear which factors matter most and how they interact, and the policy conclusions drawn from this literature rest on algorithms unlike those deployed in practice. This paper develops a computational laboratory framework, based on factorial experimental designs and large-scale Monte Carlo simulation, that addresses both algorithmic collusion and auction design under autobidding within a common methodology. Across four experiments (six sub-experiments) spanning Q-learning, contextual bandits, and budget-constrained pacing, the framework systematically ranks the relative importance of auction format, competitive pressure, learning parameters, and budget constraints on seller revenue. The central finding is that structural market parameters dominate algorithmic design choices: in unconstrained settings, competitive pressure is the strongest predictor of revenue; under budget constraints, budget tightness takes over. The effect of auction format is context-dependent, favouring second-price under learning algorithms but reversing to favour first-price under budget-constrained pacing. These results imply that mechanism design must account for the prevailing bidding technology, and that no single auction format is universally superior when bidders are algorithms.
+Algorithms increasingly automate bidding in online auctions, raising concerns about tacit bid suppression and revenue shortfalls. Prior work identifies individual mechanisms that enable algorithmic bid suppression, but it remains unclear which factors matter most and how they interact, and the policy conclusions drawn from this literature rest on algorithms unlike those deployed in practice. This paper develops a computational laboratory framework, based on factorial experimental designs and large-scale Monte Carlo simulation, that addresses both learning-driven bid suppression, where reinforcement-learning agents converge to sub-competitive bids, and constraint-driven bid suppression, where budget-pacing agents shade bids to manage spending, within a common methodology. Across four experiments (six sub-experiments) spanning Q-learning, contextual bandits, and budget-constrained pacing, the framework systematically ranks the relative importance of auction format, competitive pressure, learning parameters, and budget constraints on seller revenue. The central finding is that structural market parameters dominate algorithmic design choices. In unconstrained settings, competitive pressure is the strongest predictor of revenue; under budget constraints, budget tightness takes over. The effect of auction format is context-dependent, favouring second-price under learning algorithms but reversing to favour first-price under budget-constrained pacing. The auction-format effect reverses between the two species of bid suppression, so the optimal format depends on the prevailing bidding technology. These results imply that no single auction format is universally superior when bidders are algorithms, and that misidentifying the species of bid suppression leads to counterproductive design interventions.
 \end{abstract}
 
 \newpage
@@ -48,13 +48,11 @@ Algorithms increasingly automate bidding in online auctions, raising concerns ab
 % ── Main Body ──────────────────────────────────────────────
 \input{sections/introduction}
 \input{sections/literature}
-\input{sections/auctions}
-\input{sections/algorithms}
-\input{sections/experiments}
-\input{sections/res1}
-\input{sections/res2}
-\input{sections/res3}
-\input{sections/res4a}
+\input{sections/auctions_and_algorithms}
+\input{sections/inference_main}
+\input{sections/results_qlearning}
+\input{sections/results_bandits}
+\input{sections/results_pacing}
 \input{sections/discussion}
 
 % ── Bibliography ───────────────────────────────────────────
@@ -64,10 +62,6 @@ Algorithms increasingly automate bidding in online auctions, raising concerns ab
 % ── Appendices ─────────────────────────────────────────────
 \appendix
 \input{sections/equilibria}
-\input{sections/appendix_algorithms}
-\input{sections/appendix_design}
-\input{sections/appendix_inference}
-\input{sections/exp4a}
 \input{sections/appendix_robustness}
 
 \end{document}

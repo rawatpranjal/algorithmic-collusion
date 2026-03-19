@@ -1,0 +1,91 @@
+======================================================================
+SENSITIVITY ANALYSIS SUMMARY -- Experiment 2
+======================================================================
+
+avg_rev_last_1000:
+  Dominant factor: n_bidders (ST=0.2227, S1=0.1416)
+  Most interactive: n_bidders (gap=0.0810)
+
+  Method agreement: mean Spearman = 0.486, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.2982
+    NN        : 0.2250
+    Kriging   : 0.2983
+
+time_to_converge:
+  Dominant factor: auction_type (ST=0.1144, S1=0.0000)
+  Most interactive: auction_type (gap=0.1143)
+
+  Method agreement: mean Spearman = 0.114, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : -0.2287
+    NN        : -25.8102
+    Kriging   : -0.2274
+
+price_volatility:
+  Dominant factor: n_bidders (ST=0.1729, S1=0.1358)
+  Most interactive: auction_type (gap=0.0476)
+
+  Method agreement: mean Spearman = 0.371, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.2498
+    NN        : -0.5146
+    Kriging   : 0.2495
+
+winner_entropy:
+  Dominant factor: n_bidders (ST=0.1547, S1=0.1252)
+  Most interactive: state_info (gap=0.0333)
+
+  Method agreement: mean Spearman = 0.686, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.1363
+    NN        : 0.1757
+    Kriging   : 0.1364
+
+btv_median:
+  Dominant factor: n_bidders (ST=0.2658, S1=0.1391)
+  Most interactive: n_bidders (gap=0.1267)
+
+  Method agreement: mean Spearman = 0.238, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.3997
+    NN        : 0.3614
+    Kriging   : 0.3981
+
+winners_curse_freq:
+  Dominant factor: auction_type (ST=0.3611, S1=0.1459)
+  Most interactive: auction_type (gap=0.2152)
+
+  Method agreement: mean Spearman = 0.029, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.5518
+    NN        : 0.4884
+    Kriging   : 0.5426
+
+bid_dispersion:
+  Dominant factor: eta (ST=0.1192, S1=0.0860)
+  Most interactive: eta (gap=0.0332)
+
+  Method agreement: mean Spearman = 0.314, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.1887
+    NN        : 0.0182
+    Kriging   : 0.1649
+
+signal_slope_ratio:
+  Dominant factor: eta (ST=0.3974, S1=0.3517)
+  Most interactive: auction_type (gap=0.0839)
+
+  Method agreement: mean Spearman = 0.440, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.3847
+    NN        : 0.3164
+    Kriging   : 0.3859

@@ -456,7 +456,11 @@ def section_mixed_effects(df, coded_cols, response_cols):
 # ===================================================================
 
 def section_quantile_regression(df, coded_cols, response_cols, output_dir):
-    """Fit quantile regressions at multiple quantiles; plot coefficient paths."""
+    """Fit quantile regressions at multiple quantiles; plot coefficient paths.
+
+    Applies Holm-Bonferroni and Benjamini-Hochberg corrections across
+    the full family of factor x quantile tests within each experiment.
+    """
     print("\n" + "=" * 60)
     print("G. QUANTILE REGRESSION")
     print("=" * 60)
@@ -468,10 +472,13 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
         # Fallback: use first two responses
         qr_responses = response_cols[:2]
 
-    results = {}
+    # Pass 1: Fit all quantile regressions, collect raw results + p-values
+    raw_results = {}  # resp -> {q -> {factor -> {coef, p_value}}}
+    all_pvals = []
+    all_keys = []  # (resp, q, factor) tuples for mapping back
+
     for resp in qr_responses:
         formula = _build_formula(resp, coded_cols)
-
         coefs_by_q = {}
         for q in quantiles:
             qr = smf.quantreg(formula, data=df).fit(q=q)
@@ -479,27 +486,56 @@ def section_quantile_regression(df, coded_cols, response_cols, output_dir):
             for name in qr.params.index:
                 if name == "Intercept":
                     continue
-                coefs_by_q[q][_clean(name)] = {
+                clean = _clean(name)
+                raw_p = float(qr.pvalues[name])
+                coefs_by_q[q][clean] = {
                     "coef": float(qr.params[name]),
-                    "p_value": float(qr.pvalues[name]),
+                    "p_value": raw_p,
                 }
+                all_pvals.append(raw_p)
+                all_keys.append((resp, q, clean))
+        raw_results[resp] = coefs_by_q
 
+    # Pass 2: Apply FWER and FDR corrections across all tests
+    pvals_arr = np.array(all_pvals)
+    _, holm_p, _, _ = multipletests(pvals_arr, alpha=0.05, method="holm")
+    _, bh_p, _, _ = multipletests(pvals_arr, alpha=0.05, method="fdr_bh")
+
+    # Map adjusted p-values back
+    for i, (resp, q, factor) in enumerate(all_keys):
+        raw_results[resp][q][factor]["holm_p"] = float(holm_p[i])
+        raw_results[resp][q][factor]["bh_p"] = float(bh_p[i])
+
+    # Print summary
+    n_raw = int(np.sum(pvals_arr < 0.05))
+    n_holm = int(np.sum(holm_p < 0.05))
+    n_bh = int(np.sum(bh_p < 0.05))
+    print(f"\n  Total quantile regression tests: {len(pvals_arr)}")
+    print(f"  Significant at raw alpha=0.05:        {n_raw}")
+    print(f"  Significant after Holm-Bonferroni: {n_holm}")
+    print(f"  Significant after Benjamini-Hochberg: {n_bh}")
+
+    # Build output JSON + plots
+    results = {}
+    for resp in qr_responses:
+        coefs_by_q = raw_results[resp]
         results[resp] = {"quantiles": {str(q): coefs_by_q[q] for q in quantiles}}
 
         # Select top 5 effects by |OLS coefficient|
+        formula = _build_formula(resp, coded_cols)
         ols = smf.ols(formula, data=df).fit()
         abs_coefs = ols.params.drop("Intercept", errors="ignore").abs().sort_values(ascending=False)
         top5 = [_clean(n) for n in abs_coefs.head(5).index]
 
-        # Plot coefficient paths
+        # Plot coefficient paths (use Holm-adjusted p for coloring)
         fig, axes = plt.subplots(1, len(top5), figsize=(4 * len(top5), 3.5), sharey=False)
         if len(top5) == 1:
             axes = [axes]
 
         for ax, term in zip(axes, top5):
             coef_vals = [coefs_by_q[q][term]["coef"] for q in quantiles]
-            pvals = [coefs_by_q[q][term]["p_value"] for q in quantiles]
-            colors = ["#e74c3c" if p < 0.05 else "#95a5a6" for p in pvals]
+            adj_pvals = [coefs_by_q[q][term]["holm_p"] for q in quantiles]
+            colors = ["#e74c3c" if p < 0.05 else "#95a5a6" for p in adj_pvals]
             ax.plot(quantiles, coef_vals, "o-", color="#2980b9", markersize=6)
             for qi, (q, c, col) in enumerate(zip(quantiles, coef_vals, colors)):
                 ax.scatter([q], [c], color=col, s=40, zorder=5)

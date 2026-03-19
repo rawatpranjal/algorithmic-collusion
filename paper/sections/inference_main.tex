@@ -1,0 +1,216 @@
+\section{Statistical Inference}
+\label{sec:inference}
+
+This section presents the experimental design and statistical methods shared across all six sub-experiments. It covers experiment descriptions, the factorial design framework, estimation and inference procedures, model adequacy diagnostics, and the global sensitivity analysis methodology.
+
+\subsection{Experimental Overview}
+\label{sec:experiments}
+
+We design three experiment families, each comprising two sub-experiments, to study repeated sealed-bid auctions under varying valuations and learning strategies. The auction environment is described in Section~\ref{sec:auctions_and_algorithms}; all factors are coded as $-1$ (low level) and $+1$ (high level) for statistical analysis, ensuring orthogonal estimation of main effects and interactions.
+
+Experiment~1a deploys Q-learning agents with constant valuations ($v_i = 1$) in a $2^{10-1}$ Resolution~V half-fraction spanning 10 factors (learning rates, discount factors, exploration modes, update synchronisation, number of bidders, reserve prices) and 1{,}024 observations. Under independent private values, revenue equivalence \citep{Vickrey1961} predicts that first- and second-price auctions yield identical expected revenue. The experiment tests whether Q-learning preserves this equivalence or breaks it.
+
+Experiment~1b generalises Q-learning to affiliated valuations via $v_i = (1 - 0.5\eta)s_i + 0.5\eta \frac{1}{n-1}\sum_{j \neq i} s_j$, where $\eta \in \{0, 0.5, 1\}$ ranges from private to near-common values. The revenue ranking theorem \citep{MilgromWeber1982} predicts SPA $\geq$ FPA under affiliation. The $3 \times 2^3$ mixed-level design crosses auction format, affiliation, number of bidders, and state information, with Q-learning hyperparameters fixed at levels identified in Experiment~1a, testing whether Q-learning preserves this revenue ordering.
+
+Experiment~2a replaces Q-learning with LinUCB contextual bandits under the same affiliated valuation model. LinUCB uses optimism-based exploration and Thompson Sampling uses posterior sampling. Comparing the two tests how exploration style affects outcomes. Bandit algorithms should exploit contextual structure better than tabular Q-learning; the experiment tests whether this improves seller outcomes.
+
+The $3 \times 2^7$ mixed-level design for 2a has 8 factors (7 binary plus $\eta$) and 384 cells, replicated twice for 768 observations. It includes regularisation ($\lambda$) and memory decay as factors, both of which strongly affect LinUCB performance. Experiment~2b deploys Contextual Thompson Sampling with a smaller $3 \times 2^5$ design (6 factors, 96 cells, 192 observations). It drops regularisation and memory decay because Thompson Sampling's posterior dominates the prior after approximately 20 rounds, making these factors irrelevant.\footnote{Thompson Sampling explores via posterior sampling, which is inherently stochastic even as the posterior tightens.} Separating the two algorithms avoids wasting design cells on factors that are structurally irrelevant to one algorithm class.
+
+Experiment~3a introduces budget-constrained autobidding agents using multiplicative dual pacing, implementing the framework of \citet{Balseiro2019Learning}. Each of $n \in \{2, 4\}$ advertisers participates in 100 episodes of 1{,}000 auctions each, with budgets regenerating between episodes while dual variables persist. The theoretical worst-case Price of Anarchy is bounded by~2 for both auction formats \citep{Aggarwal2019, Gaitonde2023}. The $2^6$ full factorial crosses auction format, bidder objective (value- vs.\ utility-maximizer), number of bidders, budget multiplier (tight vs.\ loose), reserve price, and value dispersion, replicated across 8 seeds for 512 observations.
+
+Experiment~3b retains the budget-constrained environment of Experiment~3a but replaces multiplicative dual pacing with a proportional-integral (PI) controller. The PI agent bids $\lambda \cdot v$ and updates $\lambda$ additively based on cumulative spending error. The experiment tests whether the control law matters or whether budget structure is the primary driver of outcomes. The $2^6$ full factorial crosses auction format, controller aggressiveness (conservative vs.\ aggressive PI gains), number of bidders, budget multiplier, reserve price, and value dispersion, replicated across 8 seeds for 512 observations. Detailed parameter tables for each experiment appear in their respective results sections. Table~\ref{tab:params} summarises the parameters used across all experiments.
+
+
+All experiments use two-level factorial designs (with a three-level $\eta$ factor in Experiments~1b--2b). This screening strategy identifies which factors matter, rather than mapping precise functional forms \citep{Box2005, Montgomery2017}. Experiment~1a uses a Resolution~V half-fraction that aliases only four-factor and higher interactions. The programme follows \citeauthor{Box2005}'s sequential experimentation philosophy; Experiments~1a and~2a screen many factors with large designs, and their findings inform the reduced factor sets in Experiments~1b and~2b.
+
+
+\begin{table}[H]
+\centering
+\caption{Parameter Ranges and Their Usage Across Experiments}
+\label{tab:params}
+\small
+\begin{tabular}{l l c c c c c c}
+\toprule
+\textbf{Name} & \textbf{Description} & \textbf{1a} & \textbf{1b} & \textbf{2a} & \textbf{2b} & \textbf{3a} & \textbf{3b}\\
+\midrule
+$\alpha$ & Q-learning rate & \checkmark & & & & & \\
+$\gamma$ & Discount factor & \checkmark & & & & & \\
+$\varepsilon$ & E-greedy exploration prob & \checkmark & & & & & \\
+Boltzmann & Softmax exploration & \checkmark & & & & & \\
+$c$ / $\sigma^2$ & Bandit exploration param &  &  & \checkmark & \checkmark & & \\
+$\lambda$ & Regularisation &  &  & \checkmark & & & \\
+\textit{Memory decay} & Observation weighting &  &  & \checkmark & & & \\
+$r$ & Reserve price & \checkmark & & \checkmark & \checkmark & \checkmark & \checkmark \\
+$n$ & Number of bidders & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+$\eta$ & Affiliation parameter &  & \checkmark & \checkmark & \checkmark & & \\
+\textit{Episodes} & Total training rounds & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\textit{Sync/Async} & Q-learning modes & \checkmark & & & & & \\
+\textit{State info} & State features & \checkmark & \checkmark & & & & \\
+\textit{Context richness} & Context features &  &  & \checkmark & \checkmark & & \\
+\textit{Decay type}  & Epsilon decay schedule         & \checkmark & & & & & \\
+\textit{Objective}   & Value- vs.\ utility-maximizer  & & & & & \checkmark & \\
+\textit{Aggressiveness} & PI controller gain scaling & & & & & & \checkmark \\
+$m$ & Budget multiplier & & & & & \checkmark & \checkmark \\
+$\sigma$ & Value dispersion & & & & & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Our core outcome metrics are consistent across all experiments. We measure the \emph{average revenue in later rounds}, which reflects how well the auction performs after strategies have stabilised.\footnote{Specifically, we average revenue over the final 1{,}000 episodes for Experiments~1a--2b and over all post-burn-in episodes for Experiments~3a--3b.} We measure \emph{time to converge} as the earliest round after which rolling-average revenue stays within $\pm 5\%$ of its final mean. We compute a \emph{no-sale rate} by noting the fraction of rounds in which no valid bid exceeds the reserve. We track \emph{price volatility} by taking the sample standard deviation of winning bids in later rounds. Finally, we measure \emph{winner entropy} to assess whether outcomes concentrate among few bidders, calculating the Shannon entropy of the empirical distribution of winners. Table~\ref{tab:outcomes} provides a concise summary of these common metrics that allow systematic comparisons of convergence speed, bidding stability, and revenue performance across all experiments.
+
+\begin{table}[h]
+\centering
+\caption{Outcome metrics used in all experiments.}
+\label{tab:outcomes}
+\begin{tabular}{l l}
+\toprule
+\textbf{Metric} & \textbf{Description}\\
+\midrule
+Average revenue (later rounds) & Mean revenue in the final 1000 rounds \\
+Time to converge & Round at which revenue stays in a $\pm 5\%$ band \\
+No-sale rate & Fraction of rounds with all bids below $r$\\
+Price volatility & Standard deviation of winning bids in later rounds \\
+Winner entropy & Shannon entropy of bidder identity distribution \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Experiments~1b, 2a, 2b, 3a, and~3b introduce additional response variables specific to their designs; these are defined in the respective results sections (Sections~\ref{sec:qlearning_results}--\ref{sec:pacing_results}).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+]
+  % Isometric projection offsets
+  \def\dx{3.0}   % x-axis length
+  \def\dy{3.0}   % y-axis length
+  \def\ox{1.4}   % depth x-offset
+  \def\oy{0.8}   % depth y-offset
+
+  % Front face vertices
+  \coordinate (A) at (0, 0);        % (-, -, -)
+  \coordinate (B) at (\dx, 0);      % (+, -, -)
+  \coordinate (C) at (0, \dy);      % (-, +, -)
+  \coordinate (D) at (\dx, \dy);    % (+, +, -)
+
+  % Back face vertices
+  \coordinate (E) at (\ox, \oy);           % (-, -, +)
+  \coordinate (F) at (\dx+\ox, \oy);       % (+, -, +)
+  \coordinate (G) at (\ox, \dy+\oy);       % (-, +, +)
+  \coordinate (H) at (\dx+\ox, \dy+\oy);   % (+, +, +)
+
+  % Back edges (dashed)
+  \draw[thick, dashed] (A) -- (E);
+  \draw[thick, dashed] (E) -- (F);
+  \draw[thick, dashed] (E) -- (G);
+
+  % Front face edges
+  \draw[thick] (A) -- (B);
+  \draw[thick] (A) -- (C);
+  \draw[thick] (B) -- (D);
+  \draw[thick] (C) -- (D);
+
+  % Side edges
+  \draw[thick] (B) -- (F);
+  \draw[thick] (C) -- (G);
+  \draw[thick] (D) -- (H);
+
+  % Top and right-back edges
+  \draw[thick] (G) -- (H);
+  \draw[thick] (F) -- (H);
+
+  % Vertex dots and labels
+  \filldraw (A) circle (2pt) node[below left, font=\scriptsize] {$(-,-,-)$};
+  \filldraw (B) circle (2pt) node[below right, font=\scriptsize] {$(+,-,-)$};
+  \filldraw (C) circle (2pt) node[above left, font=\scriptsize] {$(-,+,-)$};
+  \filldraw (D) circle (2pt) node[above right=0.05cm and -0.2cm, font=\scriptsize] {$(+,+,-)$};
+  \filldraw (E) circle (2pt) node[below left=-0.05cm and 0.1cm, font=\scriptsize] {$(-,-,+)$};
+  \filldraw (F) circle (2pt) node[below right, font=\scriptsize] {$(+,-,+)$};
+  \filldraw (G) circle (2pt) node[above left, font=\scriptsize] {$(-,+,+)$};
+  \filldraw (H) circle (2pt) node[above right, font=\scriptsize] {$(+,+,+)$};
+
+  % Axis labels
+  \draw[arrow, gray] (A) -- ++(-0.7, 0) node[left, font=\scriptsize] {Factor A};
+  \draw[arrow, gray] (A) -- ++(0, -0.7) node[below, font=\scriptsize] {Factor B};
+  \draw[arrow, gray] (A) -- ++(-0.5, -0.3) node[below left, font=\scriptsize] {Factor C};
+
+  % Main effect annotation with brace
+  \draw[decorate, decoration={brace, amplitude=5pt, raise=3pt}]
+    ($(F)+(0.15,0)$) -- ($(H)+(0.15,0)$)
+    node[midway, right=10pt, font=\scriptsize, align=left] {Main effect of B\\$= \bar{Y}_{B=+} - \bar{Y}_{B=-}$};
+\end{tikzpicture}
+\caption{Geometry of a $2^3$ factorial design. Each vertex represents one experimental cell defined by the sign combination of three factors. The brace illustrates how a main effect is computed as the contrast between high- and low-level marginal means. Our experiments extend this structure to 6--10 factors.}
+\label{fig:factorial_cube}
+\end{figure}
+
+Figure~\ref{fig:factorial_cube} illustrates the geometry of a $2^3$ factorial for three generic factors; our experiments extend this structure to 6--10 factors.
+
+\subsection{Design and Estimation}
+\label{sec:appendix_inference}
+
+The factorial designs described above are analysed using ordinary least squares with effects coding ($x_i \in \{-1, +1\}$). This coding ensures orthogonality, meaning each main effect and two-way interaction can be estimated independently of all others, enabling clean attribution of outcome variation to specific factors. Experiment~1a's $2^{10-1}$ half-fraction has Resolution~V, ensuring that all main effects and two-way interactions are estimable without bias from three-way terms, which are assumed negligible under effect sparsity.\footnote{In the smaller mixed-level designs (Experiments~1b--2b), the degrees of freedom for error scale directly with replication count. Experiment~1b's $3 \times 2^3$ design has 24 cells and 16 model parameters; with eight replicates the residual degrees of freedom are adequate. HC3 robust standard errors and wild bootstrap $p$-values (Appendix~\ref{sec:appendix_robustness}) confirm that findings are stable across all sub-experiments.} Replication in all experiments enables pure error estimation and lack-of-fit testing.
+
+The stochastic variation in our experiments arises from seed-induced randomness in exploration, valuation draws, and tie-breaking. Inference is over realizations of the stochastic simulation, not over a population of real markets. This is methodologically standard in computational economics and agent-based modelling \citep{Tesfatsion2006}. Factorial designs applied to stochastic simulations yield unbiased effect estimates under the same assumptions as physical experiments, with seed variation playing the role of experimental noise.
+
+Experiment~1a uses a fractional factorial design to reduce experimental burden. The key trade-off is aliasing, whereby some higher-order interactions become confounded with lower-order terms. Experiments~1b--2b use mixed-level designs (combining the three-level $\eta$ factor with binary factors), and Experiments~3a and~3b each use a full $2^6$ factorial, so aliasing is not a concern for these experiments.
+
+In a Resolution~V\footnote{In a Resolution~$R$ design, no $p$-factor interaction is aliased with any interaction of fewer than $R - p$ factors. Resolution~V therefore guarantees that main effects are free of two-way interaction bias and two-way interactions are free of other two-way interaction bias.} design, no main effect is aliased with any interaction of fewer than four factors, and no two-way interaction is aliased with any interaction of fewer than three factors. This ensures that all main effects and two-way interactions are estimable without bias from three-way terms, assumed negligible under effect sparsity. We validate this assumption using LASSO variable selection and nonparametric model comparison.
+
+
+For each response variable $Y$ (e.g., average revenue, convergence time, price volatility), we fit a linear model with main effects and all two-way interactions via ordinary least squares (OLS).
+\begin{align}
+  Y_i = \beta_0 + \sum_{j=1}^{k} \beta_j\, x_{ji} + \sum_{1 \le j < l \le k} \beta_{jl}\, x_{ji}\, x_{li} + \varepsilon_i,
+  \label{eq:ols}
+\end{align}
+where $x_{ji} \in \{-1, +1\}$ is the coded level of factor $j$ in observation $i$, $\beta_j$ represents the main effect of factor $j$, and $\beta_{jl}$ captures the two-way interaction between factors $j$ and $l$. Under effects coding, $\beta_j$ equals the mean response at the high level minus the mean response at the low level, divided by two, holding all other factors at their centre values. We use Type~III ANOVA decomposition to assess the marginal contribution of each term,\footnote{Under the $\pm 1$ effects coding in a balanced factorial, the design matrix is orthogonal ($\mathbf{X}^\top\mathbf{X}$ is diagonal), so the OLS $t$-test for each coefficient is algebraically equivalent to the Type~III ANOVA $F$-test for the same term ($F = t^2$), yielding identical $p$-values. This equivalence depends on orthogonality; under $0/1$ dummy coding the columns would be correlated, main effect estimates would be conditional on the reference level rather than marginal, and the two tests would diverge.} testing each coefficient against the null $H_0\!: \beta = 0$ via the $t$-statistic $\hat{\beta}/\text{SE}(\hat{\beta})$.\footnote{The ANOVA $F$-tests are unadjusted for multiplicity. In the factorial design tradition \citep{Box2005}, the primary screening tools are the half-normal probability plot and Lenth's pseudo-standard-error method \citep{Lenth1989}, both of which identify active effects without requiring an independent error estimate. Formal multiplicity corrections (Holm--Bonferroni, Benjamini--Hochberg) are applied in the robustness analysis described below.} Model adequacy is validated by comparing OLS $R^2$ to a gradient-boosted machine (LightGBM) $R^2$ trained with five-fold cross-validation. Gaps below 0.05 support adequate linear approximation; gaps above 0.05 reveal detectable nonlinearity that warrants checking whether effect rankings change under the nonparametric model.
+
+\subsection{Inference and Diagnostics}
+
+We compute HC3 robust standard errors \citep{MacKinnonWhite1985} to account for non-constant error variance across the design space. Comparing OLS standard errors to HC3 robust standard errors, we verify that significance claims hold under heteroscedasticity. The fraction of effects changing significance status under HC3 ranges from 0\% (Experiment~3a) to 6.7\% (Experiment~1a); per-experiment details appear in Appendix~\ref{sec:appendix_robustness}.
+
+With $k$ main effects, $\binom{k}{2}$ two-way interactions, and $m$ response variables, each experiment involves many simultaneous hypothesis tests. We apply Holm--Bonferroni sequential correction \citep{Holm1979} to control the family-wise error rate at $\alpha = 0.05$. Key findings, including the auction type main effect and the auction type $\times$ exploration interaction, survive this stringent correction across all responses.
+
+We also apply Benjamini--Hochberg (BH) correction \citep{BenjaminiHochberg1995} to control the false discovery rate, a less conservative criterion than FWER, providing greater power when many effects are truly active.
+
+For the top~10 effects by absolute $t$-statistic in each response, we compute Rademacher wild bootstrap $p$-values \citep{DavidsonFlachaire2008} (1{,}000 iterations) to validate inference under minimal distributional assumptions. Bootstrap $p$-values align closely with HC3 asymptotic $p$-values (differences below 0.01), confirming robustness.
+
+We fit quantile regressions \citep{KoenkerBassett1978} at the 10th, 25th, 50th, 75th, and 90th percentiles of each response to assess whether factor effects are uniform across the outcome distribution or concentrated in the tails. This complements the OLS analysis, which estimates effects at the conditional mean.
+
+
+With two replicates per cell, we decompose the residual sum of squares into pure error (within-cell variation) and lack of fit (deviation of cell means from model predictions). The $F$-test for lack of fit assesses whether the linear model with two-way interactions adequately fits the data. Per-experiment lack-of-fit results are reported in Appendix~\ref{sec:appendix_robustness}.
+
+We compute leave-one-out cross-validated $R^2$ using the PRESS statistic. A gap between $R^2$ and Pred-$R^2$ smaller than 0.10 indicates minimal overfitting. Predicted $R^2$ and PRESS gaps vary across experiments and are reported in each experiment's model adequacy table (Tables~\ref{tab:exp1a_adequacy}--\ref{tab:exp3b_adequacy}).
+
+Gradient-boosted machines (LightGBM, 200 trees, maximum depth~4) are fit using five-fold cross-validation to establish a nonparametric upper bound on achievable $R^2$. If OLS $R^2$ is within 0.05 of LightGBM $R^2$, we conclude that the linear model with two-way interactions captures most of the signal and that higher-order or nonlinear terms contribute negligibly. In all experiments, OLS $R^2$ meets or exceeds LightGBM cross-validated $R^2$, confirming that the parametric model is well suited to the balanced factorial structure (see per-experiment diagnostics in Tables~\ref{tab:exp1a_adequacy}--\ref{tab:exp3b_adequacy}).
+
+
+We fit five-fold cross-validated LASSO models with regularisation parameter $\lambda$ chosen to minimise mean squared error. Surviving variables are compared to OLS significance. In all experiments, LASSO retains auction type and number of bidders, corroborating OLS effect selection. Heredity is verified by checking that no interaction survives whose parent main effects were dropped.
+
+The LASSO estimator \citep{Tibshirani1996} performs simultaneous estimation and variable selection via $L_1$ penalisation, driving small coefficients exactly to zero. The regularisation parameter $\lambda$ is chosen by five-fold cross-validation to minimise mean squared error. Heredity requires that an interaction $\beta_{jl}$ can be nonzero only if both parent main effects $\beta_j$ and $\beta_l$ are also nonzero.
+
+
+Four types of diagnostic plots accompany each response variable. Pareto charts rank effects by absolute $t$-statistic. Main effects plots display the mean response at the low and high levels of each factor. Interaction plots show the mean response across factor-level combinations for the top six interactions. Half-normal probability plots \citep{Daniel1959} separate active effects (large departures from the reference line) from inert effects following the half-normal distribution under effect sparsity. Residual diagnostics include quantile--quantile plots and residuals-versus-fitted plots.
+
+
+For each response variable, we compute the minimum detectable effect (MDE) at 80\% power and $\alpha = 0.05$, using the coefficient standard error $\hat{\sigma} / \sqrt{\sum_i x_{ij}^2}$. For binary $\pm 1$ factors in a balanced design this reduces to $\hat{\sigma}/\sqrt{n}$; for orthogonal polynomial contrasts with three-level factors, the sum of squares differs by column.\footnote{The linear contrast $\{-1, 0, +1\}$ has $\sum x^2 = 2n/3$ (lower power), and the quadratic contrast $\{+1, -2, +1\}$ has $\sum x^2 = 2n$ (higher power).} All effects reported as statistically significant in the results sections survive Benjamini--Hochberg correction.
+
+\subsection{Robustness and Sensitivity}
+
+We validate all findings through thirteen robustness checks applied to each experiment. These include HC3 robust standard errors, Holm--Bonferroni and Benjamini--Hochberg corrections, Rademacher wild bootstrap $p$-values, quantile regressions at five percentiles, lack-of-fit $F$-tests, leave-one-out cross-validated $R^2$ via the PRESS statistic, LightGBM nonparametric benchmarking, and LASSO variable selection. No multiplicity correction is applied across the six sub-experiments; the probability that the number of bidders ranks first among $k$ factors in all six independent sub-experiments by chance is bounded above by $(1/k)^6 < 0.0014$ for $k \geq 3$.\footnote{$t$-statistic magnitudes are not comparable across experiments due to differences in sample size, model specification, and error variance; the comparison is strictly ordinal.} MDEs range from 2--5\% of the mean response, indicating sufficient power to detect practically meaningful effects. Per-experiment diagnostics are reported in Appendix~\ref{sec:appendix_robustness}.
+
+\label{sec:appendix_sensitivity}
+
+As a complement to the factorial ANOVA, we decompose output variance through the Sobol--Hoeffding framework \citep{Sobol2001}. The first-order Sobol' index $S_i$ measures the fraction of output variance attributable to factor $X_i$ alone. The total-order index $S_{T_i}$ captures both the direct and all interaction contributions involving $X_i$. The gap $S_{T_i} - S_i$ quantifies how much of factor $i$'s influence operates through interactions with other factors rather than through its own main effect.
+
+
+For balanced factorial designs with effects coding ($\pm 1$), the columns of the design matrix are mutually orthogonal. Under orthogonality, the Type~III ANOVA sum of squares decomposition coincides with the Sobol--Hoeffding decomposition \citep{ArcherSaltelliSobol1997, Saltelli2008}. The first-order index for factor $i$ is
+\begin{equation}
+S_i = \frac{\mathrm{SS}_i}{\mathrm{SS}_{\mathrm{total}}},
+\end{equation}
+where $\mathrm{SS}_i$ is the Type~III sum of squares for factor $i$ and $\mathrm{SS}_{\mathrm{total}}$ is the total (corrected) sum of squares. The second-order index $S_{ij} = \mathrm{SS}_{ij} / \mathrm{SS}_{\mathrm{total}}$ is computed analogously from the interaction sum of squares. This equivalence provides exact, closed-form Sobol' indices without Monte Carlo sampling.\footnote{For three-level factors such as affiliation ($\eta$), which are represented by two orthogonal contrast columns (linear and quadratic), the first-order index is the sum of the two contrast contributions, $S_\eta = (\mathrm{SS}_{\eta,\mathrm{lin}} + \mathrm{SS}_{\eta,\mathrm{quad}}) / \mathrm{SS}_{\mathrm{total}}$.} For orthogonal designs, this decomposition is not only exact but A-optimal for first-order Sobol' index estimation \citep{MorrisMooreMcKay2008}. The three-level factors in Experiments~1b--2b further improve estimation of higher-order indices relative to two-level designs \citep{WangTangZhang2012}.
+
+\label{sec:power_analysis}
+
+To assess robustness of the factor rankings, seven independent sensitivity methods are applied to each response variable in each experiment. In addition to analytical Sobol' indices, we compute random forest permutation importance, SHAP values via TreeSHAP on a LightGBM surrogate, Morris elementary effects \citep{Morris1991}, Monte Carlo Sobol' indices via three surrogate models (neural network, LightGBM, Kriging), Fourier amplitude sensitivity testing (FAST), and Borgonovo's $\delta$ moment-independent measure \citep{Borgonovo2007}. Cross-method concordance is assessed by computing pairwise Spearman rank correlations across all seven methods; the mean Spearman correlation provides a scalar measure of agreement on which factors matter most. Per-experiment Sobol' tables appear in Appendix~\ref{sec:appendix_sensitivity_tables}, with concordance metrics and cross-experiment synthesis in Sections~\ref{sec:sens_concordance}--\ref{sec:sens_synthesis}.

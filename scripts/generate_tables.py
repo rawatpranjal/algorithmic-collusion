@@ -4,13 +4,13 @@ Generate LaTeX table snippets and copy publication figures from factorial
 analysis results.
 
 Reads results/expN/estimation_results.json (OLS coefficient tables from
-factorial ANOVA) and writes:
-  - paper/tables/expN_coefficients.tex  (main-effect coefficient tables per response)
-  - paper/tables/expN_model_fit.tex     (model fit summary across responses)
-  - paper/tables/expN_significant.tex   (cross-response significant effects, p<0.05)
-  - paper/tables/expN_ranked_rev.tex    (ranked significant effects for revenue)
-  - paper/tables/expN_ranked_poa.tex    (ranked significant effects for PoA, exp4a/4b only)
-  - paper/tables/expN_ranked_vol.tex    (ranked significant effects for volatility)
+factorial ANOVA) and writes (using paper-facing experiment numbers):
+  - paper/tables/exp{1a,1b,2a,2b,3a,3b}_coefficients.tex  (main-effect coefficient tables)
+  - paper/tables/exp{...}_model_fit.tex     (model fit summary across responses)
+  - paper/tables/exp{...}_significant.tex   (cross-response significant effects, p<0.05)
+  - paper/tables/exp{...}_ranked_rev.tex    (ranked significant effects for revenue)
+  - paper/tables/exp{...}_ranked_poa.tex    (ranked significant effects for PoA, exp3a/3b only)
+  - paper/tables/exp{...}_ranked_vol.tex    (ranked significant effects for volatility)
 
 Also copies key publication figures (main-effects and interaction plots)
 to paper/figures/ with short names for LaTeX inclusion.
@@ -30,16 +30,19 @@ FIGURES_DIR = "paper/figures"
 
 # Key response variables for ranked-effects tables (rev, vol; poa for exp4a/4b)
 KEY_RESPONSES = {
-    "1":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
-    "2":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
-    "3a": {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
-    "3b": {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "1":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
+    "2":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
+    "3a": {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
+    "3b": {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
     "4a": {"rev": "mean_platform_revenue", "poa": "mean_effective_poa_lp", "vol": "mean_bid_to_value"},
     "4b": {"rev": "mean_platform_revenue", "poa": "mean_effective_poa_lp", "vol": "mean_bid_to_value"},
 }
 
-# Roman numeral experiment labels
-EXP_ROMAN = {"1": "I", "2": "II", "3a": "IIIa", "3b": "IIIb", "4a": "IVa", "4b": "IVb"}
+# Experiment labels for captions (Arabic numerals, grouped by algorithm family)
+EXP_ROMAN = {"1": "1a", "2": "1b", "3a": "2a", "3b": "2b", "4a": "3a", "4b": "3b"}
+
+# Mapping from internal experiment ID to paper file naming
+EXP_FILE_NUM = {"1": "1a", "2": "1b", "3a": "2a", "3b": "2b", "4a": "3a", "4b": "3b"}
 
 # Human-readable factor names
 READABLE_NAMES = {
@@ -153,6 +156,7 @@ READABLE_RESPONSES = {
     "cross_episode_drift": "Cross-Episode Drift",
     "mean_lp_offline_welfare": "LP Offline Welfare",
     "mean_effective_poa_lp": "Effective PoA",
+    "ratio_to_theory": "Revenue / BNE",
 }
 
 RANKED_RESPONSE_LABELS = {
@@ -260,7 +264,7 @@ def generate_coefficients_tables(exp_num, responses_data):
             r"\caption{Experiment %s: Main-effect coefficients for %s.}"
             % (roman, resp_name.lower())
         )
-        lines.append(r"\label{tab:exp%s_coef_%s}" % (exp_num, response))
+        lines.append(r"\label{tab:exp%s_coef_%s}" % (EXP_FILE_NUM[exp_num], response))
         lines.append(r"\begin{tabular}{lrrrrl}")
         lines.append(r"\toprule")
         lines.append(
@@ -307,7 +311,7 @@ def generate_model_fit_table(exp_num, responses_data):
         r"\caption{Experiment %s: OLS model fit summary across response variables.}"
         % roman
     )
-    lines.append(r"\label{tab:exp%s_fit}" % exp_num)
+    lines.append(r"\label{tab:exp%s_fit}" % EXP_FILE_NUM[exp_num])
     lines.append(r"\begin{tabular}{lrrrr}")
     lines.append(r"\toprule")
     lines.append(
@@ -365,7 +369,7 @@ def generate_significant_effects_table(exp_num, responses_data):
             "%% No significant effects at p<0.05 for Experiment %s" % exp_num
         )
 
-    label = "tab:exp%s_sig" % exp_num
+    label = "tab:exp%s_sig" % EXP_FILE_NUM[exp_num]
     lines = []
     lines.append(r"\begin{longtable}{llrrr}")
     lines.append(
@@ -446,7 +450,7 @@ def generate_ranked_effects_table(exp_num, response_key, short_key, rdata):
         r"\caption{Experiment %s: Significant effects for %s ($p < 0.05$), ranked by $|t|$.}"
         % (roman, resp_label)
     )
-    lines.append(r"\label{tab:exp%s_ranked_%s}" % (exp_num, short_key))
+    lines.append(r"\label{tab:exp%s_ranked_%s}" % (EXP_FILE_NUM[exp_num], short_key))
     lines.append(r"\begin{tabular}{lrrl}")
     lines.append(r"\toprule")
     lines.append(
@@ -501,7 +505,7 @@ def generate_adequacy_table(exp_num, robust_data):
     lines.append(
         r"\caption{Experiment %s: Model adequacy diagnostics.}" % roman
     )
-    lines.append(r"\label{tab:exp%s_adequacy}" % exp_num)
+    lines.append(r"\label{tab:exp%s_adequacy}" % EXP_FILE_NUM[exp_num])
     lines.append(r"\begin{tabular}{lrrrrr}")
     lines.append(r"\toprule")
     lines.append(
@@ -570,7 +574,7 @@ def generate_inference_robust_table(exp_num, robust_data):
         r"\caption{Experiment %s: Inference robustness under heteroskedasticity and multiple testing corrections.}"
         % roman
     )
-    lines.append(r"\label{tab:exp%s_inference}" % exp_num)
+    lines.append(r"\label{tab:exp%s_inference}" % EXP_FILE_NUM[exp_num])
     lines.append(r"\begin{tabular}{lrrrr}")
     lines.append(r"\toprule")
     lines.append(
@@ -638,22 +642,22 @@ def copy_figures(exp_num):
     """
     key_resp = KEY_RESPONSES.get(exp_num, {})
     exp_dir = os.path.join(RESULTS_DIR, f"exp{exp_num}")
-    n = exp_num
+    fn = EXP_FILE_NUM[exp_num]  # paper-facing file prefix
 
     copy_pairs = []
     for short_key, var_name in key_resp.items():
         copy_pairs.extend([
             (
                 os.path.join(exp_dir, "main_effects", f"main_effects_{var_name}.png"),
-                os.path.join(FIGURES_DIR, f"e{n}_main_{short_key}.png"),
+                os.path.join(FIGURES_DIR, f"e{fn}_main_{short_key}.png"),
             ),
             (
                 os.path.join(exp_dir, "interaction_plots", f"interactions_{var_name}.png"),
-                os.path.join(FIGURES_DIR, f"e{n}_int_{short_key}.png"),
+                os.path.join(FIGURES_DIR, f"e{fn}_int_{short_key}.png"),
             ),
             (
                 os.path.join(exp_dir, "pareto_charts", f"pareto_{var_name}.png"),
-                os.path.join(FIGURES_DIR, f"e{n}_pareto_{short_key}.png"),
+                os.path.join(FIGURES_DIR, f"e{fn}_pareto_{short_key}.png"),
             ),
         ])
 
@@ -661,7 +665,7 @@ def copy_figures(exp_num):
     rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
     copy_pairs.append((
         os.path.join(exp_dir, "robust", f"quantile_coefs_{rev_var}.png"),
-        os.path.join(FIGURES_DIR, f"e{n}_quantile_rev.png"),
+        os.path.join(FIGURES_DIR, f"e{fn}_quantile_rev.png"),
     ))
 
     for src, dst in copy_pairs:
@@ -690,23 +694,25 @@ def process_experiment(exp_num):
     if not responses_data:
         raise ValueError(f"exp{exp_num}: no response data in {json_path}")
 
+    fn = EXP_FILE_NUM[exp_num]  # paper-facing file prefix
+
     # 1. Coefficient tables (one per response, combined into one file)
     coef_tex = generate_coefficients_tables(exp_num, responses_data)
-    coef_path = os.path.join(TABLES_DIR, f"exp{exp_num}_coefficients.tex")
+    coef_path = os.path.join(TABLES_DIR, f"exp{fn}_coefficients.tex")
     with open(coef_path, "w") as f:
         f.write(coef_tex + "\n")
     print(f"  Wrote {coef_path}")
 
     # 2. Model fit summary table
     fit_tex = generate_model_fit_table(exp_num, responses_data)
-    fit_path = os.path.join(TABLES_DIR, f"exp{exp_num}_model_fit.tex")
+    fit_path = os.path.join(TABLES_DIR, f"exp{fn}_model_fit.tex")
     with open(fit_path, "w") as f:
         f.write(fit_tex + "\n")
     print(f"  Wrote {fit_path}")
 
     # 3. Significant effects table (cross-response)
     sig_tex = generate_significant_effects_table(exp_num, responses_data)
-    sig_path = os.path.join(TABLES_DIR, f"exp{exp_num}_significant.tex")
+    sig_path = os.path.join(TABLES_DIR, f"exp{fn}_significant.tex")
     with open(sig_path, "w") as f:
         f.write(sig_tex + "\n")
     print(f"  Wrote {sig_path}")
@@ -718,7 +724,7 @@ def process_experiment(exp_num):
             ranked_tex = generate_ranked_effects_table(
                 exp_num, response_key, short_key, responses_data[response_key]
             )
-            ranked_path = os.path.join(TABLES_DIR, f"exp{exp_num}_ranked_{short_key}.tex")
+            ranked_path = os.path.join(TABLES_DIR, f"exp{fn}_ranked_{short_key}.tex")
             with open(ranked_path, "w") as f:
                 f.write(ranked_tex + "\n")
             print(f"  Wrote {ranked_path}")
@@ -726,13 +732,13 @@ def process_experiment(exp_num):
     # 5. Robustness tables (adequacy + inference)
     robust_data = load_robust_data(exp_num)
     adequacy_tex = generate_adequacy_table(exp_num, robust_data)
-    adequacy_path = os.path.join(TABLES_DIR, f"exp{exp_num}_adequacy.tex")
+    adequacy_path = os.path.join(TABLES_DIR, f"exp{fn}_adequacy.tex")
     with open(adequacy_path, "w") as f:
         f.write(adequacy_tex + "\n")
     print(f"  Wrote {adequacy_path}")
 
     inference_tex = generate_inference_robust_table(exp_num, robust_data)
-    inference_path = os.path.join(TABLES_DIR, f"exp{exp_num}_inference_robust.tex")
+    inference_path = os.path.join(TABLES_DIR, f"exp{fn}_inference_robust.tex")
     with open(inference_path, "w") as f:
         f.write(inference_tex + "\n")
     print(f"  Wrote {inference_path}")
@@ -746,7 +752,7 @@ def process_experiment(exp_num):
 # ---------------------------------------------------------------------------
 
 # Roman numeral for LaTeX command names
-_CMD_ROMAN = {"1": "One", "2": "Two", "3a": "ThreeA", "3b": "ThreeB", "4a": "FourA", "4b": "FourB"}
+_CMD_ROMAN = {"1": "OneA", "2": "OneB", "3a": "TwoA", "3b": "TwoB", "4a": "ThreeA", "4b": "ThreeB"}
 
 # Short keys for response variable command names
 _CMD_RESPONSE_SHORT = {
@@ -771,7 +777,7 @@ _CMD_RESPONSE_SHORT = {
 def _format_p_latex(p):
     """Format p-value for LaTeX inline use.
 
-    Returns a string suitable for $p \\ExpFourAXxxPFmt$ usage:
+    Returns a string suitable for $p \\ExpThreeAXxxPFmt$ usage:
     - '= 0.004' for moderate p
     - '< 0.001' for small p
     - '< 10^{-15}' for very small p
@@ -864,63 +870,17 @@ def _generate_generic_coefficient_macros(responses_data, lines, macros_dict, pre
         lines.append(f"\\newcommand{{\\{prefix}{suffix}PFmt}}{{{_format_p_latex(p_val)}}}")
 
 
-def _generate_exp4a_coefficient_macros(responses_data, lines):
-    """Generate \\newcommand macros for specific Exp4a coefficients.
-
-    For each entry in _EXP4A_COEF_MACROS, writes:
-      \\ExpFourA{suffix}T       - signed t-value
-      \\ExpFourA{suffix}AbsT    - |t| value
-      \\ExpFourA{suffix}PFmt    - formatted p-value (e.g. '= 0.004' or '< 10^{-15}')
-    """
-    lines.append("% Exp4a per-coefficient macros (for inline t-stats in res4a.tex)")
-    for (resp_key, factor_key), suffix in _EXP4A_COEF_MACROS.items():
-        rdata = responses_data.get(resp_key, {})
-        coeffs = rdata.get("coefficients", {})
-        coef = coeffs.get(factor_key, {})
-        t_val = coef.get("t_value", 0)
-        p_val = coef.get("p_value", 1)
-        if t_val != t_val:  # NaN
-            t_val = 0
-        if p_val != p_val:  # NaN
-            p_val = 1
-        lines.append(f"\\newcommand{{\\ExpFourA{suffix}T}}{{{t_val:.1f}}}")
-        lines.append(f"\\newcommand{{\\ExpFourA{suffix}AbsT}}{{{abs(t_val):.1f}}}")
-        lines.append(f"\\newcommand{{\\ExpFourA{suffix}PFmt}}{{{_format_p_latex(p_val)}}}")
-
-
-def _generate_exp4b_coefficient_macros(responses_data, lines):
-    """Generate \\newcommand macros for specific Exp4b coefficients.
-
-    For each entry in _EXP4B_COEF_MACROS, writes:
-      \\ExpFourB{suffix}T       - signed t-value
-      \\ExpFourB{suffix}AbsT    - |t| value
-      \\ExpFourB{suffix}PFmt    - formatted p-value (e.g. '= 0.004' or '< 10^{-15}')
-    """
-    lines.append("% Exp4b per-coefficient macros (for inline t-stats in res4b.tex)")
-    for (resp_key, factor_key), suffix in _EXP4B_COEF_MACROS.items():
-        rdata = responses_data.get(resp_key, {})
-        coeffs = rdata.get("coefficients", {})
-        coef = coeffs.get(factor_key, {})
-        t_val = coef.get("t_value", 0)
-        p_val = coef.get("p_value", 1)
-        if t_val != t_val:  # NaN
-            t_val = 0
-        if p_val != p_val:  # NaN
-            p_val = 1
-        lines.append(f"\\newcommand{{\\ExpFourB{suffix}T}}{{{t_val:.1f}}}")
-        lines.append(f"\\newcommand{{\\ExpFourB{suffix}AbsT}}{{{abs(t_val):.1f}}}")
-        lines.append(f"\\newcommand{{\\ExpFourB{suffix}PFmt}}{{{_format_p_latex(p_val)}}}")
-
 
 def _generate_exp2_lifetime_macros(responses_data, lines, exp_num):
     """Generate Exp2 lifetime revenue macros: per-format means, premiums, per-cell means."""
     import pandas as pd
+    prefix = f"Exp{_CMD_ROMAN['2']}"
     lines.append("% Exp2 lifetime revenue macros")
 
     # R² for avg_rev_all model
     all_rev = responses_data.get("avg_rev_all", {})
     r2 = all_rev.get("r_squared", 0)
-    lines.append(f"\\newcommand{{\\ExpTwoAllRevRsq}}{{{r2:.3f}}}")
+    lines.append(f"\\newcommand{{\\{prefix}AllRevRsq}}{{{r2:.3f}}}")
 
     csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
     if not os.path.exists(csv_path):
@@ -934,15 +894,15 @@ def _generate_exp2_lifetime_macros(responses_data, lines, exp_num):
         if "auction_type" in df.columns:
             fpa_mean = df[df["auction_type"] == "first"][rev_col].mean()
             spa_mean = df[df["auction_type"] == "second"][rev_col].mean()
-            lines.append(f"\\newcommand{{\\ExpTwo{tag}MeanFPA}}{{{fpa_mean:.3f}}}")
-            lines.append(f"\\newcommand{{\\ExpTwo{tag}MeanSPA}}{{{spa_mean:.3f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}{tag}MeanFPA}}{{{fpa_mean:.3f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}{tag}MeanSPA}}{{{spa_mean:.3f}}}")
 
     # Learning premiums (lifetime - end-state)
     if all(c in df.columns for c in ["avg_rev_all", "avg_rev_last_1000", "auction_type"]):
         for fmt, label in [("first", "FPA"), ("second", "SPA")]:
             sub = df[df["auction_type"] == fmt]
             premium = sub["avg_rev_all"].mean() - sub["avg_rev_last_1000"].mean()
-            lines.append(f"\\newcommand{{\\ExpTwo{label}Premium}}{{{premium:.3f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}{label}Premium}}{{{premium:.3f}}}")
 
     # Per-cell means (auction_type × n_bidders) for lifetime revenue
     if all(c in df.columns for c in ["avg_rev_all", "auction_type", "n_bidders"]):
@@ -952,7 +912,7 @@ def _generate_exp2_lifetime_macros(responses_data, lines, exp_num):
                 if len(sub) > 0:
                     mean_val = sub["avg_rev_all"].mean()
                     lines.append(
-                        f"\\newcommand{{\\ExpTwoAll{fmt_label}{nb_label}}}"
+                        f"\\newcommand{{\\{prefix}All{fmt_label}{nb_label}}}"
                         f"{{{mean_val:.3f}}}"
                     )
 
@@ -960,6 +920,7 @@ def _generate_exp2_lifetime_macros(responses_data, lines, exp_num):
 def _generate_exp4a_detail_macros(responses_data, lines, exp_num):
     """Generate Exp4a detail macros: efficiency ranges, drift diagnostics, R² for welfare/drift."""
     import pandas as pd
+    prefix = f"Exp{_CMD_ROMAN['4a']}"
     lines.append("% Exp4a detail macros (efficiency, drift, welfare)")
 
     # R² for liquid welfare and cross-episode drift
@@ -968,12 +929,12 @@ def _generate_exp4a_detail_macros(responses_data, lines, exp_num):
     welfare_r2 = welfare_data.get("r_squared", 0)
     drift_r2 = drift_data.get("r_squared", 0)
     drift_f_p = drift_data.get("f_pvalue", 1)
-    lines.append(f"\\newcommand{{\\ExpFourAWelfareRsq}}{{{welfare_r2:.2f}}}")
-    lines.append(f"\\newcommand{{\\ExpFourAWelfareRsqPct}}{{{welfare_r2*100:.0f}}}")
-    lines.append(f"\\newcommand{{\\ExpFourADriftRsq}}{{{drift_r2:.2f}}}")
-    lines.append(f"\\newcommand{{\\ExpFourADriftRsqPct}}{{{drift_r2*100:.0f}}}")
-    lines.append(f"\\newcommand{{\\ExpFourADriftFP}}{{{drift_f_p:.2f}}}")
-    lines.append(f"\\newcommand{{\\ExpFourADriftFPFmt}}{{{_format_p_latex(drift_f_p)}}}")
+    lines.append(f"\\newcommand{{\\{prefix}WelfareRsq}}{{{welfare_r2:.2f}}}")
+    lines.append(f"\\newcommand{{\\{prefix}WelfareRsqPct}}{{{welfare_r2*100:.0f}}}")
+    lines.append(f"\\newcommand{{\\{prefix}DriftRsq}}{{{drift_r2:.2f}}}")
+    lines.append(f"\\newcommand{{\\{prefix}DriftRsqPct}}{{{drift_r2*100:.0f}}}")
+    lines.append(f"\\newcommand{{\\{prefix}DriftFP}}{{{drift_f_p:.2f}}}")
+    lines.append(f"\\newcommand{{\\{prefix}DriftFPFmt}}{{{_format_p_latex(drift_f_p)}}}")
 
     csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
     if not os.path.exists(csv_path):
@@ -994,11 +955,11 @@ def _generate_exp4a_detail_macros(responses_data, lines, exp_num):
             [c for c in grp_cols if c not in ["objective", "n_bidders"]]
         )["mean_allocative_efficiency"].mean()
         if len(util_cells) > 0:
-            lines.append(f"\\newcommand{{\\ExpFourAUtilEffLow}}{{{util_cells.min():.2f}}}")
-            lines.append(f"\\newcommand{{\\ExpFourAUtilEffHigh}}{{{util_cells.max():.2f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}UtilEffLow}}{{{util_cells.min():.2f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}UtilEffHigh}}{{{util_cells.max():.2f}}}")
         if len(val4_cells) > 0:
-            lines.append(f"\\newcommand{{\\ExpFourAValFourEffLow}}{{{val4_cells.min():.2f}}}")
-            lines.append(f"\\newcommand{{\\ExpFourAValFourEffHigh}}{{{val4_cells.max():.2f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}ValFourEffLow}}{{{val4_cells.min():.2f}}}")
+            lines.append(f"\\newcommand{{\\{prefix}ValFourEffHigh}}{{{val4_cells.max():.2f}}}")
 
 
 def generate_paper_numbers():
@@ -1198,19 +1159,22 @@ def generate_paper_numbers():
                 lines.append(f"\\newcommand{{\\Exp{roman}ConvMean}}{{N/A}}")
 
         # --- Per-coefficient macros for inline t-stats ---
+        prefix = f"Exp{roman}"
         if exp_num == "1":
             _generate_generic_coefficient_macros(
-                responses_data, lines, _EXP1_COEF_MACROS, "ExpOne", "Exp1")
+                responses_data, lines, _EXP1_COEF_MACROS, prefix, "Exp1")
         elif exp_num == "2":
             _generate_generic_coefficient_macros(
-                responses_data, lines, _EXP2_COEF_MACROS, "ExpTwo", "Exp2")
+                responses_data, lines, _EXP2_COEF_MACROS, prefix, "Exp2")
             # Exp2 lifetime revenue macros
             _generate_exp2_lifetime_macros(responses_data, lines, exp_num)
         elif exp_num == "4a":
-            _generate_exp4a_coefficient_macros(responses_data, lines)
+            _generate_generic_coefficient_macros(
+                responses_data, lines, _EXP4A_COEF_MACROS, prefix, "Exp4a")
             _generate_exp4a_detail_macros(responses_data, lines, exp_num)
         elif exp_num == "4b":
-            _generate_exp4b_coefficient_macros(responses_data, lines)
+            _generate_generic_coefficient_macros(
+                responses_data, lines, _EXP4B_COEF_MACROS, prefix, "Exp4b")
 
         # --- Cross-experiment margin ratio (top-1 / top-2 |t|) for revenue ---
         rev_var = REVENUE_VAR.get(exp_num, "avg_rev_last_1000")
@@ -1348,7 +1312,7 @@ def generate_summary_statistics(exp_num):
         r"\caption{Summary Statistics for Experiment %s (%d observations).}"
         % (roman, len(df))
     )
-    lines.append(r"\label{tab:summary_statistics_exp%s}" % exp_num)
+    lines.append(r"\label{tab:summary_statistics_exp%s}" % EXP_FILE_NUM[exp_num])
     lines.append(r"\small")
     lines.append(r"\begin{tabular}{lrrrr}")
     lines.append(r"\toprule")
@@ -1403,7 +1367,7 @@ def generate_summary_statistics(exp_num):
     )
     lines.append(r"\end{table}")
 
-    out_path = os.path.join(TABLES_DIR, f"exp{exp_num}_summary.tex")
+    out_path = os.path.join(TABLES_DIR, f"exp{EXP_FILE_NUM[exp_num]}_summary.tex")
     with open(out_path, "w") as f:
         f.write("\n".join(lines) + "\n")
     print(f"  Wrote {out_path}")

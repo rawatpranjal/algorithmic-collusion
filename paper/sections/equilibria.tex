@@ -1,22 +1,22 @@
 
-\section{Equilibria under Discretized Bidding}
+\section{Appendix: Equilibria under Discretized Bidding}
 \label{sec:equilibria}
 
 This section derives the theoretical equilibrium benchmarks against which the learning experiments are evaluated.
 
 \subsection{Constant Valuations}
 
-In a first-price auction where each bidder's valuation is 1 and allowable bids are in \(\{0,0.1,\dots,1\}\), a symmetric profile \((b,b,\dots,b)\) yields an expected payoff of \(\frac{1}{n}(1-b)\). A unilateral upward deviation to \(b+0.1\) (if \(\le 1\)) has a payoff of \(1-(b+0.1)\). No deviation is profitable if 
+In a first-price auction where each bidder's valuation is 1 and allowable bids are in \(\{0,0.1,\dots,1\}\), a symmetric profile \((b,b,\dots,b)\) yields an expected payoff of \(\frac{1}{n}(1-b)\). A unilateral upward deviation to \(b+0.1\) (provided \(b+0.1 \le 1\)) yields a payoff of \(1-(b+0.1)\). No deviation is profitable if 
 \[
 1 - (b + 0.1) \;\le\; \frac{1}{n}(1 - b)
 \;\;\Longrightarrow\;\;
 b \;\ge\; \frac{0.9\,n - 1}{n - 1}.
 \]
-Thus, for each \(n\), any \(b\) at or above this threshold (rounded to 0.1) is a pure-strategy Nash equilibrium. For example, when \(n=2\), \(b\ge 0.8\), and when \(n=3\), \(b\ge 0.85\). By contrast, in a second-price auction with identical valuations all equal to 1, bidding 1 is weakly dominant under private values, and in the setting of known identical values, any profile where at least one bidder bids 1 constitutes a Nash equilibrium.
+Thus, for each \(n\), any \(b\) at or above this threshold (rounded to 0.1) is a pure-strategy Nash equilibrium. For example, when \(n=2\), \(b\ge 0.8\), and when \(n=3\), \(b\ge 0.85\). In a second-price auction with identical valuations all equal to 1, bidding 1 is weakly dominant. When valuations are known to be identical, any profile in which at least one bidder bids 1 is a Nash equilibrium.
 
 \subsection{Affiliated Valuations}
 
-In Experiments~2--3, each bidder~$i$ draws a signal $s_i \sim \text{Uniform}[0,1]$ independently and forms a valuation
+In Experiments~1b--2b, each bidder~$i$ draws a signal $s_i \sim \text{Uniform}[0,1]$ independently and forms a valuation
 \[
 v_i \;=\; \alpha\, s_i \;+\; \beta \sum_{j \neq i} s_j,
 \qquad
@@ -43,12 +43,12 @@ b^{\text{FPA}}(s) = \frac{n-1}{n} \Bigl(\alpha + \frac{n\beta}{2}\Bigr) s.
 
 \subsubsection{Expected Revenue}
 
-The winning type is the maximum of $n$ independent uniforms with mean $n/(n+1)$. The second highest type has mean $(n-1)/(n+1)$. Expected revenue equals bid slope times the appropriate order statistic in each format. The closed form is
+The winning signal is the maximum of $n$ independent uniforms with mean $n/(n+1)$. The second-highest signal has mean $(n-1)/(n+1)$. Expected revenue equals bid slope times the appropriate order statistic in each format. The closed form is
 \[
 R^{\text{SPA}} = \Bigl(\alpha + \frac{n\beta}{2}\Bigr) \frac{n-1}{n+1},\qquad
 R^{\text{FPA}} = \frac{n-1}{n} \Bigl(\alpha + \frac{n\beta}{2}\Bigr) \frac{n}{n+1}.
 \]
-These expressions coincide. Revenue equivalence holds for all $\eta$ because signals are independent. The benchmarks are used in the simulations to form ratios of observed to theoretical revenue.
+These expressions coincide. Revenue equivalence holds for all $\eta$ because signals are independent. We use these benchmarks to compute ratios of observed to theoretical revenue.
 
 \subsubsection{Efficient Benchmark}
 
@@ -76,7 +76,7 @@ The table reports the efficient benchmark and BNE revenue for representative $(\
 
 We verify the analytical equilibrium with simulation. Signals are independent uniform on $[0,1]$ and values satisfy $v_i = \alpha s_i + \beta\sum_{j\ne i} s_j$ with $\alpha=1-\tfrac{\eta}{2}$ and $\beta=\tfrac{\eta}{2(n-1)}$.
 
-Under independent signals the symmetric equilibrium bids are linear: $b^{\mathrm{SPA}}(s) = \phi s$ and $b^{\mathrm{FPA}}(s) = \tfrac{n-1}{n}\,\phi s$ with $\phi = \alpha + (n\beta)/2$.
+Under independent signals the symmetric equilibrium bids are linear, with $b^{\mathrm{SPA}}(s) = \phi s$ and $b^{\mathrm{FPA}}(s) = \tfrac{n-1}{n}\,\phi s$, where $\phi = \alpha + (n\beta)/2$.
 
 With independent signals expected revenue equals $R^{\mathrm{BNE}} = \tfrac{n-1}{n+1}\,\phi = \tfrac{n-1}{n}\,\phi\,\mathbb{E}[s_{(n:n)}] = \phi\,\mathbb{E}[s_{(n-1:n)}]$. Revenues are equal across formats. The argument uses the means of the top two order statistics and the fact that both formats allocate to the highest signal.
 

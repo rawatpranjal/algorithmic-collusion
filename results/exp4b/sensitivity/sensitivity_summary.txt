@@ -1,0 +1,194 @@
+======================================================================
+SENSITIVITY ANALYSIS SUMMARY -- Experiment 4b
+======================================================================
+
+mean_platform_revenue:
+  Dominant factor: budget_multiplier (ST=0.5291, S1=0.4760)
+  Most interactive: auction_type (gap=0.0581)
+  Negligible (ST<0.01): aggressiveness, reserve_price
+
+  Method agreement: mean Spearman = 0.907, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.7093
+    NN        : 0.3921
+    Kriging   : 0.7306
+
+mean_liquid_welfare:
+  Dominant factor: budget_multiplier (ST=0.4947, S1=0.4464)
+  Most interactive: budget_multiplier (gap=0.0483)
+  Negligible (ST<0.01): auction_type, aggressiveness, reserve_price
+
+  Method agreement: mean Spearman = 0.924, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.6810
+    NN        : 0.4936
+    Kriging   : 0.6457
+
+mean_effective_poa:
+  Dominant factor: auction_type (ST=0.1912, S1=0.1424)
+  Most interactive: budget_multiplier (gap=0.1664)
+  Negligible (ST<0.01): aggressiveness
+
+  Method agreement: mean Spearman = 0.927, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.1295
+    NN        : -18.3857
+    Kriging   : 0.4284
+
+mean_budget_utilization:
+  Dominant factor: budget_multiplier (ST=0.7016, S1=0.6174)
+  Most interactive: budget_multiplier (gap=0.0842)
+  Negligible (ST<0.01): aggressiveness, reserve_price
+
+  Method agreement: mean Spearman = 0.984, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.8333
+    NN        : 0.6849
+    Kriging   : 0.7908
+
+mean_bid_to_value:
+  Dominant factor: budget_multiplier (ST=0.7594, S1=0.6893)
+  Most interactive: auction_type (gap=0.0782)
+  Negligible (ST<0.01): aggressiveness, n_bidders, reserve_price, sigma
+
+  Method agreement: mean Spearman = 0.910, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.8785
+    NN        : 0.7004
+    Kriging   : 0.8610
+
+mean_allocative_efficiency:
+  Dominant factor: budget_multiplier (ST=0.7384, S1=0.7060)
+  Most interactive: budget_multiplier (gap=0.0324)
+  Negligible (ST<0.01): aggressiveness
+
+  Method agreement: mean Spearman = 0.793, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.8427
+    NN        : 0.6094
+    Kriging   : 0.8251
+
+mean_dual_cv:
+  Dominant factor: budget_multiplier (ST=0.7481, S1=0.6735)
+  Most interactive: auction_type (gap=0.0775)
+  Negligible (ST<0.01): aggressiveness, reserve_price, sigma
+
+  Method agreement: mean Spearman = 0.842, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.8731
+    NN        : 0.7542
+    Kriging   : 0.8589
+
+mean_no_sale_rate:
+  Dominant factor: budget_multiplier (ST=0.3319, S1=0.1024)
+  Most interactive: budget_multiplier (gap=0.2295)
+  Negligible (ST<0.01): aggressiveness
+
+  Method agreement: mean Spearman = 0.011, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : -6.4577
+    NN        : -318.2109
+    Kriging   : 0.8734
+
+mean_winner_entropy:
+  Dominant factor: n_bidders (ST=0.5763, S1=0.5463)
+  Most interactive: budget_multiplier (gap=0.0748)
+  Negligible (ST<0.01): aggressiveness, reserve_price
+
+  Method agreement: mean Spearman = 0.842, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.7689
+    NN        : 0.6750
+    Kriging   : 0.7621
+
+warm_start_benefit:
+  Dominant factor: sigma (ST=0.0165, S1=0.0037)
+  Most interactive: sigma (gap=0.0128)
+  Negligible (ST<0.01): auction_type, aggressiveness, n_bidders
+
+  Method agreement: mean Spearman = 0.831, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : -0.1016
+    NN        : -0.0121
+    Kriging   : -0.2215
+
+inter_episode_volatility:
+  Dominant factor: auction_type (ST=0.3297, S1=0.1136)
+  Most interactive: budget_multiplier (gap=0.2432)
+
+  Method agreement: mean Spearman = 0.956, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.1806
+    NN        : -378.7988
+    Kriging   : 0.5938
+
+bid_suppression_ratio:
+  Dominant factor: budget_multiplier (ST=0.7594, S1=0.6893)
+  Most interactive: auction_type (gap=0.0782)
+  Negligible (ST<0.01): aggressiveness, n_bidders, reserve_price, sigma
+
+  Method agreement: mean Spearman = 0.924, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.8785
+    NN        : 0.7004
+    Kriging   : 0.8609
+
+cross_episode_drift:
+  Dominant factor: reserve_price (ST=0.0337, S1=0.0048)
+  Most interactive: reserve_price (gap=0.0289)
+  Negligible (ST<0.01): aggressiveness, budget_multiplier
+
+  Method agreement: mean Spearman = 0.369, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : -0.0816
+    NN        : -9134876.5816
+    Kriging   : -0.1821
+
+mean_lp_offline_welfare:
+  Dominant factor: budget_multiplier (ST=0.5057, S1=0.4509)
+  Most interactive: budget_multiplier (gap=0.0548)
+  Negligible (ST<0.01): auction_type, aggressiveness, reserve_price
+
+  Method agreement: mean Spearman = 0.965, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.6750
+    NN        : 0.4706
+    Kriging   : 0.6479
+
+mean_effective_poa_lp:
+  Dominant factor: auction_type (ST=0.1909, S1=0.1422)
+  Most interactive: budget_multiplier (gap=0.1664)
+  Negligible (ST<0.01): aggressiveness
+
+  Method agreement: mean Spearman = 0.211, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.1221
+    NN        : -18.3803
+    Kriging   : 0.4347
+
+mean_rev_all:
+  Dominant factor: budget_multiplier (ST=0.5291, S1=0.4761)
+  Most interactive: auction_type (gap=0.0581)
+  Negligible (ST<0.01): aggressiveness, reserve_price
+
+  Method agreement: mean Spearman = 0.967, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.7083
+    NN        : 0.3915
+    Kriging   : 0.7344

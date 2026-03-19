@@ -4,20 +4,18 @@ ROBUST ANALYSIS SUMMARY -- Experiment 2
 
 KEY FINDING: auction_type:n_bidders interaction
 --------------------------------------------------
-  avg_rev_last_1000|auction_type:n_bidders: raw p=9.0181e-04, holm p=9.8297e-02 -> does NOT survive Holm-Bonferroni
-  avg_rev_all|auction_type:n_bidders: raw p=7.7993e-03, holm p=7.7213e-01 -> does NOT survive Holm-Bonferroni
-  time_to_converge|auction_type:n_bidders: raw p=2.1602e-04, holm p=2.4194e-02 -> SURVIVES Holm-Bonferroni
+  avg_rev_last_1000|auction_type:n_bidders: raw p=9.0181e-04, holm p=8.6574e-02 -> does NOT survive Holm-Bonferroni
+  time_to_converge|auction_type:n_bidders: raw p=2.1602e-04, holm p=2.1386e-02 -> SURVIVES Holm-Bonferroni
   price_volatility|auction_type:n_bidders: raw p=2.0617e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
   winner_entropy|auction_type:n_bidders: raw p=9.9445e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
-  btv_median|auction_type:n_bidders: raw p=1.5868e-07, holm p=1.9676e-05 -> SURVIVES Holm-Bonferroni
-  winners_curse_freq|auction_type:n_bidders: raw p=2.5132e-14, holm p=3.3928e-12 -> SURVIVES Holm-Bonferroni
+  btv_median|auction_type:n_bidders: raw p=1.5868e-07, holm p=1.7296e-05 -> SURVIVES Holm-Bonferroni
+  winners_curse_freq|auction_type:n_bidders: raw p=2.5132e-14, holm p=3.0158e-12 -> SURVIVES Holm-Bonferroni
   bid_dispersion|auction_type:n_bidders: raw p=1.5167e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
-  signal_slope_ratio|auction_type:n_bidders: raw p=8.0702e-03, holm p=7.9088e-01 -> does NOT survive Holm-Bonferroni
+  signal_slope_ratio|auction_type:n_bidders: raw p=8.0702e-03, holm p=6.9403e-01 -> does NOT survive Holm-Bonferroni
 
 MODEL ADEQUACY
 --------------------------------------------------
   avg_rev_last_1000               R2=0.4043  Pred-R2=0.2991  Gap=0.1052
-  avg_rev_all                     R2=0.2543  Pred-R2=0.1225  Gap=0.1317
   time_to_converge                R2=0.1827  Pred-R2=0.0382  Gap=0.1444
   price_volatility                R2=0.3633  Pred-R2=0.2508  Gap=0.1125
   winner_entropy                  R2=0.2872  Pred-R2=0.1612  Gap=0.1259
@@ -29,7 +27,6 @@ MODEL ADEQUACY
 LINEAR vs NONPARAMETRIC
 --------------------------------------------------
   avg_rev_last_1000               OLS=0.4043  LGBM=0.3362  Gap=-0.0681
-  avg_rev_all                     OLS=0.2543  LGBM=0.1655  Gap=-0.0887
   time_to_converge                OLS=0.1827  LGBM=-0.1511  Gap=-0.3337
   price_volatility                OLS=0.3633  LGBM=0.2843  Gap=-0.0790
   winner_entropy                  OLS=0.2872  LGBM=0.1869  Gap=-0.1003
@@ -41,7 +38,6 @@ LINEAR vs NONPARAMETRIC
 POWER ANALYSIS (80% power, alpha=0.05)
 --------------------------------------------------
   avg_rev_last_1000               MDE=0.029130 (6.3% of mean)
-  avg_rev_all                     MDE=0.030098 (5.6% of mean)
   time_to_converge                MDE=4919.817620 (6.0% of mean)
   price_volatility                MDE=0.008217 (3.7% of mean)
   winner_entropy                  MDE=0.075843 (7.3% of mean)

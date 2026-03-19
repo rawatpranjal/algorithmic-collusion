@@ -1,0 +1,63 @@
+======================================================================
+SENSITIVITY ANALYSIS SUMMARY -- Experiment 1
+======================================================================
+
+avg_rev_last_1000:
+  Dominant factor: n_bidders (ST=0.2376, S1=0.1878)
+  Most interactive: n_bidders (gap=0.0498)
+  Negligible (ST<0.01): alpha, init, decay_type
+
+  Method agreement: mean Spearman = 0.871, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.4846
+    NN        : 0.3605
+    Kriging   : 0.1089
+
+time_to_converge:
+  Dominant factor: n_bidders (ST=0.1108, S1=0.0933)
+  Most interactive: auction_type (gap=0.0279)
+  Negligible (ST<0.01): alpha, init, info_feedback
+
+  Method agreement: mean Spearman = 0.891, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.3685
+    NN        : -2.7000
+    Kriging   : 0.1054
+
+no_sale_rate:
+  Dominant factor: reserve_price (ST=0.2656, S1=0.1523)
+  Most interactive: reserve_price (gap=0.1133)
+  Negligible (ST<0.01): auction_type, info_feedback
+
+  Method agreement: mean Spearman = 0.890, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.6768
+    NN        : -0.5801
+    Kriging   : 0.1101
+
+price_volatility:
+  Dominant factor: n_bidders (ST=0.1651, S1=0.1390)
+  Most interactive: reserve_price (gap=0.0401)
+  Negligible (ST<0.01): alpha
+
+  Method agreement: mean Spearman = 0.845, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.5519
+    NN        : 0.2131
+    Kriging   : 0.1925
+
+winner_entropy:
+  Dominant factor: n_bidders (ST=0.3086, S1=0.2716)
+  Most interactive: asynchronous (gap=0.0670)
+  Negligible (ST<0.01): auction_type, alpha, gamma, init
+
+  Method agreement: mean Spearman = 0.834, top-1 consistent
+
+  Surrogate CV R²:
+    LGBM      : 0.5354
+    NN        : 0.4757
+    Kriging   : 0.1575

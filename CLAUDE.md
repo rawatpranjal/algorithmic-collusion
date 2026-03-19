@@ -186,14 +186,14 @@ make analyze tables pdf paper
 
 ## Experiments Overview
 
-| Exp | Algorithm | Valuations | Design | Factors |
-|-----|-----------|------------|--------|---------|
-| 1 | Q-learning | Constant (v=1.0) | 2^(10-1) Res V | auction_type, alpha, gamma, reserve_price, init, exploration, asynchronous, n_bidders, info_feedback, decay_type |
-| 2 | Q-learning | Affiliated (eta) | 3 × 2^3 mixed | auction_type, n_bidders, state_info, eta |
-| 3a | LinUCB | Affiliated (eta) | 3 × 2^7 mixed | auction_type, n_bidders, reserve_price, eta, exploration_intensity, context_richness, lam, memory_decay |
-| 3b | Thompson | Affiliated (eta) | 3 × 2^5 mixed | auction_type, n_bidders, reserve_price, eta, exploration_intensity, context_richness |
-| 4a | Dual Pacing | LogNormal (asymmetric) | 2^6 full | auction_type, objective, n_bidders, budget_multiplier, reserve_price, sigma |
-| 4b | PI Pacing | LogNormal (asymmetric) | 2^6 full | auction_type, aggressiveness, n_bidders, budget_multiplier, reserve_price, sigma |
+| Code ID | Paper Name | Algorithm | Valuations | Design | Factors |
+|---------|------------|-----------|------------|--------|---------|
+| exp1 | 1a / Ia | Q-learning | Constant (v=1.0) | 2^(10-1) Res V | auction_type, alpha, gamma, reserve_price, init, exploration, asynchronous, n_bidders, info_feedback, decay_type |
+| exp2 | 1b / Ib | Q-learning | Affiliated (eta) | 3 × 2^3 mixed | auction_type, n_bidders, state_info, eta |
+| exp3a | 2a / IIa | LinUCB | Affiliated (eta) | 3 × 2^7 mixed | auction_type, n_bidders, reserve_price, eta, exploration_intensity, context_richness, lam, memory_decay |
+| exp3b | 2b / IIb | Thompson | Affiliated (eta) | 3 × 2^5 mixed | auction_type, n_bidders, reserve_price, eta, exploration_intensity, context_richness |
+| exp4a | 3a / IIIa | Dual Pacing | LogNormal (asymmetric) | 2^6 full | auction_type, objective, n_bidders, budget_multiplier, reserve_price, sigma |
+| exp4b | 3b / IIIb | PI Pacing | LogNormal (asymmetric) | 2^6 full | auction_type, aggressiveness, n_bidders, budget_multiplier, reserve_price, sigma |
 
 ## Output Structure
 
@@ -461,6 +461,7 @@ Before searching the web for papers/references, check `docs/transcriptions/` fir
 - Qualify clearly when extrapolating beyond experimental scope ("this suggests", "the results are consistent with").
 - Distinguish between: (1) robust empirical findings (state directly), (2) plausible interpretations (signal uncertainty), (3) speculation (mark explicitly or omit).
 - Never overstate. "X is the dominant factor" requires X to have the largest effect size. "X contributes to" if it is one of several factors.
+- **Black-box discipline for simulation results.** Treat all simulation experiments as black-box input-output observations. Report the direction, magnitude, and statistical significance of each effect. Compare findings to theoretical predictions and prior empirical work where applicable. Do not invent mechanistic explanations for why a result occurred. We do not observe what happens inside the simulation; we observe only what comes out. State the pattern, compare to what others have found or predicted, and move on. Like a laboratory report: weigh the evidence, do not force-fit reasons.
 
 ### Paragraph Discipline
 

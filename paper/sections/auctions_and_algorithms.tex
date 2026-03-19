@@ -1,0 +1,358 @@
+\section{Auctions and Algorithms}
+\label{sec:auctions_and_algorithms}
+\label{sec:auctions}
+
+This section first describes the auction environment shared by all experiments, then specifies the learning algorithms that bidders employ.
+
+% ═══════════════════════════════════════════════════════════════
+%  AUCTIONS
+% ═══════════════════════════════════════════════════════════════
+
+We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome (who wins and how much is paid) depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximise her per-round payoff, given by her valuation minus her payment. The experiments differ in two dimensions: valuations range from a fixed value of 1 for all bidders to signals that are partially affiliated across bidders, and bidders may observe different informational states between rounds.
+
+\subsection{Auction Environment}
+
+In Experiment\,1a, every bidder's valuation is fixed at 1, so the private-value assumption is trivially satisfied and there is no direct impact of signals. In Experiments~1b--2b, however, each bidder $i$ draws a signal $s_{i}\in [0,1]$ (using a finite set of possible signal realisations) and forms a valuation via a linear-affiliation function
+\[
+v_{i}(s_{i}, s_{-i}) \;=\; \bigl(1 - 0.5\,\eta\bigr)\,s_{i} \;+\; 0.5\,\eta\;\frac{1}{n-1}\sum_{j\neq i} s_{j},
+\]
+where $\eta\in[0,1]$ measures how strongly bidder\,$i$'s value depends on the others' signals. When $\eta=0$, each bidder's value depends only on her own signal; as $\eta$ increases, the environment moves closer to a ``common-value'' setting. In each round, every bidder draws a fresh signal independently across bidders and rounds.
+
+
+Bids are constrained to lie in a finite grid, typically $\{0,0.1,0.2,\ldots,1.0\}$ or a similar set. This restriction is imposed in all three experiments to simplify the strategy space. Despite this simplification, each bidder remains free to adapt her bids over repeated rounds as she observes outcomes. We adopt a moderate granularity (e.g.\ 11 equally spaced points from 0 to 1) that is fine enough to allow distinct bidding behaviours and multiple points of convergence, yet small enough to allow full exploration. Robustness checks confirm that grid size does not materially affect results.
+
+
+All experiments allow a reserve price $r\ge 0$. If every submitted bid is below $r$, then no sale occurs in that round; otherwise, any bid below $r$ is excluded from contention.
+
+
+Both first- and second-price formats are studied. Under first-price, the winner pays her own highest valid bid; under second-price, the winner pays the second-highest valid bid (if any). In all cases, if multiple bidders tie for the highest valid bid, one among them is chosen at random to be the winner, and the payment is then computed according to the standard rule for that auction format. The resulting payoff for bidder\,$i$ is
+\[
+u_{i} \;=\;
+\begin{cases}
+v_{i} - \text{(own bid)} & \text{(first-price),}\\
+v_{i} - \text{(second-highest bid)} & \text{(second-price),}
+\end{cases}
+\]
+and is zero for those bidders who do not win.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.5cm,
+  block/.style={rectangle, draw, rounded corners, minimum width=2.0cm,
+                minimum height=0.9cm, text centered, font=\small},
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+]
+  % Nodes
+  \node[block] (val) {Valuations};
+  \node[block, right=of val] (sig) {Signals};
+  \node[block, right=of sig] (bid) {Bids};
+  \node[block, right=of bid] (win) {Winner};
+  \node[block, right=of win] (pay) {Payment};
+  \node[block, right=of pay] (payoff) {Payoffs};
+
+  % Arrows
+  \draw[arrow] (val) -- (sig);
+  \draw[arrow] (sig) -- (bid);
+  \draw[arrow] (bid) -- (win);
+  \draw[arrow] (win) -- (pay);
+  \draw[arrow] (pay) -- (payoff);
+
+  % Annotations below nodes
+  \node[below=0.15cm of val, font=\scriptsize, align=center] {$v_i$ drawn or\\fixed};
+  \node[below=0.15cm of sig, font=\scriptsize, align=center] {$s_i$ observed\\(if affiliated)};
+  \node[below=0.15cm of bid, font=\scriptsize, align=center] {$b_i$ from\\strategy};
+  \node[below=0.15cm of win, font=\scriptsize, align=center] {highest\\valid bid};
+  \node[below=0.15cm of payoff, font=\scriptsize, align=center] {$v_i - p$\\(winner)};
+
+  % Payment branching annotations
+  \node[below=0.15cm of pay, font=\scriptsize] (paymid) {};
+  \node[below left=0.5cm and -0.3cm of pay, font=\scriptsize, align=center] (fpa) {FPA: $p = b_{\text{win}}$};
+  \node[below right=0.5cm and -0.3cm of pay, font=\scriptsize, align=center] (spa) {SPA: $p = b^{(2)}$};
+  \draw[-{Stealth[length=1.5mm]}, thin, gray] (pay.south) -- (fpa.north);
+  \draw[-{Stealth[length=1.5mm]}, thin, gray] (pay.south) -- (spa.north);
+\end{tikzpicture}
+\caption{Sequence of events within a single auction round. Valuations are drawn (or fixed), bidders observe signals and submit bids, the highest valid bid wins, and payment depends on the auction format.}
+\label{fig:auction_timeline}
+\end{figure}
+
+Figure~\ref{fig:auction_timeline} summarises the sequence of events within each round.
+
+A defining feature of these repeated interactions is that bidders may condition their future bids on information from prior rounds. In Experiment\,1a, the possible states include the previous round's winning bid. In Experiments~1b--2b, states can similarly incorporate bidder-specific signals $s_{i}$, as well as the previous winning bid. Each bidder knows her own signal in each round and can rely on these state variables to guide her subsequent bid choice. The affiliation parameter~$\eta$ thus captures how interdependent each bidder's underlying valuation is with the other signals, but each bidder's private signal still enters only her own valuation (albeit modulated by average signals).
+
+\subsection{Budget Constraints and Welfare}
+
+Experiment~3a introduces hard budget constraints and autobidding pacing agents. Each of $n \in \{2, 4\}$ advertisers participates in $D = 100$ episodes, each comprising $T = 1{,}000$ single-item auctions. Between episodes, budgets regenerate to their initial level while dual variables persist (warm-starting), mimicking the daily budget cycle in real ad exchanges. Valuations follow a log-normal model with bidder-specific asymmetry, where each bidder~$i$ draws a mean $\mu_i \sim \mathrm{Uniform}(0.5, 1.5)$ once per seed, and in each round $v_{it} \sim \mathrm{LogNormal}(\mu_i, \sigma)$. The budget per episode is $B_i = m \cdot \mathbb{E}[v_{it}] \cdot T$. All bidders use multiplicative dual pacing, computing bids as $v_t / \mu_t$ (value-maximizers) or $v_t / (1 + \mu_t)$ (utility-maximizers), subject to a hard budget cap that prevents spending from exceeding the remaining budget. The dual variable $\mu_t$ is updated via an exponential rule after each round (Section~\ref{sec:pacing}). This setup allows us to study how budget constraints interact with auction format and bidder objectives, bridging the bid suppression literature with the pacing efficiency literature.
+
+All experiments repeat auctions for many rounds, allowing long-run behaviour to emerge across varied reserve prices, degrees of valuation interdependence, and budget regimes. The discrete setup (both for signals and for bids) is maintained for computational tractability, but the core elements of a standard first- or second-price auction, with or without a reserve, are preserved, and the ultimate allocation and payment follow the standard textbook rules.
+
+\label{sec:welfare}
+
+Experiments~3a and~3b evaluate allocative efficiency using liquid welfare and the Price of Anarchy. Following \citet{Gaitonde2023} and \citet{Deng2021TowardsEfficient}, the liquid welfare of an allocation $x$ for $N$ bidders over $T$ rounds is
+\begin{equation}
+  W(x) = \sum_{i=1}^{N} W_i(x), \qquad
+  W_i(x) = \min\!\Big\{B_i,\; \sum_{t=1}^{T} x_{ti}\, v_{ti}\Big\},
+  \label{eq:liquid_welfare_def}
+\end{equation}
+where $v_{ti}$ is bidder~$i$'s valuation in round~$t$, $B_i$ is bidder~$i$'s budget, and $x_{ti} \in [0,1]$ is the fraction of the item allocated to bidder~$i$ in round~$t$. In the integer case ($x_{ti} \in \{0,1\}$, at most one winner per round), liquid welfare reduces to $W(x) = \sum_{i=1}^{N} \min\{B_i,\; \sum_{t:\, \text{winner}_t = i} v_{ti}\}$, which is how it is computed in the experimental code.
+
+The optimal fractional liquid welfare is the solution to
+\begin{equation}
+  W^* = \max_{x} \sum_{i=1}^{N} \min\!\Big\{B_i,\; \sum_{t=1}^{T} x_{ti}\, v_{ti}\Big\}
+  \quad \text{s.t.} \quad
+  \sum_{i=1}^{N} x_{ti} \leq 1 \;\; \forall t, \quad
+  x_{ti} \in [0,1] \;\; \forall t,i.
+  \label{eq:welfare_opt}
+\end{equation}
+The $\min$ operator makes this a non-linear program. We linearise it via the LP relaxation $\mathrm{LP}^* = \max_{x} \sum_{t,i} v_{ti}\, x_{ti}$ subject to $\sum_i x_{ti} \le 1$ per round and $\sum_t v_{ti}\, x_{ti} \le B_i$ per bidder. At any LP-feasible point the budget constraint ensures $\min\{B_i, \sum_t v_{ti}\, x_{ti}\} = \sum_t v_{ti}\, x_{ti}$, giving $\mathrm{LP}^* = W^*$. The LP relaxation allows fractional allocations, so $\mathrm{LP}^*$ is an upper bound on the optimal integer liquid welfare, making it a conservative benchmark.
+
+The Price of Anarchy is defined as the ratio of optimal to realised liquid welfare:
+\begin{equation}
+  \text{PoA} = \frac{W^*}{W(x^{\text{obs}})},
+  \label{eq:poa_def}
+\end{equation}
+where $x^{\text{obs}}$ is the allocation produced by the bidding algorithm. By construction, $\text{PoA} \geq 1$, with values closer to~1 indicating higher efficiency. The literature defines worst-case PoA as the supremum over all instances and equilibria. Our experiments instead report per-instance empirical PoA.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Theoretical Price of Anarchy bounds for autobidding.}
+\label{tab:poa_bounds}
+\begin{tabular}{lll}
+\toprule
+\textbf{Setting} & \textbf{PoA bound} & \textbf{Source} \\
+\midrule
+SPA + budget constraints & $\leq 2$ (tight) & \citet{Aggarwal2019} \\
+FPA + RoS constraints (no budgets) & $= 1$ & \citet{Deng2021TowardsEfficient} \\
+FPA + budget constraints & $\leq 2$ (if $v_{ij} \leq B_i$) & \citet{Aggarwal2024Survey} \\
+Any core auction + learning dynamics & $\leq 2$ & \citet{Gaitonde2023} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The PoA~$= 1$ result of \citet{Deng2021TowardsEfficient} requires return-on-spend constraints, not budget constraints. Experiments~3a and~3b use cumulative budget constraints, for which the applicable theoretical bound is PoA~$\leq 2$ regardless of auction format.
+
+% ═══════════════════════════════════════════════════════════════
+%  ALGORITHMS
+% ═══════════════════════════════════════════════════════════════
+
+\label{sec:algorithms}
+
+Reinforcement learning (RL) typically involves an agent interacting with an environment through states, actions, and rewards. In \emph{Q-learning}, the agent learns to approximate an optimal action-value function $Q(s,a)$, which represents the expected discounted reward for taking action $a$ in state $s$. By comparison, \emph{bandit} algorithms (including multi-armed and contextual bandits) assume no or minimal state transitions and learn which action yields the highest expected payoff.
+
+\subsection{Q-Learning}
+\label{sec:qlearning}
+
+An \emph{asynchronous} Q-learning agent updates its $Q$-values only for the action actually taken at each step. Let $s_t$ be the current state, $a_t$ the chosen action, and $r_t$ the immediate reward upon transitioning to $s_{t+1}$. The Q-update is:
+\begin{equation}
+Q(s_t,a_t)
+\;\leftarrow\;
+Q(s_t,a_t)
+\;+\;
+\alpha \Bigl[
+  r_t
+  \;+\;
+  \gamma \,\max_{a'} Q(s_{t+1},a')
+  \;-\;
+  Q(s_t,a_t)
+\Bigr],
+\label{eq:qlearning_async}
+\end{equation}
+where $\alpha$ is the learning rate and $\gamma$ the discount factor. Only $Q(s_t,a_t)$ changes, reflecting the experience from action $a_t$.
+
+A \emph{synchronous} variant updates the Q-values for \emph{all} actions from the same state in a single step, using counterfactual rewards. Let $A$ be the set of possible actions. If the agent took action $a_t$ but also computes hypothetical rewards $r_t(a)$ for each $a \in A$, the synchronous update is:
+\begin{equation}
+Q\bigl(s_t,a\bigr)
+\;\leftarrow\;
+\bigl(1-\alpha\bigr)\,Q\bigl(s_t,a\bigr)
+\;+\;
+\alpha \Bigl[
+  r_t(a)
+  \;+\;
+  \gamma \,\max_{a'} Q\bigl(s_{t+1},a'\bigr)
+\Bigr]
+\quad
+\forall a \in A.
+\label{eq:qlearning_sync}
+\end{equation}
+Thus every $Q(s_t,a)$ is updated in a single step, including actions the agent did not actually choose. This accelerates convergence at the cost of additional computation.
+
+Agents select actions using one of two exploration strategies. \emph{Boltzmann} (or \emph{softmax}) exploration draws an action $a$ from a distribution favouring higher estimated $Q$-values:
+\begin{equation}
+P\bigl(a \mid s\bigr)
+\;=\;
+\frac{\exp\!\bigl(\beta\,Q(s,a)\bigr)}{\sum_{b}\,\exp\!\bigl(\beta\,Q(s,b)\bigr)},
+\label{eq:boltzmann}
+\end{equation}
+where $\beta = 1/\tau$ is the inverse temperature parameter. Larger $\beta$ (lower temperature $\tau$) makes the distribution more peaked, favouring higher-valued actions; smaller $\beta$ (higher $\tau$) flattens the distribution, promoting more exploration. Alternatively, \emph{$\varepsilon$-greedy} exploration selects the action that maximises $Q(s,a)$ with probability $1-\varepsilon$ and selects a random action with probability $\varepsilon$:
+\begin{equation}
+P\bigl(a \mid s\bigr)
+\;=\;
+\begin{cases}
+1-\varepsilon, & \text{if }a = \displaystyle\arg\max_{b}\,Q(s,b),\\
+\displaystyle\frac{\varepsilon}{|A|}, & \text{otherwise}.
+\end{cases}
+\label{eq:egreedy}
+\end{equation}
+As $\varepsilon$ diminishes, the policy exploits more aggressively based on current $Q$-estimates. Both exploration methods use a decaying schedule that transitions from full exploration to near-greedy exploitation.\footnote{$\varepsilon$ starts at 1.0 and decays over the first 90\% of episodes to a floor of 0.01; agents then switch to pure exploitation ($\varepsilon = 0$) for the final 10\%. For Boltzmann exploration, the temperature $\tau$ follows an analogous schedule (1.0 to 0.01). Both schedules admit linear and exponential variants (Experiment~1a). Q-tables may be initialised to all zeros or to small random values, influencing early exploration. In any given state, if multiple actions share the same $Q$-value, ties are broken uniformly at random.}
+
+\subsection{Contextual Bandits}
+\label{sec:contextual_bandits}
+
+A \emph{multi-armed bandit} scenario omits state transitions, focusing instead on learning which of several actions (arms) maximises expected reward. Let $\hat{\mu}_a$ be the estimated mean reward of arm $a$, and $u_a$ be an uncertainty term. A typical approach is Upper Confidence Bound (UCB), which selects
+\begin{equation}
+a_t
+\;=\;
+\arg\max_{a}\Bigl[\hat{\mu}_a + u_a\Bigr],
+\end{equation}
+then updates $\hat{\mu}_a$ and $u_a$ using the reward observed after pulling arm $a$.
+
+\emph{Contextual bandits} generalise this problem by providing a context vector $\mathbf{x}\in\mathbb{R}^d$ prior to choosing an action. The \emph{LinUCB} algorithm assumes a linear payoff model, so each action $a$ has parameters $\boldsymbol{\theta}_a$, and the reward is approximately $\boldsymbol{\theta}_a^\top \mathbf{x}$. For each action $a$, the algorithm maintains a matrix $\mathbf{A}_a$ and vector $\mathbf{b}_a$, initialised as $\mathbf{A}_a = \lambda \mathbf{I}$ and $\mathbf{b}_a = \mathbf{0}$, where the regularisation parameter $\lambda$ ensures that $\mathbf{A}_a$ is invertible from the start and provides numerical stability. The algorithm selects $a$ via:
+\begin{equation}
+a_t
+\;=\;
+\arg\max_{a}\Bigl[\hat{\boldsymbol{\theta}}_{a}^\top \mathbf{x}
+\;+\;
+c\sqrt{\mathbf{x}^\top \mathbf{A}_a^{-1}\mathbf{x}}\Bigr],
+\quad
+\text{where}
+\quad
+\hat{\boldsymbol{\theta}}_{a} \;=\; \mathbf{A}_a^{-1}\mathbf{b}_a,
+\end{equation}
+and $c>0$ controls exploration. After observing the reward, $\mathbf{A}_a$ and $\mathbf{b}_a$ are updated, refining the estimate of $\boldsymbol{\theta}_a$.
+
+As an alternative to the optimism-based exploration of LinUCB, \emph{Contextual Thompson Sampling} (CTS) uses posterior sampling from a Bayesian linear model to balance exploration and exploitation. Each action $a$ maintains a Bayesian linear regression model with posterior $\boldsymbol{\theta}_a \mid \text{data} \sim \mathcal{N}(\hat{\boldsymbol{\theta}}_a,\, \sigma^2 \mathbf{A}_a^{-1})$, where $\hat{\boldsymbol{\theta}}_a = \mathbf{A}_a^{-1}\mathbf{b}_a$ and $\sigma^2$ is a noise variance parameter. At each step, the algorithm draws a sample $\tilde{\boldsymbol{\theta}}_a$ from the posterior for every action and selects greedily with respect to the samples:
+\begin{equation}
+a_t \;=\; \arg\max_{a}\; \tilde{\boldsymbol{\theta}}_a^\top \mathbf{x}, \quad \tilde{\boldsymbol{\theta}}_a \sim \mathcal{N}\!\bigl(\hat{\boldsymbol{\theta}}_a,\, \sigma^2 \mathbf{A}_a^{-1}\bigr).
+\end{equation}
+The parameter $\sigma^2$ plays an analogous role to $c$ in LinUCB. Larger $\sigma^2$ produces wider posterior draws, encouraging more exploration; smaller $\sigma^2$ concentrates the posterior, promoting exploitation. The two methods are compared in Experiments~2a and~2b.
+
+In standard implementations, the precision matrices $\mathbf{A}_a$ accumulate all past observations with equal weight, progressively reducing uncertainty and concentrating the policy around the estimated optimum. Experiment~2a introduces an optional \emph{memory decay} parameter $\delta \in (0,1]$ that applies exponential discounting to historical observations, preventing the algorithm from over-weighting early experiences.\footnote{At each update, $\mathbf{A}_a \leftarrow \delta\,\mathbf{A}_a + \mathbf{x}\mathbf{x}^\top$ and $\mathbf{b}_a \leftarrow \delta\,\mathbf{b}_a + r\,\mathbf{x}$. Setting $\delta = 1$ recovers the standard algorithm; $\delta < 1$ produces an effective observation window of approximately $1/(1-\delta)$ rounds.} This mechanism tests whether the rigidity of full-memory bandit learners contributes to bid suppression, following \citet{Douglas2024}, who show that deterministic convergence is a key driver of naive algorithmic collusion. The discounted variant draws on \citet{Russac2019}, who analyse weighted linear bandits in non-stationary environments.
+
+\subsection{Budget-Constrained Pacing}
+\label{sec:pacing}
+
+Experiments~3a and~3b replace the unconstrained bidding of prior experiments with \emph{budget-constrained pacing agents}. Each agent~$i$ has a total budget $B^i$ over a horizon of $T$ rounds. At each round~$t$, the agent observes its private valuation $v_t^i$ and computes a bid using a Lagrangian dual variable $\mu_t^i$ that controls bid shading. Following the dual decomposition framework of \citet{Balseiro2019Learning}, the bid depends on the agent's objective:
+\begin{align}
+b_t^i &\;=\; \min\!\bigl(v_t^i / \mu_t^i,\; B^i - S_t^i\bigr) & &\text{(value-maximizer),} \label{eq:bid_vmax_algo}\\
+b_t^i &\;=\; \min\!\bigl(v_t^i / (1 + \mu_t^i),\; B^i - S_t^i\bigr) & &\text{(utility-maximizer),} \label{eq:bid_umax_algo}
+\end{align}
+where $S_t^i$ is the cumulative spend at round~$t$. The hard budget cap ensures spending never exceeds the remaining budget.
+
+Following \citet{Balseiro2019Learning}, the dual variable is updated via an exponential multiplicative rule:
+\begin{equation}
+\mu_{t+1}^i \;=\; \operatorname{clip}\!\bigl(\mu_t^i \cdot \exp\!\bigl(\alpha_p\,(c_t^i - B^i/T)\bigr),\; \mu_{\min},\; \mu_{\max}\bigr),
+\label{eq:dual_update}
+\end{equation}
+where $\alpha_p = 1/\!\sqrt{T}$ is the dual step size and $c_t^i$ is the payment made by agent~$i$ in round~$t$.\footnote{The dual variable is clipped to $[\mu_{\min}, \mu_{\max}] = [10^{-4}, 100]$ for numerical stability.} When the per-round cost exceeds the target spend rate $B^i/T$, the dual variable rises, reducing bids; underspending reverses this adjustment.
+
+As an alternative to the multiplicative dual update, Experiment~3b implements a proportional--integral (PI) controller that operates directly on the cumulative spending error:
+\begin{align}
+e_t^i &\;=\; \tfrac{t}{T}\,B^i \;-\; {\textstyle\sum_{\tau \le t}} c_\tau^i, \label{eq:pid_error}\\
+\lambda_{t+1}^i &\;=\; \operatorname{clip}\!\bigl(\lambda_t^i + K_P\,e_t^i + K_I\!\textstyle\sum_{\tau} e_\tau^i,\; 0.01,\; 1.5\bigr), \label{eq:pid_update}
+\end{align}
+where $K_P = 0.30\times\text{aggressiveness}$ and $K_I = 0.05\times\text{aggressiveness}$. A positive error (underspending) raises $\lambda$, encouraging higher bids; overspending drives $\lambda$ down. The derivative term is omitted ($K_D = 0$) following the literature consensus that it is counterproductive in stochastic auction environments.
+
+Both algorithms implement the same closed-loop pacing structure illustrated in Figure~\ref{fig:pacing_loop}. The multiplier governs bids, the auction determines payments, and the control law updates the multiplier in response. They differ only in how the error signal is defined and propagated.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.8cm and 2.5cm,
+  block/.style={rectangle, draw, rounded corners, minimum width=2.6cm,
+                minimum height=0.9cm, text centered, font=\small},
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+]
+  % Nodes
+  \node[block] (mult)   {Dual $\mu_t$};
+  \node[block, right=of mult] (bid)    {Bid $b_t = \min(v_t/\mu_t,\,\text{rem})$};
+  \node[block, right=of bid]  (auction){Auction};
+  \node[block, below=1.2cm of auction] (cost)  {Cost $c_t$};
+  \node[block, below=1.2cm of mult]  (ctrl)  {Control law};
+
+  % Forward path
+  \draw[arrow] (mult)    -- (bid);
+  \draw[arrow] (bid)     -- (auction);
+  \draw[arrow] (auction) -- (cost);
+  \draw[arrow] (cost)    -- (ctrl);
+  \draw[arrow] (ctrl)    -- node[left,font=\scriptsize]{$\mu_{t+1}$} (mult);
+
+  % Labels on control arrow
+  \node[font=\scriptsize, align=center, right=0.15cm of ctrl]
+    {Mult: exp.\ update};
+\end{tikzpicture}
+\caption{Pacing feedback loop shared by both algorithms. The dual variable scales bids; auction outcomes feed back through the control law to update $\mu$.}
+\label{fig:pacing_loop}
+\end{figure}
+
+The budget per episode is $B^i = m \cdot \mathbb{E}[v_t^i] \cdot T$, where $\mathbb{E}[v_t^i] = \exp(\mu_i + \sigma^2/2)$ under the log-normal valuation model. Note that $\eta$ throughout this paper denotes the affiliation parameter (Experiments~1b--2b); the dual step size above uses $\alpha_p$ to avoid notation collision.
+
+\label{sec:appendix_algorithms}
+
+In summary, Experiments~1a and~1b employ Q-learning under varying valuation models; Experiments~2a and~2b replace Q-learning with contextual bandits (LinUCB and Thompson Sampling, respectively); and Experiments~3a and~3b shift to budget-constrained pacing agents (multiplicative dual pacing and PI control, respectively). Figure~\ref{fig:algo_taxonomy} summarises the three decision loops.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  block/.style={rectangle, draw, rounded corners, minimum width=3.4cm,
+                minimum height=0.8cm, text centered, font=\small},
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+  title/.style={font=\small\bfseries, text centered},
+]
+  % Column positions
+  \def\colA{0}
+  \def\colB{5.0}
+  \def\colC{10.0}
+  \def\rowA{0}
+  \def\rowB{-1.3}
+  \def\rowC{-2.6}
+  \def\rowD{-3.9}
+
+  % Column titles
+  \node[title] at (\colA, 1.0) {Q-Learning};
+  \node[title] at (\colB, 1.0) {Contextual Bandits};
+  \node[title] at (\colC, 1.0) {Budget Pacing};
+
+  % Q-Learning column
+  \node[block] (q1) at (\colA, \rowA) {Observe state $s_t$};
+  \node[block] (q2) at (\colA, \rowB) {$\varepsilon$-greedy select};
+  \node[block] (q3) at (\colA, \rowC) {Submit bid $b_t$};
+  \node[block] (q4) at (\colA, \rowD) {Update $Q(s,a)$};
+
+  % Contextual Bandits column
+  \node[block] (b1) at (\colB, \rowA) {Observe context $\mathbf{x}_t$};
+  \node[block] (b2) at (\colB, \rowB) {UCB / Thompson};
+  \node[block] (b3) at (\colB, \rowC) {Submit bid $b_t$};
+  \node[block] (b4) at (\colB, \rowD) {Update $\boldsymbol{\theta}$};
+
+  % Budget Pacing column
+  \node[block] (p1) at (\colC, \rowA) {Observe $v_t$, budget};
+  \node[block] (p2) at (\colC, \rowB) {Shade bid $v_t/\mu_t$};
+  \node[block] (p3) at (\colC, \rowC) {Submit bid $b_t$};
+  \node[block] (p4) at (\colC, \rowD) {Update dual $\mu_t$};
+
+  % Vertical arrows within columns
+  \foreach \col in {q, b, p} {
+    \draw[arrow] (\col 1) -- (\col 2);
+    \draw[arrow] (\col 2) -- (\col 3);
+    \draw[arrow] (\col 3) -- (\col 4);
+  }
+
+  % Loopback arrows
+  \draw[arrow, rounded corners=8pt] (q4.west) -- ++(-1.2, 0) |- (q1.west);
+  \draw[arrow, rounded corners=8pt] (b4.west) -- ++(-1.2, 0) |- (b1.west);
+  \draw[arrow, rounded corners=8pt] (p4.east) -- ++(1.2, 0) |- (p1.east);
+
+  % Background panels
+  \begin{pgfonlayer}{background}
+    \node[fill=RoyalBlue!8, rounded corners=6pt, fit=(q1)(q4),
+          inner xsep=10pt, inner ysep=10pt] {};
+    \node[fill=ForestGreen!8, rounded corners=6pt, fit=(b1)(b4),
+          inner xsep=10pt, inner ysep=10pt] {};
+    \node[fill=RedOrange!8, rounded corners=6pt, fit=(p1)(p4),
+          inner xsep=10pt, inner ysep=10pt] {};
+  \end{pgfonlayer}
+\end{tikzpicture}
+\caption{Decision loops for the three algorithm families. Each column shows the per-round cycle of observation, action selection, bid submission, and parameter update. Loopback arrows indicate that the cycle repeats each round.}
+\label{fig:algo_taxonomy}
+\end{figure}

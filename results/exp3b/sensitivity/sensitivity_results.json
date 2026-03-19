@@ -1,0 +1,2715 @@
+{
+  "analytical_sobol": {
+    "avg_rev_last_1000": {
+      "s1": {
+        "eta": 0.047661276722578035,
+        "auction_type": 0.034153659604732,
+        "n_bidders": 0.17593549962065788,
+        "reserve_price": 0.14722866580904784,
+        "exploration_intensity": 0.02664233914115355,
+        "context_richness": 0.01950726049447457
+      },
+      "s2": {
+        "auction_type:n_bidders": 0.03851488974983625,
+        "auction_type:reserve_price": 0.0019427515062795963,
+        "auction_type:eta": 0.00020894479679520167,
+        "auction_type:exploration_intensity": 9.473644568880574e-05,
+        "auction_type:context_richness": 4.39076325831571e-05,
+        "n_bidders:reserve_price": 0.019319245396701913,
+        "eta:n_bidders": 0.017523814132060223,
+        "exploration_intensity:n_bidders": 0.002815831698116782,
+        "context_richness:n_bidders": 0.05168283060184372,
+        "eta:reserve_price": 0.006498571148190041,
+        "exploration_intensity:reserve_price": 0.008866707252031317,
+        "context_richness:reserve_price": 0.002521611543423052,
+        "eta:exploration_intensity": 0.004178352381246759,
+        "context_richness:eta": 0.004906663027933864,
+        "context_richness:exploration_intensity": 0.007611028137762761
+      },
+      "st": {
+        "eta": 0.08097762220880411,
+        "auction_type": 0.07495888973591502,
+        "n_bidders": 0.30579211119921673,
+        "reserve_price": 0.18637755265567377,
+        "exploration_intensity": 0.050208995055999975,
+        "context_richness": 0.08627330143802113
+      },
+      "residual_fraction": 0.38214141315686256,
+      "ss_total": 3.0026112620312526,
+      "r_squared": 0.6086477539301751,
+      "validation_sum": 1.0,
+      "valid": true
+    },
+    "time_to_converge": {
+      "s1": {
+        "eta": 0.004984115761861628,
+        "auction_type": 0.009992317069661893,
+        "n_bidders": 0.029572924024971074,
+        "reserve_price": 0.02442839493899438,
+        "exploration_intensity": 0.02509489626608771,
+        "context_richness": 0.001940478695516135
+      },
+      "s2": {
+        "auction_type:n_bidders": 0.06741602615896605,
+        "auction_type:reserve_price": 0.029572924024971012,
+        "auction_type:eta": 0.0023801183999689344,
+        "auction_type:exploration_intensity": 0.004766695493820842,
+        "auction_type:context_richness": 0.0002456097757175932,
+        "n_bidders:reserve_price": 0.04168082215764367,
+        "eta:n_bidders": 0.0047074010958116225,
+        "exploration_intensity:n_bidders": 0.011666015826177172,
+        "context_richness:n_bidders": 0.0012359428377783051,
+        "eta:reserve_price": 0.0027710487880541214,
+        "exploration_intensity:reserve_price": 0.012694204010718838,
+        "context_richness:reserve_price": 0.01103431968278657,
+        "eta:exploration_intensity": 0.005794614566117386,
+        "context_richness:eta": 0.00250660115517776,
+        "context_richness:exploration_intensity": 0.047953828591512086
+      },
+      "st": {
+        "eta": 0.023143899766991455,
+        "auction_type": 0.11437369092310633,
+        "n_bidders": 0.15627913210134792,
+        "reserve_price": 0.12218171360316858,
+        "exploration_intensity": 0.10797025475443403,
+        "context_richness": 0.06491678073848844
+      },
+      "residual_fraction": 0.6575607006776852,
+      "ss_total": 116122549479.16663,
+      "r_squared": 0.34085521645855854,
+      "validation_sum": 1.0,
+      "valid": true
+    },
+    "no_sale_rate": {
+      "s1": {
+        "eta": 0.007358806050310311,
+        "auction_type": 0.0005861327616108803,
+        "n_bidders": 0.19296413139129462,
+        "reserve_price": 0.15493164540136767,
+        "exploration_intensity": 6.080495320844002e-05,
+        "context_richness": 0.11204178512605935
+      },
+      "s2": {
+        "auction_type:n_bidders": 0.00027539257378165853,
+        "auction_type:reserve_price": 0.003774404820787286,
+        "auction_type:eta": 2.043715086298193e-05,
+        "auction_type:exploration_intensity": 0.00014271105046372693,
+        "auction_type:context_richness": 0.004646195586767281,
+        "n_bidders:reserve_price": 0.12629436333941788,
+        "eta:n_bidders": 0.0015039191721581227,
+        "exploration_intensity:n_bidders": 0.00030996751440603873,
+        "context_richness:n_bidders": 0.09069348455346671,
+        "eta:reserve_price": 0.0028524185765719198,
+        "exploration_intensity:reserve_price": 0.0037603025235051356,
+        "context_richness:reserve_price": 0.11484827793347548,
+        "eta:exploration_intensity": 0.0026266505904280926,
+        "context_richness:eta": 0.004817776930847057,
+        "context_richness:exploration_intensity": 0.0002335633379738789
+      },
+      "st": {
+        "eta": 0.019180008471178484,
+        "auction_type": 0.009445273944273816,
+        "n_bidders": 0.41204125854452506,
+        "reserve_price": 0.4064614125951253,
+        "exploration_intensity": 0.007133999969985313,
+        "context_richness": 0.32728108346858975
+      },
+      "residual_fraction": 0.1752568286612356,
+      "ss_total": 0.31966866176510417,
+      "r_squared": 0.8241167742540364,
+      "validation_sum": 1.0,
+      "valid": true
+    },
+    "price_volatility": {
+      "s1": {
+        "eta": 0.003913260602159289,
+        "auction_type": 0.04575800074635384,
+        "n_bidders": 0.09319776300104858,
+        "reserve_price": 0.03341865088563532,
+        "exploration_intensity": 0.04213319693271763,
+        "context_richness": 0.00029904342744387286
+      },
+      "s2": {
+        "auction_type:n_bidders": 0.11023518057786526,
+        "auction_type:reserve_price": 0.005753472158405576,
+        "auction_type:eta": 0.0014628108469398014,
+        "auction_type:exploration_intensity": 0.00766598926488739,
+        "auction_type:context_richness": 0.017581892917247658,
+        "n_bidders:reserve_price": 0.09685298739676929,
+        "eta:n_bidders": 0.0005780943117729657,
+        "exploration_intensity:n_bidders": 0.00030132337037195255,
+        "context_richness:n_bidders": 0.07258331793040547,
+        "eta:reserve_price": 0.004385806818244812,
+        "exploration_intensity:reserve_price": 0.0031255389812867595,
+        "context_richness:reserve_price": 0.015325897220135047,
+        "eta:exploration_intensity": 0.0017302413425066437,
+        "context_richness:eta": 0.015193045921380979,
+        "context_richness:exploration_intensity": 0.010107368010837173
+      },
+      "st": {
+        "eta": 0.02726325984300449,
+        "auction_type": 0.18845734651169954,
+        "n_bidders": 0.3737486665882335,
+        "reserve_price": 0.1588623534604768,
+        "exploration_intensity": 0.06506365790260754,
+        "context_richness": 0.1310905654274502
+      },
+      "residual_fraction": 0.4183971173355846,
+      "ss_total": 0.643098325157651,
+      "r_squared": 0.5809276580042309,
+      "validation_sum": 0.9999999999999999,
+      "valid": true
+    },
+    "winner_entropy": {
+      "s1": {
+        "eta": 0.004816590718538009,
+        "auction_type": 0.0002605345391312305,
+        "n_bidders": 0.2919205811293259,
+        "reserve_price": 0.1971944493949391,
+        "exploration_intensity": 0.015731306406420925,
+        "context_richness": 0.004513081393857609
+      },
+      "s2": {
+        "auction_type:n_bidders": 0.0004121964424827825,
+        "auction_type:reserve_price": 7.929022939819282e-05,
+        "auction_type:eta": 0.0011851833760632442,
+        "auction_type:exploration_intensity": 5.364742236508275e-05,
+        "auction_type:context_richness": 0.0003022135827119603,
+        "n_bidders:reserve_price": 4.57590615804967e-05,
+        "eta:n_bidders": 0.0030555215180112093,
+        "exploration_intensity:n_bidders": 0.027907502049459087,
+        "context_richness:n_bidders": 0.00042729338561596063,
+        "eta:reserve_price": 0.0036115553672132596,
+        "exploration_intensity:reserve_price": 0.03327618526699018,
+        "context_richness:reserve_price": 0.0013646786722073623,
+        "eta:exploration_intensity": 0.002533617156426412,
+        "context_richness:eta": 4.340517034455482e-05,
+        "context_richness:exploration_intensity": 0.04378427191835091
+      },
+      "st": {
+        "eta": 0.015245873306596689,
+        "auction_type": 0.002293065592152493,
+        "n_bidders": 0.32376885358647545,
+        "reserve_price": 0.23557191799232857,
+        "exploration_intensity": 0.1232865302200126,
+        "context_richness": 0.050434944123088354
+      },
+      "residual_fraction": 0.36748113579856656,
+      "ss_total": 24.343190005644928,
+      "r_squared": 0.6316416158531235,
+      "validation_sum": 1.0,
+      "valid": true
+    }
+  },
+  "rf_importance": {
+    "avg_rev_last_1000": {
+      "r2": 0.8543466436721413,
+      "importance": {
+        "eta": 0.057811634654522465,
+        "auction_type": 0.0721153268820969,
+        "n_bidders": 0.31182988636715914,
+        "reserve_price": 0.22386629728649562,
+        "exploration_intensity": 0.16366339069518468,
+        "context_richness": 0.17071346411454122
+      },
+      "importance_raw": {
+        "eta": 0.17597352289677354,
+        "auction_type": 0.21951270193502906,
+        "n_bidders": 0.9491827030398097,
+        "reserve_price": 0.6814292871457374,
+        "exploration_intensity": 0.49817694313560956,
+        "context_richness": 0.519636745538689
+      },
+      "importance_std": {
+        "eta": 0.034274828172974024,
+        "auction_type": 0.041368398996295054,
+        "n_bidders": 0.13071520713880097,
+        "reserve_price": 0.059740097631243876,
+        "exploration_intensity": 0.05936615055320972,
+        "context_richness": 0.05348027943387136
+      }
+    },
+    "time_to_converge": {
+      "r2": 0.7593675638014099,
+      "importance": {
+        "eta": 0.054635078561175186,
+        "auction_type": 0.18797422256669175,
+        "n_bidders": 0.2029924310396642,
+        "reserve_price": 0.19087807629435816,
+        "exploration_intensity": 0.20706588449129712,
+        "context_richness": 0.1564543070468136
+      },
+      "importance_raw": {
+        "eta": 0.19868866145538783,
+        "auction_type": 0.6835964668390473,
+        "n_bidders": 0.7382124355085481,
+        "reserve_price": 0.6941567666575283,
+        "exploration_intensity": 0.7530261602275405,
+        "context_richness": 0.5689695643295328
+      },
+      "importance_std": {
+        "eta": 0.0544777090837822,
+        "auction_type": 0.09615993024225195,
+        "n_bidders": 0.10235509678153633,
+        "reserve_price": 0.13305385502077294,
+        "exploration_intensity": 0.06810387224220486,
+        "context_richness": 0.08824720831863919
+      }
+    },
+    "no_sale_rate": {
+      "r2": 0.9641323836031928,
+      "importance": {
+        "eta": 0.021247275351735154,
+        "auction_type": 0.020151665760901976,
+        "n_bidders": 0.3332261059127241,
+        "reserve_price": 0.3155277648102467,
+        "exploration_intensity": 0.013942797217763885,
+        "context_richness": 0.29590439094662807
+      },
+      "importance_raw": {
+        "eta": 0.06678415638591384,
+        "auction_type": 0.0633404507323259,
+        "n_bidders": 1.0473919126447933,
+        "reserve_price": 0.9917627197062938,
+        "exploration_intensity": 0.043824816802789955,
+        "context_richness": 0.930082789116034
+      },
+      "importance_std": {
+        "eta": 0.014871530261405285,
+        "auction_type": 0.02011236745801965,
+        "n_bidders": 0.155889704286394,
+        "reserve_price": 0.17375682430526798,
+        "exploration_intensity": 0.010095171696127194,
+        "context_richness": 0.12804391552346228
+      }
+    },
+    "price_volatility": {
+      "r2": 0.8133945008156881,
+      "importance": {
+        "eta": 0.03404236751378621,
+        "auction_type": 0.2075664043949303,
+        "n_bidders": 0.32425834345727583,
+        "reserve_price": 0.16499076738923393,
+        "exploration_intensity": 0.1155801578300126,
+        "context_richness": 0.15356195941476106
+      },
+      "importance_raw": {
+        "eta": 0.11159053068203617,
+        "auction_type": 0.6804005393811771,
+        "n_bidders": 1.0629155157854924,
+        "reserve_price": 0.5408380390448724,
+        "exploration_intensity": 0.3788705689562107,
+        "context_richness": 0.5033745240170755
+      },
+      "importance_std": {
+        "eta": 0.026826565436688113,
+        "auction_type": 0.07351578131482786,
+        "n_bidders": 0.09071144011216231,
+        "reserve_price": 0.04974854897833057,
+        "exploration_intensity": 0.03383741849416645,
+        "context_richness": 0.052922296194736214
+      }
+    },
+    "winner_entropy": {
+      "r2": 0.8538398215793526,
+      "importance": {
+        "eta": 0.023654253065342634,
+        "auction_type": 0.01318234762688005,
+        "n_bidders": 0.3249487346642799,
+        "reserve_price": 0.26965454493300983,
+        "exploration_intensity": 0.2268894114267788,
+        "context_richness": 0.14167070828370876
+      },
+      "importance_raw": {
+        "eta": 0.06443889346590426,
+        "auction_type": 0.035911338735258216,
+        "n_bidders": 0.8852250306559665,
+        "reserve_price": 0.7345926521346877,
+        "exploration_intensity": 0.6180919165396669,
+        "context_richness": 0.385939207343171
+      },
+      "importance_std": {
+        "eta": 0.019024068452521456,
+        "auction_type": 0.01137713934241774,
+        "n_bidders": 0.12292736154023401,
+        "reserve_price": 0.0969130847150831,
+        "exploration_intensity": 0.051394718883815,
+        "context_richness": 0.05318174184215133
+      }
+    }
+  },
+  "shap": {
+    "avg_rev_last_1000": {
+      "importance": {
+        "eta": 0.10821525090434457,
+        "auction_type": 0.11907918683026963,
+        "n_bidders": 0.2722559615710131,
+        "reserve_price": 0.24589609850825278,
+        "exploration_intensity": 0.11995913269403458,
+        "context_richness": 0.13459436949208528
+      },
+      "importance_raw": {
+        "eta": 0.021110372715378266,
+        "auction_type": 0.02322968339142142,
+        "n_bidders": 0.053111042803275006,
+        "reserve_price": 0.04796882366751674,
+        "exploration_intensity": 0.023401341129108074,
+        "context_richness": 0.026256348172965197
+      }
+    },
+    "time_to_converge": {
+      "importance": {
+        "eta": 0.1051657487300292,
+        "auction_type": 0.1746406371895786,
+        "n_bidders": 0.22268177316465115,
+        "reserve_price": 0.1761315334456695,
+        "exploration_intensity": 0.1892056081523951,
+        "context_richness": 0.13217469931767634
+      },
+      "importance_raw": {
+        "eta": 2859.8843837274962,
+        "auction_type": 4749.18913328747,
+        "n_bidders": 6055.62298851859,
+        "reserve_price": 4789.7326654929775,
+        "exploration_intensity": 5145.2699248856325,
+        "context_richness": 3594.3675870446586
+      }
+    },
+    "no_sale_rate": {
+      "importance": {
+        "eta": 0.05110696303555159,
+        "auction_type": 0.03257164663744798,
+        "n_bidders": 0.3333778935278205,
+        "reserve_price": 0.29869531139687755,
+        "exploration_intensity": 0.03024443481427935,
+        "context_richness": 0.2540037505880231
+      },
+      "importance_raw": {
+        "eta": 0.002748910134687684,
+        "auction_type": 0.0017519438492727966,
+        "n_bidders": 0.017931526660309734,
+        "reserve_price": 0.01606604110111957,
+        "exploration_intensity": 0.0016267692001389184,
+        "context_richness": 0.013662198705769048
+      }
+    },
+    "price_volatility": {
+      "importance": {
+        "eta": 0.07001710177683812,
+        "auction_type": 0.1839264707687883,
+        "n_bidders": 0.2849266764111381,
+        "reserve_price": 0.17266667128157814,
+        "exploration_intensity": 0.15600382250243178,
+        "context_richness": 0.1324592572592255
+      },
+      "importance_raw": {
+        "eta": 0.005404961459042626,
+        "auction_type": 0.014198181023995018,
+        "n_bidders": 0.021994879330534556,
+        "reserve_price": 0.013328982203699788,
+        "exploration_intensity": 0.012042695665645246,
+        "context_richness": 0.010225175881478149
+      }
+    },
+    "winner_entropy": {
+      "importance": {
+        "eta": 0.06450499918367794,
+        "auction_type": 0.02597692833695814,
+        "n_bidders": 0.3699750582426017,
+        "reserve_price": 0.30402206002245136,
+        "exploration_intensity": 0.14123646910962384,
+        "context_richness": 0.09428448510468697
+      },
+      "importance_raw": {
+        "eta": 0.03352752887378748,
+        "auction_type": 0.013501933584863166,
+        "n_bidders": 0.1923005907261336,
+        "reserve_price": 0.1580204406583468,
+        "exploration_intensity": 0.07340996598761153,
+        "context_richness": 0.04900590398732158
+      }
+    }
+  },
+  "morris": {
+    "avg_rev_last_1000": {
+      "LGBM": {
+        "mu_star": {
+          "eta": 0.3122060836099335,
+          "auction_type": 0.14205095078519678,
+          "n_bidders": 0.09598914072010695,
+          "reserve_price": 0.0234929409311175,
+          "exploration_intensity": 0.1272470590166936,
+          "context_richness": 0.151133353531939
+        },
+        "sigma": {
+          "eta": 0.30680600779177175,
+          "auction_type": 0.13564417906697798,
+          "n_bidders": 0.08801634616056171,
+          "reserve_price": 0.0347724413426984,
+          "exploration_intensity": 0.1581779123330495,
+          "context_richness": 0.16907629084773662
+        },
+        "r2_cv": 0.5749855605891578
+      },
+      "NN": {
+        "mu_star": {
+          "eta": 0.24727093586168875,
+          "auction_type": 0.11446313639246516,
+          "n_bidders": 0.1701857858954802,
+          "reserve_price": 0.12469278308280131,
+          "exploration_intensity": 0.15724109659165467,
+          "context_richness": 0.11067876095499585
+        },
+        "sigma": {
+          "eta": 0.2668168383144369,
+          "auction_type": 0.12658686432890154,
+          "n_bidders": 0.20568299605267745,
+          "reserve_price": 0.1467579547962372,
+          "exploration_intensity": 0.15159952363567197,
+          "context_richness": 0.1331437314639896
+        },
+        "r2_cv": -1.1023959226293985
+      },
+      "Kriging": {
+        "mu_star": {
+          "eta": 0.0015975555425267519,
+          "auction_type": 0.0008896712431784177,
+          "n_bidders": 0.0011080327551660626,
+          "reserve_price": 0.0010384834339280718,
+          "exploration_intensity": 0.00046551772162909,
+          "context_richness": 0.0006311047691865222
+        },
+        "sigma": {
+          "eta": 0.02794995336431543,
+          "auction_type": 0.015295310666022594,
+          "n_bidders": 0.01702453145869859,
+          "reserve_price": 0.01783947370975144,
+          "exploration_intensity": 0.008486055321872927,
+          "context_richness": 0.013320306541544022
+        },
+        "r2_cv": 0.5163999083576651
+      }
+    },
+    "time_to_converge": {
+      "LGBM": {
+        "mu_star": {
+          "eta": 64926.281611652186,
+          "auction_type": 30634.143789915775,
+          "n_bidders": 16914.94631953353,
+          "reserve_price": 7693.261751212448,
+          "exploration_intensity": 31822.551483773674,
+          "context_richness": 25687.16166844572
+        },
+        "sigma": {
+          "eta": 87852.48456609255,
+          "auction_type": 44957.93703589482,
+          "n_bidders": 23505.7540554795,
+          "reserve_price": 10285.583967839671,
+          "exploration_intensity": 43212.03761945172,
+          "context_richness": 37063.74256457599
+        },
+        "r2_cv": 0.28042619330011576
+      },
+      "NN": {
+        "mu_star": {
+          "eta": 0.30389894720263394,
+          "auction_type": 0.15461107220593262,
+          "n_bidders": 0.19997571070442924,
+          "reserve_price": 0.17058449758182734,
+          "exploration_intensity": 0.1746785214351425,
+          "context_richness": 0.12744497341950586
+        },
+        "sigma": {
+          "eta": 0.3157986793488695,
+          "auction_type": 0.16370833026017345,
+          "n_bidders": 0.21920034548972153,
+          "reserve_price": 0.1534313066439571,
+          "exploration_intensity": 0.18699916099870417,
+          "context_richness": 0.15304272328333315
+        },
+        "r2_cv": -0.7544559939703491
+      },
+      "Kriging": {
+        "mu_star": {
+          "eta": 272.9344755739264,
+          "auction_type": 55.58158937218039,
+          "n_bidders": 168.7915246933516,
+          "reserve_price": 151.4232287860452,
+          "exploration_intensity": 265.7617188627693,
+          "context_richness": 185.6256730838377
+        },
+        "sigma": {
+          "eta": 4953.026082968338,
+          "auction_type": 1121.710723831727,
+          "n_bidders": 2867.202305379251,
+          "reserve_price": 2178.820172862747,
+          "exploration_intensity": 3435.9439467069974,
+          "context_richness": 3918.92456182431
+        },
+        "r2_cv": 0.1628014554018295
+      }
+    },
+    "no_sale_rate": {
+      "LGBM": {
+        "mu_star": {
+          "eta": 0.06387371238485766,
+          "auction_type": 0.04955620014056051,
+          "n_bidders": 0.013444905188821032,
+          "reserve_price": 0.0032068986237961472,
+          "exploration_intensity": 0.01408152931735213,
+          "context_richness": 0.03833961142179638
+        },
+        "sigma": {
+          "eta": 0.09114873696499728,
+          "auction_type": 0.07258620568006735,
+          "n_bidders": 0.0248811721279105,
+          "reserve_price": 0.0047561343303582655,
+          "exploration_intensity": 0.022639851662034784,
+          "context_richness": 0.06635482272804528
+        },
+        "r2_cv": 0.8678209653310841
+      },
+      "NN": {
+        "mu_star": {
+          "eta": 0.15035756743152923,
+          "auction_type": 0.09733437551897164,
+          "n_bidders": 0.14214866386816818,
+          "reserve_price": 0.10866548808658748,
+          "exploration_intensity": 0.08425394582146474,
+          "context_richness": 0.0782682632235119
+        },
+        "sigma": {
+          "eta": 0.18952974005182566,
+          "auction_type": 0.10547082281158073,
+          "n_bidders": 0.15193808670016695,
+          "reserve_price": 0.12775253916014473,
+          "exploration_intensity": 0.10853949630976803,
+          "context_richness": 0.09309860525022873
+        },
+        "r2_cv": -0.6988094172502453
+      },
+      "Kriging": {
+        "mu_star": {
+          "eta": 0.0005847496986505298,
+          "auction_type": 0.00012967587740527798,
+          "n_bidders": 0.00011450923488364549,
+          "reserve_price": 0.00020375577437884608,
+          "exploration_intensity": 0.0002852470672220524,
+          "context_richness": 0.00016576591552513838
+        },
+        "sigma": {
+          "eta": 0.009147487543063982,
+          "auction_type": 0.0018562400126869328,
+          "n_bidders": 0.0017319387007254355,
+          "reserve_price": 0.004639507766971277,
+          "exploration_intensity": 0.004229383736836283,
+          "context_richness": 0.0020990402007789013
+        },
+        "r2_cv": 0.8527421522546419
+      }
+    },
+    "price_volatility": {
+      "LGBM": {
+        "mu_star": {
+          "eta": 0.18396575893920064,
+          "auction_type": 0.07974971008034674,
+          "n_bidders": 0.027847596222758425,
+          "reserve_price": 0.012429861055048607,
+          "exploration_intensity": 0.056902453982108636,
+          "context_richness": 0.06480078187968079
+        },
+        "sigma": {
+          "eta": 0.20733796079565853,
+          "auction_type": 0.08705386672807158,
+          "n_bidders": 0.037238324720316025,
+          "reserve_price": 0.018621691413304234,
+          "exploration_intensity": 0.06240690884222174,
+          "context_richness": 0.0814274705912866
+        },
+        "r2_cv": 0.4147649471462981
+      },
+      "NN": {
+        "mu_star": {
+          "eta": 0.17192098543683837,
+          "auction_type": 0.09279105424047625,
+          "n_bidders": 0.14205738004488722,
+          "reserve_price": 0.10221634275290233,
+          "exploration_intensity": 0.08813102624099112,
+          "context_richness": 0.0739104304472534
+        },
+        "sigma": {
+          "eta": 0.21346017735636172,
+          "auction_type": 0.10142879184215532,
+          "n_bidders": 0.15353362420939023,
+          "reserve_price": 0.12257954655109708,
+          "exploration_intensity": 0.11294055495717728,
+          "context_richness": 0.09352775256962392
+        },
+        "r2_cv": -0.3726428810426038
+      },
+      "Kriging": {
+        "mu_star": {
+          "eta": 0.0012891537775443036,
+          "auction_type": 0.00027759342653255116,
+          "n_bidders": 0.00033635101864095394,
+          "reserve_price": 0.0010195163080478538,
+          "exploration_intensity": 0.0006618730627009981,
+          "context_richness": 0.00023890288994379716
+        },
+        "sigma": {
+          "eta": 0.01499014749475242,
+          "auction_type": 0.004877680165301268,
+          "n_bidders": 0.004976645055549947,
+          "reserve_price": 0.010730316567790981,
+          "exploration_intensity": 0.00981229468449179,
+          "context_richness": 0.004477393584302528
+        },
+        "r2_cv": 0.281852770246667
+      }
+    },
+    "winner_entropy": {
+      "LGBM": {
+        "mu_star": {
+          "eta": 0.7397035078888072,
+          "auction_type": 0.47928344458068645,
+          "n_bidders": 0.12834574204314358,
+          "reserve_price": 0.09425072309738153,
+          "exploration_intensity": 0.4007406809725009,
+          "context_richness": 0.29740238492256854
+        },
+        "sigma": {
+          "eta": 0.5716595837943007,
+          "auction_type": 0.4090569806728311,
+          "n_bidders": 0.18286716145063148,
+          "reserve_price": 0.12746886352917058,
+          "exploration_intensity": 0.540390178214535,
+          "context_richness": 0.4452019076889903
+        },
+        "r2_cv": 0.528312035706218
+      },
+      "NN": {
+        "mu_star": {
+          "eta": 0.5692397030793794,
+          "auction_type": 0.30277226499477666,
+          "n_bidders": 0.29896681058339986,
+          "reserve_price": 0.17773363975466716,
+          "exploration_intensity": 0.2592233456336046,
+          "context_richness": 0.1990532457750544
+        },
+        "sigma": {
+          "eta": 0.4027981712613904,
+          "auction_type": 0.20796282154458462,
+          "n_bidders": 0.28130838124557567,
+          "reserve_price": 0.21367793829056175,
+          "exploration_intensity": 0.28942263224380743,
+          "context_richness": 0.2527256163586979
+        },
+        "r2_cv": 0.2438243131447569
+      },
+      "Kriging": {
+        "mu_star": {
+          "eta": 0.005520877524276296,
+          "auction_type": 0.00531904190065075,
+          "n_bidders": 0.0026892045981368132,
+          "reserve_price": 0.0037391859307613364,
+          "exploration_intensity": 0.0037748373234165193,
+          "context_richness": 0.005288300770650922
+        },
+        "sigma": {
+          "eta": 0.07241973030488497,
+          "auction_type": 0.05161266654817807,
+          "n_bidders": 0.03709147978555306,
+          "reserve_price": 0.043781359284162914,
+          "exploration_intensity": 0.0432591995731789,
+          "context_richness": 0.052134697980078734
+        },
+        "r2_cv": 0.47330348030701863
+      }
+    }
+  },
+  "mc_sobol": {
+    "avg_rev_last_1000": {
+      "LGBM": {
+        "s1": {
+          "eta": 0.2726646040951617,
+          "auction_type": 0.1698676086755313,
+          "n_bidders": 0.047204636544891536,
+          "reserve_price": 7.119022625831813e-05,
+          "exploration_intensity": 0.026600783023622496,
+          "context_richness": 0.033048805357149894
+        },
+        "st": {
+          "eta": 0.7242534754607901,
+          "auction_type": 0.3564955271663563,
+          "n_bidders": 0.12364377736260532,
+          "reserve_price": 0.0107071384884759,
+          "exploration_intensity": 0.2518386073441493,
+          "context_richness": 0.28728724305672504
+        },
+        "s1_conf": {
+          "eta": 0.04725067918975132,
+          "auction_type": 0.02357787166627434,
+          "n_bidders": 0.015825091696467807,
+          "reserve_price": 0.004101407612144185,
+          "exploration_intensity": 0.020612884246628747,
+          "context_richness": 0.023247899580611697
+        },
+        "st_conf": {
+          "eta": 0.042882347349909054,
+          "auction_type": 0.026871203335998375,
+          "n_bidders": 0.007575599964085309,
+          "reserve_price": 0.001208925781149196,
+          "exploration_intensity": 0.01537763099170882,
+          "context_richness": 0.01639740473937302
+        },
+        "r2_cv": 0.5749855605891578
+      },
+      "NN": {
+        "s1": {
+          "eta": 0.17272113862498703,
+          "auction_type": 0.025707239306034732,
+          "n_bidders": 0.07519515228081149,
+          "reserve_price": 0.037274608629642124,
+          "exploration_intensity": 0.16607323353307157,
+          "context_richness": 0.03953458971584817
+        },
+        "st": {
+          "eta": 0.4666881064688376,
+          "auction_type": 0.15308095201986813,
+          "n_bidders": 0.3688815413918125,
+          "reserve_price": 0.2154420807005984,
+          "exploration_intensity": 0.3659161517444381,
+          "context_richness": 0.1486286838670534
+        },
+        "s1_conf": {
+          "eta": 0.040348237133389926,
+          "auction_type": 0.017049121552133204,
+          "n_bidders": 0.026860866852131775,
+          "reserve_price": 0.022366448416513682,
+          "exploration_intensity": 0.021455922402468183,
+          "context_richness": 0.016549107856865024
+        },
+        "st_conf": {
+          "eta": 0.029739715370488543,
+          "auction_type": 0.012969362447787836,
+          "n_bidders": 0.02340359571947847,
+          "reserve_price": 0.015667980188389937,
+          "exploration_intensity": 0.023379714513455135,
+          "context_richness": 0.01041306259872945
+        },
+        "r2_cv": -1.1023959226293985
+      },
+      "Kriging": {
+        "s1": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "st": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "s1_conf": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "st_conf": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "r2_cv": 0.5163999083576651
+      }
+    },
+    "time_to_converge": {
+      "LGBM": {
+        "s1": {
+          "eta": 0.048575541619879335,
+          "auction_type": 0.028613887854236346,
+          "n_bidders": 0.003691859651856141,
+          "reserve_price": 0.0021053910889065326,
+          "exploration_intensity": 0.03500007309353614,
+          "context_richness": 0.0032504221651161714
+        },
+        "st": {
+          "eta": 1.0289755113203536,
+          "auction_type": 0.541851190117213,
+          "n_bidders": 0.1481844928329793,
+          "reserve_price": 0.02946375906265376,
+          "exploration_intensity": 0.5646175001799147,
+          "context_richness": 0.42793608567495905
+        },
+        "s1_conf": {
+          "eta": 0.06331622912171828,
+          "auction_type": 0.03393852591362137,
+          "n_bidders": 0.01696037838142148,
+          "reserve_price": 0.008113060509470736,
+          "exploration_intensity": 0.03718861381741132,
+          "context_richness": 0.0274388459094736
+        },
+        "st_conf": {
+          "eta": 0.08517372883411609,
+          "auction_type": 0.044932773873771426,
+          "n_bidders": 0.014096436327750563,
+          "reserve_price": 0.0025094106366224532,
+          "exploration_intensity": 0.04281480447720797,
+          "context_richness": 0.04184924973308161
+        },
+        "r2_cv": 0.28042619330011576
+      },
+      "NN": {
+        "s1": {
+          "eta": 0.15557160539941842,
+          "auction_type": 0.07599632257808328,
+          "n_bidders": 0.10993899368663418,
+          "reserve_price": 0.1971111493658811,
+          "exploration_intensity": 0.0645120396316316,
+          "context_richness": 0.025597756696031183
+        },
+        "st": {
+          "eta": 0.3840498084775221,
+          "auction_type": 0.18673270370873188,
+          "n_bidders": 0.28851748010843237,
+          "reserve_price": 0.3080005560982626,
+          "exploration_intensity": 0.23931078261333358,
+          "context_richness": 0.10529656197910331
+        },
+        "s1_conf": {
+          "eta": 0.038550411918930716,
+          "auction_type": 0.016614170240659143,
+          "n_bidders": 0.02023463222731933,
+          "reserve_price": 0.02362654947019305,
+          "exploration_intensity": 0.02251978846133971,
+          "context_richness": 0.012734158470032423
+        },
+        "st_conf": {
+          "eta": 0.025465171192522198,
+          "auction_type": 0.011971157074213066,
+          "n_bidders": 0.020083709855636588,
+          "reserve_price": 0.019153841962377297,
+          "exploration_intensity": 0.014821817079741824,
+          "context_richness": 0.007390426735572565
+        },
+        "r2_cv": -0.7544559939703491
+      },
+      "Kriging": {
+        "s1": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "st": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "s1_conf": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "st_conf": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "r2_cv": 0.1628014554018295
+      }
+    },
+    "no_sale_rate": {
+      "LGBM": {
+        "s1": {
+          "eta": 0.19938053618210652,
+          "auction_type": 0.1618660342657864,
+          "n_bidders": 0.005426406772568433,
+          "reserve_price": 5.286147854722269e-05,
+          "exploration_intensity": 0.00021581435776377145,
+          "context_richness": 0.11516563079702086
+        },
+        "st": {
+          "eta": 0.5826689464707074,
+          "auction_type": 0.5494388338608072,
+          "n_bidders": 0.05601073032828256,
+          "reserve_price": 0.0017666903311201174,
+          "exploration_intensity": 0.03502443155549455,
+          "context_richness": 0.46259747207607416
+        },
+        "s1_conf": {
+          "eta": 0.03355883135427301,
+          "auction_type": 0.032044930382668056,
+          "n_bidders": 0.010627123894659671,
+          "reserve_price": 0.0021193628105182264,
+          "exploration_intensity": 0.009247423930907894,
+          "context_richness": 0.029685732379216522
+        },
+        "st_conf": {
+          "eta": 0.050287641305448605,
+          "auction_type": 0.046245105636373164,
+          "n_bidders": 0.00791704425361619,
+          "reserve_price": 0.00016664102906265339,
+          "exploration_intensity": 0.003686066825510657,
+          "context_richness": 0.043751793500889855
+        },
+        "r2_cv": 0.8678209653310841
+      },
+      "NN": {
+        "s1": {
+          "eta": 0.010838718787123041,
+          "auction_type": 0.16953128693326427,
+          "n_bidders": 0.20382833987808419,
+          "reserve_price": 0.02619478920675167,
+          "exploration_intensity": 0.03610849751558415,
+          "context_richness": 0.010300095601053334
+        },
+        "st": {
+          "eta": 0.3192053178576705,
+          "auction_type": 0.28856877357156147,
+          "n_bidders": 0.5648053210241737,
+          "reserve_price": 0.310110320643865,
+          "exploration_intensity": 0.21816209151098356,
+          "context_richness": 0.15618218869092398
+        },
+        "s1_conf": {
+          "eta": 0.035770961756750735,
+          "auction_type": 0.020332756156076263,
+          "n_bidders": 0.033276685107447336,
+          "reserve_price": 0.026049273613206383,
+          "exploration_intensity": 0.02122766530867119,
+          "context_richness": 0.016705812617042466
+        },
+        "st_conf": {
+          "eta": 0.022040950353295282,
+          "auction_type": 0.017552475482283673,
+          "n_bidders": 0.0385550631025435,
+          "reserve_price": 0.020758746665873858,
+          "exploration_intensity": 0.015453452292743124,
+          "context_richness": 0.011437659437772292
+        },
+        "r2_cv": -0.6988094172502453
+      },
+      "Kriging": {
+        "s1": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "st": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "s1_conf": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "st_conf": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "r2_cv": 0.8527421522546419
+      }
+    },
+    "price_volatility": {
+      "LGBM": {
+        "s1": {
+          "eta": 0.177776475210978,
+          "auction_type": 0.05306330578900918,
+          "n_bidders": 0.003570393609765246,
+          "reserve_price": 0.0005625526889181955,
+          "exploration_intensity": 0.05178914327028121,
+          "context_richness": 0.00015208558666748168
+        },
+        "st": {
+          "eta": 1.0638447122122137,
+          "auction_type": 0.36545541811206317,
+          "n_bidders": 0.0634566198541419,
+          "reserve_price": 0.014919097278018824,
+          "exploration_intensity": 0.22940282584261118,
+          "context_richness": 0.2993382560522956
+        },
+        "s1_conf": {
+          "eta": 0.06379620289078801,
+          "auction_type": 0.02690465030913011,
+          "n_bidders": 0.012184931585834727,
+          "reserve_price": 0.00576624300081728,
+          "exploration_intensity": 0.0196621518768847,
+          "context_richness": 0.025133456482178736
+        },
+        "st_conf": {
+          "eta": 0.06611753178263491,
+          "auction_type": 0.02210151957401796,
+          "n_bidders": 0.005430590566931806,
+          "reserve_price": 0.0017787841333038578,
+          "exploration_intensity": 0.015490044681280738,
+          "context_richness": 0.024420315881438115
+        },
+        "r2_cv": 0.4147649471462981
+      },
+      "NN": {
+        "s1": {
+          "eta": 0.015371606549282315,
+          "auction_type": 0.13742197655112792,
+          "n_bidders": 0.12734742581694372,
+          "reserve_price": 0.017360547913167643,
+          "exploration_intensity": 0.016771017504140673,
+          "context_richness": 0.009238398341488733
+        },
+        "st": {
+          "eta": 0.44917742940038063,
+          "auction_type": 0.30300906100506525,
+          "n_bidders": 0.5493461600149873,
+          "reserve_price": 0.3373978105581717,
+          "exploration_intensity": 0.2678145661951964,
+          "context_richness": 0.17231698538268095
+        },
+        "s1_conf": {
+          "eta": 0.043327111846893716,
+          "auction_type": 0.023619004058943145,
+          "n_bidders": 0.03449694876325835,
+          "reserve_price": 0.023134206269302446,
+          "exploration_intensity": 0.021965968511680464,
+          "context_richness": 0.019743814885891095
+        },
+        "st_conf": {
+          "eta": 0.031562960721558106,
+          "auction_type": 0.017831797007230317,
+          "n_bidders": 0.033438924845535255,
+          "reserve_price": 0.021062647671670837,
+          "exploration_intensity": 0.021685234674708148,
+          "context_richness": 0.012406564950133455
+        },
+        "r2_cv": -0.3726428810426038
+      },
+      "Kriging": {
+        "s1": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "st": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "s1_conf": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "st_conf": {
+          "eta": 0.0,
+          "auction_type": 0.0,
+          "n_bidders": 0.0,
+          "reserve_price": 0.0,
+          "exploration_intensity": 0.0,
+          "context_richness": 0.0
+        },
+        "r2_cv": 0.281852770246667
+      }
+    },
+    "winner_entropy": {
+      "LGBM": {
+        "s1": {
+          "eta": 0.3941832458406988,
+          "auction_type": 0.24184522081273177,
+          "n_bidders": 0.004368413031126883,
+          "reserve_price": 0.0010082607220056946,
+          "exploration_intensity": 0.015849535228416853,
+          "context_richness": 0.0044450162084185415
+        },
+        "st": {
+          "eta": 0.6087810618882703,
+          "auction_type": 0.432497048744239,
+          "n_bidders": 0.04236683675183386,
+          "reserve_price": 0.01900209838252732,
+          "exploration_intensity": 0.3136129403378552,
+          "context_richness": 0.22110756005490956
+        },
+        "s1_conf": {
+          "eta": 0.040474286283663084,
+          "auction_type": 0.030778877711287532,
+          "n_bidders": 0.008491520800663123,
+          "reserve_price": 0.004820097761607411,
+          "exploration_intensity": 0.024845120302579946,
+          "context_richness": 0.01923271070087719
+        },
+        "st_conf": {
+          "eta": 0.03305131183947617,
+          "auction_type": 0.028474065630629278,
+          "n_bidders": 0.003788705652467549,
+          "reserve_price": 0.0013717151695138076,
+          "exploration_intensity": 0.02280373075064619,
+          "context_richness": 0.017033671616029266
+        },
+        "r2_cv": 0.528312035706218
+      },
+      "NN": {
+        "s1": {
+          "eta": 0.405310768189533,
+          "auction_type": 0.14483421916131067,
+          "n_bidders": 0.1787183414896502,
+          "reserve_price": 0.017473504562142705,
+          "exploration_intensity": 0.05667197230321301,
+          "context_richness": 0.021767051404445917
+        },
+        "st": {
+          "eta": 0.478816170325405,
+          "auction_type": 0.19971855561009733,
+          "n_bidders": 0.267411011150567,
+          "reserve_price": 0.08409755254261313,
+          "exploration_intensity": 0.15283582105697696,
+          "context_richness": 0.10183077792113077
+        },
+        "s1_conf": {
+          "eta": 0.03472690462634317,
+          "auction_type": 0.018675550412862427,
+          "n_bidders": 0.023363464338940498,
+          "reserve_price": 0.013125975055032895,
+          "exploration_intensity": 0.015556509054109735,
+          "context_richness": 0.013323626376551507
+        },
+        "st_conf": {
+          "eta": 0.023381333779296833,
+          "auction_type": 0.013178626295874638,
+          "n_bidders": 0.01620618550803782,
+          "reserve_price": 0.00546380915112856,
+          "exploration_intensity": 0.010220302870331712,
+          "context_richness": 0.0073163151870132255
+        },
+        "r2_cv": 0.2438243131447569
+      },
+      "Kriging": {
+        "s1": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "st": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "s1_conf": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "st_conf": {
+          "eta": NaN,
+          "auction_type": NaN,
+          "n_bidders": NaN,
+          "reserve_price": NaN,
+          "exploration_intensity": NaN,
+          "context_richness": NaN
+        },
+        "r2_cv": 0.47330348030701863
+      }
+    }
+  },
+  "fast": {
+    "avg_rev_last_1000": {
+      "s1": {
+        "eta": 0.26410943885214977,
+        "auction_type": 0.17553711736177474,
+        "n_bidders": 0.04239074467755154,
+        "reserve_price": 0.0002676286587220763,
+        "exploration_intensity": 0.022477298307500265,
+        "context_richness": 0.03441938258884893
+      },
+      "st": {
+        "eta": 0.8414752583400157,
+        "auction_type": 0.4540601746607166,
+        "n_bidders": 0.1718866328435753,
+        "reserve_price": 0.08807136635300694,
+        "exploration_intensity": 0.30101036899594413,
+        "context_richness": 0.29994400731727466
+      },
+      "surrogate": "LGBM",
+      "r2_cv": 0.5749855605891578
+    },
+    "time_to_converge": {
+      "s1": {
+        "eta": 0.1333148885084276,
+        "auction_type": 0.009784724870145207,
+        "n_bidders": 0.0022878508891153314,
+        "reserve_price": 0.0006273432483138943,
+        "exploration_intensity": 0.04923312817027324,
+        "context_richness": 0.0005873443220502783
+      },
+      "st": {
+        "eta": 1.1241302017612336,
+        "auction_type": 0.5505214348017564,
+        "n_bidders": 0.2747244665396579,
+        "reserve_price": 0.1459445690727047,
+        "exploration_intensity": 0.5782844283884372,
+        "context_richness": 0.4238875010187879
+      },
+      "surrogate": "LGBM",
+      "r2_cv": 0.28042619330011576
+    },
+    "no_sale_rate": {
+      "s1": {
+        "eta": 0.18336759835186933,
+        "auction_type": 0.1421681569606399,
+        "n_bidders": 0.005103407970026752,
+        "reserve_price": 4.539713392513725e-05,
+        "exploration_intensity": 8.181256742016276e-05,
+        "context_richness": 0.10190150624133118
+      },
+      "st": {
+        "eta": 0.6791855254863395,
+        "auction_type": 0.583562695953798,
+        "n_bidders": 0.15273612691849126,
+        "reserve_price": 0.10985877691337775,
+        "exploration_intensity": 0.13219262509315444,
+        "context_richness": 0.47793737512097023
+      },
+      "surrogate": "LGBM",
+      "r2_cv": 0.8678209653310841
+    },
+    "price_volatility": {
+      "s1": {
+        "eta": 0.19845976420441452,
+        "auction_type": 0.04700850331726345,
+        "n_bidders": 0.005881914639855892,
+        "reserve_price": 0.0002233830599696475,
+        "exploration_intensity": 0.050789527097662795,
+        "context_richness": 0.00032309093698216004
+      },
+      "st": {
+        "eta": 1.145221432560457,
+        "auction_type": 0.36674282419741155,
+        "n_bidders": 0.12202913343909527,
+        "reserve_price": 0.10818520627042405,
+        "exploration_intensity": 0.2939090744602234,
+        "context_richness": 0.33343463908461846
+      },
+      "surrogate": "LGBM",
+      "r2_cv": 0.4147649471462981
+    },
+    "winner_entropy": {
+      "s1": {
+        "eta": 0.35725718348954466,
+        "auction_type": 0.21268226054119224,
+        "n_bidders": 0.00321989502213327,
+        "reserve_price": 0.0018203173724725746,
+        "exploration_intensity": 0.011514356753509208,
+        "context_richness": 0.0030704704990310223
+      },
+      "st": {
+        "eta": 0.6742087781508507,
+        "auction_type": 0.45291639678608164,
+        "n_bidders": 0.10699782013262538,
+        "reserve_price": 0.08713310933823815,
+        "exploration_intensity": 0.3110646772400256,
+        "context_richness": 0.23579236433267325
+      },
+      "surrogate": "LGBM",
+      "r2_cv": 0.528312035706218
+    }
+  },
+  "delta": {
+    "avg_rev_last_1000": {
+      "delta": {
+        "eta": 0.27617484276607057,
+        "auction_type": 0.11530528661838327,
+        "n_bidders": 0.10716480042159363,
+        "reserve_price": 0.014778114792260941,
+        "exploration_intensity": 0.08373276544837145,
+        "context_richness": 0.07856287190210748
+      },
+      "delta_conf": {
+        "eta": 0.07658902339490932,
+        "auction_type": 0.04764088230256049,
+        "n_bidders": 0.03690820767848012,
+        "reserve_price": 0.0266837391455889,
+        "exploration_intensity": 0.035142177653976606,
+        "context_richness": 0.03431549613281271
+      },
+      "delta_norm": {
+        "eta": 0.4087127530196091,
+        "auction_type": 0.17064096302005488,
+        "n_bidders": 0.15859381024145727,
+        "reserve_price": 0.021870217868833423,
+        "exploration_intensity": 0.1239166056603383,
+        "context_richness": 0.1162656501897068
+      }
+    },
+    "time_to_converge": {
+      "delta": {
+        "eta": 0.2000013604256647,
+        "auction_type": 0.07247437083311856,
+        "n_bidders": 0.051657662501727576,
+        "reserve_price": 0.08790188407693983,
+        "exploration_intensity": 0.05305162024015294,
+        "context_richness": 0.09508813374776107
+      },
+      "delta_conf": {
+        "eta": 0.06809991722718062,
+        "auction_type": 0.024675475498449437,
+        "n_bidders": 0.022180385913885287,
+        "reserve_price": 0.017815117303811447,
+        "exploration_intensity": 0.03404693344566914,
+        "context_richness": 0.0248320613226778
+      },
+      "delta_norm": {
+        "eta": 0.3570336931547056,
+        "auction_type": 0.12937808134174844,
+        "n_bidders": 0.09221700284176879,
+        "reserve_price": 0.15691860415575137,
+        "exploration_intensity": 0.09470543531238974,
+        "context_richness": 0.16974718319363602
+      }
+    },
+    "no_sale_rate": {
+      "delta": {
+        "eta": 0.38976978534458634,
+        "auction_type": 0.23742493222588745,
+        "n_bidders": 0.09033476138749705,
+        "reserve_price": 0.06973816099879794,
+        "exploration_intensity": 0.08957009646224061,
+        "context_richness": 0.21095729300567945
+      },
+      "delta_conf": {
+        "eta": 0.09649878515552066,
+        "auction_type": 0.057464395022882094,
+        "n_bidders": 0.02240376734359048,
+        "reserve_price": 0.022022523272834753,
+        "exploration_intensity": 0.019083698208182384,
+        "context_richness": 0.043425302643613994
+      },
+      "delta_norm": {
+        "eta": 0.35831179110160777,
+        "auction_type": 0.21826256399742547,
+        "n_bidders": 0.08304391814997826,
+        "reserve_price": 0.06410965219769477,
+        "exploration_intensity": 0.08234096869298281,
+        "context_richness": 0.193931105860311
+      }
+    },
+    "price_volatility": {
+      "delta": {
+        "eta": 0.1909402027453891,
+        "auction_type": 0.08490787421420462,
+        "n_bidders": 0.0706229088403042,
+        "reserve_price": 0.05701115968684872,
+        "exploration_intensity": 0.06613343693424258,
+        "context_richness": 0.07369193599436775
+      },
+      "delta_conf": {
+        "eta": 0.0792657408875682,
+        "auction_type": 0.03224298458623958,
+        "n_bidders": 0.028535748056559476,
+        "reserve_price": 0.027525373518762202,
+        "exploration_intensity": 0.03104900812142534,
+        "context_richness": 0.02510625764174938
+      },
+      "delta_norm": {
+        "eta": 0.35144038371178193,
+        "auction_type": 0.15627958630473582,
+        "n_bidders": 0.12998698977383413,
+        "reserve_price": 0.10493350037402549,
+        "exploration_intensity": 0.12172376544158876,
+        "context_richness": 0.13563577439403388
+      }
+    },
+    "winner_entropy": {
+      "delta": {
+        "eta": 0.2207686217833752,
+        "auction_type": 0.17897367868578848,
+        "n_bidders": 0.08456999608180432,
+        "reserve_price": 0.09736504425407626,
+        "exploration_intensity": 0.08256064635722994,
+        "context_richness": 0.08481650050256295
+      },
+      "delta_conf": {
+        "eta": 0.05851602545447692,
+        "auction_type": 0.03980620289894404,
+        "n_bidders": 0.009009243466328138,
+        "reserve_price": 0.009060105625251886,
+        "exploration_intensity": 0.019359752873391308,
+        "context_richness": 0.0109703128053048
+      },
+      "delta_norm": {
+        "eta": 0.2947297231628864,
+        "auction_type": 0.23893279011482255,
+        "n_bidders": 0.11290232883518213,
+        "reserve_price": 0.12998392754792765,
+        "exploration_intensity": 0.11021981406801414,
+        "context_richness": 0.11323141627116706
+      }
+    }
+  },
+  "concordance": {
+    "avg_rev_last_1000": {
+      "methods": [
+        "Sobol_ST",
+        "RF",
+        "SHAP",
+        "Morris_LGBM",
+        "MC_Sobol_LGBM",
+        "FAST",
+        "Delta"
+      ],
+      "importance_matrix": [
+        [
+          0.08097762220880411,
+          0.07495888973591502,
+          0.30579211119921673,
+          0.18637755265567377,
+          0.050208995055999975,
+          0.08627330143802113
+        ],
+        [
+          0.057811634654522465,
+          0.0721153268820969,
+          0.31182988636715914,
+          0.22386629728649562,
+          0.16366339069518468,
+          0.17071346411454122
+        ],
+        [
+          0.10821525090434457,
+          0.11907918683026963,
+          0.2722559615710131,
+          0.24589609850825278,
+          0.11995913269403458,
+          0.13459436949208528
+        ],
+        [
+          0.3663876640929856,
+          0.16670308098608738,
+          0.11264750718526322,
+          0.02757000648706374,
+          0.14933005845612315,
+          0.17736168279247677
+        ],
+        [
+          0.4128621801762532,
+          0.20322100694835096,
+          0.07048338905750427,
+          0.00610362627115975,
+          0.143561115001216,
+          0.1637686825455158
+        ],
+        [
+          0.3902135980379816,
+          0.21055931558776633,
+          0.07970822765346593,
+          0.04084094500475676,
+          0.1395862064493242,
+          0.139091707266705
+        ],
+        [
+          0.4087127530196091,
+          0.17064096302005488,
+          0.15859381024145727,
+          0.021870217868833423,
+          0.1239166056603383,
+          0.1162656501897068
+        ]
+      ],
+      "rank_matrix": [
+        [
+          4.0,
+          5.0,
+          1.0,
+          2.0,
+          6.0,
+          3.0
+        ],
+        [
+          6.0,
+          5.0,
+          1.0,
+          2.0,
+          4.0,
+          3.0
+        ],
+        [
+          6.0,
+          5.0,
+          1.0,
+          2.0,
+          4.0,
+          3.0
+        ],
+        [
+          1.0,
+          3.0,
+          5.0,
+          6.0,
+          4.0,
+          2.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          4.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          3.0,
+          4.0
+        ],
+        [
+          1.0,
+          2.0,
+          3.0,
+          6.0,
+          4.0,
+          5.0
+        ]
+      ],
+      "spearman_matrix": [
+        [
+          1.0,
+          0.7714285714285715,
+          0.7714285714285715,
+          -0.4285714285714286,
+          -0.5428571428571429,
+          -0.7142857142857143,
+          -0.3142857142857143
+        ],
+        [
+          0.7714285714285715,
+          1.0,
+          1.0,
+          -0.7714285714285715,
+          -0.8857142857142858,
+          -0.942857142857143,
+          -0.6571428571428573
+        ],
+        [
+          0.7714285714285715,
+          1.0,
+          1.0,
+          -0.7714285714285715,
+          -0.8857142857142858,
+          -0.942857142857143,
+          -0.6571428571428573
+        ],
+        [
+          -0.4285714285714286,
+          -0.7714285714285715,
+          -0.7714285714285715,
+          1.0,
+          0.942857142857143,
+          0.8285714285714287,
+          0.6
+        ],
+        [
+          -0.5428571428571429,
+          -0.8857142857142858,
+          -0.8857142857142858,
+          0.942857142857143,
+          1.0,
+          0.942857142857143,
+          0.7714285714285715
+        ],
+        [
+          -0.7142857142857143,
+          -0.942857142857143,
+          -0.942857142857143,
+          0.8285714285714287,
+          0.942857142857143,
+          1.0,
+          0.8285714285714287
+        ],
+        [
+          -0.3142857142857143,
+          -0.6571428571428573,
+          -0.6571428571428573,
+          0.6,
+          0.7714285714285715,
+          0.8285714285714287,
+          1.0
+        ]
+      ],
+      "mean_spearman": -0.05034013605442172,
+      "top1_agreement": false,
+      "top3_per_method": {
+        "Sobol_ST": [
+          "n_bidders",
+          "reserve_price",
+          "context_richness"
+        ],
+        "RF": [
+          "n_bidders",
+          "reserve_price",
+          "context_richness"
+        ],
+        "SHAP": [
+          "n_bidders",
+          "reserve_price",
+          "context_richness"
+        ],
+        "Morris_LGBM": [
+          "eta",
+          "context_richness",
+          "auction_type"
+        ],
+        "MC_Sobol_LGBM": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "FAST": [
+          "eta",
+          "auction_type",
+          "exploration_intensity"
+        ],
+        "Delta": [
+          "eta",
+          "auction_type",
+          "n_bidders"
+        ]
+      }
+    },
+    "time_to_converge": {
+      "methods": [
+        "Sobol_ST",
+        "RF",
+        "SHAP",
+        "Morris_LGBM",
+        "MC_Sobol_LGBM",
+        "FAST",
+        "Delta"
+      ],
+      "importance_matrix": [
+        [
+          0.023143899766991455,
+          0.11437369092310633,
+          0.15627913210134792,
+          0.12218171360316858,
+          0.10797025475443403,
+          0.06491678073848844
+        ],
+        [
+          0.054635078561175186,
+          0.18797422256669175,
+          0.2029924310396642,
+          0.19087807629435816,
+          0.20706588449129712,
+          0.1564543070468136
+        ],
+        [
+          0.1051657487300292,
+          0.1746406371895786,
+          0.22268177316465115,
+          0.1761315334456695,
+          0.1892056081523951,
+          0.13217469931767634
+        ],
+        [
+          0.3654147105997853,
+          0.17241348972394085,
+          0.09519981832832951,
+          0.04329881438771889,
+          0.17910202390064173,
+          0.14457114305958377
+        ],
+        [
+          0.37539759130897227,
+          0.19768170318931305,
+          0.05406163807286493,
+          0.01074916172575908,
+          0.20598745766695353,
+          0.1561224480361372
+        ],
+        [
+          0.3629161862039285,
+          0.17773131549062712,
+          0.08869253356708424,
+          0.04711700328134388,
+          0.1866943695339188,
+          0.13684859192309753
+        ],
+        [
+          0.3570336931547056,
+          0.12937808134174844,
+          0.09221700284176879,
+          0.15691860415575137,
+          0.09470543531238974,
+          0.16974718319363602
+        ]
+      ],
+      "rank_matrix": [
+        [
+          6.0,
+          3.0,
+          1.0,
+          2.0,
+          4.0,
+          5.0
+        ],
+        [
+          6.0,
+          4.0,
+          2.0,
+          3.0,
+          1.0,
+          5.0
+        ],
+        [
+          6.0,
+          4.0,
+          1.0,
+          3.0,
+          2.0,
+          5.0
+        ],
+        [
+          1.0,
+          3.0,
+          5.0,
+          6.0,
+          2.0,
+          4.0
+        ],
+        [
+          1.0,
+          3.0,
+          5.0,
+          6.0,
+          2.0,
+          4.0
+        ],
+        [
+          1.0,
+          3.0,
+          5.0,
+          6.0,
+          2.0,
+          4.0
+        ],
+        [
+          1.0,
+          4.0,
+          6.0,
+          3.0,
+          5.0,
+          2.0
+        ]
+      ],
+      "spearman_matrix": [
+        [
+          1.0,
+          0.6571428571428573,
+          0.8285714285714287,
+          -0.7714285714285715,
+          -0.7714285714285715,
+          -0.7714285714285715,
+          -0.7714285714285715
+        ],
+        [
+          0.6571428571428573,
+          1.0,
+          0.942857142857143,
+          -0.3142857142857143,
+          -0.3142857142857143,
+          -0.3142857142857143,
+          -0.8857142857142858
+        ],
+        [
+          0.8285714285714287,
+          0.942857142857143,
+          1.0,
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.942857142857143
+        ],
+        [
+          -0.7714285714285715,
+          -0.3142857142857143,
+          -0.48571428571428577,
+          1.0,
+          1.0,
+          1.0,
+          0.3142857142857143
+        ],
+        [
+          -0.7714285714285715,
+          -0.3142857142857143,
+          -0.48571428571428577,
+          1.0,
+          1.0,
+          1.0,
+          0.3142857142857143
+        ],
+        [
+          -0.7714285714285715,
+          -0.3142857142857143,
+          -0.48571428571428577,
+          1.0,
+          1.0,
+          1.0,
+          0.3142857142857143
+        ],
+        [
+          -0.7714285714285715,
+          -0.8857142857142858,
+          -0.942857142857143,
+          0.3142857142857143,
+          0.3142857142857143,
+          0.3142857142857143,
+          1.0
+        ]
+      ],
+      "mean_spearman": -0.04489795918367346,
+      "top1_agreement": false,
+      "top3_per_method": {
+        "Sobol_ST": [
+          "n_bidders",
+          "reserve_price",
+          "auction_type"
+        ],
+        "RF": [
+          "exploration_intensity",
+          "n_bidders",
+          "reserve_price"
+        ],
+        "SHAP": [
+          "n_bidders",
+          "exploration_intensity",
+          "reserve_price"
+        ],
+        "Morris_LGBM": [
+          "eta",
+          "exploration_intensity",
+          "auction_type"
+        ],
+        "MC_Sobol_LGBM": [
+          "eta",
+          "exploration_intensity",
+          "auction_type"
+        ],
+        "FAST": [
+          "eta",
+          "exploration_intensity",
+          "auction_type"
+        ],
+        "Delta": [
+          "eta",
+          "context_richness",
+          "reserve_price"
+        ]
+      }
+    },
+    "no_sale_rate": {
+      "methods": [
+        "Sobol_ST",
+        "RF",
+        "SHAP",
+        "Morris_LGBM",
+        "MC_Sobol_LGBM",
+        "FAST",
+        "Delta"
+      ],
+      "importance_matrix": [
+        [
+          0.019180008471178484,
+          0.009445273944273816,
+          0.41204125854452506,
+          0.4064614125951253,
+          0.007133999969985313,
+          0.32728108346858975
+        ],
+        [
+          0.021247275351735154,
+          0.020151665760901976,
+          0.3332261059127241,
+          0.3155277648102467,
+          0.013942797217763885,
+          0.29590439094662807
+        ],
+        [
+          0.05110696303555159,
+          0.03257164663744798,
+          0.3333778935278205,
+          0.29869531139687755,
+          0.03024443481427935,
+          0.2540037505880231
+        ],
+        [
+          0.34998746544468773,
+          0.271536571723928,
+          0.0736695600504212,
+          0.01757177216376339,
+          0.0771578568295881,
+          0.2100767737876117
+        ],
+        [
+          0.3452838479166326,
+          0.32559201223850415,
+          0.033191404157562214,
+          0.0010469231959265412,
+          0.020755131317405563,
+          0.27413068117396894
+        ],
+        [
+          0.31804920295202777,
+          0.2732709154656079,
+          0.07152331963143838,
+          0.05144470122440379,
+          0.061903202393643504,
+          0.22380865833287877
+        ],
+        [
+          0.35831179110160777,
+          0.21826256399742547,
+          0.08304391814997826,
+          0.06410965219769477,
+          0.08234096869298281,
+          0.193931105860311
+        ]
+      ],
+      "rank_matrix": [
+        [
+          4.0,
+          5.0,
+          1.0,
+          2.0,
+          6.0,
+          3.0
+        ],
+        [
+          4.0,
+          5.0,
+          1.0,
+          2.0,
+          6.0,
+          3.0
+        ],
+        [
+          4.0,
+          5.0,
+          1.0,
+          2.0,
+          6.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          4.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          4.0,
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          4.0,
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          4.0,
+          6.0,
+          5.0,
+          3.0
+        ]
+      ],
+      "spearman_matrix": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          -0.5428571428571429,
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.2571428571428572
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          -0.5428571428571429,
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.2571428571428572
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          -0.5428571428571429,
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.2571428571428572
+        ],
+        [
+          -0.5428571428571429,
+          -0.5428571428571429,
+          -0.5428571428571429,
+          1.0,
+          0.942857142857143,
+          0.942857142857143,
+          0.942857142857143
+        ],
+        [
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.2571428571428572,
+          0.942857142857143,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.2571428571428572,
+          0.942857142857143,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.2571428571428572,
+          0.942857142857143,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "mean_spearman": 0.2326530612244898,
+      "top1_agreement": false,
+      "top3_per_method": {
+        "Sobol_ST": [
+          "n_bidders",
+          "reserve_price",
+          "context_richness"
+        ],
+        "RF": [
+          "n_bidders",
+          "reserve_price",
+          "context_richness"
+        ],
+        "SHAP": [
+          "n_bidders",
+          "reserve_price",
+          "context_richness"
+        ],
+        "Morris_LGBM": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "MC_Sobol_LGBM": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "FAST": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "Delta": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ]
+      }
+    },
+    "price_volatility": {
+      "methods": [
+        "Sobol_ST",
+        "RF",
+        "SHAP",
+        "Morris_LGBM",
+        "MC_Sobol_LGBM",
+        "FAST",
+        "Delta"
+      ],
+      "importance_matrix": [
+        [
+          0.02726325984300449,
+          0.18845734651169954,
+          0.3737486665882335,
+          0.1588623534604768,
+          0.06506365790260754,
+          0.1310905654274502
+        ],
+        [
+          0.03404236751378621,
+          0.2075664043949303,
+          0.32425834345727583,
+          0.16499076738923393,
+          0.1155801578300126,
+          0.15356195941476106
+        ],
+        [
+          0.07001710177683812,
+          0.1839264707687883,
+          0.2849266764111381,
+          0.17266667128157814,
+          0.15600382250243178,
+          0.1324592572592255
+        ],
+        [
+          0.4321527307319867,
+          0.18733950918385966,
+          0.06541660155335809,
+          0.029198903255326463,
+          0.1336691730869681,
+          0.15222308218850097
+        ],
+        [
+          0.5224100707859848,
+          0.17946001766370648,
+          0.031160917462198966,
+          0.007326150683087757,
+          0.11265022527370286,
+          0.14699261813131909
+        ],
+        [
+          0.48331320946902,
+          0.15477500365696858,
+          0.05149946591491068,
+          0.04565696883852748,
+          0.12403726827906779,
+          0.14071808384150536
+        ],
+        [
+          0.35144038371178193,
+          0.15627958630473582,
+          0.12998698977383413,
+          0.10493350037402549,
+          0.12172376544158876,
+          0.13563577439403388
+        ]
+      ],
+      "rank_matrix": [
+        [
+          6.0,
+          2.0,
+          1.0,
+          3.0,
+          5.0,
+          4.0
+        ],
+        [
+          6.0,
+          2.0,
+          1.0,
+          3.0,
+          5.0,
+          4.0
+        ],
+        [
+          6.0,
+          2.0,
+          1.0,
+          3.0,
+          4.0,
+          5.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          4.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          4.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          4.0,
+          3.0
+        ],
+        [
+          1.0,
+          2.0,
+          4.0,
+          6.0,
+          5.0,
+          3.0
+        ]
+      ],
+      "spearman_matrix": [
+        [
+          1.0,
+          1.0,
+          0.942857142857143,
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.2571428571428572
+        ],
+        [
+          1.0,
+          1.0,
+          0.942857142857143,
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.2571428571428572
+        ],
+        [
+          0.942857142857143,
+          0.942857142857143,
+          1.0,
+          -0.5428571428571429,
+          -0.5428571428571429,
+          -0.5428571428571429,
+          -0.3714285714285715
+        ],
+        [
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.5428571428571429,
+          1.0,
+          1.0,
+          1.0,
+          0.942857142857143
+        ],
+        [
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.5428571428571429,
+          1.0,
+          1.0,
+          1.0,
+          0.942857142857143
+        ],
+        [
+          -0.48571428571428577,
+          -0.48571428571428577,
+          -0.5428571428571429,
+          1.0,
+          1.0,
+          1.0,
+          0.942857142857143
+        ],
+        [
+          -0.2571428571428572,
+          -0.2571428571428572,
+          -0.3714285714285715,
+          0.942857142857143,
+          0.942857142857143,
+          0.942857142857143,
+          1.0
+        ]
+      ],
+      "mean_spearman": 0.1564625850340136,
+      "top1_agreement": false,
+      "top3_per_method": {
+        "Sobol_ST": [
+          "n_bidders",
+          "auction_type",
+          "reserve_price"
+        ],
+        "RF": [
+          "n_bidders",
+          "auction_type",
+          "reserve_price"
+        ],
+        "SHAP": [
+          "n_bidders",
+          "auction_type",
+          "reserve_price"
+        ],
+        "Morris_LGBM": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "MC_Sobol_LGBM": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "FAST": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ],
+        "Delta": [
+          "eta",
+          "auction_type",
+          "context_richness"
+        ]
+      }
+    },
+    "winner_entropy": {
+      "methods": [
+        "Sobol_ST",
+        "RF",
+        "SHAP",
+        "Morris_LGBM",
+        "MC_Sobol_LGBM",
+        "FAST",
+        "Delta"
+      ],
+      "importance_matrix": [
+        [
+          0.015245873306596689,
+          0.002293065592152493,
+          0.32376885358647545,
+          0.23557191799232857,
+          0.1232865302200126,
+          0.050434944123088354
+        ],
+        [
+          0.023654253065342634,
+          0.01318234762688005,
+          0.3249487346642799,
+          0.26965454493300983,
+          0.2268894114267788,
+          0.14167070828370876
+        ],
+        [
+          0.06450499918367794,
+          0.02597692833695814,
+          0.3699750582426017,
+          0.30402206002245136,
+          0.14123646910962384,
+          0.09428448510468697
+        ],
+        [
+          0.34570002922854803,
+          0.22399285529035085,
+          0.05998231224062821,
+          0.044048023812365646,
+          0.1872859377409991,
+          0.13899084168710826
+        ],
+        [
+          0.3718047687680974,
+          0.2641417009630119,
+          0.025874970376201227,
+          0.011605273615625156,
+          0.19153484571831098,
+          0.13503844055875325
+        ],
+        [
+          0.36090360993471116,
+          0.2424459127438797,
+          0.05727587772873718,
+          0.04664230832362437,
+          0.1665127607015263,
+          0.1262195305675212
+        ],
+        [
+          0.2947297231628864,
+          0.23893279011482255,
+          0.11290232883518213,
+          0.12998392754792765,
+          0.11021981406801414,
+          0.11323141627116706
+        ]
+      ],
+      "rank_matrix": [
+        [
+          5.0,
+          6.0,
+          1.0,
+          2.0,
+          3.0,
+          4.0
+        ],
+        [
+          5.0,
+          6.0,
+          1.0,
+          2.0,
+          3.0,
+          4.0
+        ],
+        [
+          5.0,
+          6.0,
+          1.0,
+          2.0,
+          3.0,
+          4.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          3.0,
+          4.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          3.0,
+          4.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          6.0,
+          3.0,
+          4.0
+        ],
+        [
+          1.0,
+          2.0,
+          5.0,
+          3.0,
+          6.0,
+          4.0
+        ]
+      ],
+      "spearman_matrix": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.6571428571428573
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.6571428571428573
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.6571428571428573
+        ],
+        [
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          1.0,
+          1.0,
+          1.0,
+          0.48571428571428577
+        ],
+        [
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          1.0,
+          1.0,
+          1.0,
+          0.48571428571428577
+        ],
+        [
+          -0.8285714285714287,
+          -0.8285714285714287,
+          -0.8285714285714287,
+          1.0,
+          1.0,
+          1.0,
+          0.48571428571428577
+        ],
+        [
+          -0.6571428571428573,
+          -0.6571428571428573,
+          -0.6571428571428573,
+          0.48571428571428577,
+          0.48571428571428577,
+          0.48571428571428577,
+          1.0
+        ]
+      ],
+      "mean_spearman": -0.0938775510204082,
+      "top1_agreement": false,
+      "top3_per_method": {
+        "Sobol_ST": [
+          "n_bidders",
+          "reserve_price",
+          "exploration_intensity"
+        ],
+        "RF": [
+          "n_bidders",
+          "reserve_price",
+          "exploration_intensity"
+        ],
+        "SHAP": [
+          "n_bidders",
+          "reserve_price",
+          "exploration_intensity"
+        ],
+        "Morris_LGBM": [
+          "eta",
+          "auction_type",
+          "exploration_intensity"
+        ],
+        "MC_Sobol_LGBM": [
+          "eta",
+          "auction_type",
+          "exploration_intensity"
+        ],
+        "FAST": [
+          "eta",
+          "auction_type",
+          "exploration_intensity"
+        ],
+        "Delta": [
+          "eta",
+          "auction_type",
+          "reserve_price"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "avg_rev_last_1000": {
+      "dominant_factor": "n_bidders",
+      "dominant_st": 0.30579211119921673,
+      "dominant_s1": 0.17593549962065788,
+      "most_interactive": "n_bidders",
+      "interaction_gap": 0.12985661157855885,
+      "negligible_factors": [],
+      "mean_spearman": -0.05034013605442172,
+      "top1_agreement": false
+    },
+    "time_to_converge": {
+      "dominant_factor": "n_bidders",
+      "dominant_st": 0.15627913210134792,
+      "dominant_s1": 0.029572924024971074,
+      "most_interactive": "n_bidders",
+      "interaction_gap": 0.12670620807637684,
+      "negligible_factors": [],
+      "mean_spearman": -0.04489795918367346,
+      "top1_agreement": false
+    },
+    "no_sale_rate": {
+      "dominant_factor": "n_bidders",
+      "dominant_st": 0.41204125854452506,
+      "dominant_s1": 0.19296413139129462,
+      "most_interactive": "reserve_price",
+      "interaction_gap": 0.25152976719375764,
+      "negligible_factors": [
+        "auction_type",
+        "exploration_intensity"
+      ],
+      "mean_spearman": 0.2326530612244898,
+      "top1_agreement": false
+    },
+    "price_volatility": {
+      "dominant_factor": "n_bidders",
+      "dominant_st": 0.3737486665882335,
+      "dominant_s1": 0.09319776300104858,
+      "most_interactive": "n_bidders",
+      "interaction_gap": 0.28055090358718493,
+      "negligible_factors": [],
+      "mean_spearman": 0.1564625850340136,
+      "top1_agreement": false
+    },
+    "winner_entropy": {
+      "dominant_factor": "n_bidders",
+      "dominant_st": 0.32376885358647545,
+      "dominant_s1": 0.2919205811293259,
+      "most_interactive": "exploration_intensity",
+      "interaction_gap": 0.10755522381359167,
+      "negligible_factors": [
+        "auction_type"
+      ],
+      "mean_spearman": -0.0938775510204082,
+      "top1_agreement": false
+    }
+  }
+}

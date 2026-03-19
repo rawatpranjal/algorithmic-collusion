@@ -10,6 +10,8 @@ lightgbm
 tabulate
 tqdm
 patsy
+SALib
+shap
 
 # Cloud (optional, for --cloud mode in scripts/run_experiment.py)
 # google-cloud-storage>=2.0.0

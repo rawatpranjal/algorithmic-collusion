@@ -61,3 +61,8 @@ if __name__ == "__main__":
                         response_cols=[r for r in RESPONSE_COLS if r in df.columns],
                         output_dir=output_dir, experiment_id="4b")
 
+    from estimation.sensitivity_analysis import run_sensitivity_analysis
+    run_sensitivity_analysis(df, coded_cols=CODED_COLS,
+                             response_cols=[r for r in RESPONSE_COLS if r in df.columns],
+                             output_dir=output_dir, experiment_id="4b")
+

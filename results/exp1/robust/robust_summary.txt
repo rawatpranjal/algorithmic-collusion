@@ -2,14 +2,15 @@
 ROBUST ANALYSIS SUMMARY -- Experiment 1
 ======================================================================
 
-KEY FINDING: reserve_price:asynchronous interaction
+KEY FINDING: auction_type:n_bidders interaction
 --------------------------------------------------
-  avg_rev_last_1000|reserve_price:asynchronous: raw p=2.1495e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
-  avg_rev_all|reserve_price:asynchronous: raw p=1.3892e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
-  time_to_converge|reserve_price:asynchronous: raw p=5.8883e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
-  no_sale_rate|reserve_price:asynchronous: raw p=4.8175e-18, holm p=1.5320e-15 -> SURVIVES Holm-Bonferroni
-  price_volatility|reserve_price:asynchronous: raw p=4.4542e-07, holm p=1.3407e-04 -> SURVIVES Holm-Bonferroni
-  winner_entropy|reserve_price:asynchronous: raw p=2.7732e-02, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  avg_rev_last_1000|auction_type:n_bidders: raw p=2.3916e-08, holm p=8.4900e-06 -> SURVIVES Holm-Bonferroni
+  avg_rev_all|auction_type:n_bidders: raw p=4.2049e-10, holm p=1.5054e-07 -> SURVIVES Holm-Bonferroni
+  time_to_converge|auction_type:n_bidders: raw p=3.9354e-03, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  no_sale_rate|auction_type:n_bidders: raw p=4.0716e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  price_volatility|auction_type:n_bidders: raw p=1.5237e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  winner_entropy|auction_type:n_bidders: raw p=4.3315e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
+  ratio_to_theory|auction_type:n_bidders: raw p=6.4081e-76, holm p=2.4543e-73 -> SURVIVES Holm-Bonferroni
 
 MODEL ADEQUACY
 --------------------------------------------------
@@ -19,6 +20,7 @@ MODEL ADEQUACY
   no_sale_rate                    R2=0.4238  Pred-R2=0.3553  Gap=0.0686
   price_volatility                R2=0.4469  Pred-R2=0.3810  Gap=0.0658
   winner_entropy                  R2=0.4589  Pred-R2=0.3945  Gap=0.0644
+  ratio_to_theory                 R2=0.6948  Pred-R2=0.6585  Gap=0.0363
 
 LINEAR vs NONPARAMETRIC
 --------------------------------------------------
@@ -28,6 +30,7 @@ LINEAR vs NONPARAMETRIC
   no_sale_rate                    OLS=0.4238  LGBM=0.6046  Gap=0.1808
   price_volatility                OLS=0.4469  LGBM=0.4898  Gap=0.0429
   winner_entropy                  OLS=0.4589  LGBM=0.5074  Gap=0.0485
+  ratio_to_theory                 OLS=0.6948  LGBM=0.6114  Gap=-0.0834
 
 POWER ANALYSIS (80% power, alpha=0.05)
 --------------------------------------------------
@@ -37,3 +40,4 @@ POWER ANALYSIS (80% power, alpha=0.05)
   no_sale_rate                    MDE=0.001504 (13.3% of mean)
   price_volatility                MDE=0.003822 (3.3% of mean)
   winner_entropy                  MDE=0.023364 (2.3% of mean)
+  ratio_to_theory                 MDE=0.020035 (1.9% of mean)

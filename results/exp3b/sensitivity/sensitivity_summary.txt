@@ -1,0 +1,60 @@
+======================================================================
+SENSITIVITY ANALYSIS SUMMARY -- Experiment 3b
+======================================================================
+
+avg_rev_last_1000:
+  Dominant factor: n_bidders (ST=0.3058, S1=0.1759)
+  Most interactive: n_bidders (gap=0.1299)
+
+  Method agreement: mean Spearman = -0.050, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.5750
+    NN        : -1.1024
+    Kriging   : 0.5164
+
+time_to_converge:
+  Dominant factor: n_bidders (ST=0.1563, S1=0.0296)
+  Most interactive: n_bidders (gap=0.1267)
+
+  Method agreement: mean Spearman = -0.045, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.2804
+    NN        : -0.7545
+    Kriging   : 0.1628
+
+no_sale_rate:
+  Dominant factor: n_bidders (ST=0.4120, S1=0.1930)
+  Most interactive: reserve_price (gap=0.2515)
+  Negligible (ST<0.01): auction_type, exploration_intensity
+
+  Method agreement: mean Spearman = 0.233, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.8678
+    NN        : -0.6988
+    Kriging   : 0.8527
+
+price_volatility:
+  Dominant factor: n_bidders (ST=0.3737, S1=0.0932)
+  Most interactive: n_bidders (gap=0.2806)
+
+  Method agreement: mean Spearman = 0.156, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.4148
+    NN        : -0.3726
+    Kriging   : 0.2819
+
+winner_entropy:
+  Dominant factor: n_bidders (ST=0.3238, S1=0.2919)
+  Most interactive: exploration_intensity (gap=0.1076)
+  Negligible (ST<0.01): auction_type
+
+  Method agreement: mean Spearman = -0.094, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.5283
+    NN        : 0.2438
+    Kriging   : 0.4733

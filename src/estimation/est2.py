@@ -27,6 +27,7 @@ RESPONSE_COLS = [
     "winners_curse_freq",
     "bid_dispersion",
     "signal_slope_ratio",
+    "ratio_to_theory",
 ]
 
 if __name__ == "__main__":
@@ -46,3 +47,7 @@ if __name__ == "__main__":
     from estimation.robust_analysis import run_robust_analysis
     run_robust_analysis(df, coded_cols=CODED_COLS, response_cols=RESPONSE_COLS,
                         output_dir="results/exp2", experiment_id=2)
+
+    from estimation.sensitivity_analysis import run_sensitivity_analysis
+    run_sensitivity_analysis(df, coded_cols=CODED_COLS, response_cols=RESPONSE_COLS,
+                             output_dir="results/exp2", experiment_id=2)

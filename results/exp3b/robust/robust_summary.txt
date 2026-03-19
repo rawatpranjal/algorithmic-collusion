@@ -4,17 +4,15 @@ ROBUST ANALYSIS SUMMARY -- Experiment 3b
 
 KEY FINDING: n_bidders:reserve_price interaction
 --------------------------------------------------
-  avg_rev_last_1000|n_bidders:reserve_price: raw p=4.5159e-03, holm p=5.8707e-01 -> does NOT survive Holm-Bonferroni
-  avg_rev_all|n_bidders:reserve_price: raw p=4.7776e-03, holm p=6.1631e-01 -> does NOT survive Holm-Bonferroni
-  time_to_converge|n_bidders:reserve_price: raw p=1.5245e-03, holm p=2.0428e-01 -> does NOT survive Holm-Bonferroni
-  no_sale_rate|n_bidders:reserve_price: raw p=4.4981e-21, holm p=7.4218e-19 -> SURVIVES Holm-Bonferroni
-  price_volatility|n_bidders:reserve_price: raw p=5.3820e-09, holm p=8.3421e-07 -> SURVIVES Holm-Bonferroni
+  avg_rev_last_1000|n_bidders:reserve_price: raw p=4.5159e-03, holm p=4.9675e-01 -> does NOT survive Holm-Bonferroni
+  time_to_converge|n_bidders:reserve_price: raw p=1.5245e-03, holm p=1.7379e-01 -> does NOT survive Holm-Bonferroni
+  no_sale_rate|n_bidders:reserve_price: raw p=4.4981e-21, holm p=6.1624e-19 -> SURVIVES Holm-Bonferroni
+  price_volatility|n_bidders:reserve_price: raw p=5.3820e-09, holm p=6.9428e-07 -> SURVIVES Holm-Bonferroni
   winner_entropy|n_bidders:reserve_price: raw p=8.8654e-01, holm p=1.0000e+00 -> does NOT survive Holm-Bonferroni
 
 MODEL ADEQUACY
 --------------------------------------------------
   avg_rev_last_1000               R2=0.6086  Pred-R2=0.4636  Gap=0.1450
-  avg_rev_all                     R2=0.6264  Pred-R2=0.4880  Gap=0.1384
   time_to_converge                R2=0.3409  Pred-R2=0.0966  Gap=0.2443
   no_sale_rate                    R2=0.8241  Pred-R2=0.7589  Gap=0.0652
   price_volatility                R2=0.5809  Pred-R2=0.4256  Gap=0.1553
@@ -23,7 +21,6 @@ MODEL ADEQUACY
 LINEAR vs NONPARAMETRIC
 --------------------------------------------------
   avg_rev_last_1000               OLS=0.6086  LGBM=0.5567  Gap=-0.0519
-  avg_rev_all                     OLS=0.6264  LGBM=0.5793  Gap=-0.0471
   time_to_converge                OLS=0.3409  LGBM=0.2451  Gap=-0.0957
   no_sale_rate                    OLS=0.8241  LGBM=0.8721  Gap=0.0480
   price_volatility                OLS=0.5809  LGBM=0.5140  Gap=-0.0670
@@ -32,7 +29,6 @@ LINEAR vs NONPARAMETRIC
 POWER ANALYSIS (80% power, alpha=0.05)
 --------------------------------------------------
   avg_rev_last_1000               MDE=0.020821 (4.1% of mean)
-  avg_rev_all                     MDE=0.019178 (3.8% of mean)
   time_to_converge                MDE=5371.010191 (25.4% of mean)
   no_sale_rate                    MDE=0.004601 (23.5% of mean)
   price_volatility                MDE=0.010082 (8.7% of mean)

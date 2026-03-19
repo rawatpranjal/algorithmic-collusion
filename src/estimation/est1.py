@@ -28,6 +28,7 @@ RESPONSE_COLS = [
     "no_sale_rate",
     "price_volatility",
     "winner_entropy",
+    "ratio_to_theory",
 ]
 
 if __name__ == "__main__":
@@ -48,3 +49,7 @@ if __name__ == "__main__":
     from estimation.robust_analysis import run_robust_analysis
     run_robust_analysis(df, coded_cols=CODED_COLS, response_cols=RESPONSE_COLS,
                         output_dir="results/exp1", experiment_id=1)
+
+    from estimation.sensitivity_analysis import run_sensitivity_analysis
+    run_sensitivity_analysis(df, coded_cols=CODED_COLS, response_cols=RESPONSE_COLS,
+                             output_dir="results/exp1", experiment_id=1)
