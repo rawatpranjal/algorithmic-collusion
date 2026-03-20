@@ -5,8 +5,7 @@
         sensitivity sensitivity1 sensitivity2 sensitivity3a sensitivity3b sensitivity4a sensitivity4b \
         traces tables pdf paper all clean help \
         dive1 dive2 dive3 dive3a dive3b dive4a dive4b \
-        check check-freshness discretization budget-robust \
-        verify verify-quick calibrate calibrate-multi calibrate-exp3 calibrate-exp4b \
+        check-freshness \
         arxiv
 
 PYTHON  := python3
@@ -39,9 +38,6 @@ help:
 	@echo "  make pdf            Generate standalone results PDF"
 	@echo "  make paper          Compile main paper (pdflatex)"
 	@echo "  make all            Full pipeline: experiments -> analyze -> robust -> tables -> pdf -> paper"
-	@echo "  make check          Verify paper numbers match data"
-	@echo "  make discretization Discretization robustness (Exp1-3)"
-	@echo "  make budget-robust  Budget robustness (Exp4a)"
 	@echo ""
 	@echo "Options:"
 	@echo "  REPS=5              Replicates per cell (default: 2)"
@@ -210,43 +206,9 @@ dive4a:
 dive4b:
 	$(PY) scripts/deep_dive.py --exp 4b
 
-# ── Consistency Check ───────────────────────────────────────
-check:
-	$(PYTHON) scripts/check_consistency.py
-
 # ── Data Freshness Check ───────────────────────────────────
 check-freshness:
 	$(PY) -c "from estimation.factorial_analysis import check_all_freshness; check_all_freshness()"
-
-# ── Discretization Robustness ──────────────────────────────
-discretization:
-	$(PY) scripts/discretization_robustness.py --exp 1
-	$(PY) scripts/discretization_robustness.py --exp 2
-	$(PY) scripts/discretization_robustness.py --exp 3
-
-# ── Budget Robustness (Exp4a) ──────────────────────────────
-budget-robust:
-	$(PY) scripts/budget_robustness.py
-
-# ── Mathematical Verification ────────────────────────────────
-verify:
-	$(PYTHON) scripts/verification/run_all.py
-
-verify-quick:
-	$(PYTHON) scripts/verification/run_all.py --quick
-
-# ── Exploration Calibration ────────────────────────────────────
-calibrate:
-	$(PYTHON) scripts/calibration_exploration.py --output-dir results/calibration
-
-calibrate-multi:
-	$(PYTHON) scripts/calibration_exploration.py --mode multi --seeds 5 --output-dir results/calibration
-
-calibrate-exp3:
-	$(PYTHON) scripts/calibration_exploration.py --mode exp3 --seeds 5 --output-dir results/calibration
-
-calibrate-exp4b:
-	$(PY) scripts/calibrate_exp4b.py
 
 # ── arXiv Submission ────────────────────────────────────────
 arxiv:

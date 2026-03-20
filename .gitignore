@@ -85,3 +85,25 @@ arxiv_submission.tar.gz
 
 # Results (optional - uncomment to track results)
 # results/
+
+# Development & research artifacts (not part of replication package)
+CLAUDE.md
+docs/
+reviews/
+archive/
+missingpapers.md
+paper/archived_versions/
+paper/presentation.tex
+src/cloud/
+src/verification/
+scripts/verification/
+scripts/calibrate_exp4b.py
+scripts/calibration_exploration.py
+scripts/exp3_calibration.py
+scripts/debug_exp2.py
+scripts/debug_exp3.py
+scripts/budget_robustness.py
+scripts/discretization_robustness.py
+scripts/valuation_robustness.py
+scripts/check_consistency.py
+scripts/verify_regret_decomposition.py
