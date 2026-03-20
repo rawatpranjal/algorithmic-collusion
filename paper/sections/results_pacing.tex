@@ -2,7 +2,7 @@
 \label{sec:pacing_results}
 \label{sec:exp3_results}
 
-This section studies constraint-driven bid suppression, where budget-constrained pacing agents suppress bids to ration a finite budget across auctions, in contrast to the learning-driven suppression observed in earlier experiments. We study this mechanism using multiplicative dual pacing \citep{Balseiro2019Learning} in Experiment~3a and proportional-integral control in Experiment~3b.
+This section studies budget-constrained pacing agents, in contrast to the unconstrained learning algorithms of earlier experiments. Experiment~3a uses multiplicative dual pacing \citep{Balseiro2019Learning}; Experiment~3b uses proportional-integral control.
 
 \subsection{Design}
 \label{sec:shared_env_pacing}
@@ -65,9 +65,7 @@ Experiment~3b replaces the multiplicative dual pacing with a proportional-integr
   e_t^i &= \tfrac{t}{T}\,B^i - {\textstyle\sum_{\tau \le t}} c_\tau^i, \label{eq:pid_error_exp3b}\\
   \lambda_{t+1}^i &= \operatorname{clip}\!\bigl(\lambda_t^i + K_P\,e_t^i + K_I\!\textstyle\sum_{\tau} e_\tau^i,\; 0.01,\; 1.5\bigr), \label{eq:pid_update_exp3b}
 \end{align}
-with $K_P = 0.30 \times a$ and $K_I = 0.05 \times a$, where $a$ is the aggressiveness parameter. The agent bids $b_t = \min(\lambda_t \cdot v_t,\; B^i - S_t^i)$.
-
-The competitive benchmark is $\lambda = 1$ (full-value bidding) for both auction formats.
+with $K_P = 0.30 \times a$ and $K_I = 0.05 \times a$, where $a$ is the aggressiveness parameter. The agent bids $b_t = \min(\lambda_t \cdot v_t,\; B^i - S_t^i)$. The competitive benchmark is $\lambda = 1$ (full-value bidding) for both auction formats.
 
 \subsubsection{Factorial Design}
 
@@ -132,12 +130,69 @@ Cross-episode drift    & Slope of btv across episodes \\
 \end{tabular}
 \end{table}
 
-The effective PoA metric compares realised liquid welfare against offline optima computed with full hindsight. Section~\ref{sec:welfare} establishes the LP relaxation as an upper bound on achievable liquid welfare. Experiment~3b uses the same response variables (Table~\ref{tab:exp3a_responses}), with the dual variable CV computed from $\lambda$ history rather than $\mu$ history and the bid suppression ratio using a competitive benchmark of $\lambda = 1.0$ (full-value bidding). Analysis applies the same factorial ANOVA engine used in Experiments~1a through~2b to the run-level data, treating each seed as an independent replicate within its factorial cell.
+The effective PoA metric compares realised liquid welfare against offline optima computed with full hindsight. Section~\ref{sec:welfare} establishes the LP relaxation as an upper bound on achievable liquid welfare. Experiment~3b uses the same response variables (Table~\ref{tab:exp3a_responses}), with the dual variable CV computed from $\lambda$ history rather than $\mu$ history and the bid suppression ratio using a competitive benchmark of $\lambda = 1.0$ (full-value bidding). Analysis applies the same factorial ANOVA engine used in Experiments~1a through~2b to the run-level data, treating each seed as an independent replicate within its factorial cell. Figure~\ref{fig:pacing_comparison} contrasts the two pacing mechanisms.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  block/.style={rectangle, draw, rounded corners, minimum width=6.0cm,
+                minimum height=0.9cm, text centered, font=\small},
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+  title/.style={font=\small\bfseries, text centered},
+]
+  % Column positions
+  \def\colA{0}
+  \def\colB{7.5}
+  \def\rowA{0}
+  \def\rowB{-1.4}
+  \def\rowC{-2.8}
+  \def\rowD{-4.2}
+
+  % Column titles
+  \node[title] at (\colA, 1.0) {Multiplicative Dual (Exp~3a)};
+  \node[title] at (\colB, 1.0) {PI Controller (Exp~3b)};
+
+  % Dual Pacing column
+  \node[block] (d1) at (\colA, \rowA) {Observe $v_t$, remaining budget};
+  \node[block] (d2) at (\colA, \rowB) {Bid $\min(v_t / \mu_t,\;\text{rem})$};
+  \node[block] (d3) at (\colA, \rowC) {Auction $\to$ cost $c_t$};
+  \node[block, text width=5.4cm] (d4) at (\colA, \rowD) {$\mu \leftarrow \mu \cdot \exp\!\big(\alpha_p(c_t - \rho)\big)$};
+
+  % PI Controller column
+  \node[block] (p1) at (\colB, \rowA) {Observe $v_t$, remaining budget};
+  \node[block] (p2) at (\colB, \rowB) {Bid $\min(\lambda_t \cdot v_t,\;\text{rem})$};
+  \node[block] (p3) at (\colB, \rowC) {Auction $\to$ cost $c_t$};
+  \node[block, text width=5.4cm] (p4) at (\colB, \rowD) {$e_t = \text{target} - \text{spent}$;\; $\lambda \leftarrow \lambda + K_P e + K_I \Sigma e$};
+
+  % Vertical arrows
+  \foreach \col in {d, p} {
+    \draw[arrow] (\col 1) -- (\col 2);
+    \draw[arrow] (\col 2) -- (\col 3);
+    \draw[arrow] (\col 3) -- (\col 4);
+  }
+
+  % Loopback arrows
+  \draw[arrow, rounded corners=8pt] (d4.west) -- ++(-1.2, 0) |- (d1.west);
+  \draw[arrow, rounded corners=8pt] (p4.east) -- ++(1.2, 0) |- (p1.east);
+
+  % Annotations (vertical, along loopback arrows)
+  \node[font=\scriptsize, text=RedOrange!70!black, rotate=90, anchor=south] at (-1.2, -2.1) {multiplicative update};
+  \node[font=\scriptsize, text=Violet!70!black, rotate=-90, anchor=south] at (8.7, -2.1) {additive error-based update};
+
+  % Background panels
+  \begin{pgfonlayer}{background}
+    \node[fill=RedOrange!8, rounded corners=6pt, fit=(d1)(d4),
+          inner xsep=10pt, inner ysep=10pt] {};
+    \node[fill=Violet!8, rounded corners=6pt, fit=(p1)(p4),
+          inner xsep=10pt, inner ysep=10pt] {};
+  \end{pgfonlayer}
+\end{tikzpicture}
+\caption{Per-round decision loops for the two pacing algorithms. Multiplicative dual pacing updates the dual variable $\mu$ via an exponential step proportional to the spending error. The PI controller updates the bid multiplier $\lambda$ via proportional and integral error terms. Both cap bids at the remaining budget.}
+\label{fig:pacing_comparison}
+\end{figure}
 
 \subsection{Dual Pacing Results (Experiment~3a)}
 \label{sec:exp3a_results}
-
-The design and factor levels are given in Table~\ref{tab:exp3a_params} (\ExpThreeANobs{} runs total).
 
 \begin{figure}[H]
   \centering
@@ -148,25 +203,11 @@ The design and factor levels are given in Table~\ref{tab:exp3a_params} (\ExpThre
 
 \subsubsection{Efficiency and Welfare}
 
-Tables~\ref{tab:exp3a_ranked_rev} and~\ref{tab:exp3a_ranked_poa} report the ranked significant effects for platform revenue and effective Price of Anarchy, respectively. Response variable definitions appear in Table~\ref{tab:exp3a_responses}.
+The design and factor levels are given in Table~\ref{tab:exp3a_params} (\ExpThreeANobs{} runs total). Tables~\ref{tab:exp3a_ranked_rev} and~\ref{tab:exp3a_ranked_poa} report the ranked significant effects for platform revenue and effective Price of Anarchy, respectively. Response variable definitions appear in Table~\ref{tab:exp3a_responses}.
 
 \input{tables/exp3a_ranked_rev}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3a_main_rev}
-  \caption{Experiment~3a: Main effects plot for platform revenue across the three factors.}
-  \label{fig:e3a_main_rev}
-\end{figure}
-
 \input{tables/exp3a_ranked_poa}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3a_main_poa}
-  \caption{Experiment~3a: Main effects plot for effective Price of Anarchy.}
-  \label{fig:e3a_main_poa}
-\end{figure}
 
 All observed PoA values are well within the theoretical bound of~2 \citep{Aggarwal2019, Gaitonde2023}. The absence of a significant auction format effect on PoA contrasts with the revenue results. First-price bid suppression reduces payments to the auctioneer without proportionally distorting allocative outcomes. Allocative efficiency, the fraction of rounds in which the highest-value bidder wins, provides a complementary view. Under utility-maximizing objectives, agents achieve near-perfect efficiency. Under value-maximizing objectives with four bidders, efficiency drops substantially, with bid-to-value ratios exceeding 1.5.\footnote{Utility-maximizing efficiency ranges from \ExpThreeAUtilEffLow{} to \ExpThreeAUtilEffHigh{} across cells; value-maximizing four-bidder efficiency drops to \ExpThreeAValFourEffLow--\ExpThreeAValFourEffHigh, with bid-to-value ratios exceeding 1.5.} The objective$\times$n\_bidders interaction ($t = \ExpThreeAAllocEffObjxNbidT$, $p \ExpThreeAAllocEffObjxNbidPFmt$) captures this pattern, with the efficiency cost of value-maximizing objectives larger under four bidders than under two.
 
@@ -185,14 +226,7 @@ The budget multiplier dominates platform revenue ($|t| = \ExpThreeARevFactorTOne
 
 \input{tables/exp3a_ranked_vol}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3a_main_vol}
-  \caption{Experiment~3a: Main effects plot for bid-to-value ratio.}
-  \label{fig:e3a_main_vol}
-\end{figure}
-
-The factorial model explains \ExpThreeAWelfareRsqPct\% of the variance in liquid welfare but only \ExpThreeADriftRsqPct\% in cross-episode drift, reflecting substantial seed-level noise in the latter metric. Cross-episode drift, measured as the slope of the bid-to-value ratio across post-burn-in episodes, assesses the \citet{PaesLeme2024} prediction that bidders progressively suppress bids across campaign cycles. Although the factorial ANOVA for drift is statistically significant ($F$-test $p \ExpThreeADriftFPFmt$), the model explains only \ExpThreeADriftRsqPct\% of the variance ($R^2 = \ExpThreeADriftRsq$), and all cell-level drift estimates remain near zero.\footnote{The large sample size (\ExpThreeANobs{} runs) allows detection of statistically significant but economically negligible effects.} This near-zero drift falsifies the prediction of \citet{PaesLeme2024} that dual-based pacing produces progressive bid suppression.
+The factorial model explains \ExpThreeAWelfareRsqPct\% of the variance in liquid welfare but only \ExpThreeADriftRsqPct\% in cross-episode drift, reflecting substantial seed-level noise in the latter metric. Cross-episode drift, measured as the slope of the bid-to-value ratio across post-burn-in episodes, assesses the \citet{PaesLeme2024} prediction that bidders progressively suppress bids across campaign cycles. Although the factorial ANOVA for drift is statistically significant ($F$-test $p \ExpThreeADriftFPFmt$), the model explains only \ExpThreeADriftRsqPct\% of the variance ($R^2 = \ExpThreeADriftRsq$), and all cell-level drift estimates remain near zero.\footnote{The large sample size (\ExpThreeANobs{} runs) allows detection of statistically significant but economically negligible effects.} This near-zero drift does not support the prediction of \citet{PaesLeme2024} that dual-based pacing produces progressive bid suppression, suggesting that the theoretical result may not generalise to noisy, discrete-time pacing environments with finite horizons.
 
 \subsubsection{Learning Dynamics}
 
@@ -220,23 +254,9 @@ The PI controller produces welfare outcomes that can be compared directly with t
 
 \input{tables/exp3b_ranked_rev}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3b_main_rev}
-  \caption{Experiment~3b: Main effects plot for platform revenue.}
-  \label{fig:e3b_main_rev}
-\end{figure}
-
 \input{tables/exp3b_ranked_poa}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3b_main_poa}
-  \caption{Experiment~3b: Main effects plot for effective Price of Anarchy.}
-  \label{fig:e3b_main_poa}
-\end{figure}
-
-For the effective Price of Anarchy, auction format is the dominant factor ($|t| = 10.7$), with first-price auctions producing higher PoA values. The number of bidders $\times$ budget multiplier interaction ranks second ($|t| = 9.9$). Thin markets with tight budgets generate the largest efficiency losses. Value dispersion reduces PoA ($|t| = 4.8$). As in Experiment~3a, all observed PoA values remain within the theoretical bound. Allocative efficiency follows a similar pattern. The budget multiplier dominates ($|t| = 44.7$), with loose budgets yielding near-efficient allocations.
+For the effective Price of Anarchy, auction format is the dominant factor ($|t| = 10.7$), with first-price auctions producing higher PoA values. The number of bidders $\times$ budget multiplier interaction ranks second ($|t| = 9.9$). Thin markets with tight budgets produce the highest effective PoA values, indicating the largest gap between achieved and optimal liquid welfare. Value dispersion reduces PoA ($|t| = 4.8$). As in Experiment~3a, all observed PoA values remain within the theoretical bound. Allocative efficiency follows a similar pattern. The budget multiplier dominates ($|t| = 44.7$), with loose budgets yielding near-efficient allocations.
 
 \subsubsection{Revenue and Budget Dynamics}
 
@@ -251,16 +271,9 @@ The auction type $\times$ budget multiplier interaction is the strongest two-way
 
 \subsubsection{Bidding Behaviour}
 
-The bid-to-value ratio is well-explained by the factorial model ($R^2 = 0.89$). The budget multiplier is the dominant factor ($|t| = 54.4$). Loose budgets permit higher bids relative to value, while tight budgets force aggressive shading. Auction format ranks second ($|t| = 22.3$), with first-price auctions producing substantially lower bid-to-value ratios than second-price, consistent with the theoretical prediction that first-price bidders shade below value. The auction type $\times$ budget multiplier interaction ($|t| = 17.3$) indicates that bid shading under first-price rules is amplified when budgets are tight. The auction type $\times$ number of bidders interaction ($|t| = 5.8$) reflects that additional bidders narrow the bid-to-value gap between formats. Compared with the multiplicative pacing of Experiment~3a, the PI controller produces qualitatively similar bid-to-value patterns but with less extreme shading under tight budgets. Table~\ref{tab:exp3b_ranked_vol} and Figure~\ref{fig:e3b_main_vol} report the full effect hierarchy.
+The bid-to-value ratio is well-explained by the factorial model ($R^2 = 0.89$). The budget multiplier is the dominant factor ($|t| = 54.4$). Loose budgets permit higher bids relative to value, while tight budgets force aggressive shading. Auction format ranks second ($|t| = 22.3$), with first-price auctions producing substantially lower bid-to-value ratios than second-price, consistent with the theoretical prediction that first-price bidders shade below value. The auction type $\times$ budget multiplier interaction ($|t| = 17.3$) indicates that bid shading under first-price rules is amplified when budgets are tight. The auction type $\times$ number of bidders interaction ($|t| = 5.8$) reflects that additional bidders narrow the bid-to-value gap between formats. Compared with the multiplicative pacing of Experiment~3a, the PI controller produces qualitatively similar bid-to-value patterns but with less extreme shading under tight budgets. Table~\ref{tab:exp3b_ranked_vol} reports the full effect hierarchy.
 
 \input{tables/exp3b_ranked_vol}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/e3b_main_vol}
-  \caption{Experiment~3b: Main effects plot for bid-to-value ratio.}
-  \label{fig:e3b_main_vol}
-\end{figure}
 
 \subsection{Sensitivity Analysis}
 \label{sec:sens_pacing}
@@ -301,7 +314,7 @@ Experiment & Mean Spearman $\rho$ & Number of responses \\
 
 \subsection{Summary}
 
-The comparison between multiplicative dual pacing and PI control isolates the role of the control mechanism from the budget constraint itself. In both experiments, the budget multiplier is the dominant revenue driver ($|t| = \ExpThreeARevFactorTOne$ in Experiment~3a; $|t| = \ExpThreeBRevFactorTOne$ in Experiment~3b), confirming that budget tightness, not the pacing algorithm, is the primary determinant of revenue outcomes. The number of bidders ranks among the top factors in both cases ($|t| = \ExpThreeARevNbidAbsT$ in 3a; $|t| = 16.1$ in 3b), while auction format plays a stronger role under PI control ($|t| = 11.0$) than under dual pacing ($|t| = \ExpThreeARevAuctionT$). PoA values remain within the theoretical bound in both experiments (Section~\ref{sec:exp3a_results}). The two pacing mechanisms produce different bid-to-value ratio levels, but the factor hierarchy is consistent across both approaches, indicating that the structural features of the budget-constrained environment dominate the choice of control algorithm. This consistency further distinguishes constraint-driven from learning-driven bid suppression. In Experiments~1a--2b, switching algorithms changed the direction of the auction-format effect, whereas here, switching the pacing mechanism leaves the format effect unchanged. Global sensitivity analysis independently confirms these rankings (Sections~\ref{sec:sens_exp3a}--\ref{sec:sens_exp3b}). Cross-method concordance is strong in both cases ($\rho = 0.72$ in 3a, $\rho = 0.77$ in 3b), indicating robust agreement across all seven sensitivity methods (Section~\ref{sec:sens_concordance}).
+The comparison between multiplicative dual pacing and PI control isolates the role of the control mechanism from the budget constraint itself. In both experiments, the budget multiplier is the dominant revenue driver ($|t| = \ExpThreeARevFactorTOne$ in Experiment~3a; $|t| = \ExpThreeBRevFactorTOne$ in Experiment~3b), confirming that budget tightness, not the pacing algorithm, is the primary determinant of revenue outcomes. The number of bidders ranks among the top factors in both cases ($|t| = \ExpThreeARevNbidAbsT$ in 3a; $|t| = 16.1$ in 3b), while auction format plays a stronger role under PI control ($|t| = 11.0$) than under dual pacing ($|t| = \ExpThreeARevAuctionT$). PoA values remain within the theoretical bound in both experiments (Section~\ref{sec:exp3a_results}). The two pacing mechanisms produce different bid-to-value ratio levels, but the factor hierarchy is consistent across both approaches, indicating that the structural features of the budget-constrained environment dominate the choice of control algorithm. This consistency suggests that the factor hierarchy is more stable within the pacing algorithm family than across unconstrained learning algorithms, where switching from Q-learning to contextual bandits changed the direction of the auction-format effect. Global sensitivity analysis independently confirms these rankings (Sections~\ref{sec:sens_exp3a}--\ref{sec:sens_exp3b}). Cross-method concordance is strong in both cases ($\rho = 0.72$ in 3a, $\rho = 0.77$ in 3b), indicating robust agreement across all seven sensitivity methods (Section~\ref{sec:sens_concordance}).
 
 \label{sec:sens_synthesis}
 
@@ -331,7 +344,7 @@ Alloc.\ eff.   & -- & -- & -- & -- & O (0.48) & B (0.74) \\
 \end{tabular}
 \end{table}
 
-Market structure is the primary determinant of algorithmic auction outcomes across all six experiments. In the four learning experiments (1a, 1b, 2a, 2b), the number of bidders is the dominant factor for revenue in every case, achieving total-order indices from 0.22 to 0.55 (Table~\ref{tab:sens_dominant}). It also dominates winner entropy in all six experiments ($S_T = 0.16$--$0.75$), reflecting the mechanical relationship between market size and competitive balance. In the two autobidding experiments (3a, 3b), budget multiplier replaces number of bidders as the dominant revenue factor ($S_T = 0.53$--$0.54$) and drives most welfare and efficiency metrics. This transition is consistent with the theoretical distinction between the two experimental families: in learning experiments the number of competitors determines equilibrium revenue, while in autobidding the budget constraint is the binding force that shapes market outcomes.
+Market thickness is the primary determinant of algorithmic auction outcomes across all six experiments. In the four learning experiments (1a, 1b, 2a, 2b), the number of bidders is the dominant factor for revenue in every case, achieving total-order indices from 0.22 to 0.55 (Table~\ref{tab:sens_dominant}). It also dominates winner entropy in all six experiments ($S_T = 0.16$--$0.75$), reflecting the mechanical relationship between market size and competitive balance. In the two autobidding experiments (3a, 3b), budget multiplier replaces number of bidders as the dominant revenue factor ($S_T = 0.53$--$0.54$) and drives most welfare and efficiency metrics. This transition is consistent with the different constraints faced by the two algorithm families: in learning experiments the number of competitors determines equilibrium revenue, while in autobidding the budget constraint is the binding force that shapes market outcomes.
 
 Reserve price and auction format occupy distinct niches in the factor importance hierarchy. Reserve price is the dominant factor for no-sale rate in Experiments~1a and~2a ($S_T = 0.27$ and $0.45$), confirming its direct role as a bid-acceptance threshold. In Experiment~2b, reserve price ranks second to the number of bidders for no-sale rate ($S_T = 0.41$ vs $0.41$), essentially tied. Auction format is rarely the top-ranked factor; across 51 well-fitted response variables, it is dominant in only five cases.\footnote{Well-fitted responses are those with $R^2 > 0.15$, excluding three Experiment~3a responses and two Experiment~3b responses where the model explains negligible variance.} Its strongest contributions are to winner's curse frequency in Experiment~1b ($S_T = 0.36$), inter-episode volatility in Experiment~3b ($S_T = 0.33$), price volatility in Experiment~2a ($S_T = 0.24$), effective price of anarchy in Experiment~3b ($S_T = 0.19$), and convergence time in Experiment~1b ($S_T = 0.11$). The choice between first-price and second-price formats thus matters most for stability and strategic behaviour rather than for aggregate revenue.
 

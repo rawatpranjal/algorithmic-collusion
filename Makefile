@@ -6,7 +6,8 @@
         traces tables pdf paper all clean help \
         dive1 dive2 dive3 dive3a dive3b dive4a dive4b \
         check check-freshness discretization budget-robust \
-        verify verify-quick calibrate calibrate-multi calibrate-exp3 calibrate-exp4b
+        verify verify-quick calibrate calibrate-multi calibrate-exp3 calibrate-exp4b \
+        arxiv
 
 PYTHON  := python3
 PY      := PYTHONPATH=src $(PYTHON)
@@ -246,6 +247,10 @@ calibrate-exp3:
 
 calibrate-exp4b:
 	$(PY) scripts/calibrate_exp4b.py
+
+# ── arXiv Submission ────────────────────────────────────────
+arxiv:
+	$(PYTHON) scripts/make_arxiv.py
 
 # ── Cleanup ──────────────────────────────────────────────────
 clean:

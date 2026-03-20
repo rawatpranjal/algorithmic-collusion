@@ -6,18 +6,29 @@ avg_rev_last_1000:
   Dominant factor: n_bidders (ST=0.3058, S1=0.1759)
   Most interactive: n_bidders (gap=0.1299)
 
-  Method agreement: mean Spearman = -0.050, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.069, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.5750
     NN        : -1.1024
     Kriging   : 0.5164
 
+avg_rev_all:
+  Dominant factor: n_bidders (ST=0.3148, S1=0.1976)
+  Most interactive: n_bidders (gap=0.1172)
+
+  Method agreement: mean Spearman = -0.014, top-1 INCONSISTENT
+
+  Surrogate CV R²:
+    LGBM      : 0.5822
+    NN        : -1.2689
+    Kriging   : 0.5231
+
 time_to_converge:
   Dominant factor: n_bidders (ST=0.1563, S1=0.0296)
   Most interactive: n_bidders (gap=0.1267)
 
-  Method agreement: mean Spearman = -0.045, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.086, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.2804
@@ -29,7 +40,7 @@ no_sale_rate:
   Most interactive: reserve_price (gap=0.2515)
   Negligible (ST<0.01): auction_type, exploration_intensity
 
-  Method agreement: mean Spearman = 0.233, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.218, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.8678
@@ -40,7 +51,7 @@ price_volatility:
   Dominant factor: n_bidders (ST=0.3737, S1=0.0932)
   Most interactive: n_bidders (gap=0.2806)
 
-  Method agreement: mean Spearman = 0.156, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.155, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.4148
@@ -52,7 +63,7 @@ winner_entropy:
   Most interactive: exploration_intensity (gap=0.1076)
   Negligible (ST<0.01): auction_type
 
-  Method agreement: mean Spearman = -0.094, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.031, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.5283

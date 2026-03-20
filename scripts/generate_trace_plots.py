@@ -3,7 +3,7 @@
 Generate single-run trace visualizations for the paper.
 
 Produces one illustrative figure per experiment showing learning dynamics
-from a representative configuration. Outputs to paper/figures/e{1,2,3a,3b,4a,4b}_trace.png.
+from a representative configuration. Outputs to paper/figures/e{1a,1b,2a,2b,3a,3b}_trace.png.
 """
 
 import sys
@@ -33,6 +33,13 @@ os.makedirs(FIGURE_DIR, exist_ok=True)
 DPI = 300
 STYLE_KW = dict(linewidth=0.8)
 
+# Map code experiment IDs to paper figure prefixes
+_TRACE_FILE_NAMES = {
+    "exp1": "e1a", "exp2": "e1b",
+    "exp3a": "e2a", "exp3b": "e2b",
+    "exp4a": "e3a", "exp4b": "e3b",
+}
+
 
 def rolling_mean(data, window):
     return pd.Series(data).rolling(window=window, min_periods=1).mean().values
@@ -42,7 +49,7 @@ def rolling_mean(data, window):
 # Experiment 1: Q-Learning with Constant Valuations
 # =====================================================================
 def generate_exp1_trace():
-    from experiments.exp1 import run_experiment, theoretical_revenue_constant_valuation
+    from experiments.exp1 import run_experiment
 
     print("Exp1: Running single trial...")
     summary, revenues, round_history, Q = run_experiment(
@@ -62,8 +69,6 @@ def generate_exp1_trace():
         collect_history=True,
     )
 
-    bne_rev = theoretical_revenue_constant_valuation(2, "first")
-
     # Extract per-bidder bids from round_history
     df = pd.DataFrame(round_history)
     episodes = np.arange(len(revenues))
@@ -78,17 +83,20 @@ def generate_exp1_trace():
         ax.plot(np.arange(len(rm_bids)), rm_bids,
                 linestyle=styles[bidder_id % len(styles)],
                 color="black", label=f"Bidder {bidder_id}", **STYLE_KW)
-    ax.axhline(bne_rev, color="gray", linestyle="--", linewidth=0.7, label="BNE bid")
+    # BNE bid for FPA with 2 bidders, constant valuations v=1: b = (n-1)/n = 0.5
+    bne_bid = 0.5
+    ax.axhline(bne_bid, color="gray", linestyle="--", linewidth=0.7,
+               label=f"BNE bid = {bne_bid:.2f}")
     ax.set_ylabel("Mean bid (rolling mean)")
     ax.set_xlabel("Episode")
     ax.legend(frameon=False)
 
     fig.tight_layout()
-    path = os.path.join(FIGURE_DIR, "e1_trace.png")
+    path = os.path.join(FIGURE_DIR, f"{_TRACE_FILE_NAMES['exp1']}_trace.png")
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved: {path}")
-    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}, BNE={bne_rev:.4f}")
+    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}")
 
 
 # =====================================================================
@@ -96,7 +104,6 @@ def generate_exp1_trace():
 # =====================================================================
 def generate_exp2_trace():
     from experiments.exp2 import run_experiment
-    from verification.bne_verify import analytical_revenue
 
     print("Exp2: Running single trial...")
     summary, revenues, _, Q = run_experiment(
@@ -108,14 +115,18 @@ def generate_exp2_trace():
         seed=42,
     )
 
-    bne_rev = analytical_revenue(0.5, 2)
     episodes = np.arange(len(revenues))
 
     fig, ax = plt.subplots(figsize=(10, 3.5))
 
-    # Revenue rolling mean with BNE line
+    # Revenue rolling mean
     rm = rolling_mean(revenues, 2000)
     ax.plot(episodes, rm, color="black", **STYLE_KW)
+
+    # BNE revenue for FPA, 2 bidders, affiliated valuations with eta=0.5
+    # alpha = 1 - eta/2 = 0.75, beta = eta/2 = 0.25, phi = 1.0
+    # bne_rev = (n-1)/(n+1) * phi = 1/3
+    bne_rev = (2 - 1) / (2 + 1) * 1.0
     ax.axhline(bne_rev, color="gray", linestyle="--", linewidth=0.7,
                label=f"BNE = {bne_rev:.3f}")
     ax.set_ylabel("Revenue (rolling mean)")
@@ -123,18 +134,18 @@ def generate_exp2_trace():
     ax.legend(frameon=False)
 
     fig.tight_layout()
-    path = os.path.join(FIGURE_DIR, "e2_trace.png")
+    path = os.path.join(FIGURE_DIR, f"{_TRACE_FILE_NAMES['exp2']}_trace.png")
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved: {path}")
-    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}, BNE={bne_rev:.4f}")
+    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}")
 
 
 # =====================================================================
 # Experiment 3a: LinUCB Contextual Bandits
 # =====================================================================
 def generate_exp3a_trace():
-    from experiments.exp3 import run_bandit_experiment, simulate_linear_affiliation_revenue
+    from experiments.exp3 import run_bandit_experiment
 
     eta, n_bidders, auction_type = 0.5, 2, "first"
     max_rounds = 100_000
@@ -155,41 +166,38 @@ def generate_exp3a_trace():
         collect_history=True,
     )
 
-    bne_rev = simulate_linear_affiliation_revenue(n_bidders, eta, auction_type, M=50_000)
-
-    # BNE bid function: b(s) = phi * s
-    alpha_val = 1.0 - 0.5 * eta
-    beta_val = 0.5 * eta / max(n_bidders - 1, 1)
-    phi_fpa = ((n_bidders - 1) / n_bidders) * (alpha_val + n_bidders * beta_val / 2.0)
-
     df = pd.DataFrame(round_history)
 
     fig, ax = plt.subplots(figsize=(10, 3.5))
 
-    # Bid vs signal scatter (last 1000 rounds) with BNE overlay
+    # Bid vs signal scatter (last 1000 rounds)
     tail_df = df[df["episode"] >= max_rounds - 1000]
     ax.scatter(tail_df["signal"], tail_df["chosen_bid"], s=2, color="black",
                alpha=0.3, rasterized=True, label="Observed bids")
+
+    # BNE bid function: b(s) = phi_fpa * s where phi_fpa = ((n-1)/n) * (alpha + n*beta/2)
+    # eta=0.5, n=2: alpha=0.75, beta=0.25 => phi_fpa = 0.5 * (0.75 + 2*0.25/2) = 0.5
+    phi_fpa = 0.5
     s_line = np.linspace(0, 1, 100)
-    ax.plot(s_line, phi_fpa * s_line, color="gray", linestyle="--",
-            linewidth=0.7, label=f"BNE: $b = {phi_fpa:.2f} s$")
+    ax.plot(s_line, phi_fpa * s_line, color="gray", linestyle="--", linewidth=0.7,
+            label=f"BNE: $b = {phi_fpa:.2f}s$")
     ax.set_xlabel("Signal")
     ax.set_ylabel("Bid")
     ax.legend(frameon=False)
 
     fig.tight_layout()
-    path = os.path.join(FIGURE_DIR, "e3a_trace.png")
+    path = os.path.join(FIGURE_DIR, f"{_TRACE_FILE_NAMES['exp3a']}_trace.png")
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved: {path}")
-    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}, BNE={bne_rev:.4f}")
+    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}")
 
 
 # =====================================================================
 # Experiment 3b: Thompson Sampling Contextual Bandits
 # =====================================================================
 def generate_exp3b_trace():
-    from experiments.exp3 import run_bandit_experiment, simulate_linear_affiliation_revenue
+    from experiments.exp3 import run_bandit_experiment
 
     eta, n_bidders, auction_type = 0.5, 2, "first"
     max_rounds = 100_000
@@ -210,34 +218,30 @@ def generate_exp3b_trace():
         collect_history=True,
     )
 
-    bne_rev = simulate_linear_affiliation_revenue(n_bidders, eta, auction_type, M=50_000)
-
-    # BNE bid function: b(s) = phi * s
-    alpha_val = 1.0 - 0.5 * eta
-    beta_val = 0.5 * eta / max(n_bidders - 1, 1)
-    phi_fpa = ((n_bidders - 1) / n_bidders) * (alpha_val + n_bidders * beta_val / 2.0)
-
     df = pd.DataFrame(round_history)
 
     fig, ax = plt.subplots(figsize=(10, 3.5))
 
-    # Bid vs signal scatter (last 1000 rounds) with BNE overlay
+    # Bid vs signal scatter (last 1000 rounds)
     tail_df = df[df["episode"] >= max_rounds - 1000]
     ax.scatter(tail_df["signal"], tail_df["chosen_bid"], s=2, color="black",
                alpha=0.3, rasterized=True, label="Observed bids")
+
+    # BNE bid function: same as exp3a (eta=0.5, n=2 => phi_fpa = 0.5)
+    phi_fpa = 0.5
     s_line = np.linspace(0, 1, 100)
-    ax.plot(s_line, phi_fpa * s_line, color="gray", linestyle="--",
-            linewidth=0.7, label=f"BNE: $b = {phi_fpa:.2f} s$")
+    ax.plot(s_line, phi_fpa * s_line, color="gray", linestyle="--", linewidth=0.7,
+            label=f"BNE: $b = {phi_fpa:.2f}s$")
     ax.set_xlabel("Signal")
     ax.set_ylabel("Bid")
     ax.legend(frameon=False)
 
     fig.tight_layout()
-    path = os.path.join(FIGURE_DIR, "e3b_trace.png")
+    path = os.path.join(FIGURE_DIR, f"{_TRACE_FILE_NAMES['exp3b']}_trace.png")
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved: {path}")
-    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}, BNE={bne_rev:.4f}")
+    print(f"  Summary: avg_rev={summary['avg_rev_last_1000']:.4f}")
 
 
 # =====================================================================
@@ -274,7 +278,7 @@ def generate_exp4a_trace():
     ax.legend(frameon=False)
 
     fig.tight_layout()
-    path = os.path.join(FIGURE_DIR, "e4a_trace.png")
+    path = os.path.join(FIGURE_DIR, f"{_TRACE_FILE_NAMES['exp4a']}_trace.png")
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved: {path}")
@@ -316,7 +320,7 @@ def generate_exp4b_trace():
     ax.legend(frameon=False)
 
     fig.tight_layout()
-    path = os.path.join(FIGURE_DIR, "e4b_trace.png")
+    path = os.path.join(FIGURE_DIR, f"{_TRACE_FILE_NAMES['exp4b']}_trace.png")
     fig.savefig(path, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     print(f"  Saved: {path}")

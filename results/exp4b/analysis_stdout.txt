@@ -40,8 +40,8 @@ RESPONSE: mean_platform_revenue
 Dep. Variable:     mean_platform_revenue   R-squared:                       0.768
 Model:                               OLS   Adj. R-squared:                  0.758
 Method:                    Least Squares   F-statistic:                     77.05
-Date:                   Tue, 17 Mar 2026   Prob (F-statistic):          2.48e-140
-Time:                           17:34:00   Log-Likelihood:                -4220.4
+Date:                   Fri, 20 Mar 2026   Prob (F-statistic):          2.48e-140
+Time:                           01:11:46   Log-Likelihood:                -4220.4
 No. Observations:                    512   AIC:                             8485.
 Df Residuals:                        490   BIC:                             8578.
 Df Model:                             21                                         
@@ -133,8 +133,8 @@ RESPONSE: mean_liquid_welfare
 Dep. Variable:     mean_liquid_welfare   R-squared:                       0.732
 Model:                             OLS   Adj. R-squared:                  0.720
 Method:                  Least Squares   F-statistic:                     63.60
-Date:                 Tue, 17 Mar 2026   Prob (F-statistic):          3.19e-125
-Time:                         17:34:00   Log-Likelihood:                -4072.1
+Date:                 Fri, 20 Mar 2026   Prob (F-statistic):          3.19e-125
+Time:                         01:11:47   Log-Likelihood:                -4072.1
 No. Observations:                  512   AIC:                             8188.
 Df Residuals:                      490   BIC:                             8282.
 Df Model:                           21                                         
@@ -224,8 +224,8 @@ RESPONSE: mean_effective_poa
 Dep. Variable:     mean_effective_poa   R-squared:                       0.391
 Model:                            OLS   Adj. R-squared:                  0.365
 Method:                 Least Squares   F-statistic:                     14.99
-Date:                Tue, 17 Mar 2026   Prob (F-statistic):           1.25e-40
-Time:                        17:34:01   Log-Likelihood:                 1083.1
+Date:                Fri, 20 Mar 2026   Prob (F-statistic):           1.25e-40
+Time:                        01:11:48   Log-Likelihood:                 1083.1
 No. Observations:                 512   AIC:                            -2122.
 Df Residuals:                     490   BIC:                            -2029.
 Df Model:                          21                                         
@@ -319,8 +319,8 @@ RESPONSE: mean_budget_utilization
 Dep. Variable:     mean_budget_utilization   R-squared:                       0.822
 Model:                                 OLS   Adj. R-squared:                  0.815
 Method:                      Least Squares   F-statistic:                     108.1
-Date:                     Tue, 17 Mar 2026   Prob (F-statistic):          9.81e-169
-Time:                             17:34:02   Log-Likelihood:                 402.44
+Date:                     Fri, 20 Mar 2026   Prob (F-statistic):          9.81e-169
+Time:                             01:11:49   Log-Likelihood:                 402.44
 No. Observations:                      512   AIC:                            -760.9
 Df Residuals:                          490   BIC:                            -667.6
 Df Model:                               21                                         
@@ -414,8 +414,8 @@ RESPONSE: mean_bid_to_value
 Dep. Variable:      mean_bid_to_value   R-squared:                       0.886
 Model:                            OLS   Adj. R-squared:                  0.881
 Method:                 Least Squares   F-statistic:                     180.9
-Date:                Tue, 17 Mar 2026   Prob (F-statistic):          2.57e-215
-Time:                        17:34:03   Log-Likelihood:                 219.20
+Date:                Fri, 20 Mar 2026   Prob (F-statistic):          2.57e-215
+Time:                        01:11:49   Log-Likelihood:                 219.20
 No. Observations:                 512   AIC:                            -394.4
 Df Residuals:                     490   BIC:                            -301.2
 Df Model:                          21                                         
@@ -503,8 +503,8 @@ RESPONSE: mean_allocative_efficiency
 Dep. Variable:     mean_allocative_efficiency   R-squared:                       0.827
 Model:                                    OLS   Adj. R-squared:                  0.820
 Method:                         Least Squares   F-statistic:                     111.7
-Date:                        Tue, 17 Mar 2026   Prob (F-statistic):          1.41e-171
-Time:                                17:34:03   Log-Likelihood:                 386.88
+Date:                        Fri, 20 Mar 2026   Prob (F-statistic):          1.41e-171
+Time:                                01:11:51   Log-Likelihood:                 386.88
 No. Observations:                         512   AIC:                            -729.8
 Df Residuals:                             490   BIC:                            -636.5
 Df Model:                                  21                                         
@@ -599,8 +599,8 @@ RESPONSE: mean_dual_cv
 Dep. Variable:           mean_dual_cv   R-squared:                       0.882
 Model:                            OLS   Adj. R-squared:                  0.877
 Method:                 Least Squares   F-statistic:                     174.8
-Date:                Tue, 17 Mar 2026   Prob (F-statistic):          3.92e-212
-Time:                        17:34:04   Log-Likelihood:                 116.51
+Date:                Fri, 20 Mar 2026   Prob (F-statistic):          3.92e-212
+Time:                        01:11:52   Log-Likelihood:                 116.51
 No. Observations:                 512   AIC:                            -189.0
 Df Residuals:                     490   BIC:                            -95.77
 Df Model:                          21                                         
@@ -697,8 +697,8 @@ RESPONSE: mean_no_sale_rate
 Dep. Variable:      mean_no_sale_rate   R-squared:                       0.697
 Model:                            OLS   Adj. R-squared:                  0.684
 Method:                 Least Squares   F-statistic:                     53.78
-Date:                Tue, 17 Mar 2026   Prob (F-statistic):          1.16e-112
-Time:                        17:34:05   Log-Likelihood:                 843.69
+Date:                Fri, 20 Mar 2026   Prob (F-statistic):          1.16e-112
+Time:                        01:11:53   Log-Likelihood:                 843.69
 No. Observations:                 512   AIC:                            -1643.
 Df Residuals:                     490   BIC:                            -1550.
 Df Model:                          21                                         
@@ -797,8 +797,8 @@ RESPONSE: mean_winner_entropy
 Dep. Variable:     mean_winner_entropy   R-squared:                       0.798
 Model:                             OLS   Adj. R-squared:                  0.789
 Method:                  Least Squares   F-statistic:                     92.19
-Date:                 Tue, 17 Mar 2026   Prob (F-statistic):          4.05e-155
-Time:                         17:34:06   Log-Likelihood:                 186.47
+Date:                 Fri, 20 Mar 2026   Prob (F-statistic):          4.05e-155
+Time:                         01:11:54   Log-Likelihood:                 186.47
 No. Observations:                  512   AIC:                            -328.9
 Df Residuals:                      490   BIC:                            -235.7
 Df Model:                           21                                         
@@ -893,8 +893,8 @@ RESPONSE: warm_start_benefit
 Dep. Variable:     warm_start_benefit   R-squared:                       0.030
 Model:                            OLS   Adj. R-squared:                 -0.012
 Method:                 Least Squares   F-statistic:                    0.7164
-Date:                Tue, 17 Mar 2026   Prob (F-statistic):              0.818
-Time:                        17:34:07   Log-Likelihood:                -2806.0
+Date:                Fri, 20 Mar 2026   Prob (F-statistic):              0.818
+Time:                        01:11:54   Log-Likelihood:                -2806.0
 No. Observations:                 512   AIC:                             5656.
 Df Residuals:                     490   BIC:                             5749.
 Df Model:                          21                                         
@@ -978,8 +978,8 @@ RESPONSE: inter_episode_volatility
 Dep. Variable:     inter_episode_volatility   R-squared:                       0.608
 Model:                                  OLS   Adj. R-squared:                  0.591
 Method:                       Least Squares   F-statistic:                     36.21
-Date:                      Tue, 17 Mar 2026   Prob (F-statistic):           1.01e-85
-Time:                              17:34:07   Log-Likelihood:                 1701.2
+Date:                      Fri, 20 Mar 2026   Prob (F-statistic):           1.01e-85
+Time:                              01:11:55   Log-Likelihood:                 1701.2
 No. Observations:                       512   AIC:                            -3358.
 Df Residuals:                           490   BIC:                            -3265.
 Df Model:                                21                                         
@@ -1082,8 +1082,8 @@ RESPONSE: bid_suppression_ratio
 Dep. Variable:     bid_suppression_ratio   R-squared:                       0.886
 Model:                               OLS   Adj. R-squared:                  0.881
 Method:                    Least Squares   F-statistic:                     180.9
-Date:                   Tue, 17 Mar 2026   Prob (F-statistic):          2.57e-215
-Time:                           17:34:08   Log-Likelihood:                 219.20
+Date:                   Fri, 20 Mar 2026   Prob (F-statistic):          2.57e-215
+Time:                           01:11:56   Log-Likelihood:                 219.20
 No. Observations:                    512   AIC:                            -394.4
 Df Residuals:                        490   BIC:                            -301.2
 Df Model:                             21                                         
@@ -1171,8 +1171,8 @@ RESPONSE: cross_episode_drift
 Dep. Variable:     cross_episode_drift   R-squared:                       0.054
 Model:                             OLS   Adj. R-squared:                  0.014
 Method:                  Least Squares   F-statistic:                     1.335
-Date:                 Tue, 17 Mar 2026   Prob (F-statistic):              0.146
-Time:                         17:34:09   Log-Likelihood:                 4444.2
+Date:                 Fri, 20 Mar 2026   Prob (F-statistic):              0.146
+Time:                         01:11:57   Log-Likelihood:                 4444.2
 No. Observations:                  512   AIC:                            -8844.
 Df Residuals:                      490   BIC:                            -8751.
 Df Model:                           21                                         
@@ -1257,8 +1257,8 @@ RESPONSE: mean_lp_offline_welfare
 Dep. Variable:     mean_lp_offline_welfare   R-squared:                       0.731
 Model:                                 OLS   Adj. R-squared:                  0.720
 Method:                      Least Squares   F-statistic:                     63.55
-Date:                     Tue, 17 Mar 2026   Prob (F-statistic):          3.69e-125
-Time:                             17:34:10   Log-Likelihood:                -4079.7
+Date:                     Fri, 20 Mar 2026   Prob (F-statistic):          3.69e-125
+Time:                             01:11:58   Log-Likelihood:                -4079.7
 No. Observations:                      512   AIC:                             8203.
 Df Residuals:                          490   BIC:                             8297.
 Df Model:                               21                                         
@@ -1348,8 +1348,8 @@ RESPONSE: mean_effective_poa_lp
 Dep. Variable:     mean_effective_poa_lp   R-squared:                       0.391
 Model:                               OLS   Adj. R-squared:                  0.365
 Method:                    Least Squares   F-statistic:                     14.97
-Date:                   Tue, 17 Mar 2026   Prob (F-statistic):           1.36e-40
-Time:                           17:34:10   Log-Likelihood:                 1082.5
+Date:                   Fri, 20 Mar 2026   Prob (F-statistic):           1.36e-40
+Time:                           01:11:58   Log-Likelihood:                 1082.5
 No. Observations:                    512   AIC:                            -2121.
 Df Residuals:                        490   BIC:                            -2028.
 Df Model:                             21                                         
@@ -1443,8 +1443,8 @@ RESPONSE: mean_rev_all
 Dep. Variable:           mean_rev_all   R-squared:                       0.768
 Model:                            OLS   Adj. R-squared:                  0.758
 Method:                 Least Squares   F-statistic:                     77.05
-Date:                Tue, 17 Mar 2026   Prob (F-statistic):          2.46e-140
-Time:                        17:34:11   Log-Likelihood:                -4220.3
+Date:                Fri, 20 Mar 2026   Prob (F-statistic):          2.46e-140
+Time:                        01:11:59   Log-Likelihood:                -4220.3
 No. Observations:                 512   AIC:                             8485.
 Df Residuals:                     490   BIC:                             8578.
 Df Model:                          21                                         

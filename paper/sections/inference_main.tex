@@ -10,7 +10,7 @@ We design three experiment families, each comprising two sub-experiments, to stu
 
 Experiment~1a deploys Q-learning agents with constant valuations ($v_i = 1$) in a $2^{10-1}$ Resolution~V half-fraction spanning 10 factors (learning rates, discount factors, exploration modes, update synchronisation, number of bidders, reserve prices) and 1{,}024 observations. Under independent private values, revenue equivalence \citep{Vickrey1961} predicts that first- and second-price auctions yield identical expected revenue. The experiment tests whether Q-learning preserves this equivalence or breaks it.
 
-Experiment~1b generalises Q-learning to affiliated valuations via $v_i = (1 - 0.5\eta)s_i + 0.5\eta \frac{1}{n-1}\sum_{j \neq i} s_j$, where $\eta \in \{0, 0.5, 1\}$ ranges from private to near-common values. The revenue ranking theorem \citep{MilgromWeber1982} predicts SPA $\geq$ FPA under affiliation. The $3 \times 2^3$ mixed-level design crosses auction format, affiliation, number of bidders, and state information, with Q-learning hyperparameters fixed at levels identified in Experiment~1a, testing whether Q-learning preserves this revenue ordering.
+Experiment~1b generalises Q-learning to affiliated valuations via $v_i = (1 - 0.5\eta)s_i + 0.5\eta \frac{1}{n-1}\sum_{j \neq i} s_j$, where $\eta \in \{0, 0.5, 1\}$ ranges from private to near-common values. Revenue equivalence holds for all $\eta$ in this model because signals are drawn independently (Appendix~\ref{sec:equilibria}). The $3 \times 2^3$ mixed-level design crosses auction format, affiliation, number of bidders, and state information, with Q-learning hyperparameters fixed at levels identified in Experiment~1a.
 
 Experiment~2a replaces Q-learning with LinUCB contextual bandits under the same affiliated valuation model. LinUCB uses optimism-based exploration and Thompson Sampling uses posterior sampling. Comparing the two tests how exploration style affects outcomes. Bandit algorithms should exploit contextual structure better than tabular Q-learning; the experiment tests whether this improves seller outcomes.
 
@@ -67,7 +67,7 @@ Our core outcome metrics are consistent across all experiments. We measure the \
 \toprule
 \textbf{Metric} & \textbf{Description}\\
 \midrule
-Average revenue (later rounds) & Mean revenue in the final 1000 rounds \\
+Average revenue (later rounds) & Mean revenue in the final 1{,}000 rounds \\
 Time to converge & Round at which revenue stays in a $\pm 5\%$ band \\
 No-sale rate & Fraction of rounds with all bids below $r$\\
 Price volatility & Standard deviation of winning bids in later rounds \\
@@ -76,7 +76,7 @@ Winner entropy & Shannon entropy of bidder identity distribution \\
 \end{tabular}
 \end{table}
 
-Experiments~1b, 2a, 2b, 3a, and~3b introduce additional response variables specific to their designs; these are defined in the respective results sections (Sections~\ref{sec:qlearning_results}--\ref{sec:pacing_results}).
+Experiments~1b, 2a, 2b, 3a, and~3b introduce additional response variables specific to their designs; these are defined in the respective results sections (Sections~\ref{sec:qlearning_results}--\ref{sec:pacing_results}). Figure~\ref{fig:factorial_cube} illustrates the geometry of a $2^3$ factorial for three generic factors; our experiments extend this structure to 6--10 factors.
 
 \begin{figure}[H]
 \centering
@@ -144,8 +144,6 @@ Experiments~1b, 2a, 2b, 3a, and~3b introduce additional response variables speci
 \caption{Geometry of a $2^3$ factorial design. Each vertex represents one experimental cell defined by the sign combination of three factors. The brace illustrates how a main effect is computed as the contrast between high- and low-level marginal means. Our experiments extend this structure to 6--10 factors.}
 \label{fig:factorial_cube}
 \end{figure}
-
-Figure~\ref{fig:factorial_cube} illustrates the geometry of a $2^3$ factorial for three generic factors; our experiments extend this structure to 6--10 factors.
 
 \subsection{Design and Estimation}
 \label{sec:appendix_inference}

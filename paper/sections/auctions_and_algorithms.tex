@@ -2,17 +2,15 @@
 \label{sec:auctions_and_algorithms}
 \label{sec:auctions}
 
-This section first describes the auction environment shared by all experiments, then specifies the learning algorithms that bidders employ.
-
 % ═══════════════════════════════════════════════════════════════
 %  AUCTIONS
 % ═══════════════════════════════════════════════════════════════
 
-We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome (who wins and how much is paid) depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximise her per-round payoff, given by her valuation minus her payment. The experiments differ in two dimensions: valuations range from a fixed value of 1 for all bidders to signals that are partially affiliated across bidders, and bidders may observe different informational states between rounds.
+This section first describes the auction environment shared by all experiments, then specifies the learning algorithms that bidders employ. We consider a repeated-auction environment with $n$ bidders, each participating in multiple rounds. In each round, the bidders simultaneously submit a bid from a fixed discrete grid, and the auction outcome (who wins and how much is paid) depends on the chosen format (first- or second-price) as well as a reserve price. Ties for the top bid are resolved by uniformly random selection among all tying bidders. Each bidder's objective is to maximise her per-round payoff, given by her valuation minus her payment. The experiments differ in two dimensions: valuations range from a fixed value of 1 for all bidders to signals that are partially affiliated across bidders, and bidders may observe different informational states between rounds.
 
 \subsection{Auction Environment}
 
-In Experiment\,1a, every bidder's valuation is fixed at 1, so the private-value assumption is trivially satisfied and there is no direct impact of signals. In Experiments~1b--2b, however, each bidder $i$ draws a signal $s_{i}\in [0,1]$ (using a finite set of possible signal realisations) and forms a valuation via a linear-affiliation function
+In Experiment~1a, every bidder's valuation is fixed at 1, so the private-value assumption is trivially satisfied and there is no direct impact of signals. In Experiments~1b--2b, however, each bidder $i$ draws a signal $s_{i}\in [0,1]$ (using a finite set of possible signal realisations) and forms a valuation via a linear-affiliation function
 \[
 v_{i}(s_{i}, s_{-i}) \;=\; \bigl(1 - 0.5\,\eta\bigr)\,s_{i} \;+\; 0.5\,\eta\;\frac{1}{n-1}\sum_{j\neq i} s_{j},
 \]
@@ -25,7 +23,7 @@ Bids are constrained to lie in a finite grid, typically $\{0,0.1,0.2,\ldots,1.0\
 All experiments allow a reserve price $r\ge 0$. If every submitted bid is below $r$, then no sale occurs in that round; otherwise, any bid below $r$ is excluded from contention.
 
 
-Both first- and second-price formats are studied. Under first-price, the winner pays her own highest valid bid; under second-price, the winner pays the second-highest valid bid (if any). In all cases, if multiple bidders tie for the highest valid bid, one among them is chosen at random to be the winner, and the payment is then computed according to the standard rule for that auction format. The resulting payoff for bidder\,$i$ is
+Both first- and second-price formats are studied. Under first-price, the winner pays her own highest valid bid; under second-price, the winner pays the second-highest valid bid (if any). In all cases, if multiple bidders tie for the highest valid bid, one among them is chosen at random to be the winner, and the payment is then computed according to the standard rule for that auction format. The resulting payoff for bidder~$i$ is
 \[
 u_{i} \;=\;
 \begin{cases}
@@ -33,13 +31,14 @@ v_{i} - \text{(own bid)} & \text{(first-price),}\\
 v_{i} - \text{(second-highest bid)} & \text{(second-price),}
 \end{cases}
 \]
-and is zero for those bidders who do not win.
+and is zero for those bidders who do not win. Figure~\ref{fig:auction_timeline} summarises the sequence of events within each round.
 
 \begin{figure}[H]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-  node distance=0.5cm,
-  block/.style={rectangle, draw, rounded corners, minimum width=2.0cm,
+  node distance=1.2cm,
+  block/.style={rectangle, draw, rounded corners, minimum width=2.2cm,
                 minimum height=0.9cm, text centered, font=\small},
   arrow/.style={-{Stealth[length=2mm]}, thick},
 ]
@@ -59,26 +58,24 @@ and is zero for those bidders who do not win.
   \draw[arrow] (pay) -- (payoff);
 
   % Annotations below nodes
-  \node[below=0.15cm of val, font=\scriptsize, align=center] {$v_i$ drawn or\\fixed};
-  \node[below=0.15cm of sig, font=\scriptsize, align=center] {$s_i$ observed\\(if affiliated)};
-  \node[below=0.15cm of bid, font=\scriptsize, align=center] {$b_i$ from\\strategy};
-  \node[below=0.15cm of win, font=\scriptsize, align=center] {highest\\valid bid};
-  \node[below=0.15cm of payoff, font=\scriptsize, align=center] {$v_i - p$\\(winner)};
+  \node[below=0.25cm of val, font=\scriptsize, align=center] {$v_i$ drawn or\\fixed};
+  \node[below=0.25cm of sig, font=\scriptsize, align=center] {$s_i$ observed\\(if affiliated)};
+  \node[below=0.25cm of bid, font=\scriptsize, align=center] {$b_i$ from\\strategy};
+  \node[below=0.25cm of win, font=\scriptsize, align=center] {highest\\valid bid};
+  \node[below=0.25cm of payoff, font=\scriptsize, align=center] {$v_i - p$\\(winner)};
 
-  % Payment branching annotations
-  \node[below=0.15cm of pay, font=\scriptsize] (paymid) {};
-  \node[below left=0.5cm and -0.3cm of pay, font=\scriptsize, align=center] (fpa) {FPA: $p = b_{\text{win}}$};
-  \node[below right=0.5cm and -0.3cm of pay, font=\scriptsize, align=center] (spa) {SPA: $p = b^{(2)}$};
+  % Payment branching annotations — placed directly below pay and payoff
+  \node[below=1.1cm of pay, font=\scriptsize, align=center] (fpa) {FPA: $p = b_{\text{win}}$};
+  \node[below=1.1cm of payoff, font=\scriptsize, align=center] (spa) {SPA: $p = b^{(2)}$};
   \draw[-{Stealth[length=1.5mm]}, thin, gray] (pay.south) -- (fpa.north);
   \draw[-{Stealth[length=1.5mm]}, thin, gray] (pay.south) -- (spa.north);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Sequence of events within a single auction round. Valuations are drawn (or fixed), bidders observe signals and submit bids, the highest valid bid wins, and payment depends on the auction format.}
 \label{fig:auction_timeline}
 \end{figure}
 
-Figure~\ref{fig:auction_timeline} summarises the sequence of events within each round.
-
-A defining feature of these repeated interactions is that bidders may condition their future bids on information from prior rounds. In Experiment\,1a, the possible states include the previous round's winning bid. In Experiments~1b--2b, states can similarly incorporate bidder-specific signals $s_{i}$, as well as the previous winning bid. Each bidder knows her own signal in each round and can rely on these state variables to guide her subsequent bid choice. The affiliation parameter~$\eta$ thus captures how interdependent each bidder's underlying valuation is with the other signals, but each bidder's private signal still enters only her own valuation (albeit modulated by average signals).
+A defining feature of these repeated interactions is that bidders may condition their future bids on information from prior rounds. In Experiment~1a, the possible states include the previous round's winning bid. In Experiments~1b--2b, states can similarly incorporate bidder-specific signals $s_{i}$, as well as the previous winning bid. Each bidder knows her own signal in each round and can rely on these state variables to guide her subsequent bid choice. The affiliation parameter~$\eta$ thus captures how interdependent each bidder's underlying valuation is with the other signals, but each bidder's private signal still enters only her own valuation (albeit modulated by average signals).
 
 \subsection{Budget Constraints and Welfare}
 
@@ -111,7 +108,7 @@ The Price of Anarchy is defined as the ratio of optimal to realised liquid welfa
   \text{PoA} = \frac{W^*}{W(x^{\text{obs}})},
   \label{eq:poa_def}
 \end{equation}
-where $x^{\text{obs}}$ is the allocation produced by the bidding algorithm. By construction, $\text{PoA} \geq 1$, with values closer to~1 indicating higher efficiency. The literature defines worst-case PoA as the supremum over all instances and equilibria. Our experiments instead report per-instance empirical PoA.
+where $x^{\text{obs}}$ is the allocation produced by the bidding algorithm. By construction, $\text{PoA} \geq 1$, with values closer to~1 indicating higher efficiency. The literature defines worst-case PoA as the supremum over all instances and equilibria. Our experiments instead report per-instance empirical PoA. The PoA~$= 1$ result of \citet{Deng2021TowardsEfficient} requires return-on-spend constraints, not budget constraints. Experiments~3a and~3b use cumulative budget constraints, for which the applicable theoretical bound is PoA~$\leq 2$ regardless of auction format.
 
 \begin{table}[H]
 \centering
@@ -129,8 +126,6 @@ Any core auction + learning dynamics & $\leq 2$ & \citet{Gaitonde2023} \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-The PoA~$= 1$ result of \citet{Deng2021TowardsEfficient} requires return-on-spend constraints, not budget constraints. Experiments~3a and~3b use cumulative budget constraints, for which the applicable theoretical bound is PoA~$\leq 2$ regardless of auction format.
 
 % ═══════════════════════════════════════════════════════════════
 %  ALGORITHMS
@@ -227,7 +222,7 @@ a_t \;=\; \arg\max_{a}\; \tilde{\boldsymbol{\theta}}_a^\top \mathbf{x}, \quad \t
 \end{equation}
 The parameter $\sigma^2$ plays an analogous role to $c$ in LinUCB. Larger $\sigma^2$ produces wider posterior draws, encouraging more exploration; smaller $\sigma^2$ concentrates the posterior, promoting exploitation. The two methods are compared in Experiments~2a and~2b.
 
-In standard implementations, the precision matrices $\mathbf{A}_a$ accumulate all past observations with equal weight, progressively reducing uncertainty and concentrating the policy around the estimated optimum. Experiment~2a introduces an optional \emph{memory decay} parameter $\delta \in (0,1]$ that applies exponential discounting to historical observations, preventing the algorithm from over-weighting early experiences.\footnote{At each update, $\mathbf{A}_a \leftarrow \delta\,\mathbf{A}_a + \mathbf{x}\mathbf{x}^\top$ and $\mathbf{b}_a \leftarrow \delta\,\mathbf{b}_a + r\,\mathbf{x}$. Setting $\delta = 1$ recovers the standard algorithm; $\delta < 1$ produces an effective observation window of approximately $1/(1-\delta)$ rounds.} This mechanism tests whether the rigidity of full-memory bandit learners contributes to bid suppression, following \citet{Douglas2024}, who show that deterministic convergence is a key driver of naive algorithmic collusion. The discounted variant draws on \citet{Russac2019}, who analyse weighted linear bandits in non-stationary environments.
+In standard implementations, the precision matrices $\mathbf{A}_a$ accumulate all past observations with equal weight, progressively reducing uncertainty and concentrating the policy around the estimated optimum. Experiment~2a introduces an optional \emph{memory decay} parameter $\delta \in (0,1]$ that applies exponential discounting to historical observations, preventing the algorithm from over-weighting early experiences.\footnote{At each update, $\mathbf{A}_a \leftarrow \delta\,\mathbf{A}_a + \mathbf{x}\mathbf{x}^\top$ and $\mathbf{b}_a \leftarrow \delta\,\mathbf{b}_a + r\,\mathbf{x}$. Setting $\delta = 1$ recovers the standard algorithm; $\delta < 1$ produces an effective observation window of approximately $1/(1-\delta)$ rounds.} This mechanism tests whether the rigidity of full-memory bandit learners contributes to bid suppression, following \citet{Douglas2024}, who show that deterministic convergence is a key driver of what the literature terms ``naive algorithmic collusion''. The discounted variant draws on \citet{Russac2019}, who analyse weighted linear bandits in non-stationary environments.
 
 \subsection{Budget-Constrained Pacing}
 \label{sec:pacing}
@@ -277,9 +272,9 @@ Both algorithms implement the same closed-loop pacing structure illustrated in F
   \draw[arrow] (cost)    -- (ctrl);
   \draw[arrow] (ctrl)    -- node[left,font=\scriptsize]{$\mu_{t+1}$} (mult);
 
-  % Labels on control arrow
-  \node[font=\scriptsize, align=center, right=0.15cm of ctrl]
-    {Mult: exp.\ update};
+  % Label below control law node
+  \node[font=\scriptsize, align=center, below=0.2cm of ctrl]
+    {Multiplicative exp.\ update};
 \end{tikzpicture}
 \caption{Pacing feedback loop shared by both algorithms. The dual variable scales bids; auction outcomes feed back through the control law to update $\mu$.}
 \label{fig:pacing_loop}

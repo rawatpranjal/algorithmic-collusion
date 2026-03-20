@@ -27,7 +27,6 @@ RESPONSE_COLS = [
     "winners_curse_freq",
     "bid_dispersion",
     "signal_slope_ratio",
-    "ratio_to_theory",
 ]
 
 if __name__ == "__main__":

@@ -27,7 +27,6 @@ RESPONSE_COLS = [
     "no_sale_rate",
     "price_volatility",
     "winner_entropy",
-    "ratio_to_theory",
 ]
 
 if __name__ == "__main__":

@@ -81,7 +81,7 @@ Experiment~1a deploys Q-learning agents with constant valuations ($v=1$) in a $2
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/e1a_trace}
-  \caption{Representative learning trajectory for a single trial of Experiment~1a (first-price auction, 2~bidders, Boltzmann exploration, 10{,}000 episodes). Per-bidder mean bids (200-episode rolling mean) converge toward the BNE prediction over the course of training.}
+  \caption{Representative learning trajectory for a single trial of Experiment~1a (first-price auction, 2~bidders, Boltzmann exploration, 10{,}000 episodes). Per-bidder mean bids (200-episode rolling mean) converge toward competitive levels over the course of training.}
   \label{fig:e1a_trace}
 \end{figure}
 
@@ -109,7 +109,7 @@ Although auction format has no significant main effect on final-episode revenue,
 
 \subsubsection{Price Volatility}
 
-Table~\ref{tab:exp1a_ranked_vol} ranks the significant effects for price volatility. Market thickness, reserve price, discount factor, and update mode are the primary drivers (Figure~\ref{fig:e1a_main_vol}). Neither auction format nor exploration strategy has a significant direct effect.
+Table~\ref{tab:exp1a_ranked_vol} ranks the significant effects for price volatility. Market thickness, reserve price, discount factor, and update mode are the primary drivers (Figure~\ref{fig:e1a_main_vol}). Neither auction format nor exploration strategy has a significant direct effect. Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
 
 \input{tables/exp1a_ranked_vol}
 
@@ -120,17 +120,15 @@ Table~\ref{tab:exp1a_ranked_vol} ranks the significant effects for price volatil
   \label{fig:e1a_main_vol}
 \end{figure}
 
-Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
-
 \subsection{Affiliated Valuations (Experiment~1b)}
 \label{sec:exp1b_results}
 
-Experiment~1b generalises the framework to affiliated valuations with $\eta \in \{0, 0.5, 1\}$, testing whether the revenue ranking predicted by \citet{MilgromWeber1982} (SPA $\geq$ FPA under affiliation) emerges under Q-learning. The $3 \times 2^3 = 24$ mixed-level factorial crosses auction format, affiliation strength, number of bidders, and state information, with hyperparameters fixed at levels identified in Experiment~1a.
+Experiment~1b generalises the framework to affiliated valuations with $\eta \in \{0, 0.5, 1\}$, introducing stochastic signals and value interdependence. Revenue equivalence holds for all $\eta$ in this model because signals are drawn independently (Appendix~\ref{sec:equilibria}). The $3 \times 2^3 = 24$ mixed-level factorial crosses auction format, affiliation strength, number of bidders, and state information, with hyperparameters fixed at levels identified in Experiment~1a.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/e1b_trace}
-  \caption{Representative learning trajectory for a single trial of Experiment~1b (first-price auction, $\eta = 0.5$, 2~bidders, 10{,}000 episodes). Rolling-mean revenue converges near the BNE prediction.}
+  \caption{Representative learning trajectory for a single trial of Experiment~1b (first-price auction, $\eta = 0.5$, 2~bidders, 10{,}000 episodes). Rolling-mean revenue converges toward competitive levels.}
   \label{fig:e1b_trace}
 \end{figure}
 
@@ -147,7 +145,7 @@ Number of bidders is the dominant factor for revenue ($|t| = \ExpOneBRevNbidAbsT
   \label{fig:e1b_main_rev}
 \end{figure}
 
-The affiliation parameter $\eta$ has no significant effect on any primary outcome, despite spanning the full range from independent private values to near-common values. This null result contrasts with the \citet{MilgromWeber1982} prediction that affiliation should increase revenue under second-price rules. The number of bidders moderates the auction type effect, with the first-price revenue penalty smaller under four bidders than under two. State information also influences revenue outcomes. The interaction plot (Figure~\ref{fig:e1b_int_rev}) displays these moderating relationships.
+The affiliation parameter $\eta$ has no significant effect on any primary outcome, despite spanning the full range from independent private values to near-common values, consistent with the revenue equivalence that holds for all $\eta$ (Appendix~\ref{sec:equilibria}). The number of bidders moderates the auction type effect, with the first-price revenue penalty smaller under four bidders than under two. State information also influences revenue outcomes. The interaction plot (Figure~\ref{fig:e1b_int_rev}) displays these moderating relationships.
 
 \begin{figure}[H]
   \centering
@@ -160,7 +158,7 @@ End-state revenue (final 1{,}000 episodes) and lifetime revenue (all episodes) r
 
 \subsubsection{Price Volatility}
 
-Unlike Experiment~1a, where auction type had minimal effect on volatility, first-price auctions now significantly raise price volatility under affiliated valuations. Table~\ref{tab:exp1b_ranked_vol} shows auction type among the significant effects for volatility. The main effects plot (Figure~\ref{fig:e1b_main_vol}) confirms the directional increase. The number of bidders and affiliation strength also contribute to volatility differences across configurations.
+Unlike Experiment~1a, where auction type had minimal effect on volatility, first-price auctions now significantly raise price volatility under affiliated valuations. Table~\ref{tab:exp1b_ranked_vol} shows auction type among the significant effects for volatility. The main effects plot (Figure~\ref{fig:e1b_main_vol}) confirms the directional increase. The number of bidders and affiliation strength also contribute to volatility differences across configurations. Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
 
 \input{tables/exp1b_ranked_vol}
 
@@ -171,8 +169,6 @@ Unlike Experiment~1a, where auction type had minimal effect on volatility, first
   \label{fig:e1b_main_vol}
 \end{figure}
 
-Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
-
 \subsection{Sensitivity Analysis}
 \label{sec:qlearning_sensitivity}
 
@@ -182,6 +178,4 @@ Global sensitivity analysis independently confirms the factorial rankings. In Ex
 
 The number of bidders is the strongest determinant of seller outcomes across both Q-learning experiments. In Experiment~1a, it is followed by the discount factor and update mode, while auction format does not significantly affect end-state revenue but interacts with competitive pressure and temporal discounting. This null result for auction format provides a baseline; subsequent experiments show that the importance of format is context-dependent, emerging under affiliated valuations and budget-constrained pacing. Price volatility in Experiment~1a is governed by market thickness, reserve prices, and the discount factor.
 
-In Experiment~1b, the number of bidders dominates all other factors ($|t| = \ExpOneBRevNbidAbsT$). Auction format reduces end-state revenue ($|t| = \ExpOneBRevAuctionT$) but not lifetime revenue, as the end-state gap is offset by a larger learning-phase premium under first-price auctions. The affiliation parameter $\eta$ has no significant impact on any outcome. The absence of any affiliation effect raises the question of whether more sophisticated algorithms can exploit the informational structure that Q-learning ignores.
-
-Global sensitivity analysis independently confirms these rankings (Section~\ref{sec:qlearning_sensitivity}). Robustness checks confirm these findings (Appendix~\ref{sec:appendix_robustness}).
+In Experiment~1b, the number of bidders dominates all other factors ($|t| = \ExpOneBRevNbidAbsT$). Auction format reduces end-state revenue ($|t| = \ExpOneBRevAuctionT$) but not lifetime revenue, as the end-state gap is offset by a larger learning-phase premium under first-price auctions. The affiliation parameter $\eta$ has no significant impact on any outcome. The absence of any affiliation effect raises the question of whether more sophisticated algorithms can exploit the informational structure that Q-learning ignores. Global sensitivity analysis independently confirms these rankings (Section~\ref{sec:qlearning_sensitivity}). Robustness checks confirm these findings (Appendix~\ref{sec:appendix_robustness}).

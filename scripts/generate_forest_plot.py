@@ -386,5 +386,30 @@ def make_forest_plot():
     render_forest(half2, "master_forest_2")
 
 
+# Experiment order for the intro plot (by experiment number)
+INTRO_EXP_ORDER = ["1a", "1b", "2a", "2b", "3a", "3b"]
+
+
+def order_by_experiment(entries):
+    """Return entries sorted by experiment number (1a, 1b, 2a, 2b, 3a, 3b)."""
+    order = {k: i for i, k in enumerate(INTRO_EXP_ORDER)}
+    return sorted(entries, key=lambda e: order[e[0]])
+
+
+def make_intro_plot():
+    """Build a focused forest plot with only No. of bidders and Auction format.
+
+    Used in the introduction to highlight the two cross-cutting factors
+    measured across all six experiments. Entries ordered by experiment number.
+    Outputs: paper/figures/intro_forest.{png,pdf}
+    """
+    groups = [
+        ("No. of bidders", order_by_experiment(MARKET_THICKNESS)),
+        ("Auction format", order_by_experiment(AUCTION_FORMAT)),
+    ]
+    render_forest(groups, "intro_forest")
+
+
 if __name__ == "__main__":
     make_forest_plot()
+    make_intro_plot()

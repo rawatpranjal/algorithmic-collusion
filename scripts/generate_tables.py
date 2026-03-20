@@ -30,10 +30,10 @@ FIGURES_DIR = "paper/figures"
 
 # Key response variables for ranked-effects tables (rev, vol; poa for exp4a/4b)
 KEY_RESPONSES = {
-    "1":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
-    "2":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
-    "3a": {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
-    "3b": {"rev": "avg_rev_last_1000",     "vol": "price_volatility",  "bne": "ratio_to_theory"},
+    "1":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "2":  {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "3a": {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
+    "3b": {"rev": "avg_rev_last_1000",     "vol": "price_volatility"},
     "4a": {"rev": "mean_platform_revenue", "poa": "mean_effective_poa_lp", "vol": "mean_bid_to_value"},
     "4b": {"rev": "mean_platform_revenue", "poa": "mean_effective_poa_lp", "vol": "mean_bid_to_value"},
 }
@@ -156,7 +156,6 @@ READABLE_RESPONSES = {
     "cross_episode_drift": "Cross-Episode Drift",
     "mean_lp_offline_welfare": "LP Offline Welfare",
     "mean_effective_poa_lp": "Effective PoA",
-    "ratio_to_theory": "Revenue / BNE",
 }
 
 RANKED_RESPONSE_LABELS = {
@@ -648,10 +647,6 @@ def copy_figures(exp_num):
     for short_key, var_name in key_resp.items():
         copy_pairs.extend([
             (
-                os.path.join(exp_dir, "main_effects", f"main_effects_{var_name}.png"),
-                os.path.join(FIGURES_DIR, f"e{fn}_main_{short_key}.png"),
-            ),
-            (
                 os.path.join(exp_dir, "interaction_plots", f"interactions_{var_name}.png"),
                 os.path.join(FIGURES_DIR, f"e{fn}_int_{short_key}.png"),
             ),
@@ -962,7 +957,7 @@ def _generate_exp4a_detail_macros(responses_data, lines, exp_num):
             lines.append(f"\\newcommand{{\\{prefix}ValFourEffHigh}}{{{val4_cells.max():.2f}}}")
 
 
-def generate_paper_numbers():
+def generate_paper_numbers(bne_macro_lines=None):
     """Generate paper/numbers.tex with \\newcommand definitions for all statistics.
 
     Extracts from estimation_results.json and robust/robust_results.json:
@@ -1198,6 +1193,12 @@ def generate_paper_numbers():
 
         lines.append("")
 
+    # Append BNE convergence macros if provided
+    if bne_macro_lines:
+        lines.append("")
+        lines.extend(bne_macro_lines)
+        lines.append("")
+
     numbers_path = os.path.join("paper", "numbers.tex")
     with open(numbers_path, "w") as f:
         f.write("\n".join(lines) + "\n")
@@ -1374,6 +1375,143 @@ def generate_summary_statistics(exp_num):
 
 
 # ---------------------------------------------------------------------------
+# BNE convergence analysis (appendix)
+# ---------------------------------------------------------------------------
+
+# Experiments with BNE benchmarks (unconstrained only)
+_BNE_EXPERIMENTS = ["1", "2", "3a", "3b"]
+_BNE_PAPER_NAMES = {"1": "1a", "2": "1b", "3a": "2a", "3b": "2b"}
+_BNE_ALGO_LABELS = {
+    "1": "Q-learning (constant)",
+    "2": "Q-learning (affiliated)",
+    "3a": "LinUCB",
+    "3b": "Thompson Sampling",
+}
+
+
+def generate_bne_convergence_table():
+    """Generate a summary table and LaTeX macros for ratio_to_theory across experiments."""
+    import pandas as pd
+
+    rows = []
+    for exp_num in _BNE_EXPERIMENTS:
+        csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+        if not os.path.exists(csv_path):
+            print(f"  BNE convergence: skipping exp{exp_num} (no data.csv)")
+            continue
+        df = pd.read_csv(csv_path)
+        if "ratio_to_theory" not in df.columns:
+            print(f"  BNE convergence: skipping exp{exp_num} (no ratio_to_theory)")
+            continue
+        r = df["ratio_to_theory"].dropna()
+        rows.append({
+            "exp": exp_num,
+            "paper": _BNE_PAPER_NAMES[exp_num],
+            "n": len(r),
+            "mean": r.mean(),
+            "median": r.median(),
+            "std": r.std(),
+            "min": r.min(),
+            "max": r.max(),
+            "pct_within_10": 100 * ((r >= 0.9) & (r <= 1.1)).mean(),
+        })
+
+    if not rows:
+        print("  BNE convergence: no data found, skipping")
+        return
+
+    # --- LaTeX table ---
+    lines = []
+    lines.append(r"\begin{table}[H]")
+    lines.append(r"\centering")
+    lines.append(r"\caption{Proximity of learning outcomes to Bayesian Nash Equilibrium revenue predictions. "
+                 r"Each row pools all factorial cells for an experiment. "
+                 r"A ratio of 1.0 means observed revenue equals the BNE prediction exactly.}")
+    lines.append(r"\label{tab:bne_convergence}")
+    lines.append(r"\begin{tabular}{llrrrrrr}")
+    lines.append(r"\toprule")
+    lines.append(r"\textbf{Exp.} & \textbf{Algorithm} & \textbf{$N$} "
+                 r"& \textbf{Mean} & \textbf{Median} & \textbf{Std} "
+                 r"& \textbf{Min} & \textbf{\% within 10\%} \\")
+    lines.append(r"\midrule")
+
+    for row in rows:
+        algo = _BNE_ALGO_LABELS[row["exp"]]
+        lines.append(
+            f"{row['paper']} & {algo} & {row['n']} "
+            f"& {row['mean']:.3f} & {row['median']:.3f} & {row['std']:.3f} "
+            f"& {row['min']:.3f} & {row['pct_within_10']:.1f}\\% \\\\"
+        )
+
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{table}")
+
+    table_path = os.path.join(TABLES_DIR, "bne_convergence.tex")
+    with open(table_path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"  Wrote {table_path}")
+
+    # --- LaTeX macros for inline references ---
+    macro_lines = []
+    macro_lines.append("% BNE convergence macros (auto-generated)")
+    for row in rows:
+        roman = _CMD_ROMAN[row["exp"]]
+        macro_lines.append(f"\\newcommand{{\\Exp{roman}BNEMean}}{{{row['mean']:.3f}}}")
+        macro_lines.append(f"\\newcommand{{\\Exp{roman}BNEMedian}}{{{row['median']:.3f}}}")
+        macro_lines.append(f"\\newcommand{{\\Exp{roman}BNEStd}}{{{row['std']:.3f}}}")
+        macro_lines.append(f"\\newcommand{{\\Exp{roman}BNEPctTen}}{{{row['pct_within_10']:.1f}}}")
+
+    return macro_lines
+
+
+def generate_bne_convergence_figure():
+    """Generate a box plot of ratio_to_theory by experiment."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    all_data = []
+    labels = []
+    for exp_num in _BNE_EXPERIMENTS:
+        csv_path = os.path.join(RESULTS_DIR, f"exp{exp_num}", "data.csv")
+        if not os.path.exists(csv_path):
+            continue
+        df = pd.read_csv(csv_path)
+        if "ratio_to_theory" not in df.columns:
+            continue
+        r = df["ratio_to_theory"].dropna()
+        all_data.append(r.values)
+        labels.append(f"Exp {_BNE_PAPER_NAMES[exp_num]}")
+
+    if not all_data:
+        print("  BNE convergence figure: no data found, skipping")
+        return
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    bp = ax.boxplot(all_data, labels=labels, patch_artist=True, widths=0.5,
+                    medianprops=dict(color="black", linewidth=1.5))
+
+    colors = ["#4C72B0", "#55A868", "#C44E52", "#8172B2"]
+    for patch, color in zip(bp["boxes"], colors[:len(all_data)]):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+
+    ax.axhline(y=1.0, color="gray", linestyle="--", linewidth=1, label="BNE prediction")
+    ax.set_ylabel("Revenue / BNE prediction")
+    ax.set_title("Convergence to BNE benchmarks across experiments")
+    ax.legend(loc="lower right", fontsize=9)
+    ax.grid(axis="y", alpha=0.3)
+
+    fig.tight_layout()
+    fig_path = os.path.join(FIGURES_DIR, "bne_convergence.png")
+    fig.savefig(fig_path, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    print(f"  Wrote {fig_path}")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -1406,8 +1544,13 @@ def main():
         except FileNotFoundError as e:
             print(f"  Skipping: {e}")
 
-    # Generate paper numbers
-    generate_paper_numbers()
+    # BNE convergence analysis (appendix)
+    print("\nGenerating BNE convergence table and figure...")
+    bne_macro_lines = generate_bne_convergence_table()
+    generate_bne_convergence_figure()
+
+    # Generate paper numbers (includes BNE macros)
+    generate_paper_numbers(bne_macro_lines=bne_macro_lines)
 
     print("\nDone. Tables written to paper/tables/, figures copied to paper/figures/")
 

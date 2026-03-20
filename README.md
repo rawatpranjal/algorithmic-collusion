@@ -15,12 +15,12 @@ make all         # Full pipeline: experiments -> analysis -> paper
 
 | Exp | Algorithm | Valuations | Design | Key Question |
 |-----|-----------|------------|--------|--------------|
-| 1 | Q-learning | Constant (v=1) | 2^(10-1) Res V | Which learning parameters drive collusion? |
-| 2 | Q-learning | Affiliated (eta) | 3 x 2^3 mixed | Does valuation structure alter collusion? |
-| 3a | LinUCB | Affiliated (eta) | 3 x 2^7 mixed | Does sophisticated exploration help sellers? |
-| 3b | Thompson | Affiliated (eta) | 3 x 2^5 mixed | Does Thompson sampling alter collusive dynamics? |
-| 4a | Dual Pacing | LogNormal | 2^6 full | Do budget constraints mitigate or amplify collusion? |
-| 4b | PI Pacing | LogNormal | 2^6 full | Does the control law shape collusive outcomes? |
+| 1a | Q-learning | Constant (v=1) | 2^(10-1) Res V | Which structural and learning parameters drive bid suppression? |
+| 1b | Q-learning | Affiliated (eta) | 3 x 2^3 mixed | Does valuation affiliation alter revenue outcomes? |
+| 2a | LinUCB | Affiliated (eta) | 3 x 2^7 mixed | How does contextual exploration interact with auction design? |
+| 2b | Thompson | Affiliated (eta) | 3 x 2^5 mixed | Does the exploration mechanism change bid suppression patterns? |
+| 3a | Dual Pacing | LogNormal | 2^6 full | How do budget constraints reshape auction format effects? |
+| 3b | PI Pacing | LogNormal | 2^6 full | Does the pacing algorithm alter revenue and welfare outcomes? |
 
 ## Pipeline
 
@@ -31,6 +31,7 @@ make robust       # Robustness checks (HC3, multiplicity, PRESS, LightGBM)
 make traces       # Single-run trace plots for paper figures
 make tables       # Generate LaTeX tables + copy figures
 make paper        # Compile paper
+make arxiv        # Package paper for arXiv submission
 ```
 
 Individual experiments: `make exp1`, `make analyze1`, `make robust1`, etc.
@@ -65,6 +66,7 @@ scripts/
   generate_trace_plots.py   # Learning trajectory figures
   generate_tables.py        # JSON -> LaTeX tables + figure copy
   generate_results.py       # Standalone results PDF
+  make_arxiv.py             # Package paper for arXiv submission
 
 paper/                      # LaTeX source
   sections/                 # Paper section .tex files
@@ -83,11 +85,11 @@ results/
 
 ## Key Findings
 
-1. **First-price auctions systematically underperform** across all algorithm classes, valuation structures, and budget regimes.
-2. **Exploration mechanisms matter more than rates**: Boltzmann exploration mitigates collusion; UCB-based exploration exacerbates it.
-3. **Budget constraints impose discipline** but introduce a distinct form of bid suppression through pacing dynamics.
-4. **Valuation structure (affiliation) has negligible impact**, contradicting classical auction theory predictions about winner's curse effects.
-5. **Collusion is symmetric**: first-price auctions produce higher winner entropy (equitable rotation at lower prices) rather than asymmetric predation.
+1. **Structural parameters dominate algorithmic design choices** across all algorithm classes. The number of bidders and auction format consistently explain more variance than learning rates, discount factors, or exploration parameters.
+2. **Competition is the strongest revenue predictor** in unconstrained settings (Experiments 1a, 1b, 2a, 2b). Budget tightness takes over as the dominant factor under pacing constraints (Experiments 3a, 3b).
+3. **Auction format effects are context-dependent.** First-price auctions suppress revenue under Q-learning and contextual bandits, but the effect reverses under budget-constrained pacing, where first-price formats yield higher revenue.
+4. **No single auction format is universally superior.** The optimal format depends on the bidding technology deployed, undermining blanket policy recommendations.
+5. **Valuation affiliation has negligible impact** on algorithmic bidding outcomes, contrary to classical auction theory predictions about the winner's curse.
 
 ## Citation
 

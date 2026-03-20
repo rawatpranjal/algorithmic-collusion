@@ -7,7 +7,7 @@ mean_platform_revenue:
   Most interactive: auction_type (gap=0.0581)
   Negligible (ST<0.01): aggressiveness, reserve_price
 
-  Method agreement: mean Spearman = 0.907, top-1 consistent
+  Method agreement: mean Spearman = 0.939, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.7093
@@ -19,7 +19,7 @@ mean_liquid_welfare:
   Most interactive: budget_multiplier (gap=0.0483)
   Negligible (ST<0.01): auction_type, aggressiveness, reserve_price
 
-  Method agreement: mean Spearman = 0.924, top-1 consistent
+  Method agreement: mean Spearman = 0.931, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.6810
@@ -31,7 +31,7 @@ mean_effective_poa:
   Most interactive: budget_multiplier (gap=0.1664)
   Negligible (ST<0.01): aggressiveness
 
-  Method agreement: mean Spearman = 0.927, top-1 consistent
+  Method agreement: mean Spearman = 0.900, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.1295
@@ -43,7 +43,7 @@ mean_budget_utilization:
   Most interactive: budget_multiplier (gap=0.0842)
   Negligible (ST<0.01): aggressiveness, reserve_price
 
-  Method agreement: mean Spearman = 0.984, top-1 consistent
+  Method agreement: mean Spearman = 0.961, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.8333
@@ -55,7 +55,7 @@ mean_bid_to_value:
   Most interactive: auction_type (gap=0.0782)
   Negligible (ST<0.01): aggressiveness, n_bidders, reserve_price, sigma
 
-  Method agreement: mean Spearman = 0.910, top-1 consistent
+  Method agreement: mean Spearman = 0.896, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.8785
@@ -67,7 +67,7 @@ mean_allocative_efficiency:
   Most interactive: budget_multiplier (gap=0.0324)
   Negligible (ST<0.01): aggressiveness
 
-  Method agreement: mean Spearman = 0.793, top-1 consistent
+  Method agreement: mean Spearman = 0.761, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.8427
@@ -79,7 +79,7 @@ mean_dual_cv:
   Most interactive: auction_type (gap=0.0775)
   Negligible (ST<0.01): aggressiveness, reserve_price, sigma
 
-  Method agreement: mean Spearman = 0.842, top-1 consistent
+  Method agreement: mean Spearman = 0.863, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.8731
@@ -91,7 +91,7 @@ mean_no_sale_rate:
   Most interactive: budget_multiplier (gap=0.2295)
   Negligible (ST<0.01): aggressiveness
 
-  Method agreement: mean Spearman = 0.011, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.155, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : -6.4577
@@ -103,7 +103,7 @@ mean_winner_entropy:
   Most interactive: budget_multiplier (gap=0.0748)
   Negligible (ST<0.01): aggressiveness, reserve_price
 
-  Method agreement: mean Spearman = 0.842, top-1 consistent
+  Method agreement: mean Spearman = 1.000, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.7689
@@ -115,7 +115,7 @@ warm_start_benefit:
   Most interactive: sigma (gap=0.0128)
   Negligible (ST<0.01): auction_type, aggressiveness, n_bidders
 
-  Method agreement: mean Spearman = 0.831, top-1 consistent
+  Method agreement: mean Spearman = 0.751, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : -0.1016
@@ -126,7 +126,7 @@ inter_episode_volatility:
   Dominant factor: auction_type (ST=0.3297, S1=0.1136)
   Most interactive: budget_multiplier (gap=0.2432)
 
-  Method agreement: mean Spearman = 0.956, top-1 consistent
+  Method agreement: mean Spearman = 0.869, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.1806
@@ -138,7 +138,7 @@ bid_suppression_ratio:
   Most interactive: auction_type (gap=0.0782)
   Negligible (ST<0.01): aggressiveness, n_bidders, reserve_price, sigma
 
-  Method agreement: mean Spearman = 0.924, top-1 consistent
+  Method agreement: mean Spearman = 0.957, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.8785
@@ -150,7 +150,7 @@ cross_episode_drift:
   Most interactive: reserve_price (gap=0.0289)
   Negligible (ST<0.01): aggressiveness, budget_multiplier
 
-  Method agreement: mean Spearman = 0.369, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.424, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : -0.0816
@@ -162,7 +162,7 @@ mean_lp_offline_welfare:
   Most interactive: budget_multiplier (gap=0.0548)
   Negligible (ST<0.01): auction_type, aggressiveness, reserve_price
 
-  Method agreement: mean Spearman = 0.965, top-1 consistent
+  Method agreement: mean Spearman = 0.955, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.6750
@@ -174,7 +174,7 @@ mean_effective_poa_lp:
   Most interactive: budget_multiplier (gap=0.1664)
   Negligible (ST<0.01): aggressiveness
 
-  Method agreement: mean Spearman = 0.211, top-1 INCONSISTENT
+  Method agreement: mean Spearman = 0.246, top-1 INCONSISTENT
 
   Surrogate CV R²:
     LGBM      : 0.1221
@@ -186,7 +186,7 @@ mean_rev_all:
   Most interactive: auction_type (gap=0.0581)
   Negligible (ST<0.01): aggressiveness, reserve_price
 
-  Method agreement: mean Spearman = 0.967, top-1 consistent
+  Method agreement: mean Spearman = 0.971, top-1 consistent
 
   Surrogate CV R²:
     LGBM      : 0.7083

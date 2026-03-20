@@ -4,7 +4,7 @@
 \subsection{Design}
 \label{sec:bandits_design}
 
-This experiment preserves the affiliated valuation model from Experiment~1b but replaces Q-learning with contextual bandit methods. Table~\ref{tab:exp2_params} summarises the parameters. Seven binary factors and the three-level affiliation parameter $\eta$ define the experimental space. LinUCB includes two additional factors (regularisation $\lambda$ and memory decay) that preliminary screening found negligible for Thompson Sampling. These are excluded from the Thompson Sampling design to concentrate cells on active factors.\footnote{The exploration intensity factor maps to algorithm-specific parameters. For LinUCB, the confidence bound width $c \in \{0.5, 2.0\}$ (a 4$\times$ ratio), and for Contextual Thompson Sampling, the posterior variance $\sigma^2 \in \{0.1, 1.0\}$ (a 10$\times$ ratio). These ratios reflect the different units and scales of the two exploration mechanisms. LinUCB explores by inflating the estimated reward with $c\sqrt{\mathbf{x}^\top A^{-1}\mathbf{x}}$, where the uncertainty term shrinks with data; a 4$\times$ increase in $c$ roughly quadruples the exploration bonus. Thompson Sampling explores through posterior sampling variance $\sigma^2 A^{-1}$; a 10$\times$ increase broadens the sampling distribution proportionally. The factorial model captures this asymmetry through the algorithm $\times$ exploration intensity interaction term.}\footnote{The memory decay factor $\delta$ controls how much weight historical observations receive relative to recent ones. At $\delta = 1.0$ (no decay), both LinUCB and Thompson Sampling accumulate all past data, and after $T$ rounds the effective sample size is $T$. At $\delta < 1$, the effective sample size plateaus at approximately $1/(1-\delta)$. This factor is motivated by \citet{Douglas2024}, who show that deterministic convergence in bandit learners drives collusive outcomes, and by \citet{Russac2019}, who provide regret guarantees for discounted linear bandits in non-stationary environments.}
+This experiment preserves the affiliated valuation model from Experiment~1b but replaces Q-learning with contextual bandit methods. Table~\ref{tab:exp2_params} summarises the parameters. Seven binary factors and the three-level affiliation parameter $\eta$ define the experimental space. LinUCB includes two additional factors (regularisation $\lambda$ and memory decay) that preliminary screening found negligible for Thompson Sampling. These are excluded from the Thompson Sampling design to concentrate cells on active factors.\footnote{The exploration intensity factor maps to algorithm-specific parameters. For LinUCB, the confidence bound width $c \in \{0.5, 2.0\}$ (a 4$\times$ ratio), and for Contextual Thompson Sampling, the posterior variance $\sigma^2 \in \{0.1, 1.0\}$ (a 10$\times$ ratio). These ratios reflect the different units and scales of the two exploration mechanisms. LinUCB explores by inflating the estimated reward with $c\sqrt{\mathbf{x}^\top A^{-1}\mathbf{x}}$, where the uncertainty term shrinks with data; a 4$\times$ increase in $c$ roughly quadruples the exploration bonus. Thompson Sampling explores through posterior sampling variance $\sigma^2 A^{-1}$; a 10$\times$ increase broadens the sampling distribution proportionally. The factorial model captures this asymmetry through the algorithm $\times$ exploration intensity interaction term.}\footnote{The memory decay factor $\delta$ controls how much weight historical observations receive relative to recent ones. At $\delta = 1.0$ (no decay), both LinUCB and Thompson Sampling accumulate all past data, and after $T$ rounds the effective sample size is $T$. At $\delta < 1$, the effective sample size plateaus at approximately $1/(1-\delta)$. This factor is motivated by \citet{Douglas2024}, who show that deterministic convergence in bandit learners drives supra-competitive outcomes, and by \citet{Russac2019}, who provide regret guarantees for discounted linear bandits in non-stationary environments.}
 
 \begin{table}[H]
 \centering
@@ -43,13 +43,13 @@ Experiment~2a deploys LinUCB agents under the affiliated valuation model. The de
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/e2a_trace}
-  \caption{Representative bid function for a single trial of Experiment~2a (LinUCB, first-price auction, $\eta = 0.5$, 2~bidders, 5{,}000 rounds). Bids versus signals in the final 1{,}000 rounds, overlaid with the BNE bid function.}
+  \caption{Representative bid function for a single trial of Experiment~2a (LinUCB, first-price auction, $\eta = 0.5$, 2~bidders, 5{,}000 rounds). Bids versus signals in the final 1{,}000 rounds, overlaid with the theoretical bid function.}
   \label{fig:e2a_trace}
 \end{figure}
 
 \subsubsection{Revenue}
 
-Number of bidders dominates ($|t| = \ExpTwoARevFactorTOne$), with the shift from two to four bidders increasing revenue by \ExpTwoARevTopPctEffect\% of the grand mean. The next largest effects are \ExpTwoARevFactorTwo{} ($|t| = \ExpTwoARevFactorTTwo$) and \ExpTwoARevFactorThree{} ($|t| = \ExpTwoARevFactorTThree$). Table~\ref{tab:exp2a_ranked_rev} ranks all significant effects by absolute $t$-statistic. First-price auctions yield lower final revenue ($|t| = \ExpTwoARevAuctionT$), as the main effects plot (Figure~\ref{fig:e2a_main_rev}) confirms.
+Number of bidders dominates ($|t| = \ExpTwoARevFactorTOne$), with the shift from two to four bidders increasing revenue by \ExpTwoARevTopPctEffect\% of the grand mean. The next largest effects are \ExpTwoARevFactorTwo{} ($|t| = \ExpTwoARevFactorTTwo$) and \ExpTwoARevFactorThree{} ($|t| = \ExpTwoARevFactorTThree$). Table~\ref{tab:exp2a_ranked_rev} ranks all significant effects by absolute $t$-statistic. First-price auctions yield lower final revenue ($|t| = \ExpTwoARevAuctionT$), as the main effects plot (Figure~\ref{fig:e2a_main_rev}) confirms. The top interaction effects appear in Figure~\ref{fig:e2a_int_rev}.
 
 \input{tables/exp2a_ranked_rev}
 
@@ -60,8 +60,6 @@ Number of bidders dominates ($|t| = \ExpTwoARevFactorTOne$), with the shift from
   \label{fig:e2a_main_rev}
 \end{figure}
 
-The top interaction effects appear in Figure~\ref{fig:e2a_int_rev}.
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/e2a_int_rev}
@@ -71,7 +69,7 @@ The top interaction effects appear in Figure~\ref{fig:e2a_int_rev}.
 
 \subsubsection{Price Volatility}
 
-Table~\ref{tab:exp2a_ranked_vol} and the main effects plot (Figure~\ref{fig:e2a_main_vol}) show the factor rankings for price volatility under LinUCB.
+Table~\ref{tab:exp2a_ranked_vol} and the main effects plot (Figure~\ref{fig:e2a_main_vol}) show the factor rankings for price volatility under LinUCB. Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
 
 \input{tables/exp2a_ranked_vol}
 
@@ -81,8 +79,6 @@ Table~\ref{tab:exp2a_ranked_vol} and the main effects plot (Figure~\ref{fig:e2a_
   \caption{Experiment~2a: Main effects plot for price volatility under LinUCB.}
   \label{fig:e2a_main_vol}
 \end{figure}
-
-Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
 
 \subsection{Contextual Thompson Sampling (Experiment~2b)}
 
@@ -117,7 +113,7 @@ Under Thompson Sampling, \ExpTwoBRevFactorOne{} dominates ($|t| = \ExpTwoBRevFac
 
 \subsubsection{Price Volatility}
 
-Table~\ref{tab:exp2b_ranked_vol} and the main effects plot (Figure~\ref{fig:e2b_main_vol}) show the factor rankings for price volatility under Thompson Sampling.
+Table~\ref{tab:exp2b_ranked_vol} and the main effects plot (Figure~\ref{fig:e2b_main_vol}) show the factor rankings for price volatility under Thompson Sampling. Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
 
 \input{tables/exp2b_ranked_vol}
 
@@ -127,8 +123,6 @@ Table~\ref{tab:exp2b_ranked_vol} and the main effects plot (Figure~\ref{fig:e2b_
   \caption{Experiment~2b: Main effects plot for price volatility under Thompson Sampling.}
   \label{fig:e2b_main_vol}
 \end{figure}
-
-Model adequacy diagnostics confirm these findings (Appendix~\ref{sec:appendix_robustness}).
 
 \subsection{Sensitivity Analysis}
 
