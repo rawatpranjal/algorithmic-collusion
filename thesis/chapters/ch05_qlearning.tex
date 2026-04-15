@@ -1,0 +1,103 @@
+\chapter{Q-Learning Experiments}
+\label{ch:qlearning}
+
+This chapter reports the two Q-learning sub-experiments. Experiment~1a uses constant valuations and a ten-factor fractional factorial to screen which design parameters matter for seller outcomes. Experiment~1b retains Q-learning but shifts to affiliated valuations and asks whether signal interdependence alters the picture. I treat each simulation as a black-box observation. I report the direction and magnitude of each factor effect and compare those to theoretical predictions, but I do not try to reconstruct the internal mechanics that produced the observed outcomes.
+
+\section{Constant Valuations}
+\label{sec:exp1a_results}
+
+Experiment~1a places tabular Q-learning bidders in a repeated auction with constant valuations $v_i = 1$ and varies ten factors in a half-fraction of the ten-factor two-level factorial (the $2^{10-1}$ Resolution~V design introduced in Chapter~\ref{ch:design_and_inference}), yielding 1{,}024 observations. \Cref{tab:exp1a_params_summary} summarises the ten factors and their levels.
+
+\begin{table}[H]
+\centering
+\caption{Experiment~1a factor levels.}
+\label{tab:exp1a_params_summary}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Factor} & \textbf{Low} ($-1$) & \textbf{High} ($+1$)\\
+\midrule
+Auction format & Second-price & First-price \\
+Learning rate $\alpha$ & 0.01 & 0.10 \\
+Discount factor $\gamma$ & 0.00 & 0.95 \\
+Reserve price $r$ & 0.0 & 0.5 \\
+Initialisation & Zeros & Optimistic \\
+Exploration & $\varepsilon$-greedy & Boltzmann \\
+Update mode & Synchronous & Asynchronous \\
+Number of bidders $n$ & 2 & 4 \\
+Information feedback & Stateless & Previous winning bid \\
+Decay type & Linear & Exponential \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each cell runs for 100{,}000 episodes, which is sufficient for the Q-value tables to stabilise under both exploration strategies. Under independent private values with constant valuations, revenue equivalence \citep{Vickrey1961} predicts that first-price and second-price auctions generate identical expected revenue. The experiment therefore asks whether Q-learning preserves this equivalence or breaks it, and which of the ten design factors most affect outcomes. \Cref{fig:e1a_trace} shows a representative learning trajectory for one of the 1{,}024 runs.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e1a_trace}
+\caption{Representative learning trajectory for a single Experiment~1a trial with a first-price auction, two bidders, and Boltzmann exploration. Per-bidder mean bids (rolling 200-episode mean) converge towards competitive levels over the 10{,}000 episodes shown.}
+\label{fig:e1a_trace}
+\end{figure}
+
+\subsection{Factorial Analysis of Revenue}
+
+The number of bidders is the dominant factor for end-state revenue, with $|t| = \ExpOneARevFactorTOne$. The shift from two to four bidders raises revenue by \ExpOneARevTopPctEffect{} percent of the grand mean, which is roughly \ExpOneARevTopVsAuctionRatio{} times larger than the effect of auction format. The discount factor $\gamma$ ranks second ($|t| = \ExpOneARevFactorTTwo$) and update mode third ($|t| = \ExpOneARevFactorTThree$). \Cref{tab:exp1a_ranked_rev} lists all significant effects ordered by absolute $t$-statistic.
+
+\input{tables/exp1a_ranked_rev}
+
+Auction format has no significant main effect on end-state revenue ($|t| = \ExpOneARevAuctionT$, $p \ExpOneARevAuctionPFmt$). Mean revenue under first-price (\ExpOneARevMeanFPA) is within one percentage point of mean revenue under second-price (\ExpOneARevMeanSPA). This null result is consistent with revenue equivalence and provides the baseline against which the later experiments depart.
+
+Format is not entirely inert. It interacts significantly with the number of bidders ($|t| = \ExpOneARevAuctionxNbidAbsT$) and with the discount factor ($|t| = \ExpOneARevAuctionxGammaAbsT$), meaning that the direction of the format effect depends on competitive thickness and on how patient the bidders are. The format gap is wider in thin markets than in thick markets, and wider when agents discount future payoffs less heavily. \Cref{fig:e1a_int_rev} visualises these two interactions.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e1a_int_rev}
+\caption{Experiment~1a two-way interactions for end-state revenue. Non-parallel lines indicate that the effect of one factor depends on the level of the other.}
+\label{fig:e1a_int_rev}
+\end{figure}
+
+\subsection{Summary of Experiment~1a}
+
+Under constant valuations, the headline finding is that competitive thickness dominates every algorithmic design choice. Auction format has a negligible main effect but interacts with the number of bidders and the discount factor, so the choice of format matters in thin markets and under patient learning. Robustness checks reported in Appendix~\ref{ch:robustness} confirm that this ranking of factor effects survives multiple-testing correction, nonparametric model comparison, and quantile regression.
+
+\section{Affiliated Valuations}
+\label{sec:exp1b_results}
+
+Experiment~1b keeps Q-learning but replaces constant valuations with the affiliated-signal model of \Cref{sec:env}. Each bidder draws a private signal $s_i$ uniformly from the eleven-point grid, and her valuation depends on her own signal and on the average of other bidders' signals via the affiliation parameter $\eta \in \{0, 0.5, 1\}$. The design is a $3 \times 2^3$ mixed-level factorial with 24 cells and 8 replicates, yielding 192 observations. Q-learning hyperparameters are fixed at the best-performing levels identified in Experiment~1a, specifically $\alpha = 0.10$, $\gamma = 0.95$, asynchronous updates, and $\varepsilon$-greedy exploration. \Cref{fig:e1b_trace} shows a representative trajectory.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e1b_trace}
+\caption{Representative learning trajectory for a single Experiment~1b trial with a first-price auction, two bidders, and affiliation $\eta = 0.5$. Rolling-mean revenue stabilises within 10{,}000 episodes.}
+\label{fig:e1b_trace}
+\end{figure}
+
+\subsection{Factorial Analysis of Revenue}
+
+The number of bidders remains the dominant factor ($|t| = \ExpOneBRevNbidAbsT$), with the low-to-high shift raising revenue by \ExpOneBRevTopPctEffect{} percent of the grand mean. Auction format is now statistically significant but economically modest ($|t| = \ExpOneBRevAuctionT$, $p \ExpOneBRevAuctionPFmt$); first-price auctions generate lower end-state revenue, with mean \ExpOneBRevMeanFPA{} versus \ExpOneBRevMeanSPA{} under second-price. \Cref{tab:exp1b_ranked_rev} lists all significant effects.
+
+\input{tables/exp1b_ranked_rev}
+
+The affiliation parameter $\eta$ has no significant effect on any primary outcome, despite spanning the full range from independent private values to near-common values. Revenue equivalence holds under this signal model because signals are drawn independently, so theory predicts no affiliation effect at equilibrium; the Q-learning agents reproduce this prediction even though they do not compute equilibrium bids directly.
+
+The number of bidders moderates the auction-format effect. \Cref{fig:e1b_int_rev} shows the interaction plot for revenue. The first-price revenue penalty is larger in thin markets and shrinks in thicker markets, so the format gap and the competitive-thickness effect partially offset when many bidders compete.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e1b_int_rev}
+\caption{Experiment~1b two-way interactions for end-state revenue. The auction-format-by-number-of-bidders and auction-format-by-state-information interactions are the strongest non-additive effects.}
+\label{fig:e1b_int_rev}
+\end{figure}
+
+\subsection{Learning Phase versus Steady State}
+
+End-state and lifetime revenue reveal different patterns. Both formats generate higher revenue during the learning phase than after convergence, but first-price auctions earn a learning-phase premium roughly three times larger than second-price.\footnote{Measured as the difference between mean lifetime revenue and mean end-state revenue. First-price: \ExpOneBAllMeanFPA{} lifetime versus \ExpOneBEndMeanFPA{} end-state, for a premium of \ExpOneBFPAPremium. Second-price: \ExpOneBAllMeanSPA{} versus \ExpOneBEndMeanSPA, for a premium of \ExpOneBSPAPremium.} When revenue is averaged over the full trajectory rather than the final 1{,}000 episodes, the auction-format main effect loses significance ($|t| = \ExpOneBAllRevAuctionAbsT$, $p \ExpOneBAllRevAuctionPFmt$), so the two formats become statistically indistinguishable on lifetime revenue. The auction-format-by-number-of-bidders interaction survives both measures and in fact reverses sign. With two bidders, first-price auctions yield higher lifetime revenue, while with four bidders, second-price auctions yield higher lifetime revenue.
+
+\subsection{Summary of Experiment~1b}
+
+Under affiliated valuations, the ranking of factors is stable. The number of bidders remains dominant, first-price auctions generate modestly lower end-state revenue than second-price, and affiliation itself has no measurable effect on any outcome. The lifetime-versus-end-state comparison shows that first-price auctions pass through a period of higher revenue during learning before settling at a lower steady state, which partially offsets the convergence gap. As in Experiment~1a, robustness checks in Appendix~\ref{ch:robustness} confirm these rankings.
+
+\section{What Q-Learning Establishes}
+\label{sec:qlearning_summary}
+
+Across both sub-experiments, the number of bidders is the strongest determinant of seller outcomes, the discount factor is second most important where varied, and auction format is either inert (Experiment~1a) or modest (Experiment~1b). Affiliation does not matter at all under Q-learning, which stands in tension with the \citet{MilgromWeber1982} prediction that affiliated signals should favour second-price auctions. I do not speculate about which feature of Q-learning blunts the affiliation effect; the finding is simply that the algorithms I study do not track this aspect of the signal structure. Experiments~2a and~2b in the next chapter test whether more sophisticated contextual-bandit learners recover the classical pattern.

@@ -1,0 +1,93 @@
+\chapter{Contextual Bandit Experiments}
+\label{ch:bandits}
+
+This chapter reports the two contextual-bandit sub-experiments. Experiment~2a replaces Q-learning with LinUCB (linear upper confidence bound) under the affiliated-signal model of Experiment~1b, and Experiment~2b replaces LinUCB with Thompson Sampling. The motivation is that contextual bandits can in principle use the signal context to refine their bids, which raises the question of whether more sophisticated learners recover the classical affiliation-based revenue ranking that Q-learning failed to produce. Both algorithms are defined in Chapter~\ref{ch:auctions_and_algorithms}; the present chapter focuses on the factorial analysis of their outputs.
+
+\section{LinUCB}
+\label{sec:exp2a_results}
+
+Experiment~2a uses a mixed-level factorial that crosses seven binary factors with the three-level affiliation parameter (the $3 \times 2^7$ structure from Chapter~\ref{ch:design_and_inference}). The factors are auction format, number of bidders, reserve price, bandit exploration intensity, context richness, regularisation $\lambda$, memory decay $\delta$, and affiliation $\eta$. The design has 384 cells, replicated twice for \ExpTwoANobs{} observations. \Cref{tab:exp2_params_summary} summarises the factors.
+
+\begin{table}[H]
+\centering
+\caption{Experiment~2a and 2b factor levels. Memory decay and regularisation are used only in Experiment~2a because preliminary screening found them negligible for Thompson Sampling.}
+\label{tab:exp2_params_summary}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Factor} & \textbf{Low} ($-1$) & \textbf{High} ($+1$)\\
+\midrule
+Auction format & Second-price & First-price \\
+Number of bidders $n$ & 2 & 4 \\
+Reserve price $r$ & 0.0 & 0.3 \\
+Exploration intensity & Low & High \\
+Context richness & Signal only & Signal plus winner \\
+Regularisation $\lambda$ (2a only) & 0.1 & 5.0 \\
+Memory decay $\delta$ (2a only) & 1.0 & 0.999 \\
+Affiliation $\eta$ & \multicolumn{2}{l}{three levels: 0, 0.5, 1} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each run lasts 100{,}000 rounds. \Cref{fig:e2a_trace} shows a representative bid function late in training, plotted against the theoretical bid function.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e2a_trace}
+\caption{Representative LinUCB bid function from a single Experiment~2a trial with a first-price auction, two bidders, and affiliation $\eta = 0.5$. Points show bids versus signals in the final 1{,}000 rounds; the reference line shows the symmetric Bayes-Nash bid function.}
+\label{fig:e2a_trace}
+\end{figure}
+
+\subsection{Factorial Analysis of Revenue}
+
+The number of bidders dominates ($|t| = \ExpTwoARevFactorTOne$), producing its largest effect of any experiment in the thesis. The shift from two to four bidders raises revenue by \ExpTwoARevTopPctEffect{} percent of the grand mean, roughly \ExpTwoARevTopVsAuctionRatio{} times the effect of auction format. \Cref{tab:exp2a_ranked_rev} ranks all significant effects.
+
+\input{tables/exp2a_ranked_rev}
+
+Auction format is significant and negative ($|t| = \ExpTwoARevAuctionT$, $p \ExpTwoARevAuctionPFmt$), meaning first-price auctions reduce revenue. Mean revenue under first-price is \ExpTwoARevMeanFPA{} versus \ExpTwoARevMeanSPA{} under second-price, a gap of roughly 19 percent in favour of second-price. The direction of this effect matches the revenue ranking that \citet{MilgromWeber1982} derive for affiliated signals. I do not claim that LinUCB is recovering the exact equilibrium bid function; I report only that LinUCB produces revenue outcomes that are directionally aligned with the classical affiliation result, a pattern absent under Q-learning.
+
+Interactions carry much of the remaining structure. \Cref{fig:e2a_int_rev} shows the strongest two-way interactions. Exploration intensity moderates the auction-format effect, and the number of bidders moderates the exploration effect, so the joint effect of competitive pressure and algorithm configuration is larger than the sum of the two main effects.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e2a_int_rev}
+\caption{Experiment~2a two-way interactions for end-state revenue under LinUCB.}
+\label{fig:e2a_int_rev}
+\end{figure}
+
+Tuning parameters are essentially inert. Regularisation $\lambda$ and memory decay $\delta$ both fail to produce significant main effects on revenue, even though they shape the LinUCB update rule directly. This is consistent with the Sobol decomposition reported in \Cref{sec:bandits_summary}, where algorithmic parameters collectively explain less than four percent of revenue variance.
+
+\section{Thompson Sampling}
+\label{sec:exp2b_results}
+
+Experiment~2b replaces LinUCB with contextual Thompson Sampling under the same valuation model. Because Thompson Sampling explores through posterior sampling rather than an optimism bonus, regularisation and memory decay no longer enter as meaningful design levers, and the design shrinks to a mixed-level factorial with five binary factors and the three-level affiliation parameter (the $3 \times 2^5$ structure), for 96 cells replicated twice and \ExpTwoBNobs{} total observations. \Cref{fig:e2b_trace} shows a representative bid function.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e2b_trace}
+\caption{Representative Thompson Sampling bid function from a single Experiment~2b trial with a first-price auction, two bidders, and affiliation $\eta = 0.5$.}
+\label{fig:e2b_trace}
+\end{figure}
+
+\subsection{Factorial Analysis of Revenue}
+
+The number of bidders is again the top factor ($|t| = \ExpTwoBRevFactorTOne$), followed by reserve price ($|t| = \ExpTwoBRevFactorTTwo$). \Cref{tab:exp2b_ranked_rev} lists all significant effects.
+
+\input{tables/exp2b_ranked_rev}
+
+Auction format is significant and negative ($|t| = \ExpTwoBRevAuctionT$, $p \ExpTwoBRevAuctionPFmt$), with first-price yielding \ExpTwoBRevMeanFPA{} against \ExpTwoBRevMeanSPA{} for second-price. The format gap is smaller than under LinUCB, roughly \ExpTwoBRevGapPct{} percent versus \ExpTwoARevGapPct{} percent, but the direction is the same. \Cref{fig:e2b_int_rev} shows the strongest interactions.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{e2b_int_rev}
+\caption{Experiment~2b two-way interactions for end-state revenue under Thompson Sampling.}
+\label{fig:e2b_int_rev}
+\end{figure}
+
+Unlike LinUCB, Thompson Sampling produces a more diffuse factor hierarchy. No single factor accounts for the lion's share of revenue variance, and several factors contribute in similar measure. This is consistent with the fact that posterior sampling injects randomness into exploration at every round, which tends to wash out the differences between factors that an optimism bonus would amplify. I emphasise that this is an observation about the input-output map, not a mechanistic claim.
+
+\section{What Contextual Bandits Establish}
+\label{sec:bandits_summary}
+
+Two findings carry across both bandit sub-experiments. First, the number of bidders remains the dominant factor for revenue, and algorithmic hyperparameters are collectively inert. The Sobol variance decomposition reported in Appendix~\ref{ch:robustness} gives the number of bidders a total-order index of roughly 0.55 under LinUCB and 0.31 under Thompson Sampling, with algorithmic parameters all below 0.04. Second, and differently from Q-learning, auction format now has a clearly negative main effect on revenue. First-price auctions generate lower revenue under both bandit algorithms, which is directionally consistent with the \citet{MilgromWeber1982} revenue ranking for affiliated signals. The emergence of a non-trivial format effect under bandits, but not under tabular Q-learning, is the first piece of evidence that revenue consequences of auction design depend on the bidding technology.
+
+Neither contextual-bandit algorithm improves seller welfare relative to Q-learning. Both generate slightly lower end-state revenue than Q-learning on average, and neither produces a competitive bid function that tracks the Bayes-Nash benchmark in absolute terms. The main shift from Q-learning to bandits is that the format-versus-affiliation comparison becomes informative rather than inert.

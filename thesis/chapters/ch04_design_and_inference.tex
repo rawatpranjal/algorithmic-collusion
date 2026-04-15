@@ -1,0 +1,81 @@
+\chapter{Experimental Design and Statistical Inference}
+\label{ch:design_and_inference}
+
+This chapter describes the factorial experimental design, the outcome metrics, and the inference procedure that I apply uniformly across all six sub-experiments. The aim is to give the economic reader the information needed to interpret the results chapters without wading through the full methodological detail, which is collected in Appendix~\ref{ch:robustness}. A factorial design is a statistical experiment in which several input variables (factors) are varied simultaneously at a small number of levels and every combination (cell) is run, so that the effect of each factor and each pair of factors can be estimated cleanly from a single balanced experiment. The approach is standard in agricultural and industrial statistics \citep{Box2005, Montgomery2017} and maps naturally onto simulation-based economic research, where the researcher controls every input and observes every output.
+
+\section{The Six Sub-Experiments}
+\label{sec:experiments_overview}
+
+The six sub-experiments are organised into three families indexed by the algorithm that governs bidder behaviour. Each family contains two sub-experiments that share the same algorithmic engine but vary the value environment or the algorithmic parametrisation.
+
+Experiment~1a studies tabular Q-learning bidders with constant valuations $v_i = 1$. The design is a half-fraction of a full ten-factor factorial, written $2^{10-1}$, which runs 512 of the 1024 possible factor combinations and replicates each combination twice for a total of 1024 observations. A full factorial on ten two-level factors would require $2^{10} = 1024$ cells per replication; the half-fraction cuts this in half at the cost of aliasing some higher-order interactions, but a Resolution~V design (explained in the footnote) preserves all main effects and two-way interactions free of bias.\footnote{In a Resolution~$R$ design, no $p$-factor interaction is confounded with any interaction of fewer than $R - p$ factors. Resolution~V therefore guarantees that main effects are free of two-way interaction bias, and two-way interactions are free of bias from other two-way interactions. Under the effect-sparsity assumption that three-way and higher interactions are negligible, all main effects and two-way interactions are estimable without bias. The trade-off is that three-way and higher interactions cannot be disentangled from each other.} The ten factors are learning rate, discount factor, exploration mode, update synchronisation, number of bidders, reserve price, initial Q-value, information feedback, exploration decay type, and auction format. Experiment~1b extends the environment to affiliated signals through the linear affiliation model of \Cref{sec:env}, using a mixed-level design with three levels of affiliation ($\eta \in \{0, 0.5, 1\}$) crossed with three binary factors (the $3 \times 2^3$ structure), for 24 cells replicated eight times, yielding 192 observations.
+
+Experiments~2a and~2b replace Q-learning with contextual bandits under affiliated values. Experiment~2a studies LinUCB with a $3 \times 2^7$ mixed-level design (768 observations); Experiment~2b studies Thompson Sampling with a smaller $3 \times 2^5$ design (192 observations). The LinUCB design is larger because LinUCB exposes more hyperparameters that plausibly affect bidding (regularisation, memory decay, context richness); Thompson Sampling's posterior-sampling mechanism makes several of those hyperparameters irrelevant.\footnote{Thompson Sampling explores by drawing from the posterior, which is inherently stochastic even as the posterior tightens, so regularisation and memory decay behave differently than in LinUCB and are dropped from the design to avoid wasting cells on structurally irrelevant factors.}
+
+Experiments~3a and~3b study budget-constrained pacing agents under log-normal valuations. Each of $n \in \{2, 4\}$ advertisers participates in 100 episodes of 1{,}000 rounds each, and budgets regenerate across episodes while dual variables persist. Experiment~3a uses multiplicative dual pacing, Experiment~3b uses a PI controller, and both use a $2^6$ full factorial with 512 observations that crosses auction format, the pacing control parameter (bidder objective for 3a, controller aggressiveness for 3b), number of bidders, budget multiplier, reserve price, and value dispersion. \Cref{tab:params} summarises which factors are varied in each experiment.
+
+\begin{table}[H]
+\centering
+\caption{Factors varied in each experiment. A check mark indicates the factor is a design axis with two or three levels. An absent entry means the factor is held fixed at a representative value. FPA denotes first-price auction and SPA denotes second-price auction throughout the thesis.}
+\label{tab:params}
+\small
+\begin{tabular}{l l c c c c c c}
+\toprule
+\textbf{Symbol} & \textbf{Factor} & \textbf{1a} & \textbf{1b} & \textbf{2a} & \textbf{2b} & \textbf{3a} & \textbf{3b}\\
+\midrule
+$n$ & Number of bidders & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+& Auction format (FPA vs SPA) & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+$r$ & Reserve price & \checkmark & & \checkmark & \checkmark & \checkmark & \checkmark \\
+$\eta$ & Affiliation parameter & & \checkmark & \checkmark & \checkmark & & \\
+$\alpha$ & Q-learning rate & \checkmark & & & & & \\
+$\gamma$ & Discount factor & \checkmark & & & & & \\
+& Exploration mode ($\varepsilon$-greedy vs Boltzmann) & \checkmark & & & & & \\
+& Update mode (sync vs async) & \checkmark & & & & & \\
+& State information & \checkmark & \checkmark & & & & \\
+$c, \sigma^2$ & Bandit exploration parameter & & & \checkmark & \checkmark & & \\
+$\lambda$ & LinUCB regularisation & & & \checkmark & & & \\
+$\delta$ & Memory decay & & & \checkmark & & & \\
+& Context richness & & & \checkmark & \checkmark & & \\
+& Bidder objective (value- vs utility-max) & & & & & \checkmark & \\
+& PI aggressiveness & & & & & & \checkmark \\
+$m$ & Budget multiplier & & & & & \checkmark & \checkmark \\
+$\sigma$ & Value dispersion (LogNormal scale) & & & & & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Outcome Metrics}
+\label{sec:outcomes}
+
+Every experiment reports the same core response variables so that findings can be compared across algorithm classes. The primary metric is average platform revenue in the stable region of the run. For Experiments~1a through~2b, this is the mean revenue in the final 1{,}000 episodes, after learning has converged. For Experiments~3a and~3b, it is the mean over all post-burn-in episodes, since pacing agents reach steady state much faster than learning agents.
+
+Auxiliary metrics capture complementary aspects of auction performance. Time to converge is the earliest round after which a rolling-average revenue estimate stays within $\pm 5\%$ of its final mean. Price volatility is the sample standard deviation of winning bids in the stable region. The no-sale rate is the fraction of rounds in which no bid exceeds the reserve. Winner entropy is the Shannon entropy of the empirical distribution of winners, and captures whether outcomes concentrate among few bidders. Experiments~3a and~3b add allocative efficiency and the Price of Anarchy, defined in \Cref{sec:welfare}, since budget constraints make revenue alone an incomplete performance measure.
+
+\section{Estimation}
+\label{sec:estimation}
+
+Factors are coded numerically as $-1$ at their low level and $+1$ at their high level; three-level factors (affiliation $\eta$) are represented by two orthogonal contrasts, a linear contrast $\{-1, 0, +1\}$ and a quadratic contrast $\{+1, -2, +1\}$, chosen so that the two contrast columns are uncorrelated with each other and with the binary factor columns. Under this coding, every column of the design matrix is orthogonal to every other column, so ordinary least squares (OLS) yields unbiased and uncorrelated estimates of every main effect and every two-way interaction. For each response variable $Y$ I fit
+\begin{equation}
+Y_i \;=\; \beta_0 \;+\; \sum_{j=1}^{k} \beta_j \, x_{ji} \;+\; \sum_{1 \leq j < l \leq k} \beta_{jl} \, x_{ji}\, x_{li} \;+\; \varepsilon_i,
+\label{eq:ols}
+\end{equation}
+where $x_{ji} \in \{-1, +1\}$ is the coded level of factor~$j$ in observation~$i$, $\beta_j$ captures the main effect of factor~$j$, and $\beta_{jl}$ captures the two-way interaction between factors~$j$ and~$l$. Because the design is orthogonal and balanced, the coefficient on factor~$j$ equals half the difference between the mean response at its high and low levels, holding all other factors at their centre values.
+
+Significance is reported as the absolute $t$-statistic $|\hat{\beta}_j / \mathrm{SE}(\hat{\beta}_j)|$ using the conventional HC3 heteroscedasticity-robust standard error.\footnote{HC3 is a variant of the White-type robust standard error proposed by \citet{MacKinnonWhite1985}. It corrects for cell-to-cell variance differences by reweighting each observation's residual by its leverage-corrected value. Under orthogonal balanced designs, HC3 standard errors usually differ from classical OLS by less than ten percent, and no significance claim in this thesis depends on the choice between the two.} Under orthogonal effects coding, the Type~III analysis-of-variance $F$-statistic for each term is algebraically equivalent to the squared $t$-statistic, so both yield identical $p$-values. I report the signed coefficient, its $|t|$-statistic, and its direction throughout the results chapters.
+
+\section{Multiplicity and Model Adequacy}
+\label{sec:multiplicity_main}
+
+Each experiment reports many coefficients simultaneously, which creates a multiple-testing problem that economists know from empirical work with large regression tables: the probability of at least one false positive grows quickly in the number of tests, and some correction is needed to keep that probability bounded. I apply two standard corrections at $\alpha = 0.05$. The Holm step-down procedure \citep{Holm1979} controls the family-wise error rate, defined as the probability of at least one false positive, and is the strictest of the two. The Benjamini--Hochberg procedure \citep{BenjaminiHochberg1995} controls the false-discovery rate, defined as the expected fraction of false positives among rejected nulls, and is less conservative. I also compute Rademacher wild-bootstrap $p$-values on the top-ten effects of each response variable to check that the asymptotic inference is not driven by distributional assumptions about the error term.\footnote{The wild bootstrap \citep{DavidsonFlachaire2008} resamples residuals with random $\pm 1$ sign flips, which preserves heteroscedasticity structure under the null hypothesis and does not require parametric assumptions about the distribution of the errors.} All effects that this thesis reports as significant in the main text survive the Benjamini--Hochberg correction, and the top effects survive the stricter Holm procedure. Per-experiment multiple-testing tables are collected in Appendix~\ref{ch:robustness}.
+
+Model adequacy is assessed by comparing the $R^2$ of the linear specification in Equation~\ref{eq:ols} to the cross-validated $R^2$ of a flexible machine-learning benchmark that is free to fit arbitrary nonlinear interactions, specifically a gradient-boosted tree ensemble.\footnote{A gradient-boosted tree ensemble is a machine-learning model that builds many small regression trees in sequence, each of which corrects the prediction errors of the previous ones. The ensemble can approximate any sufficiently smooth function given enough training data, which makes it a good non-parametric upper bound on achievable fit. I use the LightGBM implementation with 200 trees of maximum depth four and five-fold cross-validation. Cross-validation means the sample is split into five parts, the model is fit five times with a different part held out each time, and the reported $R^2$ is computed on the held-out parts to prevent overfitting. A gap between OLS $R^2$ and the cross-validated ensemble $R^2$ below 0.05 indicates that the linear main-effects-plus-two-way-interactions specification captures essentially all the signal detectable at the sample size.} In all six sub-experiments the gap falls below this threshold, which supports treating OLS estimates as fair summaries of the underlying input-output map.
+
+\section{Sensitivity Analysis}
+\label{sec:sensitivity_main}
+
+The factorial analysis is complemented by a global sensitivity analysis based on Sobol variance decomposition. Named after the mathematician I.\ M.\ Sobol, this technique partitions the variance of the output into contributions from each input factor and from interactions among them. The first-order Sobol index $S_j$ measures the share of variance attributable to factor~$j$ acting alone, and the total-order index $S_{T_j}$ measures the share of variance attributable to~$j$ acting alone or in any interaction with other factors. Under orthogonal effects coding, these indices are a closed-form by-product of the analysis of variance decomposition and require no additional sampling.\footnote{The equivalence between Type~III sums of squares and first-order Sobol indices under orthogonal designs is established in \citet{ArcherSaltelliSobol1997} and \citet{Saltelli2008}. The total-order index is the sum of the first-order index and all interaction-term shares involving the factor, divided by the total sum of squares.} Appendix~\ref{ch:robustness} confirms the rankings using six alternative sensitivity methods, specifically random-forest permutation importance, SHAP (Shapley additive explanation) values from a gradient-boosted surrogate model, Morris elementary effects, Monte Carlo Sobol indices via three surrogate models, FAST (Fourier amplitude sensitivity test), and Borgonovo's $\delta$ moment-independent measure. The rank correlations between the analytical Sobol ranking and each of these alternatives exceed 0.85 across the six experiments.
+
+\section{What the Results Chapters Report}
+\label{sec:ch4_summary}
+
+Each results chapter (\Crefrange{ch:qlearning}{ch:pacing}) follows the same template. I first state the dominant effect for platform revenue together with its direction, magnitude, and $|t|$-statistic, referencing the corresponding ranked-effects table. I then describe the remaining significant main effects and the most consequential interactions, usually with a single interaction figure. I close each sub-experiment with a brief summary sentence and a pointer to Appendix~\ref{ch:robustness}. I do not restate individual numbers from tables in the prose, following the style convention that prose interprets and tables convey precise magnitudes. The takeaway for the reader is that every reported effect has been filtered through the same multiple-testing corrections, the same model-adequacy benchmark, and the same sensitivity-analysis cross-check. When I say a factor matters, it has survived all three filters.

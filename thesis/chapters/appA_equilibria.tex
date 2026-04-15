@@ -1,0 +1,86 @@
+\chapter{Equilibrium Benchmarks}
+\label{ch:equilibria}
+
+This appendix derives the rational-bidder equilibrium benchmarks that the results chapters compare against. The derivations are standard and are collected here to keep the main text focused on the experimental findings.
+
+\section{Constant Valuations}
+\label{sec:eq_constant}
+
+Experiment~1a uses constant valuations $v_i = 1$ with the discrete bid grid $\mathcal{B} = \{0, 0.1, \ldots, 1.0\}$. In a first-price auction with $n$ bidders, a symmetric profile in which every bidder bids $b$ yields each bidder an expected payoff of $(1 - b) / n$, since ties are broken uniformly at random. A unilateral upward deviation to $b + 0.1$ (provided $b + 0.1 \leq 1$) yields a payoff of $1 - (b + 0.1)$. No upward deviation is profitable when
+\[
+1 - (b + 0.1) \;\leq\; \frac{1 - b}{n},
+\]
+which after rearrangement gives
+\[
+b \;\geq\; \frac{0.9\,n - 1}{n - 1}.
+\]
+For any $b$ at or above this threshold and bounded by the grid, the symmetric profile is a pure-strategy Nash equilibrium. With $n = 2$ the threshold is $0.8$, and with $n = 4$ the threshold is approximately $0.87$.
+
+In a second-price auction with identical valuations, bidding $v_i = 1$ is weakly dominant, since the winner pays the second-highest bid regardless of her own bid. Any profile in which at least one bidder bids $1$ is a Nash equilibrium, and the expected revenue to the seller is $1$. Under revenue equivalence \citep{Vickrey1961} the two formats deliver the same expected revenue, so the first-price equilibrium threshold derivation above pins down the minimum symmetric bid consistent with non-dominated play.
+
+\section{Affiliated Valuations}
+\label{sec:eq_affiliated}
+
+Experiments~1b, 2a, and 2b use the linear-affiliation model of \Cref{sec:env}. Each bidder draws a signal $s_i$ uniformly on $\{0, 0.1, \ldots, 1.0\}$, and her valuation is
+\[
+v_i \;=\; \alpha \, s_i \;+\; \beta \sum_{j \neq i} s_j,
+\qquad
+\alpha = 1 - \frac{\eta}{2},
+\qquad
+\beta = \frac{\eta}{2 (n - 1)},
+\]
+with $\eta \in \{0, 0.5, 1\}$. Signals are drawn independently across bidders and rounds. The symmetric Bayes-Nash equilibrium in both formats features a linear bid function.
+
+\subsection{Bid Functions}
+
+In the second-price auction with independent private values, each bidder has a dominant strategy to bid her expected valuation conditional on the event that she ties for the highest bid. Under the linear model above, the resulting symmetric bid function is
+\[
+b^{\mathrm{SPA}}(s) \;=\; \Big(\alpha + \frac{n \beta}{2}\Big) s.
+\]
+The derivation conditions on the highest rival signal equalling the bidder's own signal. Her own signal contributes $\alpha s$, the tying rival contributes $\beta s$, and each of the remaining $n - 2$ rivals contributes $\beta \, \mathbb{E}[s_j \mid s_j \leq s] = \beta s / 2$. Summing across the $n - 1$ rival contributions gives $\beta (1 + (n-2)/2) s = \beta (n/2) s$, which yields the formula above.
+
+In the first-price auction under independent uniform signals, the standard envelope argument produces
+\[
+b^{\mathrm{FPA}}(s) \;=\; \frac{n - 1}{n} \Big(\alpha + \frac{n \beta}{2}\Big) s.
+\]
+The bid function is linear in the signal, with a shading factor $(n - 1)/n$ that captures the first-price markdown.
+
+\subsection{Expected Revenue}
+
+Let $\phi = \alpha + n \beta / 2$. Under independent uniform signals on $[0, 1]$, the highest signal has expected value $n / (n + 1)$ and the second-highest signal has expected value $(n - 1) / (n + 1)$. Expected revenue in each format is the bid slope times the relevant order statistic, which gives
+\[
+R^{\mathrm{SPA}} \;=\; \phi \cdot \frac{n - 1}{n + 1},
+\qquad
+R^{\mathrm{FPA}} \;=\; \frac{n - 1}{n} \cdot \phi \cdot \frac{n}{n + 1} \;=\; \phi \cdot \frac{n - 1}{n + 1}.
+\]
+The two expressions coincide, so revenue equivalence holds for every affiliation level $\eta$ in this model. The equivalence holds because signals are drawn independently, which is why the classical \citet{MilgromWeber1982} ranking in favour of second-price formats does not apply here; their ranking requires positively affiliated signals in the strict technical sense. The linear-affiliation function I use creates interdependent valuations but preserves signal independence.
+
+\subsection{Efficient Benchmark}
+
+The expected value of the highest valuation is
+\[
+\mathbb{E}[v_{(1)}] \;=\; (\alpha - \beta) \, \mathbb{E}[s_{(1:n)}] \;+\; \beta \, \mathbb{E}[S],
+\]
+where $s_{(1:n)}$ is the maximum of $n$ independent uniform signals and $S = \sum_i s_i$. Substituting $\mathbb{E}[s_{(1:n)}] = n / (n + 1)$ and $\mathbb{E}[S] = n / 2$, the expression simplifies to
+\[
+\mathbb{E}[v_{(1)}] \;=\; (\alpha - \beta) \cdot \frac{n}{n + 1} \;+\; \beta \cdot \frac{n}{2}.
+\]
+This is the efficient first-best benchmark. The factorial analysis in Chapter~\ref{ch:qlearning} reports realised revenues rather than welfare, so the efficient benchmark enters the discussion only for comparison with the Price of Anarchy analysis in Chapter~\ref{ch:pacing}.
+
+\section{Numerical Verification}
+\label{sec:eq_numerical}
+
+The analytical equilibria above are verified by numerical simulation. The deviation check fixes a grid of signal types and computes the expected payoff from multiplicative deviations around the predicted equilibrium bid. \Cref{tab:bne_deviation} reports the maximal gain from deviating for each $(\eta, n)$ pair; values at numerical zero indicate that the proposed bid is a best response at the reported precision.
+
+\input{tables/bne_deviation}
+
+The revenue check runs Monte Carlo simulations at the equilibrium bids and compares realised mean revenue to the closed-form prediction $R^{\mathrm{BNE}} = \phi \cdot (n - 1)/(n + 1)$ for both formats. \Cref{tab:bne_revenue_match} reports the results.
+
+\input{tables/bne_revenue_match}
+
+The Monte Carlo means match the closed-form predictions within tight confidence intervals, and the first-price and second-price revenues coincide within sampling error, confirming revenue equivalence.
+
+\section{Pacing Equilibrium}
+\label{sec:eq_pacing}
+
+The pacing experiments in Chapter~\ref{ch:pacing} do not admit a closed-form Bayes-Nash benchmark, because budget constraints couple the bidder's choices across rounds. Instead, the relevant equilibrium concept is the first-price pacing equilibrium introduced by \citet{Conitzer2022FPPE}, which is unique under mild regularity conditions and computable via the Eisenberg-Gale convex programme. The welfare benchmark is the liquid welfare optimum defined in \Cref{sec:welfare}, and the efficiency benchmark is the Price of Anarchy bound of $\mathrm{PoA} \leq 2$ derived by \citet{Aggarwal2019} and \citet{Gaitonde2023}. I do not rederive these results here; the reader is referred to the original sources for the full constructions.

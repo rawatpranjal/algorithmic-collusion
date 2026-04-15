@@ -1,0 +1,21 @@
+\begin{table}[H]
+  \centering
+  \small
+  \caption{Revenue formula validation: analytical vs.\ Monte Carlo (500K draws). Revenue equivalence holds under iid signals.}
+  \label{tab:bne_revenue_match}
+  \begin{tabular}{cccccc}
+    \toprule
+    $\eta$ & $N$ & $R^{\text{analytical}}$ & $R^{\text{FPA}}_{\text{MC}}$ & $R^{\text{SPA}}_{\text{MC}}$ & $|R^{\text{FPA}} - R^{\text{SPA}}|$ \\
+    \midrule
+    0.0 & 2 & 0.3333 & 0.3330 & 0.3337 & 0.0007 \\
+    0.0 & 3 & 0.5000 & 0.5000 & 0.4997 & 0.0003 \\
+    0.0 & 6 & 0.7143 & 0.7145 & 0.7145 & 0.0000 \\
+    0.5 & 2 & 0.3333 & 0.3330 & 0.3337 & 0.0007 \\
+    0.5 & 3 & 0.4688 & 0.4688 & 0.4685 & 0.0003 \\
+    0.5 & 6 & 0.6429 & 0.6431 & 0.6430 & 0.0000 \\
+    1.0 & 2 & 0.3333 & 0.3330 & 0.3337 & 0.0007 \\
+    1.0 & 3 & 0.4375 & 0.4375 & 0.4372 & 0.0003 \\
+    1.0 & 6 & 0.5714 & 0.5716 & 0.5716 & 0.0000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

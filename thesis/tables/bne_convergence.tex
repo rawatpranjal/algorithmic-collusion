@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering
+\caption{Proximity of learning outcomes to Bayesian Nash Equilibrium revenue predictions. Each row pools all factorial cells for an experiment. A ratio of 1.0 means observed revenue equals the BNE prediction exactly.}
+\label{tab:bne_convergence}
+\begin{tabular}{llrrrrrr}
+\toprule
+\textbf{Exp.} & \textbf{Algorithm} & \textbf{$N$} & \textbf{Mean} & \textbf{Median} & \textbf{Std} & \textbf{Min} & \textbf{\% within 10\%} \\
+\midrule
+1a & Q-learning (constant) & 1024 & 1.079 & 1.000 & 0.403 & 0.000 & 32.4\% \\
+1b & Q-learning (affiliated) & 192 & 1.028 & 0.990 & 0.111 & 0.835 & 82.3\% \\
+2a & LinUCB & 768 & 1.029 & 1.011 & 0.333 & 0.000 & 41.4\% \\
+2b & Thompson Sampling & 192 & 1.196 & 1.105 & 0.311 & 0.338 & 40.6\% \\
+\bottomrule
+\end{tabular}
+\end{table}

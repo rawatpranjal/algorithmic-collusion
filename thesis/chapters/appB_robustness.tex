@@ -1,0 +1,59 @@
+\chapter{Robustness and Model Adequacy}
+\label{ch:robustness}
+
+This appendix collects the robustness and model-adequacy diagnostics that support the findings reported in the results chapters. I group the checks by what they test rather than parade them one by one. The main body reports that the dominant factor rankings survive all of these diagnostics; this appendix provides the supporting detail.
+
+\section{Model Adequacy}
+\label{sec:app_adequacy}
+
+Model adequacy is assessed by four complementary diagnostics. Each addresses a distinct failure mode of the linear main-effects-plus-two-way-interactions specification.
+
+The first diagnostic is the in-sample $R^2$ of the OLS model. Across all six sub-experiments, the $R^2$ for platform revenue ranges from $\ExpOneBRevRsq$ in Experiment~1b to $\ExpThreeARevRsq$ in Experiment~3a. The highest $R^2$ values are recorded under pacing, where the outcome is more tightly determined by the budget and design structure; the lowest are recorded under contextual bandits and Q-learning with affiliated signals, where additional seed-level variability enters through the stochastic exploration mechanism.
+
+The second diagnostic is the out-of-sample $R^2$ computed via the predicted residual error sum of squares (PRESS) statistic. PRESS is a closed-form way to compute leave-one-out cross-validation for an OLS regression. It uses the hat matrix of the fit rather than actually refitting the model after removing each observation, so the answer is identical to leave-one-out cross-validation but cheaper. The gap between in-sample $R^2$ and leave-one-out cross-validated $R^2$ is below 0.10 for every response variable in every sub-experiment, with the largest gap recorded in Experiment~1b ($\ExpOneBRevPRESSGap$) and the smallest in Experiment~3a ($\ExpThreeARevPRESSGap$). A gap below 0.10 indicates that the linear model generalises cleanly and does not overfit the design.
+
+The third diagnostic benchmarks the linear model against a gradient-boosted tree ensemble (LightGBM) fit with five-fold cross-validation. LightGBM can approximate arbitrary nonlinear interactions given enough data, so its cross-validated $R^2$ provides a nonparametric upper bound on how much signal the data contain. In Experiments~1b, 2b, 3a, and 3b, LightGBM's cross-validated $R^2$ is comparable to or lower than OLS $R^2$, which means the linear specification captures essentially all the signal. In Experiments~1a and~2a, LightGBM's cross-validated $R^2$ modestly exceeds OLS $R^2$ for one or two responses, indicating mild nonlinearity that the linear model does not capture. The dominant factor rankings are unchanged when the analysis is rerun with a LightGBM feature-importance ranking.
+
+The fourth diagnostic is a lack-of-fit $F$-test. The test exploits the within-cell replication of the factorial designs to decompose the residual sum of squares into two pieces: pure error (the variance of replicate runs within the same design cell) and lack of fit (the deviation of cell means from the model's predicted cell means). If the second piece is large relative to the first, the linear model is missing systematic structure. Lack of fit is detectable but small for all experiments, and the dominant effects retain their ranking when the model is extended to include three-way interactions.
+
+\section{Multiple Testing}
+\label{sec:app_multiple_testing}
+
+Each experiment reports many effect estimates simultaneously, so I apply two multiple-testing corrections. The Holm step-down procedure controls the family-wise error rate at $\alpha = 0.05$, and the Benjamini-Hochberg procedure controls the false-discovery rate at the same level. Rademacher wild-bootstrap $p$-values are also computed for the top ten effects of each response variable to guard against distributional misspecification, with 1000 iterations per test.
+
+Across all six sub-experiments, the effects I report as significant in the main text survive both Holm and Benjamini-Hochberg. The fraction of effects surviving Benjamini-Hochberg varies across experiments, ranging from $\ExpOneBBHPct$ percent in Experiment~1b to $\ExpThreeABHPct$ percent in Experiment~3a. Wild-bootstrap $p$-values align closely with asymptotic HC3 $p$-values, with differences below 0.01 in every case. HC3 heteroskedasticity-consistent standard errors change the significance status of at most 2.1 percent of effects (recorded in Experiment~2b) across the six sub-experiments, so the conclusions are not driven by the choice between classical OLS and HC3 standard errors.
+
+\section{Quantile Regression}
+\label{sec:app_quantile}
+
+The OLS analysis conditions on the mean of the response. Some factors may have effects that are concentrated in the tails of the outcome distribution and are therefore invisible to mean regression. I fit quantile regressions at the 10th, 25th, 50th, 75th, and 90th percentiles for platform revenue in each sub-experiment, using the Holm step-down correction across the full family of factor-by-quantile tests.
+
+The most striking quantile finding is in Experiment~1a, where the auction-format coefficient reverses sign across quantiles. At the 10th percentile of revenue, first-price auctions raise revenue by roughly $+0.033$, and at the 90th percentile they lower it by roughly $-0.047$, with the crossover between the median and the 75th percentile. Both tails are significant under Holm correction, and both effects disappear when averaged into the OLS mean regression. First-price auctions therefore compress the revenue distribution, raising the floor and lowering the ceiling, even though they have no significant main effect on the conditional mean. This sign reversal is a distributional pattern that OLS masks by construction.
+
+In Experiments~2b, 3a, and 3b, the auction-format effect grows monotonically towards the upper tail of the revenue distribution rather than reversing sign. The first-price penalty under Thompson Sampling nearly doubles from the 10th percentile to the 90th, and the first-price advantage under PI pacing nearly doubles in the same direction. The best-performing configurations are the most sensitive to the choice of auction format in both directions. The number-of-bidders effect is stable across quantiles in every experiment, confirming that market thickness benefits revenue uniformly.
+
+\section{LASSO Variable Selection}
+\label{sec:app_lasso}
+
+The LASSO estimator of \citet{Tibshirani1996} simultaneously estimates coefficients and selects variables through an $L_1$ penalty that shrinks small coefficients exactly to zero. I fit LASSO models for each response variable in each experiment, with the regularisation parameter $\lambda$ chosen by five-fold cross-validation to minimise mean squared error. I then check whether the LASSO-surviving variables match the OLS-significant variables.
+
+LASSO retains auction format and the number of bidders in every sub-experiment. No interaction survives LASSO whose parent main effects were dropped, so the LASSO fit respects the effect-heredity principle that interactions should only be retained when their constituent main effects are also present. The LASSO-selected variables are a subset of the OLS-significant effects in every case, with LASSO being more conservative as expected under the $L_1$ penalty.
+
+\section{Discretisation and Budget Sensitivity}
+\label{sec:app_sensitivity}
+
+Two external sensitivity checks probe whether the findings depend on specific parameter choices. The first is a discretisation sensitivity analysis for Experiments~1a through 2b. I rerun a representative subset of factorial cells at bid-grid sizes of 6, 11, and 21 discrete levels. The dominant factor rankings are stable across grid sizes, and the relative ordering of the top effects is preserved at every granularity. Mean response values shift modestly as the grid coarsens, consistent with approximation error proportional to the grid spacing, but no effect changes sign or significance.
+
+The second is a budget sensitivity analysis for Experiment~3a. I rerun the pacing design with budget multipliers $m \in \{0.25, 0.5, 1.0\}$. Tighter budgets amplify the bidder-objective effect on revenue, while looser budgets reduce the auction-format effect because the pacing constraint becomes less binding. The number of bidders remains the dominant factor at every budget level. The auction-format reversal between pacing and learning experiments survives across all three budget levels.
+
+\section{Sobol Sensitivity Methods}
+\label{sec:app_sobol}
+
+The analytical Sobol decomposition in \Cref{sec:sensitivity_main} is supplemented by six alternative sensitivity methods. Random-forest permutation importance measures how much the test-set accuracy of a random-forest fit drops when a given factor is randomly shuffled. SHAP (Shapley additive explanation) values decompose the prediction of a machine-learning model into an additive contribution from each feature, using a weighting drawn from cooperative game theory. Morris elementary effects average the finite-difference contribution of each factor along randomised one-step perturbation paths through the design space. Monte Carlo Sobol indices estimate the same variance decomposition as the analytical indices, but by sampling from surrogate models (I use a neural network, the gradient-boosted tree ensemble, and a Kriging interpolator, which is a Gaussian-process regression model named after the mining engineer D.\ G.\ Krige). FAST (Fourier amplitude sensitivity test) uses Fourier analysis to separate the contribution of each factor to output variance. Borgonovo's $\delta$ measure is a moment-independent sensitivity indicator that captures how much the distribution of the output shifts when a factor is fixed at its mean. Each method returns an importance score per factor, and I compute the pairwise Spearman rank correlation between methods within each experiment and response to assess concordance.
+
+Cross-method concordance is strong in the experiments with clear dominant factors and large sample sizes. Experiment~1a records a mean Spearman correlation of 0.87 across all methods and responses, and Experiments~3a and~3b record correlations of 0.72 and 0.77 respectively. Concordance is weaker in Experiments~2a and~2b, where many factors have similar importance and the methods disagree on the ordering of minor effects, though the identity of the top one or two factors remains consistent across methods.
+
+\section{Summary}
+\label{sec:app_summary}
+
+The robustness analysis supports three claims that recur throughout the results chapters. First, the dominant factor rankings are stable under multiple-testing correction, distributional-assumption-free inference, quantile regression at five percentiles, LASSO variable selection, discretisation sensitivity, budget sensitivity, and six alternative sensitivity methods. Second, model adequacy is high across the board, with linear $R^2$ close to the nonparametric benchmark and leave-one-out cross-validated gaps below 0.10 in every experiment. Third, distributional heterogeneity exists for the auction-format effect and is invisible to standard OLS at the conditional mean; quantile regression uncovers it in Experiment~1a as a sign reversal across percentiles, and in Experiments~2b, 3a, and 3b as a monotone growth towards the upper tail.

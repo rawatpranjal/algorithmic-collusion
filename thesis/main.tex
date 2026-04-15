@@ -1,0 +1,36 @@
+\documentclass[12pt,oneside]{report}
+
+\input{preamble}
+\input{numbers}
+
+\title{Designing Auctions when Algorithms Learn to Bid}
+\author{Pranjal Rawat}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Algorithms increasingly automate bidding in online auctions, raising concerns about tacit bid suppression and revenue shortfalls. This thesis builds a computational laboratory, grounded in factorial experimental design and large-scale Monte Carlo simulation, that measures how auction format, competitive pressure, learning parameters, and budget constraints associate with platform revenue across a common methodology. The framework treats each simulation as a black-box input-output observation. The aim is to rank factors by their association with revenue, not to explain internal mechanics. Across six sub-experiments spanning three algorithm families (tabular Q-learning, contextual bandits, and budget-constrained pacing), structural market parameters dominate algorithmic design choices. In unconstrained settings, the number of bidders is the strongest predictor of revenue. Under budget constraints, budget tightness takes over. The effect of auction format on revenue depends on the bidding technology. Second-price formats generate higher revenue under learning algorithms, while first-price formats generate higher revenue under budget-constrained pacing. No single auction format is universally superior when bidders are algorithms, and format recommendations built on one algorithm class do not generalise to another.
+\end{abstract}
+
+\tableofcontents
+
+\input{chapters/ch01_introduction}
+\input{chapters/ch02_literature}
+\input{chapters/ch03_auctions_and_algorithms}
+\input{chapters/ch04_design_and_inference}
+\input{chapters/ch05_qlearning}
+\input{chapters/ch06_bandits}
+\input{chapters/ch07_pacing}
+\input{chapters/ch08_discussion}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+\input{chapters/appA_equilibria}
+\input{chapters/appB_robustness}
+
+\end{document}
