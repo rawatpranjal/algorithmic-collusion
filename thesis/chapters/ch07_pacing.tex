@@ -10,29 +10,20 @@ Both experiments use the same auction environment. Each of $n \in \{2, 4\}$ adve
 
 Both experiments use a full factorial in six binary factors (the $2^6$ design from Chapter~\ref{ch:design_and_inference}), which gives 64 cells replicated across eight random seeds for 512 observations. The factors common to both experiments are auction format, number of bidders $n$, budget multiplier $m$, reserve price $r$, and value dispersion $\sigma$. The sixth factor differs between the two experiments. Experiment~3a varies bidder objective (value-maximising versus utility-maximising), which determines whether the agent bids $v / \mu$ or $v / (1 + \mu)$. Experiment~3b varies controller aggressiveness, which scales the proportional and integral gains of the feedback rule by a factor of ten (from $a = 0.3$ to $a = 3.0$).
 
-The factorial model explains a large share of revenue variance in both experiments, with $R^2 = \ExpThreeARevRsq$ for dual pacing and $R^2 = \ExpThreeBRevRsq$ for PI pacing. These $R^2$ values are a descriptive statement about model fit, not a claim that the estimated effects are identified in the econometric sense. The factorial design orthogonalises the inputs by construction, so the OLS coefficients unambiguously recover the partial-derivative effects of each input on the output of the simulator. What they do not recover is any causal parameter of an underlying economic model, since the simulator is the object of study and the black-box framing of the thesis treats it as such.
+The factorial model explains a large share of revenue variance in both experiments ($R^2 = \ExpThreeARevRsq$ for dual pacing, $R^2 = \ExpThreeBRevRsq$ for PI pacing).
 
 \section{Dual Pacing}
 \label{sec:exp3a_results}
 
-Experiment~3a uses multiplicative dual pacing. \Cref{fig:e3a_trace} shows a representative trajectory of the bid-to-value ratio across episodes. The bid-to-value ratio is the bid an agent submits divided by the valuation she draws in that round. A ratio below one means the agent shades her bid below her value. A ratio equal to one means she bids her full value, and a ratio above one means she overbids.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.75\textwidth]{e3a_trace}
-\caption{Representative Experiment~3a trajectory. The plot shows the mean bid-to-value ratio per episode for a single trial with a first-price auction, value-maximising objective, and two bidders.}
-\label{fig:e3a_trace}
-\end{figure}
+Experiment~3a uses multiplicative dual pacing.
 
 \subsection{Revenue}
 
-The budget multiplier dominates platform revenue with $|t| = \ExpThreeARevFactorTOne$, shifting revenue by \ExpThreeARevTopPctEffect{} percent of the grand mean. This is the largest main effect recorded in any experiment in the thesis. Within the range of factor levels I study, tight budgets are associated with systematically lower bids and loose budgets with higher bids, and the pattern holds across every combination of the other five factors in the design. Bidder objective ranks second ($|t| = \ExpThreeARevFactorTTwo$), followed by the objective-by-budget interaction ($|t| = \ExpThreeARevFactorTThree$), then the number of bidders ($|t| = \ExpThreeARevNbidAbsT$), and finally auction format ($|t| = \ExpThreeARevAuctionT$). \Cref{tab:exp3a_ranked_rev} lists all significant effects.
-
-\input{tables/exp3a_ranked_rev}
+The budget multiplier dominates platform revenue with $|t| = \ExpThreeARevFactorTOne$, shifting revenue by \ExpThreeARevTopPctEffect{} percent of the grand mean. This is the largest main effect recorded in any experiment in the thesis. Within the range of factor levels I study, tight budgets are associated with systematically lower bids and loose budgets with higher bids, and the pattern holds across every combination of the other five factors in the design. Bidder objective ranks second ($|t| = \ExpThreeARevFactorTTwo$), followed by the objective-by-budget interaction ($|t| = \ExpThreeARevFactorTThree$), then the number of bidders ($|t| = \ExpThreeARevNbidAbsT$), and finally auction format ($|t| = \ExpThreeARevAuctionT$). The full effect hierarchy appears in \Cref{tab:exp3a_ranked_rev} (Appendix~\ref{ch:ranked_tables}).
 
 The auction-format effect reverses sign compared with the learning experiments. First-price auctions now generate higher revenue than second-price, with mean revenue \ExpThreeARevMeanFPA{} under FPA versus \ExpThreeARevMeanSPA{} under SPA, a gap of \ExpThreeARevGapPct{} percent in favour of first-price. Recall that under LinUCB the gap was roughly nineteen percent in favour of second-price and under Thompson Sampling roughly nine percent in favour of second-price. The same structural comparison therefore flips when the bidding technology moves from unconstrained learning to budget-constrained pacing.
 
-\Cref{fig:e3a_int_rev} shows the strongest two-way interactions for revenue. The budget-by-number-of-bidders and objective-by-budget interactions are the largest, and both indicate that the slope of the budget-multiplier effect varies with the other factor: the revenue response to loosening budgets is steeper when there are more bidders, and steeper again when the bidders are value-maximisers rather than utility-maximisers.
+\Cref{fig:e3a_int_rev} shows the strongest two-way interactions for revenue. The budget-by-number-of-bidders and objective-by-budget interactions are the largest, and both indicate that the slope of the budget-multiplier effect varies with the other factor. The revenue response to loosening budgets is steeper when there are more bidders, and steeper again when the bidders are value-maximisers rather than utility-maximisers.
 
 \begin{figure}[H]
 \centering
@@ -43,9 +34,7 @@ The auction-format effect reverses sign compared with the learning experiments. 
 
 \subsection{Price of Anarchy}
 
-The factorial model for effective Price of Anarchy achieves $R^2 = \ExpThreeAPoaRsq$. \Cref{tab:exp3a_ranked_poa} lists the significant effects.
-
-\input{tables/exp3a_ranked_poa}
+The factorial model for effective Price of Anarchy achieves $R^2 = \ExpThreeAPoaRsq$. The significant effects are listed in \Cref{tab:exp3a_ranked_poa} (Appendix~\ref{ch:ranked_tables}).
 
 Every observed Price of Anarchy value remains within the theoretical bound $\mathrm{PoA} \leq 2$ derived by \citet{Aggarwal2019} and \citet{Gaitonde2023}. This is a non-trivial confirmation, since the theoretical bound covers worst-case instances and could fail in practice if the pacing dynamics hit a pathological corner of the design space. Auction format does not have a significant main effect on the Price of Anarchy in Experiment~3a, even though it does affect revenue. The pattern that appears in the data is therefore that first-price auctions yield lower seller revenue relative to second-price without a corresponding change in measured allocative efficiency. I report this co-occurrence and do not claim that the one causes the other, since the black-box framing of the thesis does not permit statements about mechanism.
 
@@ -53,27 +42,16 @@ Every observed Price of Anarchy value remains within the theoretical bound $\mat
 
 \citet{PaesLeme2024} conjecture that dual-based pacing produces progressive bid suppression across campaign cycles. I test this by estimating the slope of the bid-to-value ratio across post-burn-in episodes and relating it to the factorial design. The drift model is statistically significant with an $F$-test $p$-value $\ExpThreeADriftFPFmt$, but the $R^2$ is only $\ExpThreeADriftRsq$ and all cell-level drift estimates remain near zero. The data therefore do not support the direction of the \citet{PaesLeme2024} prediction in this specific discrete-time environment with finite horizons. I do not speculate about whether the theoretical prediction would be recovered under different simulation parameters.
 
-\subsection{Summary of Experiment~3a}
-
-Budget tightness dominates every aspect of dual pacing. The auction-format effect flips sign relative to the learning experiments, though it remains of secondary magnitude. The Price of Anarchy bound holds uniformly. Robustness checks reported in Appendix~\ref{ch:robustness} confirm these findings across all thirteen diagnostic tests.
+Robustness checks in Appendix~\ref{ch:robustness} confirm these findings across all thirteen diagnostic tests.
 
 \section{PI Controller Pacing}
 \label{sec:exp3b_results}
 
-Experiment~3b replaces the multiplicative dual update with a PI controller. The agent tracks the cumulative spending error and adjusts its bid-scaling multiplier $\lambda$ through proportional and integral terms; the derivative term is omitted. Aggressiveness is the sixth design factor and controls how reactive the controller is to spending error. \Cref{fig:e3b_trace} shows a representative trajectory.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.75\textwidth]{e3b_trace}
-\caption{Representative Experiment~3b trajectory. The plot shows the mean bid-to-value ratio per episode for a single trial with a first-price auction, default aggressiveness, and two bidders.}
-\label{fig:e3b_trace}
-\end{figure}
+Experiment~3b replaces the multiplicative dual update with a PI controller. Aggressiveness is the sixth design factor and controls how reactive the controller is to spending error.
 
 \subsection{Revenue}
 
-The budget multiplier again dominates with $|t| = \ExpThreeBRevFactorTOne$ and an effect of \ExpThreeBRevTopPctEffect{} percent of the grand mean. \Cref{tab:exp3b_ranked_rev} lists the significant effects.
-
-\input{tables/exp3b_ranked_rev}
+The budget multiplier again dominates with $|t| = \ExpThreeBRevFactorTOne$ and an effect of \ExpThreeBRevTopPctEffect{} percent of the grand mean. The full effect hierarchy appears in \Cref{tab:exp3b_ranked_rev} (Appendix~\ref{ch:ranked_tables}).
 
 Auction format is the second-most important main effect ($|t| = \ExpThreeBRevAuctionAbsT$) and remains positive for first-price, so first-price auctions generate higher revenue than second-price under the PI controller as well. The first-price revenue gap is proportionally larger in Experiment~3b than in Experiment~3a. I report this as a between-experiment comparison, since the two experiments differ only in the pacing control law and share every other design feature; I do not claim that any particular agent "switches" control laws.
 
@@ -88,17 +66,6 @@ The auction-format-by-budget interaction is the largest interaction term ($|t| =
 
 \subsection{Price of Anarchy}
 
-\input{tables/exp3b_ranked_poa}
+The significant effects for Price of Anarchy are listed in \Cref{tab:exp3b_ranked_poa} (Appendix~\ref{ch:ranked_tables}). Under the PI controller, auction format becomes the dominant main effect on the Price of Anarchy ($|t| \approx 10.7$), with first-price auctions yielding higher Price-of-Anarchy values, that is, lower measured allocative efficiency, than second-price. This is the opposite pattern from dual pacing, where auction format had no significant main effect on the Price of Anarchy. Since the two experiments share every other design feature, the between-experiment difference is associated with the change in control law. As in Experiment~3a, all values remain within the theoretical bound.
 
-Under the PI controller, auction format becomes the dominant main effect on the Price of Anarchy ($|t| \approx 10.7$), with first-price auctions yielding higher Price-of-Anarchy values, that is, lower measured allocative efficiency, than second-price. This is the opposite pattern from dual pacing, where auction format had no significant main effect on the Price of Anarchy. Since the two experiments share every other design feature, the between-experiment difference is associated with the change in control law rather than with any of the other factors. I state this as a descriptive empirical observation rather than a causal property of the control law itself. As in Experiment~3a, every observed Price of Anarchy remains within the theoretical bound of~2.
-
-\subsection{Summary of Experiment~3b}
-
-The budget multiplier remains the dominant revenue driver under PI control. Auction format has a stronger main effect than under dual pacing and also moves the Price of Anarchy significantly, whereas dual pacing insulated allocative efficiency from the choice of format. Controller aggressiveness has a negligible main effect on revenue, which is consistent with the broader finding that algorithmic tuning parameters matter less than structural market conditions. Robustness checks in Appendix~\ref{ch:robustness} confirm all these effects.
-
-\section{What Budget-Constrained Pacing Establishes}
-\label{sec:pacing_summary}
-
-Three patterns carry across both pacing sub-experiments. First, the budget multiplier dominates revenue in both 3a and 3b, with total-order Sobol indices above 0.5 in both cases. Tight budgets lower bids uniformly, while loose budgets let the other design factors matter. Second, the number of bidders continues to matter but is no longer the dominant factor. Competitive thickness still pushes revenue up, but its share of explained variance drops well below what it achieved in the learning experiments. Third, and most consequentially, the auction-format effect on revenue reverses sign. Both pacing experiments report first-price auctions generating strictly higher revenue than second-price, a pattern that contradicts the direction observed under LinUCB and Thompson Sampling.
-
-The reversal is not a small margin. Under LinUCB, first-price revenue is about 19 percent below second-price. Under dual pacing, first-price revenue is about 9 percent above second-price. Under PI pacing, the first-price advantage is larger still and interacts more strongly with budget tightness. No single recommendation about auction format generalises across the algorithm families studied in this thesis. I report the pattern without assigning it a mechanism. The black-box approach of this thesis stops at the observation that different bidding technologies respond differently to the format choice. Chapter~\ref{ch:discussion} returns to this reversal and discusses its implications for platform design.
+Robustness checks in Appendix~\ref{ch:robustness} confirm all these effects.
