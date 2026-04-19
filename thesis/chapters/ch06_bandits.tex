@@ -1,12 +1,12 @@
 \chapter{Contextual Bandit Experiments}
 \label{ch:bandits}
 
-This chapter reports the two contextual-bandit sub-experiments. Experiment~2a replaces Q-learning with LinUCB (linear upper confidence bound) under the affiliated-signal model of Experiment~1b, and Experiment~2b replaces LinUCB with Thompson Sampling. The motivation is that contextual bandits can in principle use the signal context to refine their bids, which raises the question of whether more sophisticated learners recover the classical affiliation-based revenue ranking that Q-learning failed to produce. Both algorithms are defined in Chapter~\ref{ch:auctions_and_algorithms}; the present chapter focuses on the factorial analysis of their outputs.
+This chapter reports the two contextual-bandit sub-experiments. Experiment~2a replaces Q-learning with LinUCB (linear upper confidence bound) under the affiliated-signal model of Experiment~1b, and Experiment~2b replaces LinUCB with Thompson Sampling. The motivation is that contextual bandits can in principle use the signal context to refine their bids, which raises the question of whether more sophisticated learners recover the classical affiliation-based revenue ranking that Q-learning failed to produce. Both algorithms are defined in \cref{ch:auctions_and_algorithms}; the present chapter focuses on the factorial analysis of their outputs.
 
 \section{LinUCB}
 \label{sec:exp2a_results}
 
-Experiment~2a uses the $3 \times 2^7$ mixed-level factorial from Chapter~\ref{ch:design_and_inference}, with 384 cells replicated twice for \ExpTwoANobs{} observations. \Cref{tab:exp2_params_summary} summarises the factors.
+Experiment~2a uses the $3 \times 2^7$ mixed-level factorial from \cref{ch:design_and_inference}, with 384 cells replicated twice for \ExpTwoANobs{} observations. \Cref{tab:exp2_params_summary} summarises the factors.
 
 \begin{table}[H]
 \centering
@@ -32,7 +32,7 @@ Each run lasts 100{,}000 rounds.
 
 \subsection{Revenue}
 
-The number of bidders dominates ($|t| = \ExpTwoARevFactorTOne$), producing its largest effect of any experiment in the thesis. The shift from two to four bidders raises revenue by \ExpTwoARevTopPctEffect{} percent of the grand mean, roughly \ExpTwoARevTopVsAuctionRatio{} times the effect of auction format. The full effect hierarchy appears in \Cref{tab:exp2a_ranked_rev} (Appendix~\ref{ch:ranked_tables}).
+The number of bidders dominates ($|t| = \ExpTwoARevFactorTOne$), producing its largest effect of any experiment in the thesis. The shift from two to four bidders raises revenue by \ExpTwoARevTopPctEffect{} percent of the grand mean, roughly \ExpTwoARevTopVsAuctionRatio{} times the effect of auction format. The full effect hierarchy appears in \Cref{tab:exp2a_ranked_rev} (\cref{ch:ranked_tables}).
 
 Auction format is significant and negative ($|t| = \ExpTwoARevAuctionT$, $p \ExpTwoARevAuctionPFmt$), meaning first-price auctions reduce revenue. Mean revenue under first-price is \ExpTwoARevMeanFPA{} versus \ExpTwoARevMeanSPA{} under second-price, a gap of roughly 19 percent in favour of second-price. The direction of this effect matches the revenue ranking that \citet{MilgromWeber1982} derive for affiliated signals. I do not claim that LinUCB is recovering the exact equilibrium bid function; I report only that LinUCB produces revenue outcomes that are directionally aligned with the classical affiliation result, a pattern absent under Q-learning.
 
@@ -45,7 +45,7 @@ Interactions carry much of the remaining structure. \Cref{fig:e2a_int_rev} shows
 \label{fig:e2a_int_rev}
 \end{figure}
 
-Tuning parameters are essentially inert. Regularisation $\lambda$ and memory decay $\delta$ both fail to produce significant main effects on revenue, consistent with the Sobol decomposition in Appendix~\ref{ch:robustness}, where algorithmic parameters collectively explain less than four percent of revenue variance.
+Tuning parameters are essentially inert. Regularisation $\lambda$ and memory decay $\delta$ both fail to produce significant main effects on revenue, consistent with the Sobol decomposition in \cref{ch:robustness}, where algorithmic parameters collectively explain less than four percent of revenue variance.
 
 \section{Thompson Sampling}
 \label{sec:exp2b_results}
@@ -54,7 +54,7 @@ Experiment~2b replaces LinUCB with contextual Thompson Sampling. Regularisation 
 
 \subsection{Revenue}
 
-The number of bidders is again the top factor ($|t| = \ExpTwoBRevFactorTOne$), followed by reserve price ($|t| = \ExpTwoBRevFactorTTwo$). The full effect hierarchy appears in \Cref{tab:exp2b_ranked_rev} (Appendix~\ref{ch:ranked_tables}).
+The number of bidders is again the top factor ($|t| = \ExpTwoBRevFactorTOne$), followed by reserve price ($|t| = \ExpTwoBRevFactorTTwo$). The full effect hierarchy appears in \Cref{tab:exp2b_ranked_rev} (\cref{ch:ranked_tables}).
 
 Auction format is significant and negative ($|t| = \ExpTwoBRevAuctionT$, $p \ExpTwoBRevAuctionPFmt$), with first-price yielding \ExpTwoBRevMeanFPA{} against \ExpTwoBRevMeanSPA{} for second-price. The format gap is smaller than under LinUCB, roughly \ExpTwoBRevGapPct{} percent versus \ExpTwoARevGapPct{} percent, but the direction is the same. \Cref{fig:e2b_int_rev} shows the strongest interactions.
 
@@ -65,4 +65,4 @@ Auction format is significant and negative ($|t| = \ExpTwoBRevAuctionT$, $p \Exp
 \label{fig:e2b_int_rev}
 \end{figure}
 
-Unlike LinUCB, Thompson Sampling produces a more diffuse factor hierarchy. No single factor accounts for the lion's share of revenue variance, and several factors contribute in similar measure. Robustness checks in Appendix~\ref{ch:robustness} confirm these rankings.
+Unlike LinUCB, Thompson Sampling produces a more diffuse factor hierarchy. No single factor accounts for the lion's share of revenue variance, and several factors contribute in similar measure. Robustness checks in \cref{ch:robustness} confirm these rankings.

@@ -6,7 +6,7 @@ This chapter reports the two Q-learning sub-experiments. Experiment~1a uses cons
 \section{Constant Valuations}
 \label{sec:exp1a_results}
 
-Experiment~1a uses the ten-factor Resolution~V half-fraction described in Chapter~\ref{ch:design_and_inference}, yielding 1{,}024 observations. \Cref{tab:exp1a_params_summary} summarises the factors and their levels.
+Experiment~1a uses the ten-factor Resolution~V half-fraction described in \cref{ch:design_and_inference}, yielding 1{,}024 observations. \Cref{tab:exp1a_params_summary} summarises the factors and their levels.
 
 \begin{table}[H]
 \centering
@@ -34,7 +34,7 @@ Each cell runs for 100{,}000 episodes, which is sufficient for Q-value tables to
 
 \subsection{Revenue}
 
-The number of bidders is the dominant factor for end-state revenue, with $|t| = \ExpOneARevFactorTOne$. The shift from two to four bidders raises revenue by \ExpOneARevTopPctEffect{} percent of the grand mean, which is roughly \ExpOneARevTopVsAuctionRatio{} times larger than the effect of auction format. The discount factor $\gamma$ ranks second ($|t| = \ExpOneARevFactorTTwo$) and update mode third ($|t| = \ExpOneARevFactorTThree$). The full effect hierarchy appears in \Cref{tab:exp1a_ranked_rev} (Appendix~\ref{ch:ranked_tables}).
+The number of bidders is the dominant factor for end-state revenue, with $|t| = \ExpOneARevFactorTOne$. The shift from two to four bidders raises revenue by \ExpOneARevTopPctEffect{} percent of the grand mean, which is roughly \ExpOneARevTopVsAuctionRatio{} times larger than the effect of auction format. The discount factor $\gamma$ ranks second ($|t| = \ExpOneARevFactorTTwo$) and update mode third ($|t| = \ExpOneARevFactorTThree$). The full effect hierarchy appears in \Cref{tab:exp1a_ranked_rev} (\cref{ch:ranked_tables}).
 
 Auction format has no significant main effect on end-state revenue ($|t| = \ExpOneARevAuctionT$, $p \ExpOneARevAuctionPFmt$). Mean revenue under first-price (\ExpOneARevMeanFPA) is within one percentage point of mean revenue under second-price (\ExpOneARevMeanSPA). This null result is consistent with revenue equivalence and provides the baseline against which the later experiments depart.
 
@@ -47,7 +47,7 @@ Format is not entirely inert. It interacts significantly with the number of bidd
 \label{fig:e1a_int_rev}
 \end{figure}
 
-Robustness checks in Appendix~\ref{ch:robustness} confirm that these rankings survive multiple-testing correction, nonparametric model comparison, and quantile regression.
+Robustness checks in \cref{ch:robustness} confirm that these rankings survive multiple-testing correction, nonparametric model comparison, and quantile regression.
 
 \section{Affiliated Valuations}
 \label{sec:exp1b_results}
@@ -56,7 +56,7 @@ Experiment~1b replaces constant valuations with the affiliated-signal model of \
 
 \subsection{Revenue}
 
-The number of bidders remains the dominant factor ($|t| = \ExpOneBRevNbidAbsT$), with the low-to-high shift raising revenue by \ExpOneBRevTopPctEffect{} percent of the grand mean. Auction format is now statistically significant but economically modest ($|t| = \ExpOneBRevAuctionT$, $p \ExpOneBRevAuctionPFmt$); first-price auctions generate lower end-state revenue, with mean \ExpOneBRevMeanFPA{} versus \ExpOneBRevMeanSPA{} under second-price. The full effect hierarchy appears in \Cref{tab:exp1b_ranked_rev} (Appendix~\ref{ch:ranked_tables}).
+The number of bidders remains the dominant factor ($|t| = \ExpOneBRevNbidAbsT$), with the low-to-high shift raising revenue by \ExpOneBRevTopPctEffect{} percent of the grand mean. Auction format is now statistically significant but economically modest ($|t| = \ExpOneBRevAuctionT$, $p \ExpOneBRevAuctionPFmt$); first-price auctions generate lower end-state revenue, with mean \ExpOneBRevMeanFPA{} versus \ExpOneBRevMeanSPA{} under second-price. The full effect hierarchy appears in \Cref{tab:exp1b_ranked_rev} (\cref{ch:ranked_tables}).
 
 The affiliation parameter $\eta$ has no significant effect on any primary outcome, despite spanning the full range from independent private values to near-common values. Revenue equivalence holds under this signal model because signals are drawn independently, so theory predicts no affiliation effect at equilibrium; the Q-learning agents reproduce this prediction even though they do not compute equilibrium bids directly.
 
@@ -73,4 +73,4 @@ The number of bidders moderates the auction-format effect. \Cref{fig:e1b_int_rev
 
 End-state and lifetime revenue reveal different patterns. Both formats generate higher revenue during the learning phase than after convergence, but first-price auctions earn a learning-phase premium roughly three times larger than second-price.\footnote{Measured as the difference between mean lifetime revenue and mean end-state revenue. First-price: \ExpOneBAllMeanFPA{} lifetime versus \ExpOneBEndMeanFPA{} end-state, for a premium of \ExpOneBFPAPremium. Second-price: \ExpOneBAllMeanSPA{} versus \ExpOneBEndMeanSPA, for a premium of \ExpOneBSPAPremium.} When revenue is averaged over the full trajectory rather than the final 1{,}000 episodes, the auction-format main effect loses significance ($|t| = \ExpOneBAllRevAuctionAbsT$, $p \ExpOneBAllRevAuctionPFmt$), so the two formats become statistically indistinguishable on lifetime revenue. The auction-format-by-number-of-bidders interaction survives both measures and in fact reverses sign. With two bidders, first-price auctions yield higher lifetime revenue, while with four bidders, second-price auctions yield higher lifetime revenue.
 
-Robustness checks in Appendix~\ref{ch:robustness} confirm these rankings.
+Robustness checks in \cref{ch:robustness} confirm these rankings.
