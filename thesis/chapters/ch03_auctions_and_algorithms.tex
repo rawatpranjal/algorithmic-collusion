@@ -30,7 +30,6 @@ Bidders may condition future bids on information from prior rounds, including th
 
 \section{Q-Learning and Contextual Bandits}
 \label{sec:qlearning}
-\label{sec:bandits}
 
 Q-learning agents maintain a state-action value table $Q(s, a)$ and update it from observed rewards using \ifcsname r@ch:rl_survey\endcsname the Bellman update rule described in \cref{ch:rl_survey}\else the standard Bellman update rule\fi. In the experiments here, the states are discretised records of recent auction outcomes (such as the previous winning bid), the actions are bid levels on the eleven-point grid, and the rewards are auction payoffs. The agent learns to bid by trial and error, without computing an equilibrium strategy in closed form. The classical convergence result for Q-learning assumes a single agent learning against a fixed environment; here every bidder is a Q-learner, so the environment each agent faces is non-stationary. I therefore do not claim that agents reach any particular fixed point. The empirical question is whether their long-run revenue outcomes respond systematically to changes in market structure, and the factorial analysis in \cref{ch:qlearning} answers that.
 
@@ -114,7 +113,7 @@ The two algorithms implement the same closed-loop pacing idea, illustrated in \C
   \draw[arrow, rounded corners=8pt] (b4.west) -- ++(-1.0, 0) |- (b1.west);
   \draw[arrow, rounded corners=8pt] (p4.east) -- ++(1.0, 0) |- (p1.east);
 \end{tikzpicture}
-\caption{The per-round decision loop for each algorithm family. Each column shows the sequence of observation, action selection, bid submission, and parameter update, with a feedback arrow indicating that the cycle repeats.}
+\caption[The per-round decision loop for each algorithm family]{\textbf{The per-round decision loop for each algorithm family.} Each column shows the sequence of observation, action selection, bid submission, and parameter update, with a feedback arrow indicating that the cycle repeats.}
 \label{fig:algo_taxonomy}
 \end{figure}
 
